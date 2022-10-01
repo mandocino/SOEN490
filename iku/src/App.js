@@ -1,11 +1,9 @@
+import React from "react";
 import "./App.css";
+import HomePage from "./pages/Homepage";
 
 function App() {
-  return (
-    <div className="App">
-      <h1>Project Iku - SOEN 490</h1>
-    </div>
-  );
+  return <HomePage />;
 }
 
 export default App;
