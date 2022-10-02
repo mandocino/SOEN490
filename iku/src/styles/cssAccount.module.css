@@ -1,0 +1,12 @@
+.pageText {
+  color: cyan;
+}
+
+.acctBtns {
+  color: white;
+  border-radius: 12px;
+  height: 70px;
+  width: 150px;
+  font-size: 18px;
+  background-color: blue;
+}
