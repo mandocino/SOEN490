@@ -4,7 +4,7 @@ import "bulma/css/bulma.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-export default function Homepage() {
+export default function SearchBar() {
   return (
     <>
       <div>
