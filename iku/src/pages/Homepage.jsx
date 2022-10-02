@@ -4,6 +4,7 @@ import SearchBar from "./../components/SearchBar";
 import Guide from "./../components/Guide";
 import Description from "./../components/Description";
 import Footer from "./../components/Footer";
+import MyAccount from "./../components/MyAccount";
 
 export default function Homepage() {
   return (

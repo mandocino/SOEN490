@@ -1,6 +1,6 @@
 import React from "react";
 import "bulma/css/bulma.css";
-import BusImg from "./../assets/stmbus.jpg";
+import BusImg from "./../assets/stm_bus.jpg";
 
 export default function Guide() {
   return (
