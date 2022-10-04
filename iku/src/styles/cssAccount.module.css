@@ -1,5 +1,5 @@
 .pageText {
-  color: cyan;
+  color: #38a8d9;
 }
 
 .acctBtns {
@@ -8,5 +8,10 @@
   height: 70px;
   width: 150px;
   font-size: 18px;
-  background-color: blue;
+  background-color: #38a8d9;
+  border-color: #38a8d9;
+}
+
+.accountBox {
+  background-color: black;
 }

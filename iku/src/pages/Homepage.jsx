@@ -5,15 +5,18 @@ import Guide from "./../components/Guide";
 import Description from "./../components/Description";
 import Footer from "./../components/Footer";
 import MyAccount from "./../components/MyAccount";
+import styles from "./../styles/cssHomepage.module.css";
 
 export default function Homepage() {
   return (
     <>
-      <HomeHeader />
-      <SearchBar />
-      <Guide />
-      <Description />
-      <Footer />
+      <div class={styles.body}>
+        <HomeHeader />
+        <SearchBar />
+        <Guide />
+        <Description />
+        <Footer />
+      </div>
     </>
   );
 }
