@@ -1,5 +1,17 @@
+.body {
+  background-color: #38a8d9;
+}
+
 .pageText {
   color: #38a8d9;
+  padding-bottom: 20px;
+  font-size: 18px;
+}
+
+.pageTitle {
+  color: white;
+  font-size: 35px;
+  text-align: center;
 }
 
 .acctBtns {
@@ -13,5 +25,22 @@
 }
 
 .accountBox {
-  background-color: black;
+  padding-top: 45px;
+  background-color: #bee6fa;
+  width: 500px;
+  height: 550px;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-color: #38a8d9;
+}
+
+.container {
+  height: 800px;
+}
+
+html {
+  overflow: hidden;
 }

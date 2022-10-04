@@ -107,3 +107,7 @@ About Component
   font-size: 20px;
   font-family: Montserrat Medium;
 }
+
+html {
+  overflow: hidden;
+}
