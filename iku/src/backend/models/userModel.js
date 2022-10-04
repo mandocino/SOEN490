@@ -40,3 +40,31 @@ export const getUserByUserName = (userName, result) => {
         }
     });
 }
+
+// Attempt to get user data by login credentials
+export const login = (data, result) => {
+    // TODO: Should hash password, currently stored in plaintext
+    userDBModel.find(data, 'id first_name duration_priority email frequency_priority last_name walk_priority', (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Creates a new user using given data
+export const signup = (data, result) => {
+    // TODO: Should hash password, currently stored in plaintext
+    userDBModel.create(data, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
