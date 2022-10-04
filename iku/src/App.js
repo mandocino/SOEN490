@@ -4,7 +4,7 @@ import AccountPage from "./pages/Accountpage";
 import Homepage from "./pages/Homepage";
 
 function App() {
-  return <Homepage />;
+  return <AccountPage />;
 }
 
 export default App;

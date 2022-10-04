@@ -1,16 +1,16 @@
 .body {
-  background-color: #38a8d9;
+  background-color: #d2efff;
 }
 
 .pageText {
   color: #38a8d9;
   padding-bottom: 20px;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .pageTitle {
-  color: white;
-  font-size: 35px;
+  color: #38a8d9;
+  font-size: 42px;
   text-align: center;
 }
 
@@ -35,6 +35,9 @@
   top: 50%;
   transform: translate(-50%, -50%);
   border-color: #38a8d9;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 15px;
 }
 
 .container {
