@@ -1,6 +1,7 @@
 import React from "react";
 import "bulma/css/bulma.css";
 import styles from "./../styles/cssHomepage.module.css";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -21,14 +22,18 @@ export default function Footer() {
                       <div>
                         <a href="/register">
                           <p class="has-text-white has-text-weight-bold is-size-5 mr-6">
-                            Help
+                            <Link class="has-text-white" to="/help">
+                              Help
+                            </Link>
                           </p>
                         </a>
                       </div>
                       <div>
                         <a href="/login">
                           <p class="has-text-white has-text-weight-bold is-size-5">
-                            About Us
+                            <Link class="has-text-white" to="/aboutUs">
+                              About Us
+                            </Link>
                           </p>
                         </a>
                       </div>
