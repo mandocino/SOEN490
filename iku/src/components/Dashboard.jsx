@@ -28,8 +28,11 @@ export default function Dashboard() {
                         class={styles.inputBoxes}
                         type="text"
                         placeholder="1234, Street Name, City, Province, A1B 2C3"
-                      ></input>
-                      <br />
+                      ></input>{" "}
+                    </div>
+                  </div>
+                  <div class="columns has-text-weight-semibold">
+                    <div class="column is-two-fourths">
                       <br />
                       <p class={styles.dashboardText}>
                         Work <FontAwesomeIcon icon={faBriefcase} />
@@ -60,93 +63,115 @@ export default function Dashboard() {
                       <br />
                     </div>
                     <div class="column is-two-fourths">
+                      <br />
+                      <p class={styles.optionsText}>
+                        Rush-hour Off-Peak Weekend Midnight Overall
+                      </p>
+                      <br />
                       <input
+                        class={styles.radioBtn1}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />{" "}
                       <input
+                        class={styles.radioBtn2}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn3}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn4}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn5}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <br />
+                      <br />
                       <input
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />{" "}
-                      <input
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <input
+                        class={styles.radioBtn6}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn7}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn8}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        class={styles.radioBtn9}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        class={styles.radioBtn10}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <br />
+                      <br />
                       <input
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />{" "}
-                      <input
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <input
+                        class={styles.radioBtn11}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn12}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
+                        class={styles.radioBtn13}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        class={styles.radioBtn14}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        class={styles.radioBtn15}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
