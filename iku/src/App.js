@@ -1,9 +1,9 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
-
-import Accountpage from "./pages/Accountpage";
 import Homepage from "./pages/Homepage";
+import Accountpage from "./pages/Accountpage";
+import Dashboard from "./pages/Dashboardpage";
 //import Signup from "./components/Login/Signup";
 
 function App() {
@@ -25,6 +25,7 @@ function App() {
           */
         }
         {<Route path="/Accountpage" element={<Accountpage />} />}
+        {<Route path="/Dashboard" element={<Dashboard />} />}
       </Routes>
     </>
   );
