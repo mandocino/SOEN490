@@ -1,6 +1,13 @@
 import React from "react";
 import "bulma/css/bulma.css";
 import styles from "./../styles/cssDashboard.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDumbbell,
+  faHouseChimney,
+  faHouseUser,
+  faBriefcase,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Dashboard() {
   return (
@@ -9,57 +16,148 @@ export default function Dashboard() {
         <div>
           <section class="hero">
             <p class={styles.pageTitle}>Dashboard</p>
-            <div class="hero is-small">
-              <div class="hero-body">
-                <div class={styles.guideDiv}>
+            <div class={styles.dashboardDiv}>
+              <div class="hero is-small">
+                <div class="hero-body">
                   <div class="columns has-text-weight-semibold">
                     <div class="column is-two-fourths">
-                      <p>Your Home</p>
-                      <input type="text"></input>
+                      <p class={styles.dashboardText}>
+                        Your Home <FontAwesomeIcon icon={faHouseChimney} />
+                      </p>
+                      <input
+                        class={styles.inputBoxes}
+                        type="text"
+                        placeholder="1234, Street Name, City, Province, A1B 2C3"
+                      ></input>
                       <br />
-                      <p>Your Home</p>
-                      <input type="text"></input>
                       <br />
-                      <p>Your Home</p>
-                      <input type="text"></input>
+                      <p class={styles.dashboardText}>
+                        Work <FontAwesomeIcon icon={faBriefcase} />
+                      </p>
+                      <input
+                        class={styles.inputBoxes}
+                        type="text"
+                        placeholder="1234, Street Name, City, Province, A1B 2C3"
+                      ></input>
                       <br />
-                      <p>Your Home</p>
-                      <input type="text"></input>
+                      <p class={styles.dashboardText}>
+                        Gym <FontAwesomeIcon icon={faDumbbell} />
+                      </p>
+                      <input
+                        class={styles.inputBoxes}
+                        type="text"
+                        placeholder="1234, Street Name, City, Province, A1B 2C3"
+                      ></input>
+                      <br />
+                      <p class={styles.dashboardText}>
+                        Friend's Home <FontAwesomeIcon icon={faHouseUser} />
+                      </p>
+                      <input
+                        class={styles.inputBoxes}
+                        type="text"
+                        placeholder="1234, Street Name, City, Province, A1B 2C3"
+                      ></input>
                       <br />
                     </div>
                     <div class="column is-two-fourths">
-                      <p>Your Home</p>
-                      <p>Your Home</p>
-                      <p>Your Home</p>
-                      <p>Your Home</p>
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />{" "}
                       <input
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
-                      <label for="vehicle1"> I have a bike</label>
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
                       <br />
                       <input
                         type="checkbox"
-                        id="vehicle2"
-                        name="vehicle2"
-                        value="Car"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />{" "}
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
                       />
-                      <label for="vehicle2"> I have a car</label>
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
                       <br />
                       <input
                         type="checkbox"
-                        id="vehicle3"
-                        name="vehicle3"
-                        value="Boat"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />{" "}
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
                       />
-                      <label for="vehicle3"> I have a boat</label>
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <button class={styles.editBtn}>Edit Addresses</button>{" "}
           </section>
         </div>
       </div>

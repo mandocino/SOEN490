@@ -23,89 +23,44 @@ Footer Component
   font-size: 18px;
 }
 
-/*
-Search Component
-*/
+.pageTitle {
+  color: #38a8d9;
+  font-size: 40px;
+  padding-left: 70px;
+}
 
-.locationBtn {
-  margin-top: 18px;
+.dashboardDiv {
+  background-color: #bee6fa;
+  border-radius: 15px;
+  margin-right: 150px;
+  margin-left: 150px;
+}
+
+.dashboardText {
+  color: #38a8d9;
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.inputBoxes {
+  width: 350px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  height: 40px;
+  border-color: white;
+}
+
+.editBtn {
+  margin-top: 40px;
+  margin-left: 150px;
   color: white;
   border-radius: 12px;
-  height: 70px;
-  width: 120px;
+  height: 50px;
+  width: 150px;
   font-size: 18px;
   background-color: #38a8d9;
   border-color: #38a8d9;
-}
-.searchBar {
-  background-color: white;
-  width: 50vw;
-  height: 7vh;
-  color: #38a8d9;
-  border-radius: 15px;
-  border-color: #38a8d9;
-  margin-left: 46px;
-  margin-top: 18px;
-}
-.searchDiv {
-  background-color: #d2efff;
-  color: #38a8d9;
-  margin-bottom: 10px;
-  margin-left: 150px;
-  margin-right: 150px;
-}
-.searchText {
-  margin-top: 18px;
-  margin-left: 140px;
-  color: #38a8d9;
-  font-size: 38px;
-}
-
-/*
-Guide Component
-*/
-
-.guideDiv {
-  background-color: #38a8d9;
-  border-radius: 15px;
-  margin-right: 150px;
-  margin-left: 150px;
-}
-.guideText {
-  color: white;
-  font-size: 20px;
-  padding-left: 30px;
-}
-.guideTextNumbered {
-  color: white;
-  font-size: 20px;
-  padding-left: 50px;
-}
-
-.guideImg {
-  margin-left: 20px;
-  border-radius: 25px;
-}
-/*
-About Component
-*/
-
-.aboutDiv {
-  background-color: #38a8d9;
-  border-radius: 15px;
-  padding-top: 26px;
-  padding-bottom: 26px;
-  padding-left: 10px;
-  margin-right: 150px;
-  margin-left: 150px;
-}
-
-.aboutText {
-  padding-right: 30px;
-  padding-left: 30px;
-  color: white;
-  font-size: 20px;
-  font-family: Montserrat Medium;
+  margin-bottom: 40px;
 }
 
 html {
