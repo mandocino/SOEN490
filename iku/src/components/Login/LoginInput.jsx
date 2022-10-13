@@ -7,9 +7,9 @@ const LoginInput = ({ handleInputChange, value, label, type, name, ariaLabel, co
 
     return(
         <>
-            <label classNameName='login-label' htmlFor={name}>{label}</label>
+            <label className='login-label' htmlFor={name}>{label}</label>
             <input
-                classNameName='login-input'
+                className='login-input'
                 value={value}
                 onChange={event => handleInputChange(event, count)}
                 type={type}
