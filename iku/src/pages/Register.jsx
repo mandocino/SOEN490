@@ -8,7 +8,7 @@ import SingleGradientBackground from '../components/Login/SingleGradientBackgrou
 import LoginForm from '../components/Login/LoginForm';
 
 const Register = () => {
-
+    
     const inputs = [
         {
             label: "Username",
@@ -47,8 +47,8 @@ const Register = () => {
             </div>
             <div className='half-container'>
                 <InfoContainer>
-                    <h3 id='login-container-title'>Signup</h3>
-                    <LoginForm inputs={inputs} />
+                    <h3 id='login-container-title'>Register</h3>
+                    <LoginForm inputs={inputs} type={0} />
                 </InfoContainer>
             </div>
         </SingleGradientBackground>

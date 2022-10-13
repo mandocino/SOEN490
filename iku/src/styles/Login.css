@@ -3,6 +3,7 @@
     background-image: linear-gradient(#0691CC, #D2EFFF);
     height: 100%;
     display: flex;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .half-container {
@@ -20,7 +21,6 @@
 #login-title {
     color: white;
     font-size: 4rem;
-    font-family: 'Montserrat', sans-serif;
     letter-spacing: .15rem;
     margin-top: 3rem;
     line-height: 4rem;
@@ -51,22 +51,47 @@
     flex-direction: column;
 }
 
+.input-container {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin-bottom: 15px;
+}
+
+.login-label {
+    color: #00618A;
+    font-weight: bold;
+}
+
 .login-input {
     border: none;
     border-radius: 5px;
-    width: 300px;
-    padding: 10px 20px 10px 20px;
-    margin-bottom: 15px;
+    padding: 10px 15px 10px 15px;
 }
 
 .login-input:focus {
     outline: none;
 }
 
-.login-label {
-
+#button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 300px;
+    margin: 10px 0 15px 0;
 }
 
-.login-input {
-    
+#login-button {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: #0691CC;
+    color: white;
+    border: none;
+    padding: 10px 20px 10px 20px;
+    border-radius: 20px;
+}
+
+#login-button:hover {
+    cursor: pointer;
 }

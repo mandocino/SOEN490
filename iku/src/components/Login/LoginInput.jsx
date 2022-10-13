@@ -6,7 +6,7 @@ const LoginInput = ({ handleInputChange, value, label, type, name, ariaLabel, co
 
 
     return(
-        <>
+        <div className='input-container'>
             <label className='login-label' htmlFor={name}>{label}</label>
             <input
                 className='login-input'
@@ -17,7 +17,7 @@ const LoginInput = ({ handleInputChange, value, label, type, name, ariaLabel, co
                 aria-label={ariaLabel}
                 required
             />
-        </>
+        </div>
     )
 }
 

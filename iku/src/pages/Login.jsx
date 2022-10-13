@@ -33,7 +33,7 @@ const Login = () => {
             <div className='half-container'>
                 <InfoContainer>
                     <h3 id='login-container-title'>Login</h3>
-                    <LoginForm inputs={inputs} />
+                    <LoginForm inputs={inputs} type={1} />
                 </InfoContainer>
             </div>
         </SingleGradientBackground>
