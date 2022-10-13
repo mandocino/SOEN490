@@ -4,7 +4,7 @@ import SearchBar from "./../components/SearchBar";
 import Guide from "./../components/Guide";
 import Description from "./../components/Description";
 import Footer from "./../components/Footer";
-import MyAccount from "./../components/MyAccount";
+//import MyAccount from "./../components/MyAccount";
 import styles from "./../styles/cssHomepage.module.css";
 
 export default function Homepage() {
