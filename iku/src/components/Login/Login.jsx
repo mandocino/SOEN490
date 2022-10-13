@@ -15,10 +15,10 @@ const Login = () => {
 
     return(
         <SingleGradientBackground>
-            <div class='half-container'>
+            <div className='half-container'>
                 <LoginLogo />
             </div>
-            <div class='half-container'>
+            <div className='half-container'>
                 <InfoContainer>
                     <h3>Login</h3>
                     <form>

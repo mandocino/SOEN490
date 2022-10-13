@@ -9,10 +9,10 @@ const Signup = () => {
 
     return(
         <SingleGradientBackground>
-            <div class='half-container'>
+            <div className='half-container'>
                 <LoginLogo />
             </div>
-            <div class='half-container'>
+            <div className='half-container'>
                 <InfoContainer>
                     <h3>Signup</h3>
                 </InfoContainer>
