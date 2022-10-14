@@ -4,7 +4,6 @@ import '../../styles/Login.css';
 
 const LoginInput = ({ handleInputChange, value, label, type, name, ariaLabel, count }) => {
 
-
     return(
         <div className='input-container'>
             <label className='login-label' htmlFor={name}>{label}</label>

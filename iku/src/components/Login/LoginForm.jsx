@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+// import axios from 'axios';
 
 import '../../styles/Login.css';
 
@@ -28,6 +29,21 @@ const LoginForm = ({ inputs, type }) => {
         return type === 0 ? '/login' : '/register';
     }
 
+    const testInput = async () => {
+        switch (type) {
+            case 0:
+                // Register information here.
+                break;
+            case 1:
+                // Login information here.
+                // To get value of a certain input field use --> inputValue[i].value ||| where i is the 'i'th input field on the webpage.
+                //const res = await axios.post(`http://localhost:5000/user`, {username: inputValue[0].value, password: inputValue[1].value})
+                break;
+            default:
+
+        }
+    }
+
     let count = 0;
 
     return(
@@ -49,7 +65,7 @@ const LoginForm = ({ inputs, type }) => {
                 })
             }
             <div id='button-container'>
-                <button id='login-button'>{getButtonType(type)}</button>
+                <button id='login-button' onClick={testInput}>{getButtonType(type)}</button>
                 <Link to={getRedirectLink(type)}>{getRedirectMessage(type)}</Link>
             </div>
         </form>

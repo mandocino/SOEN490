@@ -42,10 +42,10 @@ const Register = () => {
 
     return(
         <SingleGradientBackground>
-            <div className='half-container'>
+            <div className='half-container left'>
                 <LoginLogo />
             </div>
-            <div className='half-container'>
+            <div className='half-container right'>
                 <InfoContainer>
                     <h3 id='login-container-title'>Register</h3>
                     <LoginForm inputs={inputs} type={0} />

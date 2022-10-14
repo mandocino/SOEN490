@@ -15,15 +15,16 @@
 }
 
 #login-logo {
-    width: 30rem;
+    width: 80%;
+    max-width: 30rem;
 }
 
 #login-title {
     color: white;
-    font-size: 4rem;
+    font-size: min(5.5vw, 4rem);
     letter-spacing: .15rem;
     margin-top: 3rem;
-    line-height: 4rem;
+    line-height: min(5.5vw, 4rem);
 }
 
 #login-container {
@@ -31,8 +32,9 @@
     align-items: center;
     flex-direction: column;
     background-color: #BEE6FA;
-    min-width: 500px;
-    width: 50%;
+    min-width: 400px;
+    width: 80%;
+    max-width: 600px;
     border-radius: 10px;
     box-shadow: 4px 4px #009df9;
 }
@@ -49,12 +51,14 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    width: 100%;
 }
 
 .input-container {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    min-width: 300px;
+    width: 80%;
     margin-bottom: 15px;
 }
 
@@ -77,8 +81,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 300px;
-    margin: 10px 0 15px 0;
+    min-width: 300px;
+    width: 80%;
+    margin: 10px 0 20px 0;
 }
 
 #login-button {
@@ -94,4 +99,33 @@
 
 #login-button:hover {
     cursor: pointer;
+}
+
+@media screen and (max-width: 850px) {
+    #login-root {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .half-container {
+        width: 90%;
+    }
+
+    .half-container.left {
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 20px 0px 80px 0px;
+    }
+
+    #login-logo {
+        width: 30vw;
+    }
+
+    #login-title {
+        margin: 0;
+    }
+
+    .half-container.right {
+
+    }
 }
