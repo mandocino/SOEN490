@@ -2,7 +2,6 @@ import '../styles/Login.css';
 
 import React from 'react';
 import LoginLogo from '../components/Login/LoginLogo';
-import InfoContainer from '../components/Login/InfoContainer';
 import SingleGradientBackground from '../components/Login/SingleGradientBackground';
 import LoginForm from '../components/Login/LoginForm';
 
@@ -31,10 +30,10 @@ const Login = () => {
                 <LoginLogo />
             </div>
             <div className='half-container right'>
-                <InfoContainer>
+                <div id='login-container'>
                     <h3 id='login-container-title'>Login</h3>
                     <LoginForm inputs={inputs} type={1} />
-                </InfoContainer>
+                </div>
             </div>
         </SingleGradientBackground>
     )

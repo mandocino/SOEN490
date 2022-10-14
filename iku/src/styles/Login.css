@@ -36,7 +36,7 @@
     width: 80%;
     max-width: 600px;
     border-radius: 10px;
-    box-shadow: 4px 4px #009df9;
+    box-shadow: 4px 4px 4px #6495ed;
 }
 
 #login-container-title {
@@ -123,9 +123,5 @@
 
     #login-title {
         margin: 0;
-    }
-
-    .half-container.right {
-
     }
 }

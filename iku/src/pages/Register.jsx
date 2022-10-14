@@ -3,7 +3,6 @@ import React from "react";
 import '../styles/Login.css';
 
 import LoginLogo from '../components/Login/LoginLogo';
-import InfoContainer from '../components/Login/InfoContainer';
 import SingleGradientBackground from '../components/Login/SingleGradientBackground';
 import LoginForm from '../components/Login/LoginForm';
 
@@ -46,10 +45,10 @@ const Register = () => {
                 <LoginLogo />
             </div>
             <div className='half-container right'>
-                <InfoContainer>
+                <div id='login-container'>
                     <h3 id='login-container-title'>Register</h3>
                     <LoginForm inputs={inputs} type={0} />
-                </InfoContainer>
+                </div>
             </div>
         </SingleGradientBackground>
     )
