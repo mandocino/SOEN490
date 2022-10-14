@@ -1,10 +1,13 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+
 import "./App.css";
+
 import Homepage from "./pages/Homepage";
 import Accountpage from "./pages/Accountpage";
 import Dashboard from "./pages/Dashboardpage";
-//import Signup from "./components/Login/Signup";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -24,8 +27,10 @@ function App() {
                //Where the ellipsis in the 'to' prop matches a path extension in the Routes.
           */
         }
-        {<Route path="/Accountpage" element={<Accountpage />} />}
-        {<Route path="/Dashboard" element={<Dashboard />} />}
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element ={<Register />} />
+        <Route path="/accountpage" element={<Accountpage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   );

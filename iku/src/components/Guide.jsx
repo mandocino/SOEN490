@@ -41,6 +41,7 @@ export default function Guide() {
                       src={BusImg}
                       width="800"
                       height="600"
+                      alt="Bus"
                     ></img>{" "}
                   </div>
                 </div>

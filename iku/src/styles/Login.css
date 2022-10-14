@@ -1,0 +1,131 @@
+
+#login-root {
+    background-image: linear-gradient(#0691CC, #D2EFFF);
+    height: 100%;
+    display: flex;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.half-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+#login-logo {
+    width: 80%;
+    max-width: 30rem;
+}
+
+#login-title {
+    color: white;
+    font-size: min(5.5vw, 4rem);
+    letter-spacing: .15rem;
+    margin-top: 3rem;
+    line-height: min(5.5vw, 4rem);
+}
+
+#login-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #BEE6FA;
+    min-width: 400px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 4px 4px #009df9;
+}
+
+#login-container-title {
+    color: #00618A;
+    font-size: 2rem;
+    margin-top: 15px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+#login-form {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    width: 80%;
+    margin-bottom: 15px;
+}
+
+.login-label {
+    color: #00618A;
+    font-weight: bold;
+}
+
+.login-input {
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px 10px 15px;
+}
+
+.login-input:focus {
+    outline: none;
+}
+
+#button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 300px;
+    width: 80%;
+    margin: 10px 0 20px 0;
+}
+
+#login-button {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    background-color: #0691CC;
+    color: white;
+    border: none;
+    padding: 10px 20px 10px 20px;
+    border-radius: 20px;
+}
+
+#login-button:hover {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 850px) {
+    #login-root {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .half-container {
+        width: 90%;
+    }
+
+    .half-container.left {
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 20px 0px 80px 0px;
+    }
+
+    #login-logo {
+        width: 30vw;
+    }
+
+    #login-title {
+        margin: 0;
+    }
+
+    .half-container.right {
+
+    }
+}
