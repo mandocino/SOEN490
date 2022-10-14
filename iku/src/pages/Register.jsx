@@ -24,6 +24,20 @@ const Register = () => {
             value: ""
         },
         {
+            label: "First Name",
+            type: "text",
+            name: "first_name",
+            ariaLabel: "First name input field",
+            value: ""
+        },
+        {
+            label: "Last Name",
+            type: "text",
+            name: "last_name",
+            ariaLabel: "Last name input field",
+            value: ""
+        },
+        {
             label: "Password",
             type: "password",
             name: "password",

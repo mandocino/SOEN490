@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import axios from 'axios';
+import axios from 'axios';
 
 import '../../styles/Login.css';
 
@@ -11,7 +11,6 @@ const LoginForm = ({ inputs, type }) => {
     const [inputValue, setInputValues] = useState(inputs);
 
     const _handleOnChange = (event, count) => {
-        console.log(count);
         let newValue = inputValue.slice();
         newValue[count].value = event.target.value;
         setInputValues(newValue);
@@ -35,9 +34,13 @@ const LoginForm = ({ inputs, type }) => {
                 // Register information here.
                 break;
             case 1:
-                // Login information here.
-                // To get value of a certain input field use --> inputValue[i].value ||| where i is the 'i'th input field on the webpage.
-                //const res = await axios.post(`http://localhost:5000/user`, {username: inputValue[0].value, password: inputValue[1].value})
+                const res = await axios.post(`http://localhost:5000/login`, {email: inputValue[0].value, password: inputValue[1].value}).catch(e => e.message);
+                if(res.data.length > 0) {
+                    console.log(res.data[0]);
+                    localStorage.setItem('authenticated', 'true');
+                    localStorage.setItem('first_name', res.data[0].first_name)
+                    //window.location.reload();
+                };
                 break;
             default:
 
@@ -47,7 +50,7 @@ const LoginForm = ({ inputs, type }) => {
     let count = 0;
 
     return(
-        <form id='login-form'>
+        <>
             {
                 inputValue.map(({ label, type, name, ariaLabel, value }) => {
                     return (
@@ -68,7 +71,7 @@ const LoginForm = ({ inputs, type }) => {
                 <button id='login-button' onClick={testInput}>{getButtonType(type)}</button>
                 <Link to={getRedirectLink(type)}>{getRedirectMessage(type)}</Link>
             </div>
-        </form>
+        </>
     )
 }
 
