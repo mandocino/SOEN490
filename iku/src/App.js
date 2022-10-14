@@ -8,6 +8,7 @@ import Accountpage from "./pages/Accountpage";
 import Dashboard from "./pages/Dashboardpage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import AboutUs from "./pages/Aboutpage";
 
 function App() {
   return (
@@ -27,10 +28,11 @@ function App() {
                //Where the ellipsis in the 'to' prop matches a path extension in the Routes.
           */
         }
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element ={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/accountpage" element={<Accountpage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/aboutus" element={<AboutUs />} />
       </Routes>
     </>
   );

@@ -22,7 +22,7 @@ export default function Footer() {
                       <div>
                         <a href="/register">
                           <p class="has-text-white has-text-weight-bold is-size-5 mr-6">
-                            <Link class="has-text-white" to="/help">
+                            <Link class="has-text-white" to="/homepage">
                               Help
                             </Link>
                           </p>
