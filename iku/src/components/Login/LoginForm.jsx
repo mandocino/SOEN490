@@ -22,7 +22,7 @@ const LoginForm = ({ inputs, type }) => {
     }
 
     const getRedirectMessage = (type) => {
-        return type === 0 ? 'Already have an account? Log in' : 'Create an account';
+        return type === 0 ? 'Have an account? Log in' : 'Create an account';
     }
 
     const getRedirectLink = (type) => {
@@ -66,7 +66,7 @@ const LoginForm = ({ inputs, type }) => {
             }
             <div id='button-container'>
                 <button id='login-button' onClick={testInput}>{getButtonType(type)}</button>
-                <Link to={getRedirectLink(type)}>{getRedirectMessage(type)}</Link>
+                <Link id='login-create-account' to={getRedirectLink(type)}>{getRedirectMessage(type)}</Link>
             </div>
         </form>
     )

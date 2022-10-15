@@ -11,20 +11,49 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.half-container.left {
+    width: calc(50% - min(8vw, 4rem));
+    padding-right: 20px;
+}
+
+.half-container.right {
     width: 50%;
+    padding-right: min(8vw, 4rem);
+    padding-left: 20px;
+}
+
+#login-return-home {
+    align-self: flex-start;
+    width: min(8vw, 4rem);
+    margin: 10px 0 0 10px;
 }
 
 #login-logo {
+    min-width: 12rem;
     width: 80%;
-    max-width: 30rem;
+    max-width: 28rem;
 }
 
-#login-title {
+#login-title-big {
     color: white;
-    font-size: min(5.5vw, 4rem);
+    font-size: min(5vw, 4rem);
     letter-spacing: .15rem;
     margin-top: 3rem;
-    line-height: min(5.5vw, 4rem);
+    line-height: min(5vw, 4rem);
+    text-align: center;
+}
+
+#login-title-small {
+    color: white;
+    font-size: min(5vw, 4rem);
+    letter-spacing: .15rem;
+    margin-top: 2rem;
+    line-height: min(5vw, 4rem);
+    text-align: center;
+    display: none;
+    margin-bottom: 3rem;
 }
 
 #login-container {
@@ -90,7 +119,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 1em;
     font-weight: bold;
-    background-color: #0691CC;
+    background-color: #00618A;
     color: white;
     border: none;
     padding: 10px 20px 10px 20px;
@@ -99,6 +128,11 @@
 
 #login-button:hover {
     cursor: pointer;
+}
+
+#login-create-account {
+    color: #00618A;
+    font-weight: bold;
 }
 
 @media screen and (max-width: 850px) {
@@ -113,15 +147,30 @@
 
     .half-container.left {
         flex-direction: row;
-        justify-content: space-between;
-        margin: 20px 0px 80px 0px;
+    }
+
+    .half-container.right {
+        width: 100%;
     }
 
     #login-logo {
         width: 30vw;
+        align-self: center;
     }
 
     #login-title {
         margin: 0;
+    }
+
+    #login-title-big {
+        display: none;
+    }
+
+    #login-title-small {
+        display: block;
+    }
+
+    #login-container {
+        
     }
 }
