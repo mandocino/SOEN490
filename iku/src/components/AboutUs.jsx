@@ -12,7 +12,7 @@ export default function AboutUs() {
               <div class={styles.pageBox}>
                 <p class={styles.pageTitle}>Project IKU</p>
                 <p class={styles.pageTitle}>CAPSTONE SOEN490</p>
-                <p></p>
+                <br />
                 <p class={styles.pageText}>Shuaib Rauph (srauph) - 40134457</p>
                 <p class={styles.pageText}>Mahmoud Idlbi (Mah514) - 40016792</p>
                 <p class={styles.pageText}>
