@@ -35,7 +35,6 @@ const LoginForm = ({ inputs, type }) => {
                 break;
             case 1:
                 const res = await axios.post(`http://localhost:5000/login`, {email: inputValue[0].value, password: inputValue[1].value}).catch(e => e.message);
-                console.log(res.data);
                 if(res.data.length > 0) {
                     localStorage.setItem('authenticated', 'true');
                     localStorage.setItem('first_name', res.data[0].first_name)
@@ -68,7 +67,7 @@ const LoginForm = ({ inputs, type }) => {
       }
       <div id='button-container'>
         <button id='login-button' onClick={testInput}>{getButtonType(type)}</button>
-        <Link to={getRedirectLink(type)}>{getRedirectMessage(type)}</Link>
+        <Link id='redirect-link' to={getRedirectLink(type)}>{getRedirectMessage(type)}</Link>
       </div>
     </>
   )

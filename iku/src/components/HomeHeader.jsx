@@ -49,9 +49,22 @@ export default function HomeHeader() {
                           </div>
                         </>
                         :
-                        <p class="has-text-white has-text-weight-bold is-size-4 mt-6">
-                          { localStorage.getItem('first_name') }
-                        </p>
+                        <>
+                          <p class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
+                            { localStorage.getItem('first_name') }
+                          </p>
+                          <Link
+                            to='/'
+                            class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
+                            onClick={() => {
+                              localStorage.removeItem('authenticated');
+                              localStorage.removeItem('first_name');
+                              window.location.reload();
+                            }}
+                          >
+                            Sign Out
+                          </Link>
+                        </>
                       }
                     </div>
                   </div>

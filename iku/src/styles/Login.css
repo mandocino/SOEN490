@@ -96,12 +96,16 @@
 .login-label {
     color: #00618A;
     font-weight: bold;
+    font-size: 19px;
 }
 
 .login-input {
     border: none;
     border-radius: 5px;
     padding: 10px 15px 10px 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    letter-spacing: 0.02rem;
 }
 
 .login-input:focus {
@@ -132,9 +136,10 @@
     cursor: pointer;
 }
 
-#login-create-account {
+#redirect-link {
     color: #00618A;
     font-weight: bold;
+    font-size: 17px;
 }
 
 @media screen and (max-width: 850px) {
