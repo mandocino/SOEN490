@@ -32,14 +32,18 @@ const LoginForm = ({ inputs, type }) => {
         switch (type) {
             case 0:
                 const checkEmail = await axios.post('http://localhost:5000/login', {
-                    email: inputValue[1].value
+                    email: inputValue[0].value
                 }).catch(e => e.message);
                 if (checkEmail.data.length > 0) {
                     emailInUse();
-                } else if (inputValue[4].value !== inputValue[5].value) {
+                } else if (inputValue[3].value !== inputValue[4].value) {
                     passwordNoMatch();
-                } else {
-                    register();
+                } else if (!goodPassword(inputValue[3])) {
+                    passwordPoor();
+                }
+                else {
+                    //register();
+                    console.log('all good');
                 }
                 break;
             case 1:
@@ -87,8 +91,34 @@ const LoginForm = ({ inputs, type }) => {
         document.getElementById('email-in-use').style.display = 'block';
     }
 
+    const passwordPoor = () => {
+        document.getElementById('password-poor').style.display = 'block';
+    }
+
+    const goodPassword = (password) => {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)” + “(?=.*[-+_!@#$%^&*., ?]).+$/;
+        return regex.test(password);
+    }
+
     const passwordNoMatch = () => {
         document.getElementById('password-no-match').style.display = 'block';
+    }
+
+    const setIncorrectMessage = (label) => {
+        const element = <></>;
+        switch (label) {
+            case 'Email':
+                element = <p id='email-in-use'>Email already in use</p>;
+                break;
+            case 'Password':
+                element = <p id='password-poor'>{`Password must contain:\n\tAt least 10 characters\n\t1+ uppercase letter\n\t1+ lowercase letter\n\t1+ number\n\t1+ symbol`}</p>;
+                break;
+            case 'Confirm Password':
+                element = <p id='password-no-match'>Passwords do not match</p>;
+                break;
+            default:
+        }
+        return element;
     }
 
     let count = 0;
@@ -110,14 +140,7 @@ const LoginForm = ({ inputs, type }) => {
                                 key={name}
                                 onEnterDown={onEnterPress}
                             />
-                            {
-                                label === 'Email' &&
-                                <p id='email-in-use'>Email already in use</p>
-                            }
-                            {
-                                label === 'Confirm Password' &&
-                                <p id='password-no-match'>Passwords do not match</p>
-                            }
+                            { setIncorrectMessage() }
                         </>
                     )
                 })
