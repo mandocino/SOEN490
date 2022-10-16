@@ -3,29 +3,26 @@ import { Schema, model, connect, Mongoose } from "mongoose";
 const connectionString = "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
 
 const userSchema = new Schema({
-    id: Number,
-    first_name: String,
-    duration_priority: Number,
-    email: String,
-    frequency_priority: Number,
-    last_name: String,
-    password: String,
-    username: String,
-    walk_priority: Number
+    first_name: { type: String, required: true},
+    email: { type: String, required: true},
+    last_name: { type: String, required: true},
+    password: { type: String, required: true},
+    duration_priority: { type: Number, default: 0},
+    frequency_priority: { type: Number, default: 0},
+    walk_priority: { type: Number, default: 0}
 }, { collection : 'Users' });
 
 const locationSchema = new Schema({
-    id: Number,
-    user_id: Number,
-    latitude: Number,
-    longitude: Number,
-    name: String,
-    notes: String,
-    origin: Boolean,
-    priority: Number,
-    current_home: Boolean,
-    arrive_time: String,
-    depart_time: String
+    user_id: { type: Schema.Types.ObjectId, required: true},
+    latitude: { type: Number, required: true},
+    longitude: { type: Number, required: true},
+    name: { type: String, required: true},
+    notes: { type: String, default: "None"},
+    origin: { type: Boolean, required: true},
+    priority: { type: Number, default: 0},
+    current_home: { type: Boolean, required: true},
+    arrive_time: { type: String, required: true},
+    depart_time: { type: String, required: true}
 }, { collection : 'Locations' });
 
 export const userDBModel = model("User", userSchema);
