@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 
@@ -11,11 +11,12 @@ import Login from "./pages/Login";
 import AboutUs from "./pages/Aboutpage";
 
 function App() {
+
   return (
     <>
       <Routes>
+        <Route path="/" element={<Homepage />} />
         {
-          <Route path="/" element={<Homepage />} />
           /* Insert Routes here in the following format:
                //<Route path='/...' element={<... />}
                //Where the ellipsis (...) in the path prop is the extension added to the url
@@ -28,7 +29,7 @@ function App() {
                //Where the ellipsis in the 'to' prop matches a path extension in the Routes.
           */
         }
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={localStorage.getItem('authenticated') !== 'true' ? <Login /> : <Navigate to='/' />} />
         <Route path="/register" element={<Register />} />
         <Route path="/accountpage" element={<Accountpage />} />
         <Route path="/dashboard" element={<Dashboard />} />

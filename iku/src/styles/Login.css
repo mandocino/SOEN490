@@ -4,6 +4,8 @@
     height: 100%;
     display: flex;
     font-family: 'Montserrat', sans-serif;
+    overflow: scroll;
+    /*background-size: cover;*/
 }
 
 .half-container {
@@ -26,8 +28,8 @@
 
 #login-return-home {
     align-self: flex-start;
-    width: min(8vw, 4rem);
-    margin: 10px 0 0 10px;
+    width: min(8vw, 3.5rem);
+    margin: 10px 0px 0px 10px;
 }
 
 #login-logo {
@@ -53,7 +55,7 @@
     line-height: min(5vw, 4rem);
     text-align: center;
     display: none;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 #login-container {
@@ -94,12 +96,16 @@
 .login-label {
     color: #00618A;
     font-weight: bold;
+    font-size: 19px;
 }
 
 .login-input {
     border: none;
     border-radius: 5px;
     padding: 10px 15px 10px 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+    letter-spacing: 0.02rem;
 }
 
 .login-input:focus {
@@ -112,7 +118,7 @@
     align-items: center;
     min-width: 300px;
     width: 80%;
-    margin: 10px 0 20px 0;
+    margin: 10px 0px 20px 0px;
 }
 
 #login-button {
@@ -130,9 +136,10 @@
     cursor: pointer;
 }
 
-#login-create-account {
+#redirect-link {
     color: #00618A;
     font-weight: bold;
+    font-size: 17px;
 }
 
 @media screen and (max-width: 850px) {
@@ -141,16 +148,16 @@
         align-items: center;
     }
 
-    .half-container {
-        width: 90%;
-    }
-
     .half-container.left {
-        flex-direction: row;
+        width: 100%;
+        padding-right: 0px;
     }
 
     .half-container.right {
         width: 100%;
+        padding-right: 0px;
+        padding-left: 0px;
+        margin-bottom: 10px;
     }
 
     #login-logo {
@@ -168,9 +175,5 @@
 
     #login-title-small {
         display: block;
-    }
-
-    #login-container {
-        
     }
 }

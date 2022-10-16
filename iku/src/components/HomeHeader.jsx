@@ -30,20 +30,42 @@ export default function HomeHeader() {
                           </p>
                         </Link>
                       </div>
-                      <div>
-                        <Link to="/register">
+                      {
+                        localStorage.getItem('authenticated') !== 'true' ?
+                        <>
+                          <div>
+                            <Link to="/register">
+                              <p class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
+                                Sign Up
+                              </p>
+                            </Link>
+                          </div>
+                          <div>
+                            <Link to="/login">
+                              <p class="has-text-white has-text-weight-bold is-size-4 mt-6">
+                                Login
+                              </p>
+                            </Link>
+                          </div>
+                        </>
+                        :
+                        <>
                           <p class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
-                            Sign Up
+                            { localStorage.getItem('first_name') }
                           </p>
-                        </Link>
-                      </div>
-                      <div>
-                        <Link to="/login">
-                          <p class="has-text-white has-text-weight-bold is-size-4 mt-6">
-                            Login
-                          </p>
-                        </Link>
-                      </div>
+                          <Link
+                            to='/'
+                            class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
+                            onClick={() => {
+                              localStorage.removeItem('authenticated');
+                              localStorage.removeItem('first_name');
+                              window.location.reload();
+                            }}
+                          >
+                            Sign Out
+                          </Link>
+                        </>
+                      }
                     </div>
                   </div>
                 </div>
