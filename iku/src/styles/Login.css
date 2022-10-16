@@ -112,6 +112,33 @@
     outline: none;
 }
 
+#incorrect-input-message {
+    display: none;
+    color: red;
+    min-width: 300px;
+    width: 80%;
+}
+
+#email-in-use {
+    display: none;
+    color: red;
+    min-width: 300px;
+    width: 80%;
+    margin-top: -13px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
+#password-no-match {
+    display: none;
+    color: red;
+    min-width: 300px;
+    width: 80%;
+    margin-top: -13px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
 #button-container {
     display: flex;
     justify-content: space-between;

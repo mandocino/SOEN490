@@ -50,9 +50,12 @@ export default function HomeHeader() {
                         </>
                         :
                         <>
-                          <p class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
+                          <Link
+                            to='/accountpage'
+                            class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
+                          >
                             { localStorage.getItem('first_name') }
-                          </p>
+                          </Link>
                           <Link
                             to='/'
                             class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
