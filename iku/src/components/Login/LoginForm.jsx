@@ -41,7 +41,7 @@ const LoginForm = ({ inputs, type }) => {
                     window.location.reload();
                 }
                 break;
-                
+            default:
         }
     }
 

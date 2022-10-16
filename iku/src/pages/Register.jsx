@@ -12,13 +12,6 @@ const Register = () => {
     
     const inputs = [
         {
-            label: "Username",
-            type: "text",
-            name: "username",
-            ariaLabel: "Username input field",
-            value: ""
-        },
-        {
             label: "Email",
             type: "text",
             name: "email",
