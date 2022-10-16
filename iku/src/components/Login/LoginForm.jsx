@@ -66,11 +66,10 @@ const LoginForm = ({ inputs, type }) => {
 
     const register = async () => {
         await axios.post('http://localhost:5000/signup', {
-            username: inputValue[0].value,
-            email: inputValue[1].value,
-            first_name: inputValue[2].value,
-            last_name: inputValue[3].value,
-            password: inputValue[4].value
+            email: inputValue[0].value,
+            first_name: inputValue[1].value,
+            last_name: inputValue[2].value,
+            password: inputValue[3].value
         }).catch(e => e.message);
     }
 
