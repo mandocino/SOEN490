@@ -37,7 +37,6 @@ const LoginForm = ({ inputs, type }) => {
                 if (checkEmail.data.length > 0) {
                     emailInUse();
                 } else if (inputValue[4].value !== inputValue[5].value) {
-                    //console.log(inputValue[4] + " " + inputValue[5])
                     passwordNoMatch();
                 } else {
                     register();
@@ -47,6 +46,7 @@ const LoginForm = ({ inputs, type }) => {
                 login();
                 break;
             default:
+        }
     }
 
     const login = async () => {
@@ -77,6 +77,8 @@ const LoginForm = ({ inputs, type }) => {
         if (key === 'Enter') {
             testInput();
         }
+    }
+
     const incorrectInput = () => {
         document.getElementById('incorrect-input-message').style.display = 'block';
     }
