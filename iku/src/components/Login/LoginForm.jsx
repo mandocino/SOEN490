@@ -47,7 +47,6 @@ const LoginForm = ({ inputs, type }) => {
                 login();
                 break;
             default:
-        }
     }
 
     const login = async () => {
@@ -78,8 +77,6 @@ const LoginForm = ({ inputs, type }) => {
         if (key === 'Enter') {
             testInput();
         }
-    }
-
     const incorrectInput = () => {
         document.getElementById('incorrect-input-message').style.display = 'block';
     }
