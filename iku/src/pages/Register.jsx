@@ -44,7 +44,7 @@ const Register = () => {
     return(
         <SingleGradientBackground>
             <Link id='login-return-home' to='/'>
-                <img src={HomepageLogo} />
+                <img src={HomepageLogo} alt='Homepage' />
             </Link>
             <div className='half-container left'>
                 <LoginLogo />
