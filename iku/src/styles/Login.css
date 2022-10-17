@@ -112,6 +112,46 @@
     outline: none;
 }
 
+#incorrect-input-message {
+    display: none;
+    color: red;
+    min-width: 300px;
+    width: 80%;
+    margin-top: -5px;
+    margin-bottom: 5px;
+}
+
+.error-message {
+    display: none;
+    color: red;
+    min-width: 300px;
+    width: 80%;
+    margin-top: -13px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
+#password-poor {
+    display: none;
+}
+
+#password-poor-question {
+    width: 12px;
+    margin: 5px 0px 0px 5px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+#password-poor-info {
+    background-color: white;
+    margin: 5px 0px 0px 5px;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    margin-left: 250px;
+    display: none;
+}
+
 #button-container {
     display: flex;
     justify-content: space-between;
