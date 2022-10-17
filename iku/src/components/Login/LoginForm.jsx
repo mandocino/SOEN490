@@ -29,6 +29,13 @@ const LoginForm = ({ inputs, type }) => {
         return type === 0 ? '/login' : '/register';
     }
 
+    const onEnterPress = (event) => {
+        const key = event.key;
+        if (key === 'Enter') {
+            testInput();
+        }
+    }
+
     const testInput = async () => {
         switch (type) {
             case 0:
@@ -41,37 +48,9 @@ const LoginForm = ({ inputs, type }) => {
         }
     }
 
-    const register = async () => {
-        const checkEmail = await axios.post('http://localhost:5000/login', {
-                email: inputValue[0].value.toLowerCase()
-            }).catch(e => e.message);
-
-        if (checkEmail.data.length > 0) {
-            emailInUse(true);
-            passwordNoMatch(false);
-            passwordPoor(false);
-        } else if (inputValue[3].value !== inputValue[4].value) {
-            emailInUse(false);
-            passwordNoMatch(true);
-            passwordPoor(false);
-        } else if (!goodPassword(inputValue[3])) {
-            emailInUse(false);
-            passwordNoMatch(false);
-            passwordPoor(true);
-        } else {
-            //await axios.post('http://localhost:5000/signup', {
-            //    email: inputValue[0].value,
-            //    first_name: inputValue[1].value,
-            //    last_name: inputValue[2].value,
-            //    password: inputValue[3].value
-            //}).catch(e => e.message);
-            console.log('all good');
-        }
-    }
-
     const login = async () => {
         const res = await axios.post('http://localhost:5000/login', {
-            email: inputValue[0].value,
+            email: inputValue[0].value.toLowerCase(),
             password: inputValue[1].value
         }).catch(e => e.message);
         if(res.data.length > 0) {
@@ -83,15 +62,109 @@ const LoginForm = ({ inputs, type }) => {
         }
     }
 
-    const onEnterPress = (event) => {
-        const key = event.key;
-        if (key === 'Enter') {
-            testInput();
+    const register = async () => {
+        inputIsGood().then(inputIsGood => {
+            if (inputIsGood) {
+                axios.post('http://localhost:5000/signup', {
+                    email: inputValue[0].value.toLowerCase(),
+                    first_name: inputValue[1].value,
+                    last_name: inputValue[2].value,
+                    password: inputValue[3].value
+                }).catch(e => e.message);
+            }
+        })
+    }
+
+    const inputIsGood = async () => {
+        return emailIsGood(inputValue[0].value).then(emailIsGood => {
+            console.log(emailIsGood);
+            console.log(firstNameIsGood(inputValue[1].value));
+            console.log(lastNameIsGood(inputValue[2].value));
+            console.log(passwordIsGood(inputValue[3].value, inputValue[4].value));
+            
+            return emailIsGood &
+                   firstNameIsGood(inputValue[1].value) &
+                   lastNameIsGood(inputValue[2].value) &
+                   passwordIsGood(inputValue[3].value, inputValue[4].value);
+        });
+    }
+
+    const emailIsGood = async (email) => {
+        if (!email) {
+            emptyEmail(true);
+            return false;
         }
+        emptyEmail(false);
+
+        const checkEmail = await axios.post('http://localhost:5000/login', {
+                email: inputValue[0].value.toLowerCase()
+            }).catch(e => e.message);
+
+        if (checkEmail.data.length > 0) {
+            emailInUse(true);
+            passwordsDoNotMatch(false);
+            passwordPoor(false);
+            return false;
+        }
+        emailInUse(false);
+        return true;
+    }
+
+    const firstNameIsGood = (firstName) => {
+        if (!firstName) {
+            emptyFirstName(true);
+            return false;
+        }
+        emptyFirstName(false);
+        return true;
+    }
+
+    const lastNameIsGood = (lastName) => {
+        if (!lastName) {
+            emptyLastName(true);
+            return false;
+        }
+        emptyLastName(false);
+        return true;
+    }
+
+    const passwordIsGood = (password, cpassword) => {
+        if (password !== cpassword) {
+            emailInUse(false);
+            passwordsDoNotMatch(true);
+            passwordPoor(false);
+            return false;
+        } else if (!isGoodPassword(password)) {
+            emailInUse(false);
+            passwordsDoNotMatch(false);
+            passwordPoor(true);
+            return false;
+        }
+        passwordsDoNotMatch(false);
+        passwordPoor(false);
+        return true;
     }
 
     const incorrectInput = () => {
         document.getElementById('incorrect-input-message').style.display = 'block';
+    }
+
+    const emptyEmail = (condition) => {
+        condition === true ?
+        document.getElementById('empty-email').style.display = 'block'
+        : document.getElementById('empty-email').style.display = 'none';
+    }
+
+    const emptyFirstName = (condition) => {
+        condition === true ?
+        document.getElementById('empty-first-name').style.display = 'block'
+        : document.getElementById('empty-first-name').style.display = 'none';
+    }
+
+    const emptyLastName = (condition) => {
+        condition === true ?
+        document.getElementById('empty-last-name').style.display = 'block'
+        : document.getElementById('empty-last-name').style.display = 'none';
     }
 
     const emailInUse = (condition) => {
@@ -108,14 +181,14 @@ const LoginForm = ({ inputs, type }) => {
             );
     }
 
-    const passwordNoMatch = (condition) => {
+    const passwordsDoNotMatch = (condition) => {
         condition === true ?
             document.getElementById('password-no-match').style.display = 'block'
             : document.getElementById('password-no-match').style.display = 'none';
     }
 
-    const goodPassword = (password) => {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)” + “(?=.*[-+_!@#$%^&*., ?]).+$/;
+    const isGoodPassword = (password) => {
+        const regex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/);
         return regex.test(password);
     }
 
@@ -123,10 +196,19 @@ const LoginForm = ({ inputs, type }) => {
         let element = <></>;
         switch (label) {
             case 'Email':
-                element = <p id='email-in-use' className='error-message' key={label}>Email already in use</p>;
+                element = <>
+                            <p id='empty-email' className='error-message'>Cannot have empty Email</p>
+                            <p id='email-in-use' className='error-message'>Email already in use</p>
+                        </>;
+                break;
+            case 'First Name':
+                element = <p id='empty-first-name' className='error-message'>Cannot have empty First Name</p>
+                break;
+            case 'Last Name':
+                element = <p id='empty-last-name' className='error-message'>Cannot have empty Last Name</p>
                 break;
             case 'Password':
-                element = <div id='password-poor' className='error-message' key={label}>
+                element = <div id='password-poor' className='error-message'>
                             <p>Password requirements not met</p>
                             <img
                                 id='password-poor-question'
@@ -146,13 +228,13 @@ const LoginForm = ({ inputs, type }) => {
                                     &nbsp;- 1 uppercase character<br />
                                     &nbsp;- 1 lowercase character<br />
                                     &nbsp;- 1 number<br />
-                                    &nbsp;- 1 symbol<br />
+                                    &nbsp;- 1 special character<br />
                                 </p>
                             </div>
                         </div>;
                 break;
             case 'Confirm Password':
-                element = <p id='password-no-match' className='error-message' key={label}>Passwords do not match</p>;
+                element = <p id='password-no-match' className='error-message'>Passwords do not match</p>;
                 break;
             default:
         }
