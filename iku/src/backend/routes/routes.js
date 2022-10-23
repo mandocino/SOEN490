@@ -2,7 +2,7 @@
 import express from "express";
 
 // import functions from controllers
-import { showUsers, showUserByID, showUserByUserName, loginController , signupController } from "../controllers/user.js";
+import { showUsers, showUserByID, showUserByEmail, loginController , signupController } from "../controllers/user.js";
 import { addLocation, showLocationsByUserID } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
@@ -20,8 +20,8 @@ router.get('/users/', showUsers);
 // Get data of a user by their ID
 router.get('/userByID/:id', showUserByID);
 
-// Get data for a user by their username
-router.get('/userByUserName/:userName', showUserByUserName);
+// Get data for a user by their email
+router.get('/userByEmail/:email', showUserByEmail);
 
 // Attempt to get user data by login credentials
 router.post('/login/', loginController);
@@ -50,7 +50,7 @@ router.post('/removeEmailConfirmation/', removeEmailConfirmation);
 
 ///////////// PASSWORD RESET REQUEST
 
-// Create a new password reset request with data (controller will create code and send email)
+// Create a new password reset request for email
 router.post('/newPasswordResetRequest/', addPasswordResetRequest);
 
 // Attempt to get password reset data by user_id and code

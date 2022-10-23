@@ -1,5 +1,5 @@
 // Import function from user Model
-import { getUsers, getUserByID, getUserByUserName, login, signup } from "../models/userModel.js";
+import { getUsers, getUserByID, getUserByEmail, login, signup } from "../models/userModel.js";
 
 // Get All Users
 export const showUsers = (req, res) => {
@@ -23,9 +23,9 @@ export const showUserByID = (req, res) => {
     });
 }
 
-// Get User by username
-export const showUserByUserName = (req, res) => {
-    getUserByUserName(req.params.userName, (err, results) => {
+// Get User ID by email
+export const showUserByEmail = (req, res) => {
+    getUserByEmail(req.params.email, (err, results) => {
         if (err){
             res.send(err);
         }else{

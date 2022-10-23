@@ -28,9 +28,9 @@ export const getUserByID = (ID, result) => {
     });
 }
 
-// Get User by username
-export const getUserByUserName = (userName, result) => {
-    userDBModel.find({'username':userName},(err, data) => {
+// Get User ID by email
+export const getUserByEmail = (email, result) => {
+    userDBModel.find({'email':email}, '_id',(err, data) => {
         if (err){
             console.log(err);
         }
