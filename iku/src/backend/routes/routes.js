@@ -4,6 +4,8 @@ import express from "express";
 // import functions from controllers
 import { showUsers, showUserByID, showUserByUserName, loginController , signupController } from "../controllers/user.js";
 import { addLocation, showLocationsByUserID } from "../controllers/location.js";
+import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
+import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
 
 // init express router
 const router = express.Router();
@@ -34,6 +36,31 @@ router.post('/newlocation/', addLocation);
 
 // Get all locations for given player ID
 router.get('/locations/:id', showLocationsByUserID);
+
+///////////// EMAIL CONFIRMATION
+
+// Create a new email confirmation with data (controller will create code and send email)
+router.post('/newEmailConfirmation/', addEmailConfirmation);
+
+// Attempt to get confirmation data by email and code
+router.post('/emailConfirmation/', getEmailConfirmation);
+
+// Delete email confirmation by email and code
+router.post('/removeEmailConfirmation/', removeEmailConfirmation);
+
+///////////// PASSWORD RESET REQUEST
+
+// Create a new password reset request with data (controller will create code and send email)
+router.post('/newPasswordResetRequest/', addPasswordResetRequest);
+
+// Attempt to get password reset data by user_id and code
+router.post('/passwordResetRequest/', getPasswordResetRequest);
+
+// Update password reset request by user_id, given new code
+router.post('/updatePasswordResetRequest/', updatePasswordResetRequest);
+
+// Delete password reset request by user_id and code
+router.post('/removePasswordResetRequest/', removePasswordResetRequest);
 
 // export default router
 export default router;

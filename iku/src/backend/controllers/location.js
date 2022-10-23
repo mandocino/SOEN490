@@ -1,4 +1,4 @@
-// Import function from user Model
+// Import function from location Model
 import { createLocation, getLocationsByUserID } from "../models/locationModel.js";
 
 // Create a new location with data

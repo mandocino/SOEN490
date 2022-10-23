@@ -44,7 +44,7 @@ export const getUserByUserName = (userName, result) => {
 // Attempt to get user data by login credentials
 export const login = (data, result) => {
     // TODO: Should hash password, currently stored in plaintext
-    userDBModel.find(data, 'first_name duration_priority email frequency_priority last_name walk_priority', (err, data) => {
+    userDBModel.find(data, '_id first_name duration_priority email frequency_priority last_name walk_priority', (err, data) => {
         if (err){
             console.log(err);
         }

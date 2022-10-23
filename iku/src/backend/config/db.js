@@ -25,8 +25,20 @@ const locationSchema = new Schema({
     depart_time: { type: String, required: true}
 }, { collection : 'Locations' });
 
+const emailConfirmationSchema = new Schema({
+    email: { type: String, required: true},
+    code: { type: String, required: true}
+}, { collection : 'EmailConfirmations' });
+
+const passwordResetRequestSchema = new Schema({
+    user_id: { type: Schema.Types.ObjectId, required: true},
+    code: { type: String, required: true}
+}, { collection : 'PasswordResetRequests' });
+
 export const userDBModel = model("User", userSchema);
 export const locationDBModel = model("Location", locationSchema);
+export const emailConfirmationDBModel = model("EmailConfirmation", emailConfirmationSchema);
+export const passwordResetRequestDBModel = model("PasswordResetRequest", passwordResetRequestSchema);
 
 export function connectToServer(){
     connect(connectionString, {dbName: "Iku"});
