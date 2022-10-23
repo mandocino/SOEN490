@@ -1,5 +1,6 @@
 // import connection
 import {locationDBModel} from "../config/db.js";
+import mongoose from "mongoose";
 
 // Creates a new location using given data
 export const createLocation = (data, result) => {
@@ -16,7 +17,7 @@ export const createLocation = (data, result) => {
 
 // Get locations by user ID
 export const getLocationsByUserID = (ID, result) => {
-    locationDBModel.find({'user_id':ID},(err, data) => {
+    locationDBModel.find({'user_id':mongoose.Types.ObjectId(ID)},(err, data) => {
         if (err){
             console.log(err);
         }
