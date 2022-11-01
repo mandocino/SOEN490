@@ -3,7 +3,7 @@ import express from "express";
 
 // import functions from controllers
 import { showUsers, showUserByID, showUserByEmail, loginController , signupController, modifyUserByEmail, deleteUserByEmail } from "../controllers/user.js";
-import { addLocation, showLocationsByUserID } from "../controllers/location.js";
+import { addLocation, showLocationsByUserID, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
 
@@ -42,6 +42,12 @@ router.post('/newlocation/', addLocation);
 
 // Get all locations for given player ID
 router.get('/locations/:id', showLocationsByUserID);
+
+// Update location's data by object id
+router.post('/updateLocation/', updateLocation);
+
+// Delete a location by object id
+router.post('/deleteLocation/', deleteLocation);
 
 ///////////// EMAIL CONFIRMATION
 

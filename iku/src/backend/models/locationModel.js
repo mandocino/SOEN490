@@ -27,3 +27,29 @@ export const getLocationsByUserID = (ID, result) => {
         }
     });
 }
+
+// Modify a location's data by its Object ID
+export const modifyLocation = (data, result) => {
+    locationDBModel.findOneAndUpdate({_id:data._id},data,(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Remove a location by its Object ID
+export const removeLocation = (_id, result) => {
+    locationDBModel.findOneAndDelete({_id:_id},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
