@@ -81,3 +81,16 @@ export const updateUserByEmail = (data, result) => {
         }
     });
 }
+
+// Remove a user by email
+export const removeUserByEmail = (email, result) => {
+    userDBModel.findOneAndDelete({email:email}, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}

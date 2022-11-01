@@ -1,5 +1,5 @@
 // Import function from user Model
-import { getUsers, getUserByID, getUserByEmail, login, signup, updateUserByEmail } from "../models/userModel.js";
+import { getUsers, getUserByID, getUserByEmail, login, signup, updateUserByEmail, removeUserByEmail } from "../models/userModel.js";
 
 // Get All Users
 export const showUsers = (req, res) => {
@@ -61,6 +61,17 @@ export const signupController = (req, res) => {
 // Modify User by email
 export const modifyUserByEmail = (req, res) => {
     updateUserByEmail(req.body, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete User by email
+export const deleteUserByEmail = (req, res) => {
+    removeUserByEmail(req.body.email, (err, results) => {
         if (err){
             res.send(err);
         }else{
