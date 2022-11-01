@@ -2,7 +2,7 @@
 import express from "express";
 
 // import functions from controllers
-import { showUsers, showUserByID, showUserByEmail, loginController , signupController } from "../controllers/user.js";
+import { showUsers, showUserByID, showUserByEmail, loginController , signupController, modifyUserByEmail } from "../controllers/user.js";
 import { addLocation, showLocationsByUserID } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
@@ -28,6 +28,9 @@ router.post('/login/', loginController);
 
 // Create a new user with data
 router.post('/signup/', signupController);
+
+// Modify a user by email with data
+router.post('/modifyUser/', modifyUserByEmail);
 
 ///////////// LOCATION
 

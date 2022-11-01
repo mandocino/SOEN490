@@ -1,5 +1,5 @@
 // Import function from user Model
-import { getUsers, getUserByID, getUserByEmail, login, signup } from "../models/userModel.js";
+import { getUsers, getUserByID, getUserByEmail, login, signup, updateUserByEmail } from "../models/userModel.js";
 
 // Get All Users
 export const showUsers = (req, res) => {
@@ -50,6 +50,17 @@ export const loginController = (req, res) => {
 export const signupController = (req, res) => {
     const data = req.body;
     signup(data, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Modify User by email
+export const modifyUserByEmail = (req, res) => {
+    updateUserByEmail(req.body, (err, results) => {
         if (err){
             res.send(err);
         }else{

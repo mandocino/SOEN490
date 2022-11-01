@@ -68,3 +68,16 @@ export const signup = (data, result) => {
         }
     });
 }
+
+// Update a user's data by email
+export const updateUserByEmail = (data, result) => {
+    userDBModel.findOneAndUpdate({email:data.email}, data, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
