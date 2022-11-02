@@ -6,26 +6,25 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import styles from "./../styles/cssHomepage.module.css";
 import axios from "axios";
 
-const getCurrentLocation = () => {
+const getCurrentLocation = async () => {
   if(!navigator.geolocation){
     console.log("ERROR: Goeolocation is not supported by your browser");
   }
   else{
-    navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
 
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
-      axios.get('http://localhost:5000/address', {
+      await axios.get('http://localhost:5000/address', {
           params:{
-            latitude: latitude,
-            longitude: longitude
+            lat: latitude,
+            lng: longitude
           }
       })
       .then(function(response){
-        console.log(response);
+        console.log(response.data.address);
       });
 
-      console.log(position);
     }, () => {
       console.log("Unable to retrieve your location.");
     });
