@@ -1,5 +1,6 @@
 import {Client} from "@googlemaps/google-maps-services-js";
 
+
 // Import function from user Model
 import { createLocation, getLocationsByUserID } from "../models/locationModel.js";
 
@@ -32,8 +33,10 @@ export const showLocationsByUserID = (req, res) => {
 // Get address by coordinates
 export const getAddressByCoordinates = (req, res) => {
     var latlng = req.query.lat + ',' + req.query.lng;
+    const key = process.env.GEOCODING_KEY;
+    console.log(key);
     var params = {
-        key: 'ADD_KEY_HERE',
+        key: key,
         latlng: latlng
     };
 
