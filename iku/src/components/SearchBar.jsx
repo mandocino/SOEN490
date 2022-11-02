@@ -12,8 +12,18 @@ import styles from "./../styles/cssHomepage.module.css";
 export default function SearchBar() {
 
   const [address, setAddress] = React.useState("");
+  const [coordinates, setCoordinates] = React.useState({
+    lat: null,
+    lng: null
+  })
 
-  const handleSelect = async (value) => {};
+  const handleSelect = async value => {
+    const results = await geocodeByAddress(value);
+    const latLng = await getLatLng(results[0]);
+    setCoordinates(latLng);
+    setAddress(value);
+    console.log(latLng);
+  };
 
   return (
     <>
@@ -48,7 +58,8 @@ export default function SearchBar() {
                                   {loading ? <div>...loading</div> : null}
                                   {suggestions.map((suggestion) => {
                                     const style = {
-                                      backgroundColor: suggestion.active ? "#50C1E9" : "#fff"
+                                      backgroundColor: suggestion.active ? "#50C1E9" : "#fff",
+                                      color: suggestion.active ? "#fff" : "#38a8d9"
                                     };
 
                                     return (
