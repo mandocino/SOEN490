@@ -108,6 +108,10 @@ About Component
   font-family: Montserrat Medium;
 }
 
+.suggestionList {
+  padding-left: 50px;
+}
+
 html {
   overflow: hidden;
 }

@@ -44,16 +44,15 @@ export default function SearchBar() {
                                   {... getInputProps({placeholder: 
                                     "                   Enter the address or postal code"})}
                                 />
-                                <div>
+                                <div class={styles.suggestionList}>
                                   {loading ? <div>...loading</div> : null}
-
                                   {suggestions.map((suggestion) => {
-                                    const suggestionStyle = {
+                                    const style = {
                                       backgroundColor: suggestion.active ? "#50C1E9" : "#fff"
                                     };
 
                                     return (
-                                      <div {... getSuggestionItemProps(suggestion, { suggestionStyle })}>
+                                      <div {...getSuggestionItemProps(suggestion, { style })}>
                                         {suggestion.description}
                                       </div>
                                     );
