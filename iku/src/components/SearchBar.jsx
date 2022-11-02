@@ -4,6 +4,34 @@ import "bulma/css/bulma.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import styles from "./../styles/cssHomepage.module.css";
+import axios from "axios";
+
+const getCurrentLocation = () => {
+  if(!navigator.geolocation){
+    console.log("ERROR: Goeolocation is not supported by your browser");
+  }
+  else{
+    navigator.geolocation.getCurrentPosition((position) => {
+
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      axios.get('http://localhost:5000/address', {
+          params:{
+            latitude: latitude,
+            longitude: longitude
+          }
+      })
+      .then(function(response){
+        console.log(response);
+      });
+
+      console.log(position);
+    }, () => {
+      console.log("Unable to retrieve your location.");
+    });
+  }
+}
+
 
 export default function SearchBar() {
   return (
@@ -38,7 +66,7 @@ export default function SearchBar() {
                       <p class={styles.searchText}>or</p>
                     </div>
                     <div class="column">
-                      <button class={styles.locationBtn}>
+                      <button class={styles.locationBtn} onClick={getCurrentLocation}>
                         Current Location
                       </button>
                     </div>

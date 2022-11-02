@@ -23,3 +23,8 @@ export const showLocationsByUserID = (req, res) => {
         }
     });
 }
+
+// Get address by coordinates
+export const getAddressByCoordinates = (req, res) => {
+    res.json({'hello': 'world'});
+}
