@@ -110,6 +110,7 @@ About Component
 
 .suggestionList {
   padding-left: 50px;
+  width: 50vw;
 }
 
 html {
