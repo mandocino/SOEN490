@@ -18,6 +18,8 @@ export default function SearchBar() {
     lat: null,
     lng: null
   })
+  // To autofill the textbox after fetching current location
+  const inputRef = useRef(null);
 
   const handleSelect = async value => {
     const results = await geocodeByAddress(value);
@@ -26,9 +28,6 @@ export default function SearchBar() {
     setAddress(value);
     console.log(latLng);
   };
-
-  // To autofill the textbox after fetching current location
-  const inputRef = useRef(null);
 
   const getCurrentLocation = async () => {
     if(!navigator.geolocation){
