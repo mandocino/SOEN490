@@ -1,11 +1,44 @@
 import React from "react";
+import {useRef} from 'react';
 import "bulma/css/bulma.css";
 //import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import styles from "./../styles/cssHomepage.module.css";
+import axios from "axios";
 
 export default function SearchBar() {
+
+  // To autofill the textbox after fetching current location
+  const inputRef = useRef(null);
+
+  const getCurrentLocation = async () => {
+    if(!navigator.geolocation){
+      alert("ERROR: Goeolocation is not supported by your browser");
+    }
+    else{
+      navigator.geolocation.getCurrentPosition(async (position) => {
+  
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        await axios.get('http://localhost:5000/address', {
+            params:{
+              lat: latitude,
+              lng: longitude
+            }
+        })
+        .then(function(response){
+          console.log(response.data.address);
+          inputRef.current.value = response.data.address;
+        });
+  
+      }, () => {
+        alert("Unable to retrieve your location.");
+      });
+    }
+  }
+
+
   return (
     <>
       <div>
@@ -23,6 +56,7 @@ export default function SearchBar() {
                     <div class="column is-three-fifths">
                       <p class="control has-icons-left">
                         <input
+                          ref = {inputRef}
                           class={styles.searchBar}
                           type="email"
                           placeholder="                   Enter the address or postal code"
@@ -38,7 +72,7 @@ export default function SearchBar() {
                       <p class={styles.searchText}>or</p>
                     </div>
                     <div class="column">
-                      <button class={styles.locationBtn}>
+                      <button class={styles.locationBtn} onClick={getCurrentLocation}>
                         Current Location
                       </button>
                     </div>
