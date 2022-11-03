@@ -3,17 +3,20 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 
-import Homepage from "./pages/Homepage";
-import Accountpage from "./pages/Accountpage";
-import Dashboard from "./pages/Dashboardpage";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import AboutUs from "./pages/Aboutpage";
+import Homepage from "./pages/Homepage.jsx";
+import Accountpage from "./pages/Accountpage.jsx";
+import Dashboard from "./pages/Dashboardpage.jsx";
+import Register from "./pages/Register.jsx";
+import Login from "./pages/Login.jsx";
+import AboutUs from "./pages/Aboutpage.jsx";
 
 function App() {
 
   return (
     <>
+      <div class="m-32 p-32 rounded-3xl bg-slate-300">
+        geeg
+      </div>
       <Routes>
         <Route path="/" element={<Homepage />} />
         {
