@@ -14,7 +14,7 @@ export default function SearchBar() {
 
   const getCurrentLocation = async () => {
     if(!navigator.geolocation){
-      console.log("ERROR: Goeolocation is not supported by your browser");
+      alert("ERROR: Goeolocation is not supported by your browser");
     }
     else{
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -33,7 +33,7 @@ export default function SearchBar() {
         });
   
       }, () => {
-        console.log("Unable to retrieve your location.");
+        alert("Unable to retrieve your location.");
       });
     }
   }
