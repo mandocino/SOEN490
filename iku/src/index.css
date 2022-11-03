@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   height: 100%;
   font-size: 62.5%; /* Turns REM and EM scaling to base 10 */

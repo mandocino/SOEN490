@@ -1,5 +1,4 @@
 import React from "react";
-import "bulma/css/bulma.css";
 import styles from "./../styles/cssDashboard.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

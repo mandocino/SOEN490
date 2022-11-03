@@ -1,5 +1,4 @@
 import React from "react";
-import "bulma/css/bulma.css";
 //import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";

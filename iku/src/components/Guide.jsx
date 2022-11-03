@@ -1,5 +1,4 @@
 import React from "react";
-import "bulma/css/bulma.css";
 import BusImg from "./../assets/stm_bus.jpg";
 import styles from "./../styles/cssHomepage.module.css";
 
