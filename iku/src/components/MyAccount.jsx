@@ -1,6 +1,5 @@
 import React from "react";
 import tempUserImg from "./../assets/default_user.jpg";
-import styles from "./../styles/cssAccount.module.css";
 import LinkButton from "./custom/LinkButton";
 
 export default function MyAccount() {
