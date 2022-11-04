@@ -14,9 +14,6 @@ function App() {
 
   return (
     <>
-      <div class="m-32 p-32 rounded-3xl bg-slate-500">
-        geeg
-      </div>
       <Routes>
         <Route path="/" element={<Homepage />} />
         {
