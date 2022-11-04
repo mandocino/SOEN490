@@ -3,7 +3,7 @@ import express from "express";
 
 // import functions from controllers
 import { showUsers, showUserByID, showUserByEmail, loginController , signupController, modifyUserByEmail, deleteUserByEmail } from "../controllers/user.js";
-import { addLocation, getAddressByCoordinates, showLocationsByUserID, getSuggestions, getCoordinatesByAddress, updateLocation, deleteLocation } from "../controllers/location.js";
+import { addLocation, getAddressByCoordinates, showLocationsByUserID, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
 
@@ -45,12 +45,6 @@ router.get('/locations/:id', showLocationsByUserID);
 
 // Get address from coordinates
 router.get('/address/', getAddressByCoordinates);
-
-//Get places suggestion and autocomplete given user input
-router.get('/suggestions/', getSuggestions);
-
-//Get Coordinates of specified address
-router.get('/coordinates/', getCoordinatesByAddress);
 
 // Update location's data by object id
 router.post('/updateLocation/', updateLocation);
