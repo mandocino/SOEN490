@@ -3,7 +3,7 @@ import express from "express";
 
 // import functions from controllers
 import { showUsers, showUserByID, showUserByUserName, loginController , signupController } from "../controllers/user.js";
-import { addLocation, showLocationsByUserID } from "../controllers/location.js";
+import { addLocation, getAddressByCoordinates, showLocationsByUserID } from "../controllers/location.js";
 
 // init express router
 const router = express.Router();
@@ -42,6 +42,9 @@ router.post('/newlocation/', addLocation);
 
 // Get all locations for given player ID
 router.get('/locations/:id', showLocationsByUserID);
+
+// Get address from coordinates
+router.get('/address/', getAddressByCoordinates);
 
 // export default router
 export default router;
