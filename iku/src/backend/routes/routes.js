@@ -2,8 +2,6 @@
 import express from "express";
 
 // import functions from controllers
-import { showUsers, showUserByID, showUserByUserName, loginController , signupController } from "../controllers/user.js";
-import { addLocation, showLocationsByUserID } from "../controllers/location.js";
 import { showUsers, showUserByID, showUserByEmail, loginController , signupController, modifyUserByEmail, deleteUserByEmail } from "../controllers/user.js";
 import { addLocation, getAddressByCoordinates, showLocationsByUserID, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
