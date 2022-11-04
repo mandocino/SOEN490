@@ -10,7 +10,7 @@ export default function Homepage(props) {
         <div class="flex-none">
           <HomeHeader />
         </div>
-        <div class="flex-auto bg-emerald-50 dark:bg-teal-900">
+        <div class={"grow bg-emerald-50 dark:bg-teal-900 "+props.class}>
           {props.children}
         </div>
         <div class="flex-none">
