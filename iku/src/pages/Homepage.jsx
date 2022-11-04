@@ -1,9 +1,9 @@
 import React from "react";
-import HomeHeader from "./../components/HomeHeader";
-import SearchBar from "./../components/SearchBar";
-import Guide from "./../components/Guide";
-import Description from "./../components/Description";
-import Footer from "./../components/Footer";
+import HomeHeader from "./../components/HomeHeader.jsx";
+import SearchBar from "./../components/SearchBar.jsx";
+import Guide from "./../components/Guide.jsx";
+import Description from "./../components/Description.jsx";
+import Footer from "./../components/Footer.jsx";
 //import MyAccount from "./../components/MyAccount";
 import styles from "./../styles/cssHomepage.module.css";
 

@@ -28,9 +28,9 @@ export const getUserByID = (ID, result) => {
     });
 }
 
-// Get User by username
-export const getUserByUserName = (userName, result) => {
-    userDBModel.find({'username':userName},(err, data) => {
+// Get User ID by email
+export const getUserByEmail = (email, result) => {
+    userDBModel.find({'email':email}, '_id',(err, data) => {
         if (err){
             console.log(err);
         }
@@ -44,7 +44,7 @@ export const getUserByUserName = (userName, result) => {
 // Attempt to get user data by login credentials
 export const login = (data, result) => {
     // TODO: Should hash password, currently stored in plaintext
-    userDBModel.find(data, 'id first_name duration_priority email frequency_priority last_name walk_priority', (err, data) => {
+    userDBModel.find(data, '_id first_name duration_priority email frequency_priority last_name walk_priority', (err, data) => {
         if (err){
             console.log(err);
         }
@@ -59,6 +59,32 @@ export const login = (data, result) => {
 export const signup = (data, result) => {
     // TODO: Should hash password, currently stored in plaintext
     userDBModel.create(data, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Update a user's data by email
+export const updateUserByEmail = (data, result) => {
+    userDBModel.findOneAndUpdate({email:data.email}, data, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Remove a user by email
+export const removeUserByEmail = (email, result) => {
+    userDBModel.findOneAndDelete({email:email}, (err, data) => {
         if (err){
             console.log(err);
         }
