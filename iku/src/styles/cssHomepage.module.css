@@ -122,11 +122,6 @@ About Component
   color: #ffffff;
 }
 
-.suggestion:focus, .suggestion:focus{
-  background-color: #50C1E9;
-  color: #ffffff;
-}
-
 html {
   overflow: hidden;
 }
