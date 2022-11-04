@@ -3,7 +3,7 @@ import express from "express";
 
 // import functions from controllers
 import { showUsers, showUserByID, showUserByUserName, loginController , signupController } from "../controllers/user.js";
-import { addLocation, getAddressByCoordinates, showLocationsByUserID } from "../controllers/location.js";
+import { addLocation, getAddressByCoordinates, showLocationsByUserID, getSuggestions, getCoordinatesByAddress} from "../controllers/location.js";
 
 // init express router
 const router = express.Router();
@@ -45,6 +45,12 @@ router.get('/locations/:id', showLocationsByUserID);
 
 // Get address from coordinates
 router.get('/address/', getAddressByCoordinates);
+
+//Get places suggestion and autocomplete given user input
+router.get('/suggestions/', getSuggestions);
+
+//Get Coordinates of specified address
+router.get('/coordinates/', getCoordinatesByAddress);
 
 // export default router
 export default router;

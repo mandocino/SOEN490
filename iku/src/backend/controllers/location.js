@@ -53,3 +53,45 @@ export const getAddressByCoordinates = (req, res) => {
     });
     
 }
+
+// Get places suggestions given user input
+export const getSuggestions = (req, res) => {
+    const key = process.env.GEOCODING_KEY;
+    var input = req.query.input;
+    var params = {
+        key: key,
+        input: input
+    }
+    geocodingClient.placeAutocomplete({
+        params: params
+    })
+    .then((response) => {
+        var predictions = response.data.predictions.map(prediction => (
+            prediction.description
+        ));
+        res.json({'predictions': predictions});
+    })
+    .catch((error) => {
+        console.log(error.message);
+    });
+}
+
+//Get Coordinates of specified address
+export const getCoordinatesByAddress = (req, res) => {
+    const key = process.env.GEOCODING_KEY;
+    var address = req.query.address;
+    var params = {
+        key: key,
+        address: address
+    }
+    geocodingClient.geocode({
+        params: params
+    })
+    .then(response => {
+        var coordinates = response.data.results[0].geometry.location;
+        res.json({'coordinates': coordinates});
+    })
+    .catch(error => {
+        console.log(error.message);
+    })
+}

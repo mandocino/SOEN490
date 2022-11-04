@@ -1,9 +1,5 @@
-import React from "react";
-import {useRef} from 'react';
-import PlacesAutocomplete, {
-  geocodeByAddress,
-  getLatLng,
-} from "react-places-autocomplete";
+import React from 'react';
+import { useState, useRef } from 'react';
 import "bulma/css/bulma.css";
 //import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,20 +9,58 @@ import axios from "axios";
 
 export default function SearchBar() {
 
-  const [address, setAddress] = React.useState("");
-  const [coordinates, setCoordinates] = React.useState({
-    lat: null,
-    lng: null
-  })
   // To autofill the textbox after fetching current location
   const inputRef = useRef(null);
 
-  const handleSelect = async value => {
-    const results = await geocodeByAddress(value);
-    const latLng = await getLatLng(results[0]);
-    setCoordinates(latLng);
-    setAddress(value);
-    console.log(latLng);
+  // Handles input in the search bar
+  const [input, setInput] = useState('');
+
+  // Handles places suggestions returned by api
+  const [suggestions, setSuggestions] = useState([]);
+
+
+  const selectSuggestion = suggestion => {
+    inputRef.current.value = suggestion;
+    setInput(suggestion);
+    setSuggestions([]);
+  }
+
+  const handleEnterPressed = async event => {
+    if(event.key === 'Enter'){
+      handleSubmit()
+    }
+  }
+
+  const handleSubmit = async () => {
+    await axios.get('http://localhost:5000/coordinates',{
+      params: {
+        address: input 
+      }
+    })
+    .then((response) => {
+      console.log(response.data.coordinates);
+    }).catch(error => {
+      console.log(error.message);
+    }) 
+  }
+
+  const getSuggestions = async event => {
+    setInput(event.target.value);
+    if(event.target.value.length > 0) {
+      await axios.get('http://localhost:5000/suggestions',{
+        params: {
+          input: event.target.value
+        }
+      })
+      .then((response) => {
+        setSuggestions(response.data.predictions);
+      }).catch(error => {
+        console.log(error.message);
+        setSuggestions([]);
+      }) 
+    } else{
+      setSuggestions([]);
+    }
   };
 
   const getCurrentLocation = async () => {
@@ -73,37 +107,25 @@ export default function SearchBar() {
                   <div class="columns">
                     <div class="column is-three-fifths">
                       <p class="control has-icons-left">
-                        <PlacesAutocomplete 
-                            value={address} 
-                            onChange={setAddress} 
-                            onSelect={handleSelect}
-                          >
-                            {({getInputProps, suggestions, getSuggestionItemProps, loading}) => (
-                              <div>
-                                <input
-                                  ref = {inputRef}
-                                  class={styles.searchBar}
-                                  {... getInputProps({placeholder: 
-                                    "                   Enter the address or postal code"})}
-                                />
-                                <div class={styles.suggestionList}>
-                                  {loading ? <div>...loading</div> : null}
-                                  {suggestions.map((suggestion) => {
-                                    const style = {
-                                      backgroundColor: suggestion.active ? "#50C1E9" : "#fff",
-                                      color: suggestion.active ? "#fff" : "#38a8d9"
-                                    };
-
-                                    return (
-                                      <div {...getSuggestionItemProps(suggestion, { style })}>
-                                        {suggestion.description}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
+                        <input
+                          ref = {inputRef}
+                          class={styles.searchBar}
+                          type = "email"
+                          onChange={getSuggestions}
+                          onKeyDown={handleEnterPressed}
+                          placeholder="                   Enter the address or postal code"
+                        ></input>
+                        <div class={styles.suggestionList}>
+                          {suggestions.map(suggestion => {
+                            return(
+                              <div 
+                                class={styles.suggestion}
+                                onClick={() => selectSuggestion(suggestion)}>
+                                {suggestion}
                               </div>
-                            )}
-                        </PlacesAutocomplete>
+                            );
+                          })}
+                        </div>
                         <a href="/search">
                           <span class="icon is-size-2 is-left ml-5">
                             <FontAwesomeIcon icon={faMagnifyingGlass} />
