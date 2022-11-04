@@ -108,6 +108,20 @@ About Component
   font-family: Montserrat Medium;
 }
 
+.suggestionList {
+  padding-left: 50px;
+  width: 50vw;
+}
+
+.suggestion {
+  background-color: #ffffff;
+}
+
+.suggestion:hover{
+  background-color: #50C1E9;
+  color: #ffffff;
+}
+
 html {
   overflow: hidden;
 }
