@@ -1,5 +1,4 @@
 import React from "react";
-import "bulma/css/bulma.css";
 import tempUserImg from "./../assets/default_user.jpg";
 import styles from "./../styles/cssAccount.module.css";
 

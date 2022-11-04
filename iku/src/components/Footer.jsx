@@ -1,5 +1,4 @@
 import React from "react";
-import "bulma/css/bulma.css";
 import styles from "./../styles/cssHomepage.module.css";
 import { Link } from "react-router-dom";
 

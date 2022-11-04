@@ -1,5 +1,4 @@
 import React from "react";
-import "bulma/css/bulma.css";
 import styles from "./../styles/cssAbout.module.css";
 
 export default function AboutUs() {

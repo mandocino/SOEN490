@@ -1,8 +1,7 @@
 import {Client} from "@googlemaps/google-maps-services-js";
 
-
-// Import function from user Model
-import { createLocation, getLocationsByUserID } from "../models/locationModel.js";
+// Import function from location Model
+import { createLocation, getLocationsByUserID, modifyLocation, removeLocation } from "../models/locationModel.js";
 
 // Google client for Geocoding API
 const geocodingClient = new Client({});
@@ -51,8 +50,8 @@ export const getAddressByCoordinates = (req, res) => {
     .catch((error)=>{
         console.log(error);
     });
-    
 }
+    
 
 // Get places suggestions given user input
 export const getSuggestions = (req, res) => {
@@ -94,4 +93,26 @@ export const getCoordinatesByAddress = (req, res) => {
     .catch(error => {
         console.log(error.message);
     })
+}
+
+// Update a location by its object ID
+export const updateLocation = (req, res) => {
+    modifyLocation(req.body, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a location by its object ID
+export const deleteLocation = (req, res) => {
+    removeLocation(req.body._id, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
 }
