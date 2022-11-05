@@ -1,5 +1,4 @@
 import React from "react";
-import tempUserImg from "./../assets/default_user.jpg";
 import LinkButton from "./custom/LinkButton";
 
 export default function EditAccount() {
