@@ -93,7 +93,7 @@ export default function SearchBar() {
     <>
         <div class="shadow-lg shadow-gray-400 dark:shadow-gray-900 rounded-3xl w-full bg-cover bg-center bg-[url('/src/assets/stm_bus.jpg')]">
           <div class="rounded-3xl p-2 xs:p-8 sm:p-16 w-full backdrop-blur backdrop-brightness-50 flex flex-col items-center justify-center">
-            <div class="text-emerald-400 dark:text-emerald-400 flex flex-col gap-4 max-w-screen-md p-4">
+            <div class="text-emerald-400 dark:text-emerald-400 flex flex-col gap-4 p-4">
               <p class="text-center text-5xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
                 Let's find your transit scores
               </p>
