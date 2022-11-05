@@ -5,7 +5,7 @@ import "./App.css";
 
 import Homepage from "./pages/Homepage.jsx";
 import Accountpage from "./pages/Accountpage.jsx";
-import Dashboard from "./pages/Dashboardpage.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import AboutUs from "./pages/Aboutpage.jsx";
