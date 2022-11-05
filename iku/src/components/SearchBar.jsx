@@ -139,20 +139,6 @@ export default function SearchBar() {
                 </button>
               </div>
             </div>
-            {/*
-            <div className="text-emerald-400 dark:text-emerald-400 flex flex-col gap-2 max-w-screen-md ml-40 pr-9 w-7/12 self-start bg-gray-50">
-              {suggestions.map(suggestion => {
-                return(
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => selectSuggestion(suggestion)}
-                  >
-                    {suggestion}
-                  </div>
-                );
-              })}
-            </div>
-            */}
           </div>
         </div>
     </>
