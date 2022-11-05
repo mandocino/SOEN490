@@ -7,7 +7,7 @@ export default function EditAccount() {
     <form>
       <div class="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
         <div>
-          <p class="pt-7 pb-7 text-2xl">My Account Edit</p>
+          <p class="pt-7 pb-7 text-2xl">My Account Information Edit</p>
           <p class="pb-4">Username: </p>
           <input
             class="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"

@@ -7,7 +7,7 @@ export default function EditPhoto() {
     <>
       <div class="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
         <div>
-          <p class="pt-7 pb-7 text-2xl">My Account Edit</p>
+          <p class="pt-7 pb-7 text-2xl">My Account Photo Edit</p>
           <img
             class="w-20 rounded-lg mx-auto pb-7"
             src={tempUserImg}
