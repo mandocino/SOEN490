@@ -17,7 +17,7 @@ export const getUsers = (result) => {
 
 // Get User by ID
 export const getUserByID = (ID, result) => {
-    userDBModel.find({'id':ID},(err, data) => {
+    userDBModel.find({'_id':ID},(err, data) => {
         if (err){
             console.log(err);
         }
