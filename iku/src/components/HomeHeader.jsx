@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import LinkButton from "./custom/LinkButton";
+import Button from "./custom/Button";
 import Logo from "./custom/Logo";
 
 export default function HomeHeader() {
@@ -57,7 +58,7 @@ export default function HomeHeader() {
                       />
                       <button
                         type="submit"
-                        class="transition ease-in-out duration-200 text-emerald-600 dark:text-emerald-800 absolute right-3 bottom-3 bg-emerald-200 hover:bg-emerald-300 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-300 dark:hover:bg-emerald-500 dark:focus:ring-green-300"
+                        class="transition ease-in-out duration-200 text-emerald-600 dark:text-emerald-800 absolute right-3 bottom-3 bg-emerald-200 hover:bg-white focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-300 dark:focus:ring-green-300"
                       >
                         Search
                       </button>
@@ -86,15 +87,17 @@ export default function HomeHeader() {
                   <li class="flex items-center">
                     <Link
                       to="/accountpage"
-                      class="font-medium rounded-lg text-sm px-4 py-2 border focus:border-0 focus:ring-4 focus:ring-green-300 text-emerald-900 bg-gray-50 hover:bg-gray-300 border-gray-300 dark:text-emerald-50 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600"
+                      class="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
                     >
-                      {localStorage.getItem("first_name")}
+                      <Button>
+                        {localStorage.getItem("first_name")}
+                      </Button>
                     </Link>
                   </li>
                   <li class="flex items-center">
                     <Link
                       to="/"
-                      class="font-medium rounded-lg text-sm px-4 py-2 border focus:border-0 focus:ring-4 focus:ring-green-300 text-emerald-900 bg-gray-50 hover:bg-gray-300 border-gray-300 dark:text-emerald-50 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600"
+                      class="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
                       onClick={() => {
                         localStorage.removeItem("authenticated");
                         localStorage.removeItem("first_name");
@@ -102,7 +105,9 @@ export default function HomeHeader() {
                         window.location.reload();
                       }}
                     >
-                      Sign Out
+                      <Button>
+                        Sign Out
+                      </Button>
                     </Link>
                   </li>
                 </>
