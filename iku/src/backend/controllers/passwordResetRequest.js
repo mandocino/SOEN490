@@ -46,8 +46,6 @@ export const addPasswordResetRequest = (req, res) => {
             });
         }
     });
-
-    const data = req.body;
 }
 
 // Attempt to get password reset request by user_id and code
