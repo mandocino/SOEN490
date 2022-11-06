@@ -2,14 +2,14 @@ import React from "react";
 import CircleWithText from "../components/custom/CircleWithText";
 import { Link } from "react-router-dom";
 
-export default function DashboardCard() {
+export default function DashboardCard(props) {
   return (
     <>
       <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
 
-        <div class="flex justify-between items-center gap-2 drop-shadow-lg">
-          <span class="font-bold text-2xl text-center text-white">
-            Current Home
+        <div class="flex justify-between items-center gap-2 drop-shadow-lg h-full">
+          <span class="font-bold text-2xl text-center text-white line-clamp-2">
+            {props.children}
           </span>
           <Link to="/" class="transition ease-in-out duration-200 rounded-lg">
             <button type="button" class="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white">

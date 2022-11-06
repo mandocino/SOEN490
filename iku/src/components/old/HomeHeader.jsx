@@ -61,6 +61,7 @@ export default function HomeHeader() {
                             onClick={() => {
                               localStorage.removeItem('authenticated');
                               localStorage.removeItem('first_name');
+                              localStorage.removeItem("user_id");
                               window.location.reload();
                             }}
                           >
