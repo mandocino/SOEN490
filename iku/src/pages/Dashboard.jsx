@@ -79,7 +79,7 @@ export default function Dashboard() {
                   {
                     currentHome ?
                       <>
-                        <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
+                        <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                           Current Home
                         </p>
                         <DashboardCard invert>{currentHome.name}</DashboardCard>
@@ -95,14 +95,14 @@ export default function Dashboard() {
                   }
                 </div>
                 
-                <div class="w-96 flex flex-col gap-4 items-center bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col">
+                <div class="w-96 h-fit flex flex-col items-center rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
                   <span class="flex items-center gap-2">
-                    <p class="text-center text-4xl font-bold text-white">
+                    <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                       Priorities List
                     </p>
                   </span>
 
-                  <div class="w-full flex flex-col gap-2 ">
+                  <div class="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
                     <div class="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                       <span>1. Frequency</span>
                       <FrequencyIcon class="fill-emerald-500 w-6 h-6"/>
@@ -131,7 +131,7 @@ export default function Dashboard() {
                 
               </div>
               <div class="grow h-fit flex flex-col rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
-                <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
+                <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Saved Homes
                 </p>
                 <div class="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
@@ -140,12 +140,21 @@ export default function Dashboard() {
               </div>
               
               <div class="w-96 h-fit flex flex-col items-center rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
-                <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
+                <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Saved Destinations
                 </p>
-                <div class="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2 w-64">
+                <div class="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
                   {destinationCards}
                 </div>
+
+                <Link to="/" class="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
+                  <button type="button" class="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Add Destination
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
