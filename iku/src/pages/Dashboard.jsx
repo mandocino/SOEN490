@@ -1,6 +1,5 @@
 import React, { useEffect , useState} from "react";
 import BaseLayout from "../components/BaseLayout";
-import ImgWithText from "../components/custom/ImgWithText";
 import DashboardCard from "../components/DashboardCard";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -27,9 +26,9 @@ export default function Dashboard() {
     fetchLocations();
   }, []);
 
-  let origins;
+  let origins = [];
   let originCards;
-  let destinations;
+  let destinations = [];
   let destinationCards;
   let currentHome = null;
 
@@ -37,10 +36,9 @@ export default function Dashboard() {
     currentHome = locations.find(loc => loc.current_home);
     origins = locations.filter(loc => !loc.current_home && loc.origin);
     destinations = locations.filter(loc => !loc.origin);
+  }
 
-    originCards = origins.map(function(loc){
-      return <DashboardCard>{loc.name}</DashboardCard>;
-    })
+  if (destinations.length > 0) {
     destinationCards = destinations.map(function(loc){
       return (
         <div class="bg-white text-emerald-500 rounded-2xl px-4 py-2 flex justify-between items-center">
@@ -56,6 +54,21 @@ export default function Dashboard() {
           </Link>
         </div>
       );
+    })
+  } else {
+    destinationCards =
+    <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
+      <div class="flex justify-between items-center gap-2 drop-shadow-lg">
+        <span class="font-bold text-2xl text-center text-white">
+          No saved destinations yet.
+        </span>
+      </div>
+    </div>;
+  }
+  
+  if (origins.length > 0) {
+    originCards = origins.map(function(loc){
+      return <DashboardCard>{loc.name}</DashboardCard>;
     })
   } else {
     originCards =
@@ -76,12 +89,12 @@ export default function Dashboard() {
             <div class="flex gap-8">
               <div class="w-96 flex flex-col gap-8 items-center">
                 <div class="w-full flex flex-col items-center p-4 rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
+                  <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+                    Current Home
+                  </p>
                   {
                     currentHome ?
                       <>
-                        <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
-                          Current Home
-                        </p>
                         <DashboardCard invert>{currentHome.name}</DashboardCard>
                       </>
                       :
@@ -132,7 +145,7 @@ export default function Dashboard() {
               </div>
               <div class="grow h-fit flex flex-col rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
                 <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
-                  Saved Homes
+                  Added Homes
                 </p>
                 <div class="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
                   {originCards}
@@ -141,7 +154,7 @@ export default function Dashboard() {
               
               <div class="w-96 h-fit flex flex-col items-center rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
                 <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
-                  Saved Destinations
+                  Added Destinations
                 </p>
                 <div class="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
                   {destinationCards}
