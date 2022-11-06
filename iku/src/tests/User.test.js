@@ -1,7 +1,5 @@
 import '@testing-library/jest-dom';
-import {jest} from '@jest/globals';
 import axios from 'axios';
-import {userDBModel} from "../backend/config/db";
 
 const getUsers = async () => {
     const res = await axios.get('http://localhost:5000/users');

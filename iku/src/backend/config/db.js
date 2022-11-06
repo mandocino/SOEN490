@@ -1,4 +1,4 @@
-import { Schema, model, connect, Mongoose } from "mongoose";
+import { Schema, model, connect } from "mongoose";
 
 const connectionString = "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
 

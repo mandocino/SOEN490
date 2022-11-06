@@ -151,41 +151,39 @@ const LoginForm = ({ inputs, type }) => {
     }
 
     const emptyEmail = (condition) => {
-        condition === true ?
-        document.getElementById('empty-email').style.display = 'block'
-        : document.getElementById('empty-email').style.display = 'none';
+        let property = '';
+        condition === true ? property = 'block': property = 'none';
+        document.getElementById('empty-email').style.display = property;
     }
 
     const emptyFirstName = (condition) => {
-        condition === true ?
-        document.getElementById('empty-first-name').style.display = 'block'
-        : document.getElementById('empty-first-name').style.display = 'none';
+        let property = '';
+        condition === true ? property = 'block': property = 'none';
+        document.getElementById('empty-first-name').style.display = property;
     }
 
     const emptyLastName = (condition) => {
-        condition === true ?
-        document.getElementById('empty-last-name').style.display = 'block'
-        : document.getElementById('empty-last-name').style.display = 'none';
+        let property = '';
+        condition === true ? property = 'block' : property = 'none';
+        document.getElementById('empty-last-name').style.display = property;
     }
 
     const emailInUse = (condition) => {
-        condition === true ?
-            document.getElementById('email-in-use').style.display = 'block'
-            : document.getElementById('email-in-use').style.display = 'none';
+        let property = '';
+        condition === true ? property = 'block' : property = 'none';
+        document.getElementById('email-in-use').style.display = property;    
     }
 
     const passwordPoor = (condition) => {
-        condition === true ? (
-                document.getElementById('password-poor').style.display = 'flex'
-            ) : (
-                document.getElementById('password-poor').style.display = 'none'
-            );
+        let property = '';
+        condition === true ? property = 'flex': property = 'none';
+        document.getElementById('password-poor').style.display = property;
     }
 
     const passwordsDoNotMatch = (condition) => {
-        condition === true ?
-            document.getElementById('password-no-match').style.display = 'block'
-            : document.getElementById('password-no-match').style.display = 'none';
+        let property = '';
+        condition === true ? property = 'block': property = 'none';
+        document.getElementById('password-no-match').style.display = property;
     }
 
     const isGoodPassword = (password) => {

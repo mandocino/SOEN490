@@ -83,5 +83,4 @@ router.post('/updatePasswordResetRequest/', updatePasswordResetRequest);
 // Delete password reset request by user_id and code
 router.post('/removePasswordResetRequest/', removePasswordResetRequest);
 
-// export default router
 export default router;
