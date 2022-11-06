@@ -31,10 +31,10 @@ export const showLocationsByUserID = (req, res) => {
 
 // Get address by coordinates
 export const getAddressByCoordinates = (req, res) => {
-    var latlng = req.query.lat + ',' + req.query.lng;
+    const latlng = req.query.lat + ',' + req.query.lng;
     const key = process.env.GEOCODING_KEY;
     console.log(key);
-    var params = {
+    const params = {
         key: key,
         latlng: latlng
     };
@@ -44,7 +44,7 @@ export const getAddressByCoordinates = (req, res) => {
         params:params
     })
     .then((response) => {
-        var address = response.data.results[0].formatted_address;
+        const address = response.data.results[0].formatted_address;
         res.json({'address': address});
     })
     .catch((error)=>{
@@ -55,8 +55,8 @@ export const getAddressByCoordinates = (req, res) => {
 // Get places suggestions given user input
 export const getSuggestions = (req, res) => {
     const key = process.env.GEOCODING_KEY;
-    var input = req.query.input;
-    var params = {
+    const input = req.query.input;
+    const params = {
         key: key,
         input: input
     }
@@ -64,7 +64,7 @@ export const getSuggestions = (req, res) => {
         params: params
     })
     .then((response) => {
-        var predictions = response.data.predictions.map(prediction => (
+        const predictions = response.data.predictions.map(prediction => (
             prediction.description
         ));
         res.json({'predictions': predictions});
@@ -77,8 +77,8 @@ export const getSuggestions = (req, res) => {
 //Get Coordinates of specified address
 export const getCoordinatesByAddress = (req, res) => {
     const key = process.env.GEOCODING_KEY;
-    var address = req.query.address;
-    var params = {
+    const address = req.query.address;
+    const params = {
         key: key,
         address: address
     }
@@ -86,7 +86,7 @@ export const getCoordinatesByAddress = (req, res) => {
         params: params
     })
     .then(response => {
-        var coordinates = response.data.results[0].geometry.location;
+        const coordinates = response.data.results[0].geometry.location;
         res.json({'coordinates': coordinates});
     })
     .catch(error => {

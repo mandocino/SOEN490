@@ -11,6 +11,7 @@ import {connectToServer} from "./config/db.js";
 
 // init express
 const app = express();
+app.disable("x-powered-by");
 
 // use express json
 app.use(express.json());

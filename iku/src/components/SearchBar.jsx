@@ -1,6 +1,4 @@
-import React from "react";
-import {useState, useRef} from 'react';
-//import { library } from "@fortawesome/fontawesome-svg-core";
+import { React, useState, useRef} from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import styles from "./../styles/cssHomepage.module.css";
@@ -69,8 +67,8 @@ export default function SearchBar() {
     else{
       navigator.geolocation.getCurrentPosition(async (position) => {
   
-        var latitude = position.coords.latitude;
-        var longitude = position.coords.longitude;
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
         await axios.get('http://localhost:5000/address', {
             params:{
               lat: latitude,
