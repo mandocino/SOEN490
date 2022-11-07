@@ -34,22 +34,35 @@ export default function SearchBar() {
         address: input 
       }
     })
-    .then(async (response) => {
-      console.log(response);
-      console.log(input);
-      await axios.post('http://localhost:5000/newlocation',{
-        user_id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
-        latitude: response.data.coordinates.lat,
-        longitude: response.data.coordinates.lng,
-        name: input.split(',')[0],
-        notes: input,
-        origin: true,
-        current_home: false,
-      }).catch(e => e.message);
+    .then((response) => {
+      console.log(response.data.coordinates);
     }).catch(error => {
       console.log(error.message);
     }) 
   }
+
+  // const handleSubmit = async () => {
+  //   await axios.get('http://localhost:5000/coordinates',{
+  //     params: {
+  //       address: input 
+  //     }
+  //   })
+  //   .then(async (response) => {
+  //     console.log(response);
+  //     console.log(input);
+  //     await axios.post('http://localhost:5000/newlocation',{
+  //       user_id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
+  //       latitude: response.data.coordinates.lat,
+  //       longitude: response.data.coordinates.lng,
+  //       name: input.split(',')[0],
+  //       notes: input,
+  //       origin: true,
+  //       current_home: false,
+  //     }).catch(e => e.message);
+  //   }).catch(error => {
+  //     console.log(error.message);
+  //   }) 
+  // }
 
   const getSuggestions = async event => {
     setInput(event.target.value);
