@@ -1,5 +1,5 @@
 import { React, useState, useRef} from 'react';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useNavigate} from 'react-router-dom';
 import mongoose from "mongoose";
 import axios from "axios";
 import { ReactComponent as Location } from "./../assets/location.svg";
@@ -15,6 +15,8 @@ export default function SearchBar() {
   // Handles places suggestions returned by api
   const [suggestions, setSuggestions] = useState([]);
 
+  const navigate = useNavigate()
+
 
   const selectSuggestion = suggestion => {
     inputRef.current.value = suggestion;
@@ -28,41 +30,36 @@ export default function SearchBar() {
     }
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     await axios.get('http://localhost:5000/coordinates',{
       params: {
         address: input 
       }
     })
-    .then((response) => {
-      console.log(response.data.coordinates);
+    .then(async (response) => {
+      console.log(response);
+      console.log(input);
+
+      await axios.post('http://localhost:5000/newlocation',{
+        user_id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
+        latitude: response.data.coordinates.lat,
+        longitude: response.data.coordinates.lng,
+        name: input.split(',')[0],
+        notes: input,
+        origin: true,
+        current_home: false,
+      }).catch(error => {
+        console.log(error.message);
+      });
+
+      navigate("/dashboard");
     }).catch(error => {
       console.log(error.message);
-    }) 
-  }
+    });
 
-  // const handleSubmit = async () => {
-  //   await axios.get('http://localhost:5000/coordinates',{
-  //     params: {
-  //       address: input 
-  //     }
-  //   })
-  //   .then(async (response) => {
-  //     console.log(response);
-  //     console.log(input);
-  //     await axios.post('http://localhost:5000/newlocation',{
-  //       user_id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
-  //       latitude: response.data.coordinates.lat,
-  //       longitude: response.data.coordinates.lng,
-  //       name: input.split(',')[0],
-  //       notes: input,
-  //       origin: true,
-  //       current_home: false,
-  //     }).catch(e => e.message);
-  //   }).catch(error => {
-  //     console.log(error.message);
-  //   }) 
-  // }
+    
+  }
 
   const getSuggestions = async event => {
     setInput(event.target.value);
