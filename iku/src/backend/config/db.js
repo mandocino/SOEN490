@@ -21,8 +21,8 @@ const locationSchema = new Schema({
     origin: { type: Boolean, required: true},
     priority: { type: Number, default: 0},
     current_home: { type: Boolean, required: true},
-    arrive_time: { type: String, required: true},
-    depart_time: { type: String, required: true}
+    arrive_time: { type: String, default: "None"},
+    depart_time: { type: String, default: "None"}
 }, { collection : 'Locations' });
 
 const emailConfirmationSchema = new Schema({

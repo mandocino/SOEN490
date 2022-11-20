@@ -1,21 +1,19 @@
 import React from "react";
-import HomeHeader from "./../components/HomeHeader.jsx";
-import SearchBar from "./../components/SearchBar.jsx";
-import Guide from "./../components/Guide.jsx";
-import Description from "./../components/Description.jsx";
-import Footer from "./../components/Footer.jsx";
-import styles from "./../styles/cssHomepage.module.css";
+import BaseLayout from "./../components/BaseLayout";
+import SearchBar from "./../components/SearchBar";
+import Guide from "./../components/Guide";
+import Description from "./../components/Description";
 
 export default function Homepage() {
   return (
     <>
-      <div class={styles.body}>
-        <HomeHeader />
-        <SearchBar />
-        <Guide />
-        <Description />
-        <Footer />
-      </div>
+      <BaseLayout class="flex items-center justify-center h-full">
+        <div class="flex flex-col grow max-w-screen-lg h-full items-center justify-center gap-8 m-8">
+          <SearchBar />
+          <Guide />
+          <Description />
+        </div>
+      </BaseLayout>
     </>
   );
 }

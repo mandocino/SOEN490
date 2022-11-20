@@ -55,6 +55,7 @@ const LoginForm = ({ inputs, type }) => {
         }).catch(e => e.message);
         if(res.data.length > 0) {
             localStorage.setItem('authenticated', 'true');
+            localStorage.setItem('user_id', res.data[0]._id)
             localStorage.setItem('first_name', res.data[0].first_name)
             window.location.reload();
         } else {
