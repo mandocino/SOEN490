@@ -25,6 +25,17 @@ const locationSchema = new Schema({
     depart_time: { type: String, default: "None"}
 }, { collection : 'Locations' });
 
+const savedScoreSchema = new Schema({
+    origin: { type: Schema.Types.ObjectId, required: true},
+    destination: { type: Schema.Types.ObjectId, required: true},
+    generatedTime: { type: Schema.Types.Date, required: true},
+    overall: { type: Number, required: true},
+    rushHour: { type: Number, required: true},
+    offPeak: { type: Number, required: true},
+    weekend: { type: Number, required: true},
+    overnight: { type: Number, required: true}
+}, { collection : 'SavedScores' });
+
 const emailConfirmationSchema = new Schema({
     email: { type: String, required: true},
     code: { type: String, required: true}
@@ -37,6 +48,7 @@ const passwordResetRequestSchema = new Schema({
 
 export const userDBModel = model("User", userSchema);
 export const locationDBModel = model("Location", locationSchema);
+export const savedScoreDBModel = model("SavedScore", savedScoreSchema);
 export const emailConfirmationDBModel = model("EmailConfirmation", emailConfirmationSchema);
 export const passwordResetRequestDBModel = model("PasswordResetRequest", passwordResetRequestSchema);
 
