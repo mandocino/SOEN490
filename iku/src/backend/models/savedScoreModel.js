@@ -13,3 +13,16 @@ export const getSavedScoresByLocations = (originID, destID, result) => {
         }
     });
 }
+
+// Creates a new location using given data
+export const createSavedScore = (data, result) => {
+    savedScoreDBModel.create(data, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
