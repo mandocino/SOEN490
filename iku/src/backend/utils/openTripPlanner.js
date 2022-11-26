@@ -1,6 +1,6 @@
 
 export const getWalkWaitComponents = (route) => {
-    var walkTime = 0;
+    var walkTime = route.walkTime; // Get walktime
     var walkComponents = [];
     var waitTime = 0;
     var waitComponents = [];
@@ -9,9 +9,8 @@ export const getWalkWaitComponents = (route) => {
 
     for (let i = 0; i < legs.length; i++) {
         const leg = legs[i];
-        if(leg.mode == 'WALK') { // Get walk components and compute walk time
+        if(leg.mode == 'WALK') { // Get walk components 
             walkComponents.push(leg);
-            walkTime += (leg.endTime - leg.startTime) / 1000;
         } else if ( i != 0 && (leg.from.departure - leg.from.arrival) > 0) {
             // Get wait component and compute wait time
             waitComponents.push(leg);

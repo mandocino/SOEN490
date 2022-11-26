@@ -960,5 +960,345 @@ describe("OTP Route Parsing Functions Tests (Walking and Waiting Metrics)", () =
          expect(walkWaitComponents.walk.time).toBe(1163)
          expect(walkWaitComponents.wait.components).toHaveLength(2);
          expect(walkWaitComponents.wait.time).toBe(1051)
-     })
+     });
+
+     test("Get metrics from route without walking and waiting components", () => {
+        const testingRoute = {
+            "duration":4590,
+            "startTime":1669340579000,
+            "endTime":1669345169000,
+            "walkTime":0,
+            "transitTime":2376,
+            "waitingTime":1051,
+            "walkDistance":1141.48,
+            "walkLimitExceeded":false,
+            "generalizedCost":7224,
+            "elevationLost":0.0,
+            "elevationGained":0.0,
+            "transfers":2,
+            "fare":{
+               "fare":{
+                  "regular":{
+                     "cents":350,
+                     "currency":{
+                        "currency":"CAD",
+                        "defaultFractionDigits":2,
+                        "currencyCode":"CAD",
+                        "symbol":"CA$"
+                     }
+                  }
+               },
+               "details":{
+                  "regular":[
+                     {
+                        "fareId":"1:13S_REG",
+                        "price":{
+                           "cents":350,
+                           "currency":{
+                              "currency":"CAD",
+                              "defaultFractionDigits":2,
+                              "currencyCode":"CAD",
+                              "symbol":"CA$"
+                           }
+                        },
+                        "routes":[
+                           "1:191",
+                           "1:2",
+                           "1:174"
+                        ]
+                     }
+                  ]
+               }
+            },
+            "legs":[
+               {
+                  "startTime":1669341180000,
+                  "endTime":1669342116000,
+                  "departureDelay":0,
+                  "arrivalDelay":0,
+                  "realTime":false,
+                  "distance":6430.61,
+                  "generalizedCost":1536,
+                  "pathway":false,
+                  "mode":"BUS",
+                  "transitLeg":true,
+                  "route":"Broadway / Provost",
+                  "agencyName":"Société de transport de Montréal",
+                  "agencyUrl":"http://www.stm.info",
+                  "agencyTimeZoneOffset":-18000000,
+                  "routeColor":"009EE0",
+                  "routeType":3,
+                  "routeId":"1:191",
+                  "routeTextColor":"000000",
+                  "interlineWithPreviousLeg":false,
+                  "headsign":"191-E",
+                  "agencyId":"1:STM",
+                  "tripId":"1:254685536",
+                  "serviceDate":"2022-11-24",
+                  "from":{
+                     "name":"Notre-Dame / Saint-Pierre",
+                     "stopId":"1:56474",
+                     "stopCode":"56474",
+                     "lon":-73.646549,
+                     "lat":45.442456,
+                     "arrival":1669341180000,
+                     "departure":1669341180000,
+                     "stopIndex":49,
+                     "stopSequence":50,
+                     "vertexType":"TRANSIT"
+                  },
+                  "to":{
+                     "name":"Station Place-Saint-Henri / Saint-Ferdinand",
+                     "stopId":"1:51987",
+                     "stopCode":"51987",
+                     "lon":-73.587162,
+                     "lat":45.47709,
+                     "arrival":1669342116000,
+                     "departure":1669342116000,
+                     "stopIndex":68,
+                     "stopSequence":69,
+                     "vertexType":"TRANSIT"
+                  },
+                  "intermediateStops":[
+                     {
+                        "name":"Notre-Dame / No 450",
+                        "stopId":"1:56480",
+                        "stopCode":"56480",
+                        "lon":-73.643582,
+                        "lat":45.444088,
+                        "arrival":1669341208000,
+                        "departure":1669341208000,
+                        "stopIndex":50,
+                        "stopSequence":51,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / No 1000",
+                        "stopId":"1:56482",
+                        "stopCode":"56482",
+                        "lon":-73.64159,
+                        "lat":45.445193,
+                        "arrival":1669341227000,
+                        "departure":1669341227000,
+                        "stopIndex":51,
+                        "stopSequence":52,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / de la Berge-du-Canal",
+                        "stopId":"1:56449",
+                        "stopCode":"56449",
+                        "lon":-73.637434,
+                        "lat":45.447503,
+                        "arrival":1669341267000,
+                        "departure":1669341267000,
+                        "stopIndex":52,
+                        "stopSequence":53,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / No 8000",
+                        "stopId":"1:56484",
+                        "stopCode":"56484",
+                        "lon":-73.632425,
+                        "lat":45.449367,
+                        "arrival":1669341311000,
+                        "departure":1669341311000,
+                        "stopIndex":53,
+                        "stopSequence":54,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / No 6450",
+                        "stopId":"1:51240",
+                        "stopCode":"51240",
+                        "lon":-73.61587,
+                        "lat":45.457901,
+                        "arrival":1669341466000,
+                        "departure":1669341466000,
+                        "stopIndex":54,
+                        "stopSequence":55,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / No 6300",
+                        "stopId":"1:51305",
+                        "stopCode":"51305",
+                        "lon":-73.613709,
+                        "lat":45.459097,
+                        "arrival":1669341487000,
+                        "departure":1669341487000,
+                        "stopIndex":55,
+                        "stopSequence":56,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / No 6200",
+                        "stopId":"1:60585",
+                        "stopCode":"60585",
+                        "lon":-73.611756,
+                        "lat":45.460179,
+                        "arrival":1669341506000,
+                        "departure":1669341506000,
+                        "stopIndex":56,
+                        "stopSequence":57,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / No 6000",
+                        "stopId":"1:51418",
+                        "stopCode":"51418",
+                        "lon":-73.609589,
+                        "lat":45.461372,
+                        "arrival":1669341527000,
+                        "departure":1669341527000,
+                        "stopIndex":57,
+                        "stopSequence":58,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / Turcot",
+                        "stopId":"1:62042",
+                        "stopCode":"62042",
+                        "lon":-73.60826,
+                        "lat":45.462066,
+                        "arrival":1669341539000,
+                        "departure":1669341539000,
+                        "stopIndex":58,
+                        "stopSequence":59,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / Place Turcot Est",
+                        "stopId":"1:51601",
+                        "stopCode":"51601",
+                        "lon":-73.602505,
+                        "lat":45.465192,
+                        "arrival":1669341597000,
+                        "departure":1669341597000,
+                        "stopIndex":59,
+                        "stopSequence":60,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / Monk",
+                        "stopId":"1:53961",
+                        "stopCode":"53961",
+                        "lon":-73.600305,
+                        "lat":45.466319,
+                        "arrival":1669341618000,
+                        "departure":1669341618000,
+                        "stopIndex":60,
+                        "stopSequence":61,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / Gadbois",
+                        "stopId":"1:61640",
+                        "stopCode":"61640",
+                        "lon":-73.596907,
+                        "lat":45.468091,
+                        "arrival":1669341650000,
+                        "departure":1669341650000,
+                        "stopIndex":61,
+                        "stopSequence":62,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"École James-Lyng (Notre-Dame / de Carillon)",
+                        "stopId":"1:51775",
+                        "stopCode":"51775",
+                        "lon":-73.595791,
+                        "lat":45.468471,
+                        "arrival":1669341660000,
+                        "departure":1669341660000,
+                        "stopIndex":62,
+                        "stopSequence":63,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / de la Côte-Saint-Paul",
+                        "stopId":"1:60527",
+                        "stopCode":"60527",
+                        "lon":-73.5929,
+                        "lat":45.469432,
+                        "arrival":1669341780000,
+                        "departure":1669341780000,
+                        "stopIndex":63,
+                        "stopSequence":64,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / Saint-Rémi",
+                        "stopId":"1:51874",
+                        "stopCode":"51874",
+                        "lon":-73.591168,
+                        "lat":45.470104,
+                        "arrival":1669341840000,
+                        "departure":1669341840000,
+                        "stopIndex":64,
+                        "stopSequence":65,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Notre-Dame / De Courcelle",
+                        "stopId":"1:51936",
+                        "stopCode":"51936",
+                        "lon":-73.588787,
+                        "lat":45.472622,
+                        "arrival":1669341924000,
+                        "departure":1669341924000,
+                        "stopIndex":65,
+                        "stopSequence":66,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Square Sir-George-Étienne-Cartier",
+                        "stopId":"1:53954",
+                        "stopCode":"53954",
+                        "lon":-73.58743,
+                        "lat":45.474126,
+                        "arrival":1669341974000,
+                        "departure":1669341974000,
+                        "stopIndex":66,
+                        "stopSequence":67,
+                        "vertexType":"TRANSIT"
+                     },
+                     {
+                        "name":"Saint-Jacques / Saint-Philippe",
+                        "stopId":"1:51926",
+                        "stopCode":"51926",
+                        "lon":-73.588394,
+                        "lat":45.476637,
+                        "arrival":1669342088000,
+                        "departure":1669342088000,
+                        "stopIndex":67,
+                        "stopSequence":68,
+                        "vertexType":"TRANSIT"
+                     }
+                  ],
+                  "legGeometry":{
+                     "points":"snjtGhbo`M{HeQGM????kEmJQ_@????_HoOgDuH????iAiCcAsDCG}@mDGk@???AcDaM????m@{BI]Qq@a@uA]_Ag@uA{@uBEGkAiCQ[y@}AYg@e@aA[o@aA{BiAmC{@gCyCeJcD}HaEkJcBmCmFuM_D{G???A}EiKQa@??gDiHq@{A????oFmL??mBeEMe@???AQW??Q[CEo@}@q@q@m@i@g@a@g@UJg@?A?A@w@???AMmA?A??g@eBkIyR????]w@CGyAqDg@y@cAcC????[u@EIkBoEy@sBy@kBc@cACIu@kB????Qc@{@{D????k@kCCGq@_Dw@kDEM_@sA????gAcECGs@cCEG??ACGMKOu@m@EEaLgK????OMEEqAmAEEsAeAOOEEuAgA????QOEEo@k@y@q@EEcByAEL?J?Vo@tB]~@IVMd@aAtCM^YXIBk@iB????_@qACIw@yC",
+                     "length":158
+                  },
+                  "steps":[
+                     
+                  ],
+                  "routeShortName":"191",
+                  "routeLongName":"Broadway / Provost",
+                  "duration":936.0
+               }
+            ],
+            "tooSloped":false,
+            "arrivedAtDestinationWithRentedBicycle":false
+         }
+
+         const walkWaitComponents = getWalkWaitComponents(testingRoute);
+
+         expect(walkWaitComponents.walk.components).toHaveLength(0);
+         expect(walkWaitComponents.walk.time).toBe(0)
+         expect(walkWaitComponents.wait.components).toHaveLength(0);
+         expect(walkWaitComponents.wait.time).toBe(0)
+
+     });
 });
