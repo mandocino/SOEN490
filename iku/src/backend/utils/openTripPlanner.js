@@ -1,43 +1,53 @@
-
-import request from "request";
 import axios from "axios";
 
 var url = "http://localhost:8080/otp/routers/default/plan";
 
-async function handleGetAllRoutesOTP(origin, destination){
+async function handleGetAllRoutesOTP(originCoordinates, destinationCoordinates, date, time, isArriveBy, isWheelchair, waitReluctance, walkReluctance, transferPenalty){
 
-
+    // Mandatory parameters for API call
     var queryString = {
-        date: "11-24-2022",
+        fromPlace: originCoordinates,
+        toPlace: destinationCoordinates,
+        date: date,
+        time: time,
+        arriveBy: isArriveBy,
+        wheelchair: isWheelchair,
         mode: "TRANSIT,WALK",
-        arriveBy: "false",
-        wheelchair: "false",
         debugItineraryFilter: "false",
         showIntermediateStops: "true",
-        fromPlace: "45.43761055339032,-73.65114212036134",
         baseLayer: "OSM Standard Tiles",
-        toPlace: "45.48408598634595,-73.71894836425783",
-        time: "8:26pm",
         locale: "en"
+    };
+
+    // Optional parameters
+    if(waitReluctance !== null || waitReluctance !== 0){
+        queryString.waitReluctance = waitReluctance;
     }
 
-    //USING REQUEST MODULE(DEPRECATED)
-    // request.get(url, {qs:queryString}, function(error, response, body){
+    if(walkReluctance !== null || walkReluctance !== 0){
+        queryString.walkReluctance = walkReluctance;
+    }
 
-    //     // console.log(response);
-    //     console.log("--------------------------------------------------------------------------");
-    //     console.log(body);
-    //     return body;
-    // });
+    if(transferPenalty !== null || transferPenalty !== 0){
+        queryString.transferPenalty = transferPenalty;
+    }
 
-    //USING AXIOS
-    const res = await axios.get(url, {params: queryString})
-    console.log(res.data.plan.itineraries);
+    //Make API call to OTP
+    await axios.get(url, {params: queryString})
+    .then((response) => {
+        console.log(JSON.stringify(response.data.plan.itineraries));
+        return response.data.plan.itineraries;
+    })
+    .catch(error => {
+        console.log(error);
+        return {};
+    })
+    
 }
 
 //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
 export const getAllRoutesOTP = (req, res) => {
     console.log("INSIDE GETALLROUTESOTP BACKEND");
-    handleGetAllRoutesOTP(1,2);
+    handleGetAllRoutesOTP("45.50083137628949,-73.63675475120546", "45.49718414083273,-73.57888340950014", "11-25-2022", "8:00pm", false, false);
     res.json({"hello":"world"});
 }
