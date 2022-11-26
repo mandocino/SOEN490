@@ -95,4 +95,4 @@ export const getAllRoutesOTP = (req, res) => {
     }
     handleGetAllRoutesOTP("45.50083137628949,-73.63675475120546", "45.49718414083273,-73.57888340950014", "11-25-2022", "8:00pm", false, false, "TRANSIT,WALK", optionalParams);
     res.json({"hello":"world"});
-}
+} 
