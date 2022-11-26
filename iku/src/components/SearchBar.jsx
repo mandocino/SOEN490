@@ -107,6 +107,7 @@ export default function SearchBar() {
     }
   }
 
+  //TODO: REMOVE THIS WHEN IKU-110 AND IKU-111 ARE COMPLETED
   //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
   const generateOTPRoutes = async()=>{
     await axios.get('http://localhost:5000/routesOTP')
