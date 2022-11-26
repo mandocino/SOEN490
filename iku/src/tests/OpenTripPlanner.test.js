@@ -39,7 +39,7 @@ describe("OpenTripPlanner tests", () => {
     });
 
     // Test to check if valid parameters are returned and invalid ones are removed
-    test("Optional parameters validation (all valid params)", () => {
+    test("Optional parameters validation (some invalid params)", () => {
         const params = {
             maxPreTransitTime: 5, 
             maxTransfers:5, 
@@ -59,7 +59,7 @@ describe("OpenTripPlanner tests", () => {
     });
 
     // Test to check if invalid parameters are removed
-    test("Optional parameters validation (all valid params)", () => {
+    test("Optional parameters validation (no valid params)", () => {
         const params = {
             invalidParam1: 5,
             invalidParam2: 10,
