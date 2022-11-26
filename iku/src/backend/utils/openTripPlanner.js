@@ -30,7 +30,7 @@ var otpParameterKeys = [
     'walkSpeed'
 ];
 
-function validateOptionalParams(optionalParams){
+export function validateOptionalParams(optionalParams){
     for(let key in optionalParams){
 
         // Remove invalid OTP params
