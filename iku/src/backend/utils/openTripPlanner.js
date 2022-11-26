@@ -1,5 +1,6 @@
 
 export const getWalkWaitComponents = (route) => {
+    var duration = route.duration;
     var walkTime = route.walkTime; // Get walktime
     var walkComponents = [];
     var waitTime = 0;
@@ -19,6 +20,7 @@ export const getWalkWaitComponents = (route) => {
     }
 
     return {
+        duration: duration,
         walk: {
             time: walkTime,
             components: walkComponents

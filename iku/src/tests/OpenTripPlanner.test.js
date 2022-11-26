@@ -956,12 +956,14 @@ describe("OTP Route Parsing Functions Tests (Walking and Waiting Metrics)", () =
 
          const walkWaitComponents = getWalkWaitComponents(testingRoute);
 
+         expect(walkWaitComponents.duration).toBe(4590);
          expect(walkWaitComponents.walk.components).toHaveLength(4);
          expect(walkWaitComponents.walk.time).toBe(1163)
          expect(walkWaitComponents.wait.components).toHaveLength(2);
          expect(walkWaitComponents.wait.time).toBe(1051)
      });
 
+     // Test for a route without any walk or wait components
      test("Get metrics from route without walking and waiting components", () => {
         const testingRoute = {
             "duration":4590,
