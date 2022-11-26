@@ -960,6 +960,5 @@ describe("OTP Route Parsing Functions Tests (Walking and Waiting Metrics)", () =
          expect(walkWaitComponents.walk.time).toBe(1163)
          expect(walkWaitComponents.wait.components).toHaveLength(2);
          expect(walkWaitComponents.wait.time).toBe(1051)
-
      })
 });
