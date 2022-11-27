@@ -15,7 +15,7 @@ export default function SearchBar() {
   // Handles places suggestions returned by api
   const [suggestions, setSuggestions] = useState([]);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
 
   const selectSuggestion = suggestion => {
@@ -26,7 +26,7 @@ export default function SearchBar() {
 
   const handleEnterPressed = async event => {
     if(event.key === 'Enter'){
-      handleSubmit()
+      handleSubmit();
     }
   }
 

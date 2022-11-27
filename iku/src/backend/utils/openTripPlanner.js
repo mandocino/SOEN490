@@ -96,3 +96,38 @@ export const getAllRoutesOTP = (req, res) => {
     handleGetAllRoutesOTP("45.50083137628949,-73.63675475120546", "45.49718414083273,-73.57888340950014", "11-25-2022", "8:00pm", false, false, "TRANSIT,WALK", optionalParams);
     res.json({"hello":"world"});
 } 
+
+
+export const getWalkWaitComponents = (route) => {
+    var duration = route.duration;
+    var walkTime = route.walkTime; // Get walktime
+    var walkComponents = [];
+    var waitTime = 0;
+    var waitComponents = [];
+
+    const legs = route.legs;
+
+    for (let i = 0; i < legs.length; i++) {
+        const leg = legs[i];
+        if(leg.mode == 'WALK') { // Get walk components 
+            walkComponents.push(leg);
+        } else if ( i != 0 && (leg.from.departure - leg.from.arrival) > 0) {
+            // Get wait component and compute wait time
+            waitComponents.push(leg);
+            waitTime += (leg.from.departure - leg.from.arrival) / 1000;
+        }
+    }
+
+    return {
+        duration: duration,
+        walk: {
+            time: walkTime,
+            components: walkComponents
+        },
+        wait: {
+            time: waitTime,
+            components: waitComponents
+        }
+    }
+
+}
