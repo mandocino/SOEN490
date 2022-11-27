@@ -1,8 +1,29 @@
 import React from "react";
-import tempUserImg from "./../assets/default_user.jpg";
 import LinkButton from "./custom/LinkButton";
+import defaultPhoto from "./../assets/default_user.jpg";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function MyAccount() {
+  const [FirstName, setFirstName] = useState("");
+  const [LastName, setLastName] = useState("");
+  const [Email, setEmail] = useState("");
+  const [CurrentHome, setCurrentHome] = useState("");
+  const fetchAccountInfo = () => {
+    const user_id = localStorage.getItem("user_id");
+    axios
+      .get(`http://localhost:5000/userByID/${user_id}`)
+      .then((response) => {
+        setFirstName(response.data[0].first_name);
+        setLastName(response.data[0].last_name);
+        setEmail(response.data[0].email);
+        setCurrentHome(response.data[0].current_location);
+      })
+      .catch((err) => console.error(err));
+  };
+  useEffect(() => {
+    fetchAccountInfo();
+  }, []);
   return (
     <>
       <div class="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
@@ -10,16 +31,14 @@ export default function MyAccount() {
           <p class="pt-7 pb-7 text-2xl">My Account</p>
           <img
             class="w-20 rounded-lg mx-auto pb-7"
-            src={tempUserImg}
-            alt="tempUserImg"
-          ></img>{" "}
-          <p class="pb-4">Username: </p>
-          <p class="pb-4">Email: </p>
-          <p class="pb-4">Location:</p>
+            src={defaultPhoto}
+            alt="default_user.jpg"
+          />
+          <p class="pb-4">First Name: {FirstName} </p>
+          <p class="pb-4">Last Name: {LastName} </p>
+          <p class="pb-4">Email: {Email}</p>
+          <p class="pb-4">Location: {CurrentHome}</p>
           <div class="w-60 mx-auto pb-10">
-            <LinkButton class="mb-10" to="/editphoto">
-              Change Profile Picture
-            </LinkButton>
             <LinkButton to="/editinfo">Edit Account Information</LinkButton>
           </div>
         </div>
