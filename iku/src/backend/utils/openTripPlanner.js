@@ -157,6 +157,8 @@ export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
                 }
             }
             return list; 
+        default: 
+            throw new Error("INVALIDE MODE. Mode must be 'START_MODE', 'END_MODE', or 'WHOLE_ROUTE_MODE'");
     }
     
 };

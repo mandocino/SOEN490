@@ -1561,4 +1561,12 @@ describe("OTP List Route Parsing Functions Test (with start time, end time and a
         //empty list expected
         expect(routeList3).toHaveLength(0);
      });
+
+     //Verifies that an error is indeed produced when an invalid mode is passed.
+     test("Get List of routes that fit specifications: Testing invalid mode", () => {
+        expect(() => {
+         sliceRoutesList(testingListRoute, 1669341340000, 1669345169000, "INVALID_MODE")
+      })
+      .toThrow(Error);
+     });
 });
