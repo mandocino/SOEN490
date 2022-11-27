@@ -2,7 +2,7 @@
 import express from "express";
 
 // import functions from controllers
-import { showUsers, showUserByID, showUserByEmail, loginController , signupController, modifyUserByEmail, deleteUserByEmail } from "../controllers/user.js";
+import { showUsers, showUserByID, showUserByEmail, loginController , signupController, modifyUserByID, modifyUserByEmail, deleteUserByEmail } from "../controllers/user.js";
 import { addLocation, getAddressByCoordinates, showLocationsByUserID, getSuggestions, getCoordinatesByAddress, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
@@ -43,7 +43,7 @@ router.post("/signup/", signupController);
 // Modify a user by email with data
 router.post("/modifyUserByEmail/", modifyUserByEmail);
 
-// Modify a user by email with data
+// Modify a user by email with ID
 router.post("/modifyUserByID/", modifyUserByID);
 
 // Delete a user by email
