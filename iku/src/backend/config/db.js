@@ -13,7 +13,8 @@ const userSchema = new Schema({
     password: { type: String, required: true},
     duration_priority: { type: Number, default: 0},
     frequency_priority: { type: Number, default: 0},
-    walk_priority: { type: Number, default: 0}
+    walk_priority: { type: Number, default: 0},
+    lastPrefChangeTime: { type: Schema.Types.Date, required: true}
 }, { collection : 'Users' });
 
 const locationSchema = new Schema({
