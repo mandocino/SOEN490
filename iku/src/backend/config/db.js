@@ -2,6 +2,10 @@ import { Schema, model, connect } from "mongoose";
 
 const connectionString = "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
 
+const globalSchema = new Schema({
+    lastAlgoUpdateTime: { type: Schema.Types.Date, required: true}
+}, { collection : 'Global' });
+
 const userSchema = new Schema({
     first_name: { type: String, required: true},
     email: { type: String, required: true, unique: true},
@@ -9,7 +13,8 @@ const userSchema = new Schema({
     password: { type: String, required: true},
     duration_priority: { type: Number, default: 0},
     frequency_priority: { type: Number, default: 0},
-    walk_priority: { type: Number, default: 0}
+    walk_priority: { type: Number, default: 0},
+    lastPrefChangeTime: { type: Schema.Types.Date, required: true}
 }, { collection : 'Users' });
 
 const locationSchema = new Schema({
@@ -46,6 +51,7 @@ const passwordResetRequestSchema = new Schema({
     code: { type: String, required: true}
 }, { collection : 'PasswordResetRequests' });
 
+export const globalDBModel = model("Global", globalSchema);
 export const userDBModel = model("User", userSchema);
 export const locationDBModel = model("Location", locationSchema);
 export const savedScoreDBModel = model("SavedScore", savedScoreSchema);
