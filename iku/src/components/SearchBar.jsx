@@ -110,16 +110,6 @@ export default function SearchBar() {
     }
   };
 
-  //TODO: REMOVE THIS WHEN IKU-110 AND IKU-111 ARE COMPLETED
-  //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
-  const generateOTPRoutes = async()=>{
-    await axios.get('http://localhost:5000/routesOTP')
-        .then(function(response){
-          console.log('ROUTES OTP');
-          console.log(response);
-        });
-  }
-
   return (
     <>
       <div class="shadow-lg shadow-gray-400 dark:shadow-gray-900 rounded-3xl w-full bg-cover bg-center bg-[url('/src/assets/stm_bus.jpg')]">
@@ -195,7 +185,6 @@ export default function SearchBar() {
               >
                 <Location onClick={getCurrentLocation} />
               </button>
-              <button onClick={generateOTPRoutes} class="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300">OTP TEST</button>
             </div>
           </div>
         </div>
