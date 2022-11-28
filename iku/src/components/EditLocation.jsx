@@ -13,6 +13,14 @@ export default function EditLocation(props) {
   const [Priority, setPriority] = useState(loc.priority);
   const [CurrentHome, setCurrentHome] = useState(loc.current_home)
 
+  const handlePriorityChange = event => {
+    const regex = /\D/g;
+    const result = event.target.value.replace(regex, '');
+    console.log(result);
+
+    setPriority(result);
+  };
+
   const SubmitHandler = () => {
     console.log(props.loc);
 
@@ -117,7 +125,7 @@ export default function EditLocation(props) {
                             <input
                               class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
                               placeholder="Enter new First Name"
-                              defaultValue={Name}
+                              value={Name}
                               id="newName"
                             />
                           </div>
@@ -131,7 +139,7 @@ export default function EditLocation(props) {
                             <input
                               class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
                               placeholder="Enter new First Name"
-                              defaultValue={Notes}
+                              value={Notes}
                               id="newNotes"
                             />
                           </div>
@@ -147,7 +155,8 @@ export default function EditLocation(props) {
                                 <input
                                   class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
                                   placeholder="Enter new First Name"
-                                  defaultValue={Priority}
+                                  value={Priority}
+                                  onChange={handlePriorityChange}
                                   id="newPriority"
                                 />
                               </div>
