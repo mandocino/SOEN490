@@ -137,40 +137,46 @@ export default function EditLocation(props) {
                           </div>
                         </div>
 
-                        <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
-                          <div class="flex items-center h-8 gap-4">
-                            <span class="w-16 h-full flex items-center justify-start">
-                              Priority
-                            </span>
-                            <input
-                              class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
-                              placeholder="Enter new First Name"
-                              defaultValue={Priority}
-                              id="newPriority"
-                            />
-                          </div>
-                        </div>
+                        {loc.origin ?
+                          <>
+                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                              <div class="flex items-center h-8 gap-4">
+                                <span class="w-16 h-full flex items-center justify-start">
+                                  Priority
+                                </span>
+                                <input
+                                  class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+                                  placeholder="Enter new First Name"
+                                  defaultValue={Priority}
+                                  id="newPriority"
+                                />
+                              </div>
+                            </div>
 
-                        <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
-                          <div class="flex items-center h-8 gap-4">
-                            <span class="w-16 h-full flex items-center justify-start">
-                              Current Home
-                            </span>
-                            <Switch
-                              checked={CurrentHome}
-                              onChange={setCurrentHome}
-                              className={`${CurrentHome ? 'bg-emerald-600' : 'bg-teal-900'}
-                                relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-                            >
-                              <span className="sr-only">Use setting</span>
-                              <span
-                                aria-hidden="true"
-                                className={`${CurrentHome ? 'translate-x-6' : 'translate-x-0'}
-                                  pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-                              />
-                            </Switch>
-                          </div>
-                        </div>
+                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                              <div class="flex items-center h-8 gap-4">
+                                <span class="w-16 h-full flex items-center justify-start">
+                                  Current Home
+                                </span>
+                                <Switch
+                                  checked={CurrentHome}
+                                  onChange={setCurrentHome}
+                                  className={`${CurrentHome ? 'bg-emerald-600' : 'bg-teal-900'}
+                                    relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                                >
+                                  <span className="sr-only">Use setting</span>
+                                  <span
+                                    aria-hidden="true"
+                                    className={`${CurrentHome ? 'translate-x-6' : 'translate-x-0'}
+                                      pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                                  />
+                                </Switch>
+                              </div>
+                            </div>
+                          </>
+                          :
+                          <></>
+                        }
                       </div>
                     </form>
                   </div>
