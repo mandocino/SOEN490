@@ -77,6 +77,19 @@ export default function EditLocation(props) {
     }
   };
 
+  const deleteHandler = async (event) => {
+    event.preventDefault();
+
+    await axios
+      .post("http://localhost:5000/deleteLocation", {
+        _id: mongoose.Types.ObjectId(loc._id),
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+    window.location.reload(false);
+  }
+
   function closeModal() {
     // Close modal without saving changes
     setIsOpen(false)
@@ -134,7 +147,7 @@ export default function EditLocation(props) {
                     
                     <button 
                       type="button"
-                      onClick={closeModal}
+                      onClick={deleteHandler}
                       class="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg dark:bg-red-400 dark:hover:bg-red-600 dark:focus:ring-red-300"
                       >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
