@@ -68,7 +68,7 @@ export async function loadScores(origin, destination, user){
     var user = await axios.get(`http://localhost:5000/userByID/${user}`);
     var lastPrefChangeTime = user.data[0].lastPrefChangeTime;
     savedScores = getScores(origin,destination,user);
-    if (savedScores==null || savedScores.date << lastPrefChangeTime || savedScores.date << lastUpdateAlgoUpdateTime ){
+    if (savedScores==null || savedScores.date < lastPrefChangeTime || savedScores.date < lastUpdateAlgoUpdateTime ){
         generateNewScores(origin,destination,user);
         savedScores = getScores(origin,destination,user);
     }
