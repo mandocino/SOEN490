@@ -79,6 +79,5 @@ export async function loadScores(origin, destination, user){
         weekend: savedScores.weekend,
         overNight: savedScores.overNight
     }
-    console.log(scores);
     return scores;
 };
