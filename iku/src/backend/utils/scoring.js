@@ -47,7 +47,7 @@ export function generateNewScores(origin, destination, user){
   saveScores(origin, destination, scores, date);
 };
 
-export async function getScores(orgin, destination, user){
+export async function getScores(origin, destination, user){
     await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`, {
         params:
         {
