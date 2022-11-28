@@ -11,7 +11,15 @@ export default function EditLocation(props) {
   const [Name, setName] = useState(loc.name);
   const [Notes, setNotes] = useState(loc.notes);
   const [Priority, setPriority] = useState(loc.priority);
-  const [CurrentHome, setCurrentHome] = useState(loc.current_home)
+  const [CurrentHome, setCurrentHome] = useState(loc.current_home);
+
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  }
+
+  const handleNotesChange = (event) => {
+    setNotes(event.target.value);
+  }
 
   const handlePriorityChange = event => {
     const regex = /\D/g;
@@ -21,33 +29,46 @@ export default function EditLocation(props) {
     setPriority(result);
   };
 
-  const SubmitHandler = () => {
-    console.log(props.loc);
+  const submitHandler = async (event) => {
+    event.preventDefault();
 
-    var newNameInput = document.getElementById("newName").value;
-    var newNotesInput = document.getElementById("newNotes").value;
-    var newPriorityInput = document.getElementById("newPriority").value;
+    // Reset all other homes to false if current location changed
+    if (CurrentHome !== loc.current_home) {
+      const user_id = localStorage.getItem("user_id");
+      let locations;
 
-    setName(newNameInput);
-    setNotes(newNotesInput);
-    setPriority(newPriorityInput);
+      await axios.get(`http://localhost:5000/locations/${user_id}`)
+      .then((response) => {
+        locations = response.data;
+        locations = locations.filter(l => l._id !== loc._id && l.current_home);
+      })
+      .catch(err => console.error(err));
 
-    // postLocationInfo();
-  };
-
-  const postLocationInfo = () => {
+      for (let l in locations) {
+        let oldHome = locations[l];
+        await axios
+        .post("http://localhost:5000/updateLocation", {
+          _id: mongoose.Types.ObjectId(oldHome._id),
+          current_home: false,
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+      }
+    }
+    
     if (
       Name !== "" ||
       Notes !== "" ||
       Priority !== ""
     ) {
-      axios
-        .post("http://localhost:5000/modifyUserById", {
-          _id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
-          email: Name,
-          first_name: Notes,
-          last_name: Priority,
-          current_location: CurrentHome,
+      await axios
+        .post("http://localhost:5000/updateLocation", {
+          _id: mongoose.Types.ObjectId(loc._id),
+          name: Name,
+          notes: Notes,
+          priority: parseInt(Priority),
+          current_home: CurrentHome,
         })
         .catch((error) => {
           console.log(error.message);
@@ -63,11 +84,6 @@ export default function EditLocation(props) {
 
   function openModal() {
     setIsOpen(true)
-  }
-
-  function saveChanges() {
-    // Save edits
-    SubmitHandler();
   }
 
   return (
@@ -125,7 +141,8 @@ export default function EditLocation(props) {
                             <input
                               class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
                               placeholder="Enter new First Name"
-                              value={Name}
+                              onChange={handleNameChange}
+                              defaultValue={Name}
                               id="newName"
                             />
                           </div>
@@ -139,7 +156,8 @@ export default function EditLocation(props) {
                             <input
                               class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
                               placeholder="Enter new First Name"
-                              value={Notes}
+                              onChange={handleNotesChange}
+                              defaultValue={Notes}
                               id="newNotes"
                             />
                           </div>
@@ -193,7 +211,7 @@ export default function EditLocation(props) {
                   <div class="mt-4 flex gap-2">
                     <button 
                       type="button"
-                      onClick={saveChanges}
+                      onClick={submitHandler}
                       class="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
                       >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
