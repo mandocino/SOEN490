@@ -9,7 +9,6 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import AboutUs from "./pages/Aboutpage.jsx";
-import EditPhotoPage from "./pages/Editphotopage.jsx";
 import EditAccountPage from "./pages/Editinfopage.jsx";
 
 function App() {
@@ -42,7 +41,6 @@ function App() {
         <Route path="/accountpage" element={<Accountpage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/editphoto" element={<EditPhotoPage />} />
         <Route path="/editinfo" element={<EditAccountPage />} />
       </Routes>
     </>
