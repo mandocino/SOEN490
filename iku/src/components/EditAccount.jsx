@@ -34,10 +34,10 @@ export default function EditAccount() {
   }, [NewFirstName, NewLastName, NewEmail, NewCurrentLocation]);
 
   const SubmitHandler = () => {
-    var newFirstNameInput = document.getElementById("newFirstName").value;
-    var newLastNameInput = document.getElementById("newLastName").value;
-    var newEmailInput = document.getElementById("newEmail").value;
-    var newLocationInput = document.getElementById("newLocation").value;
+    let newFirstNameInput = document.getElementById("newFirstName").value;
+    let newLastNameInput = document.getElementById("newLastName").value;
+    let newEmailInput = document.getElementById("newEmail").value;
+    let newLocationInput = document.getElementById("newLocation").value;
 
     if (newFirstNameInput === "") {
       setNewFirstName(FirstName);

@@ -1,6 +1,5 @@
-import React from "react";
+import {React, Fragment, useState} from "react";
 import { Switch, Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
 import axios from "axios";
 import mongoose from "mongoose";
 

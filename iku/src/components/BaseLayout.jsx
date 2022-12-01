@@ -1,7 +1,6 @@
 import React from "react";
 import HomeHeader from "./../components/HomeHeader";
 import Footer from "./../components/Footer";
-//import MyAccount from "./../components/MyAccount";
 
 export default function Homepage(props) {
   return (

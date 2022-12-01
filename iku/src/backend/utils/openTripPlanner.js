@@ -1,8 +1,8 @@
 import axios from "axios";
 
-var url = "http://localhost:8080/otp/routers/default/plan";
+const url = "http://localhost:8080/otp/routers/default/plan";
 
-var otpParameterKeys = [
+let otpParameterKeys = [
     'maxPreTransitTime', 
     'maxTransfers', 
     'maxWalkDistance', 
@@ -43,7 +43,7 @@ export function validateOptionalParams(optionalParams){
 async function handleGetAllRoutesOTP(originCoordinates, destinationCoordinates, date, time, isArriveBy, isWheelchair, mode, optionalParams){
 
     // Mandatory parameters for API call
-    var mandatoryParams = {
+    let mandatoryParams = {
         fromPlace: originCoordinates,
         toPlace: destinationCoordinates,
         date: date,
@@ -86,7 +86,7 @@ async function handleGetAllRoutesOTP(originCoordinates, destinationCoordinates, 
 //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
 export const getAllRoutesOTP = (req, res) => {
     console.log("INSIDE GETALLROUTESOTP BACKEND");
-    var optionalParams = {
+    let optionalParams = {
         waitReluctance: 5,
         walkReluctance: 5, 
         transferPenalty: 5,
@@ -98,11 +98,11 @@ export const getAllRoutesOTP = (req, res) => {
 
 
 export const getWalkWaitComponents = (route) => {
-    var duration = route.duration;
-    var walkTime = route.walkTime; // Get walktime
-    var walkComponents = [];
-    var waitTime = 0;
-    var waitComponents = [];
+    let duration = route.duration;
+    let walkTime = route.walkTime; // Get walktime
+    let walkComponents = [];
+    let waitTime = 0;
+    let waitComponents = [];
 
     const legs = route.legs;
 
@@ -132,7 +132,7 @@ export const getWalkWaitComponents = (route) => {
 }
 
 export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
-    var list = [];
+    let list = [];
     switch (mode){
         case "END_MODE":
             for(let i=0; i<routes.length;i++){
