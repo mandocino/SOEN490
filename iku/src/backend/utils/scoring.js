@@ -20,19 +20,19 @@ export async function saveScores(origin, destination, scores, date) {
 
 export function generateNewScores(origin, destination, user){
   var rushHour = (Math.random()*100) + 1;
-  Math.floor(this.rushHour);
+  Math.floor(rushHour);
   
   var offPeak = (Math.random()*100) + 1;
-  Math.floor(this.offPeak);
+  Math.floor(offPeak);
   
   var weekend = (Math.random()*100) + 1;
-  Math.floor(this.weekend);
+  Math.floor(weekend);
   
   var night = (Math.random()*100) + 1;
-  Math.floor(this.night);
+  Math.floor(night);
   
   var overall = (Math.random()*100) + 1;
-  Math.floor(this.night);
+  Math.floor(night);
 
   var date = Date.now();
 
