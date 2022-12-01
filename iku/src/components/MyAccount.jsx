@@ -1,7 +1,6 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import LinkButton from "./custom/LinkButton";
 import defaultPhoto from "./../assets/default_user.jpg";
-import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function MyAccount() {

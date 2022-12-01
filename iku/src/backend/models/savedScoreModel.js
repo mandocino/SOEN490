@@ -1,5 +1,5 @@
 // import connection
-import {locationDBModel, savedScoreDBModel} from "../config/db.js";
+import {savedScoreDBModel} from "../config/db.js";
 
 // Get saved scores by origin and destination
 export const getSavedScoresByLocations = (originID, destID, result) => {

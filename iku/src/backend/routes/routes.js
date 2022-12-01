@@ -109,7 +109,6 @@ router.post("/updatePasswordResetRequest/", updatePasswordResetRequest);
 router.post("/removePasswordResetRequest/", removePasswordResetRequest);
 
 ///////////// OPEN TRIP PLANNER
-//TODO: REMOVE THIS WHEN IKU-110 AND IKU-111 ARE COMPLETED
 //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
 router.get("/routesOTP/", getAllRoutesOTP);
 

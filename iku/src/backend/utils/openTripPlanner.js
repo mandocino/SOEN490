@@ -38,7 +38,7 @@ export function validateOptionalParams(optionalParams){
             delete optionalParams[key];
         }
     }
-};
+}
 
 async function handleGetAllRoutesOTP(originCoordinates, destinationCoordinates, date, time, isArriveBy, isWheelchair, mode, optionalParams){
 
@@ -83,7 +83,6 @@ async function handleGetAllRoutesOTP(originCoordinates, destinationCoordinates, 
     
 }
 
-//TODO: REMOVE THIS WHEN IKU-110 AND IKU-111 ARE COMPLETED
 //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
 export const getAllRoutesOTP = (req, res) => {
     console.log("INSIDE GETALLROUTESOTP BACKEND");
