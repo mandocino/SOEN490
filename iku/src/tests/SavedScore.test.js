@@ -10,7 +10,7 @@ describe("Database tests", () => {
         const resCreate = await axios.post(`http://localhost:5000/newSavedScore/`, {
             origin: new mongoose.mongo.ObjectId(),
             destination: new mongoose.mongo.ObjectId(),
-            generatedTime: new mongoose.mongo.Date(),
+            generatedTime: new Date(),
             overall: 0,
             rushHour: 0,
             offPeak: 0,
@@ -40,11 +40,11 @@ describe("Database tests", () => {
         const resDelete = await axios.post(`http://localhost:5000/deleteSavedScore/`, {
             _id: scoreID
         });
-        const resGet = await axios.get(`http://localhost:5000/locations/${objectID}`);
+        const resGet = await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`);
         expect(Array.isArray(resGet.data)).toBe(true);
         let found = false;
         for(let i = 0;i<resGet.data.length;++i){
-            if(resGet.data[i]._id == locationID){
+            if(resGet.data[i]._id == scoreID){
                 found = true;
             }
         }
