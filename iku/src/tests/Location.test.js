@@ -54,6 +54,8 @@ describe("Google Places Autocomplete API test", () => {
 });
 
 describe("Database tests", () => {
+    let locationID = "";
+    const objectID = new mongoose.mongo.ObjectId('6334936ea7e4368f95ec50c9');
     test("Create", async () => {
         const resSignup = await axios.post(`http://localhost:5000/newlocation/`, {
             user_id: new mongoose.mongo.ObjectId('6334936ea7e4368f95ec50c9'),
@@ -64,19 +66,42 @@ describe("Database tests", () => {
             current_home: true
         });
         expect(resSignup.data).toHaveProperty('_id');
+        locationID = resSignup.data._id;
     });
 
     test("Get", async () => {
-        const objectID = new mongoose.mongo.ObjectId('6334936ea7e4368f95ec50c9');
         const resGet = await axios.get(`http://localhost:5000/locations/${objectID}`);
         expect(Array.isArray(resGet.data)).toBe(true);
         expect(resGet.data.length).toBeGreaterThanOrEqual(1);
         let found = false;
         for(let i = 0;i<resGet.data.length;++i){
-            if(resGet.data[i].user_id == '6334936ea7e4368f95ec50c9' && resGet.data[i].name == 'Test'){
+            if(resGet.data[i]._id == locationID){
                 found = true;
             }
         }
         expect(found).toBe(true);
+    });
+
+    test("Modify", async () => {
+        const resModify = await axios.post(`http://localhost:5000/updateLocation/`, {
+            _id: locationID,
+            name: "ModifiedTest"
+        });
+        expect(resModify.data.name).toBe("ModifiedTest");
+    });
+
+    test("Delete", async () => {
+        const resModify = await axios.post(`http://localhost:5000/deleteLocation/`, {
+            _id: locationID
+        });
+        const resGet = await axios.get(`http://localhost:5000/locations/${objectID}`);
+        expect(Array.isArray(resGet.data)).toBe(true);
+        let found = false;
+        for(let i = 0;i<resGet.data.length;++i){
+            if(resGet.data[i]._id == locationID){
+                found = true;
+            }
+        }
+        expect(found).toBe(false);
     });
 });
