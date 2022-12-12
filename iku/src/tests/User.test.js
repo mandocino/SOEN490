@@ -26,7 +26,8 @@ describe("User tests", () => {
             email: "userSignUpTestTemp@test.com",
             first_name: "TestFirstName",
             last_name: "TestLastName",
-            password: "TestPassword"
+            password: "TestPassword",
+            lastPrefChangeTime: 0
         });
         expect(resSignup.data).toHaveProperty('_id');
     });
@@ -65,7 +66,7 @@ describe("User tests", () => {
     });
 
     test("Modify a user", async () => {
-        await axios.post(`http://localhost:5000/modifyUser/`, {
+        await axios.post(`http://localhost:5000/modifyUserByEmail/`, {
             email: "userSignUpTestTemp@test.com",
             first_name: "modifiedTestFirstName"
         });
