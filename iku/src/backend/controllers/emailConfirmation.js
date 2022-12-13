@@ -55,7 +55,7 @@ export const getEmailConfirmation = (req, res) => {
 // Remove an email confirmation by _id
 export const removeEmailConfirmation = (req, res) => {
     const data = req.body;
-    deleteEmailConfirmation(data._id, (err, results) => {
+    deleteEmailConfirmation(data, (err, results) => {
         if (err){
             res.send(err);
         }else{
