@@ -11,8 +11,9 @@ export const addPasswordResetRequest = (req, res) => {
         if (err){
             res.send(err);
         }else{
+
             // Put retrieved user_id in data
-            const data = {_id : results[0]._id}
+            const data = {user_id : results[0]._id}
 
             // Add a code
             data.code = "";
@@ -29,8 +30,8 @@ export const addPasswordResetRequest = (req, res) => {
 
                     // If Successful, send email to User
                     const mailData = {
-                        from: 'iku.soen490@gmail.com',  // sender address
-                        to: data.email,   // list of receivers
+                        from: 'ikumailer@gmail.com',  // sender address
+                        to: req.body.email,   // list of receivers
                         subject: 'Iku Password Reset Request',
                         text: '',
                         html: `<b>A request was done to reset your Iku password</b><br>Here is your code: ${data.code}`,
@@ -79,7 +80,7 @@ export const updatePasswordResetRequest = (req, res) => {
 
             // If Successful, send email to User
             const mailData = {
-                from: 'iku.soen490@gmail.com',  // sender address
+                from: 'ikumailer@gmail.com',  // sender address
                 to: data.email,   // list of receivers
                 subject: 'Iku Password Reset Request',
                 text: '',

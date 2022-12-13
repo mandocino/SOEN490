@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import axios from 'axios';
-import mongoose from "mongoose";
 
 describe("Database tests", () => {
     let confirmID = "";

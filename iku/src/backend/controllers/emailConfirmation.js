@@ -23,7 +23,7 @@ export const addEmailConfirmation = (req, res) => {
 
             // If Successful, send email to User
             const mailData = {
-                from: 'iku.soen490@gmail.com',  // sender address
+                from: 'ikumailer@gmail.com',  // sender address
                 to: data.email,   // list of receivers
                 subject: 'Iku Email Confirmation',
                 text: '',
