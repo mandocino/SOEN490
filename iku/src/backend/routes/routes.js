@@ -105,7 +105,7 @@ router.post("/passwordResetRequest/", getPasswordResetRequest);
 // Update password reset request by user_id, given new code
 router.post("/updatePasswordResetRequest/", updatePasswordResetRequest);
 
-// Delete password reset request by user_id and code
+// Delete password reset request by ID
 router.post("/removePasswordResetRequest/", removePasswordResetRequest);
 
 ///////////// OPEN TRIP PLANNER
