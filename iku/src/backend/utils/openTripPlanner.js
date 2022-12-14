@@ -26,7 +26,6 @@ let otpParameterKeys = [
     'waitAtBeginningFactor',
     'waitReluctance',
     'walkBoardCost',
-    'walkReluctance',
     'walkSpeed'
 ];
 
@@ -130,6 +129,26 @@ export const getWalkWaitComponents = (route) => {
     }
 
 }
+
+export const getDurationMetrics = (routes) => {
+    let durationTimes = [];
+    for(let i = 0; i < routes.length; i++){
+        durationTimes.push(routes[i].duration);
+    }
+
+    let minDurationTime = Math.min(...durationTimes);
+    let maxDurationTime = Math.max(...durationTimes);
+    let averageDurationTime = durationTimes.reduce((a, b) => a + b) / durationTimes.length;
+    let standardDeviationDurationTime = Math.sqrt(durationTimes.map(x => Math.pow(x - averageDurationTime, 2)).reduce((a,b) => a+b)/durationTimes.length);
+
+    return {
+        minDurationTime: minDurationTime,
+        maxDurationTime: maxDurationTime,
+        averageDurationTime: averageDurationTime,
+        standardDeviationDurationTime: standardDeviationDurationTime
+    }
+}
+
 
 export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
     let list = [];
