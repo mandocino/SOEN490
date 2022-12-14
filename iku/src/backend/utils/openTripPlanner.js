@@ -182,6 +182,52 @@ export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
 };
 
 /**
+ * Function that computes the minimum, maximum, average and standard deviation of the routes walk times
+ * @param {*} routes 
+ */
+export const getWalkTimeMetrics = (routes) => {
+    let walkTimes = [];
+    for(let i = 0; i < routes.length; i++){
+        walkTimes.push(routes[i].walkTime);
+    }
+
+    let minWalkTime = Math.min(...walkTimes);
+    let maxWalkTime = Math.max(...walkTimes);
+    let averageWalkTime = walkTimes.reduce((a, b) => a + b) / walkTimes.length;
+    let standardDeviationWalkTime = Math.sqrt(walkTimes.map(x => Math.pow(x - averageWalkTime, 2)).reduce((a,b) => a+b)/walkTimes.length);
+
+    return {
+        minWalkTime: minWalkTime,
+        maxWalkTime: maxWalkTime,
+        averageWalkTime: averageWalkTime,
+        standardDeviationWalkTime: standardDeviationWalkTime
+    }
+}
+
+/**
+ * Function that computes the minimum, maximum, average and standard deviation of the routes waiting times
+ * @param {*} routes 
+ */
+export const getWaitTimeMetrics = (routes) => {
+    let waitTimes = [];
+    for(let i = 0; i < routes.length; i++){
+        waitTimes.push(routes[i].waitingTime);
+    }
+
+    let minWaitTime = Math.min(...waitTimes);
+    let maxWaitTime = Math.max(...waitTimes);
+    let averageWaitTime = waitTimes.reduce((a, b) => a + b) / waitTimes.length;
+    let standardDeviationWaitTime = Math.sqrt(waitTimes.map(x => Math.pow(x - averageWaitTime, 2)).reduce((a,b) => a+b)/waitTimes.length);
+
+    return {
+        minWaitTime: minWaitTime,
+        maxWaitTime: maxWaitTime,
+        averageWaitTime: averageWaitTime,
+        standardDeviationWaitTime: standardDeviationWaitTime
+    }
+}
+
+/**
  * Function that verifies if input time is in the specific start and end time range
  * @param {} time 
  * @param {*} startTime 
