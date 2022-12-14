@@ -1,6 +1,10 @@
 import '@testing-library/jest-dom';
 import axios from 'axios';
 import mongoose from "mongoose";
+import { getSuggestions } from '../backend/controllers/location';
+
+import {Client} from "@googlemaps/google-maps-services-js";
+const geocodingClient = new Client({});
 
 jest.setTimeout(10000);
 
@@ -39,7 +43,7 @@ describe("Google Geocoding API tests", () => {
 
 describe("Google Places Autocomplete API test", () => {
 
-    // Test to check that an Non empty array is returned
+    //Test to check that an Non empty array is returned
     test("Get suggestions for a given input", async () => {
         const input = 'montreal';
         const suggestionsResponse = await axios.get('http://localhost:5000/suggestions', {
@@ -50,6 +54,32 @@ describe("Google Places Autocomplete API test", () => {
         const suggestions = suggestionsResponse.data.predictions;
         expect(suggestionsResponse.status).toBe(200); // 200 --> successful request
         expect(suggestions[0]).toBe("Montreal, QC, Canada");
+    })
+
+    test("Testing valid input to getSuggestions", async () => {
+        jest.mock("@googlemaps/google-maps-services-js");
+        const suggestionList = {
+            data: {
+                predictions: [{'description': "Montreal, QC, Canada"}]
+            
+        }};
+        jest.spyOn(geocodingClient, 'placeAutocomplete').mockResolvedValueOnce(suggestionList);
+        const mockReq = { query: { 'input': 'montreal' } };
+        const mockRes = { status: 0,
+            data: {},
+            json: function(input){
+                this.status = 200;
+                this.data = input;
+            }}
+        getSuggestions(mockReq, mockRes)
+        .then(response => {
+            console.log(response);
+            expect(response.status).toBe(200); // 200 --> successful request
+            expect(response.data.predictions).toBe("Montreal, QC, Canada");
+        })
+        .catch(error => {
+            console.log(error.message);
+        });
     })
 });
 

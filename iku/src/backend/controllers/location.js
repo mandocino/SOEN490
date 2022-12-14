@@ -53,7 +53,7 @@ export const getAddressByCoordinates = (req, res) => {
 }
 
 // Get places suggestions given user input
-export const getSuggestions = (req, res) => {
+export const getSuggestions = async (req, res) => {
     const key = process.env.GEOCODING_KEY;
     const input = req.query.input;
     const params = {
