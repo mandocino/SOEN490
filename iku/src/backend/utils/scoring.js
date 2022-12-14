@@ -1,12 +1,11 @@
 import axios from "axios";
-import { response as savedScores } from "express";
-import { Query } from "mongoose";
+import * as thisModule from './scoring.js';
 
 export async function saveScores(origin, destination, scores, date) {
    await axios.post('http://localhost:5000/newSavedScore', {
     params:
     {
-        orgin: origin,
+        origin: origin,
         destination: destination,
         generatedTime: date,
         overall: scores.overall,
@@ -21,22 +20,22 @@ export async function saveScores(origin, destination, scores, date) {
 export function generateNewScores(origin, destination, user){
   var rushHour = (Math.random()*100) + 1;
   Math.floor(rushHour);
-  
+
   var offPeak = (Math.random()*100) + 1;
   Math.floor(offPeak);
-  
+
   var weekend = (Math.random()*100) + 1;
   Math.floor(weekend);
-  
+
   var night = (Math.random()*100) + 1;
   Math.floor(night);
-  
+
   var overall = (Math.random()*100) + 1;
   Math.floor(night);
 
   var date = Date.now();
 
-  var scores = 
+  var scores =
   {
     overall:overall,
     rushHour:rushHour,
@@ -44,40 +43,42 @@ export function generateNewScores(origin, destination, user){
     weekend:weekend,
     overNight:night
   };
-  saveScores(origin, destination, scores, date);
-};
+    thisModule.saveScores(origin, destination, scores, date);
+}
 
-export async function getScores(origin, destination, user){
-    await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`, {
+export async function getScores(origin, destination){
+    const result = await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`, {
         params:
         {
             origin:origin,
             destination:destination,
         }
-    }).then(async (response) => {
-        // We need to add the Algorithm update check and the Users preference last udate check
+    }).then((response) => {
         return response.data;
-
     }).catch(err => console.log(err));
-};
 
-export async function loadScores(origin, destination, user){
-    var savedScores;
-    var timeValues = await axios.get('http://localhost:5000/global/');
-    var lastUpdateAlgoUpdateTime = timeValues.data[0].lastUpdateAlgoUpdateTime;
-    var user = await axios.get(`http://localhost:5000/userByID/${user}`);
-    var lastPrefChangeTime = user.data[0].lastPrefChangeTime;
-    savedScores = getScores(origin,destination,user);
+    return result;
+}
+
+export async function loadScores(origin, destination, userID){
+    let savedScores;
+    const timeValues = await axios.get('http://localhost:5000/global/');
+    const lastUpdateAlgoUpdateTime = timeValues.data[0].lastUpdateAlgoUpdateTime;
+    const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
+    const lastPrefChangeTime = user.data[0].lastPrefChangeTime;
+
+    savedScores = await thisModule.getScores(origin,destination);
+
     if (savedScores==null || savedScores.date < lastPrefChangeTime || savedScores.date < lastUpdateAlgoUpdateTime ){
-        generateNewScores(origin,destination,user);
-        savedScores = getScores(origin,destination,user);
+        await thisModule.generateNewScores(origin,destination,user);
+        savedScores = await thisModule.getScores(origin,destination);
     }
-    var scores = {
+
+    return {
         overall: savedScores.overall,
         rushHour: savedScores.rushHour,
         offPeak: savedScores.offPeak,
         weekend: savedScores.weekend,
         overNight: savedScores.overNight
-    }
-    return scores;
-};
+    };
+}
