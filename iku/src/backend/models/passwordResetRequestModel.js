@@ -16,7 +16,7 @@ export const createPasswordResetRequest = (data, result) => {
 
 // Modify an existing password reset request, given a user_id and a new code
 export const modifyPasswordResetRequest = (data, result) => {
-    passwordResetRequestDBModel.findOneAndUpdate({user_id : data.user_id}, {code : data.code}, (err, data) => {
+    passwordResetRequestDBModel.findOneAndUpdate({user_id : data.user_id}, {code : data.code}, {new: true}, (err, data) => {
         if (err){
             console.log(err);
         }

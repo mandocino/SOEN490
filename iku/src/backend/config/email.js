@@ -5,8 +5,8 @@ const transporter = nodemailer.createTransport({
     port: 465,               // true for 465, false for other ports
     host: "smtp.gmail.com",
     auth: {
-        user: 'iku.soen490@gmail.com',
-        pass: 'capstone2022',
+        user: 'ikumailer@gmail.com',
+        pass: 'gkiuvioywcicjklr',
     },
     secure: true,
     tls: {

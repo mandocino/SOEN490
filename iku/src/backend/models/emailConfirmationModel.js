@@ -28,8 +28,8 @@ export const findEmailConfirmation = (data, result) => {
 }
 
 // Delete email confirmation by _id
-export const deleteEmailConfirmation = (_id, result) => {
-    emailConfirmationDBModel.deleteOne({_id : _id}, (err, data) => {
+export const deleteEmailConfirmation = (data, result) => {
+    emailConfirmationDBModel.deleteOne(data, (err, data) => {
         if (err){
             console.log(err);
         }

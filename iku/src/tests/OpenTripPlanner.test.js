@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { validateOptionalParams, getWalkWaitComponents, sliceRoutesList, getWalkTimeMetrics, getWaitTimeMetrics } from "../backend/utils/openTripPlanner";
 
+
 describe("OpenTripPlanner tests", () => {
 
     // Test to check if valid parameters are returned
@@ -70,6 +71,119 @@ describe("OpenTripPlanner tests", () => {
         // All parameters are removed since they're all invalid
         expect(Object.keys(params).length).toBe(0); 
     });
+
+    test("Calculate metrics on duration times", () => {
+      const testingListRoute = 
+        [
+           {
+               "duration":4590,
+              "startTime":1669340579000,    
+              "endTime":1669345169000,     
+              "walkTime":1163,    
+              "transitTime":2376,     
+              "waitingTime":1051,    
+              "walkDistance":1141.48,     
+              "walkLimitExceeded":false,     
+              "generalizedCost":7224,     
+              "elevationLost":0.0,     
+              "elevationGained":0.0,     
+              "transfers":2,    
+              "fare":{     
+                 "fare":{
+                    "regular":{
+                       "cents":350,
+                       "currency":{
+                          "currency":"CAD",
+                          "defaultFractionDigits":2,
+                          "currencyCode":"CAD",
+                          "symbol":"CA$"     
+                       }    
+                    }     
+                 },
+                 "details":{
+                    "regular":[
+                       {
+                          "fareId":"1:13S_REG",
+                          "price":{
+                             "cents":350,
+                             "currency":{
+                                "currency":"CAD",
+                                "defaultFractionDigits":2,
+                                "currencyCode":"CAD",
+                                "symbol":"CA$"
+                             }
+                          },
+                          "routes":[
+                             "1:191",
+                             "1:2",
+                             "1:174"
+                          ]
+                       }
+                    ]
+                 }
+              },
+              "tooSloped":false,
+              "arrivedAtDestinationWithRentedBicycle":false
+           },
+           {
+              "duration":5180,
+              "startTime":1669341341000,
+              "endTime":1669346521000,
+              "walkTime":2240,
+              "transitTime":2733,
+              "waitingTime":207,
+              "walkDistance":2748.99,
+              "walkLimitExceeded":false,
+              "generalizedCost":8371,
+              "elevationLost":0.0,
+              "elevationGained":0.0,
+              "transfers":1,
+              "fare":{
+                 "fare":{
+                    "regular":{
+                       "cents":350,
+                       "currency":{
+                          "currency":"CAD",
+                          "defaultFractionDigits":2,
+                          "currencyCode":"CAD",
+                          "symbol":"CA$"
+                       }
+                    }
+                 },
+                 "details":{
+                    "regular":[
+                       {
+                          "fareId":"1:13S_REG",
+                          "price":{
+                             "cents":350,
+                             "currency":{
+                                "currency":"CAD",
+                                "defaultFractionDigits":2,
+                                "currencyCode":"CAD",
+                                "symbol":"CA$"
+                             }
+                          },
+                          "routes":[
+                             "1:191",
+                             "1:202"
+                          ]
+                       }
+                    ]
+                 }
+              },
+              "tooSloped":false,
+              "arrivedAtDestinationWithRentedBicycle":false
+           }
+        ]
+      let durationTimeMetrics = getDurationMetrics(testingListRoute);
+
+         expect(durationTimeMetrics.minDurationTime).toBe(4590);
+         expect(durationTimeMetrics.maxDurationTime).toBe(5180);
+         expect(durationTimeMetrics.averageDurationTime).toBe(4885);
+         expect(durationTimeMetrics.standardDeviationDurationTime).toBe(295);
+  });
+
+
 });
 
 
