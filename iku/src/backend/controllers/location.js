@@ -30,7 +30,7 @@ export const showLocationsByUserID = (req, res) => {
 }
 
 // Get address by coordinates
-export const getAddressByCoordinates = (req, res) => {
+export const getAddressByCoordinates = async (req, res) => {
     const latlng = req.query.lat + ',' + req.query.lng;
     const key = process.env.GEOCODING_KEY;
     console.log(key);
@@ -48,7 +48,7 @@ export const getAddressByCoordinates = (req, res) => {
         res.json({'address': address});
     })
     .catch((error)=>{
-        console.log(error);
+        console.log(error.message);
     });
 }
 
@@ -75,7 +75,7 @@ export const getSuggestions = async (req, res) => {
 }
 
 //Get Coordinates of specified address
-export const getCoordinatesByAddress = (req, res) => {
+export const getCoordinatesByAddress = async (req, res) => {
     const key = process.env.GEOCODING_KEY;
     const address = req.query.address;
     const params = {
