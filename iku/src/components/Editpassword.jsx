@@ -52,18 +52,8 @@ export default function EditAccount() {
     if (newPassword === reEnterNewPassword) {
       boolPasswordsMatch = true;
     }
-    console.log(oldPassword);
-    console.log(oldPasswordInput);
-    console.log(newPassword);
-    console.log(reEnterNewPassword);
-    console.log(boolOldPassInput);
-    console.log(boolPasswordsMatch);
-    console.log();
-    console.log();
-    console.log();
 
-
-    if (boolOldPassInput && boolPasswordsMatch) {
+    if (boolOldPassInput && boolPasswordsMatch && oldPasswordInput!="") {
 
       await axios
         .post("http://localhost:5000/modifyUserById", {
@@ -73,6 +63,8 @@ export default function EditAccount() {
         .catch((error) => {
           console.log(error.message);
         });
+      console.log("Password Changed");
+      window.location.reload(true);
     }
     else {
       console.log("Error in fields.");
