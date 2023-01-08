@@ -8,6 +8,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@googlemaps/google-maps-services-js": "^3.3.16",
     "@headlessui/react": "^1.7.4",
+    "@next/env": "^13.0.6",
     "@tailwindcss/line-clamp": "^0.4.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

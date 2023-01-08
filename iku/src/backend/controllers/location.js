@@ -5,6 +5,7 @@ import { createLocation, getLocationsByUserID, modifyLocation, removeLocation } 
 
 // Google client for Geocoding API
 const geocodingClient = new Client({});
+const apiKey = "AIzaSyBnuzE1B3FwqNqcD9l8ahk_dTyn6XyQ0G4";
 
 // Create a new location with data
 export const addLocation = (req, res) => {
@@ -32,15 +33,15 @@ export const showLocationsByUserID = (req, res) => {
 // Get address by coordinates
 export const getAddressByCoordinates = async (req, res) => {
     const latlng = req.query.lat + ',' + req.query.lng;
-    const key = process.env.GEOCODING_KEY;
-    console.log(key);
+    const key = apiKey;
+    // const key = process.env.GEOCODING_KEY;
     const params = {
         key: key,
         latlng: latlng
     };
 
     console.log("retrieving address for " + req.query.lat + ", " + req.query.lng);
-    geocodingClient.geocode({
+    await geocodingClient.geocode({
         params:params
     })
     .then((response) => {
@@ -54,13 +55,14 @@ export const getAddressByCoordinates = async (req, res) => {
 
 // Get places suggestions given user input
 export const getSuggestions = async (req, res) => {
-    const key = process.env.GEOCODING_KEY;
+    const key = apiKey;
     const input = req.query.input;
+    console.log(key);
     const params = {
         key: key,
         input: input
     }
-    geocodingClient.placeAutocomplete({
+    await geocodingClient.placeAutocomplete({
         params: params
     })
     .then((response) => {
@@ -70,19 +72,21 @@ export const getSuggestions = async (req, res) => {
         res.json({'predictions': predictions});
     })
     .catch((error) => {
-        console.log(error.message);
+        console.log(error.response);
     });
 }
 
 //Get Coordinates of specified address
 export const getCoordinatesByAddress = async (req, res) => {
-    const key = process.env.GEOCODING_KEY;
+    const key = apiKey;
+    // const key = process.env.GEOCODING_KEY;
+    console.log(process);
     const address = req.query.address;
     const params = {
         key: key,
         address: address
     }
-    geocodingClient.geocode({
+    await geocodingClient.geocode({
         params: params
     })
     .then(response => {
