@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { validateOptionalParams, getWalkWaitComponents, sliceRoutesList, getWalkTimeMetrics, getWaitTimeMetrics } from "../backend/utils/openTripPlanner";
+import { validateOptionalParams, getWalkWaitComponents, sliceRoutesList, getWalkTimeMetrics, getWaitTimeMetrics, getFrequencyMetrics } from "../backend/utils/openTripPlanner";
 
 
 describe("OpenTripPlanner tests", () => {
@@ -1702,5 +1702,15 @@ describe("OTP List Route Parsing Functions Test (with start time, end time and a
       expect(waitTimeMetrics.averageWaitTime).toBe(629);
       expect(waitTimeMetrics.standardDeviationWaitTime).toBe(422);
 
-  });
+   });
+
+   test("Calculate metrics on frequncy", () =>{
+      let frequncyMetrics = getFrequencyMetrics(testingRoute);
+
+      expect(frequncyMetrics.minGap).toBe(762000);
+      expect(frequncyMetrics.maxGap).toBe(762000);
+      expect(frequncyMetrics.averageGap).toBe(762000);
+      expect(frequncyMetrics.standardDeviationGap).toBe(0);
+   });
+
 });

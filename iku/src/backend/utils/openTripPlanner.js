@@ -227,6 +227,36 @@ export const getWaitTimeMetrics = (routes) => {
     }
 }
 
+export const getFrequencyMetrics = (routes) => {
+    let frequencyList = [];
+    let gap = 0;
+
+    for(let i = 0; i < routes.length-1; i++){
+        gap = routes[i+1].startTime - routes[i].startTime;
+
+        if (gap != 0 && !(frequencyList.includes[gap])){
+            frequencyList.push(gap);
+        }
+    }
+
+    let minGap = 99999; 
+    let maxGap = 99999; 
+    let averageGap = 99999;
+    let standardDeviationGap = 99999;
+    
+    minGap = Math.min(...frequencyList);
+    maxGap = Math.max(...waitTimes);
+    averageGap = frequencyList.reduce((a, b) => a + b) / waitTimes.length;
+    standardDeviationGap = Math.sqrt(frequencyList.map(x => Math.pow(x - averageGap, 2)).reduce((a,b) => a+b)/frequencyList.length);
+
+    return {
+        minGap: minGap,
+        maxGap: maxGap,
+        averageGap: averageGap,
+        standardDeviationGap: standardDeviationGap
+    }
+}
+
 /**
  * Function that verifies if input time is in the specific start and end time range
  * @param {} time 
