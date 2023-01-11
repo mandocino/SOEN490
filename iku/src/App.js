@@ -10,6 +10,7 @@ import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import AboutUs from "./pages/Aboutpage.jsx";
 import EditAccountPage from "./pages/Editinfopage.jsx";
+import EditPasswordPage from "./pages/Editpasswordpage.jsx";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/editinfo" element={<EditAccountPage />} />
+        <Route path="/editpassword" element={<EditPasswordPage />} />
       </Routes>
     </>
   );

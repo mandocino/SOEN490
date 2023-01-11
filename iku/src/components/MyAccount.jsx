@@ -39,6 +39,7 @@ export default function MyAccount() {
           <p class="pb-4">Location: {CurrentHome}</p>
           <div class="w-60 mx-auto pb-10">
             <LinkButton to="/editinfo">Edit Account Information</LinkButton>
+            <LinkButton to="/editpassword">Change Password</LinkButton>
           </div>
         </div>
       </div>
