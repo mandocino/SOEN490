@@ -149,38 +149,6 @@ export const getDurationMetrics = (routes) => {
     }
 }
 
-
-export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
-    let list = [];
-    switch (mode){
-        case "END_MODE":
-            for(let i=0; i<routes.length;i++){
-                if(isInRange(routes[i].endTime,startTime,endTime)){ //verification if end time is in specific range
-                    list.push(routes[i]);
-                }
-            }
-            return list; 
-        case "START_MODE":
-            for(let i=0; i<routes.length;i++){
-                if(isInRange(routes[i].startTime,startTime,endTime)){ //verificatiopn if start time is in specific range
-                    list.push(routes[i]);
-                }
-            }
-            return list; 
-        case "WHOLE_ROUTE_MODE":
-            for(let i=0; i<routes.length;i++){
-                if(isInRange(routes[i].endTime,startTime,endTime) && 
-                isInRange(routes[i].startTime,startTime,endTime)){ //verification if both start and end time are in specific range
-                    list.push(routes[i]);
-                }
-            }
-            return list; 
-        default: 
-            throw new Error("INVALIDE MODE. Mode must be 'START_MODE', 'END_MODE', or 'WHOLE_ROUTE_MODE'");
-    }
-
-};
-
 /**
  * Function that computes the minimum, maximum, average and standard deviation of the routes walk times
  * @param {*} routes 
@@ -255,6 +223,94 @@ export const getFrequencyMetrics = (routes) => {
         averageGap: averageGap,
         standardDeviationGap: standardDeviationGap
     }
+}
+
+export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
+    let list = [];
+    switch (mode){
+        case "END_MODE":
+            for(let i=0; i<routes.length;i++){
+                if(isInRange(routes[i].endTime,startTime,endTime)){ //verification if end time is in specific range
+                    list.push(routes[i]);
+                }
+            }
+            return list;
+        case "START_MODE":
+            for(let i=0; i<routes.length;i++){
+                if(isInRange(routes[i].startTime,startTime,endTime)){ //verificatiopn if start time is in specific range
+                    list.push(routes[i]);
+                }
+            }
+            return list;
+        case "WHOLE_ROUTE_MODE":
+            for(let i=0; i<routes.length;i++){
+                if(isInRange(routes[i].endTime,startTime,endTime) &&
+                    isInRange(routes[i].startTime,startTime,endTime)){ //verification if both start and end time are in specific range
+                    list.push(routes[i]);
+                }
+            }
+            return list;
+        default:
+            throw new Error("INVALIDE MODE. Mode must be 'START_MODE', 'END_MODE', or 'WHOLE_ROUTE_MODE'");
+    }
+
+};
+
+/**
+ * Function to clean up routes by removing unwanted, undesirable, or redundant routes.
+ * @param routes
+ * @returns {*}
+ */
+export const removeBadRoutes = (routes) => {
+    let currentLength = routes.length
+    let removed = routes.length+1
+    for (let i=0; i<currentLength; i++) {
+        for (let j=0; j<currentLength; j++) {
+            // Remove route j if j starts or ends at the same time as route i, and is a longer route.
+            if (routes[i].startTime >= routes[j].startTime && routes[i].endTime < routes[j].endTime
+                || routes[i].startTime > routes[j].startTime && routes[i].endTime <= routes[j].endTime) {
+                routes.splice(j, 1);
+                removed = j;
+            }
+            // If both routes start at the same time, remove the "worse" route.
+            else if (routes[i].startTime === routes[j].startTime && routes[i].endTime === routes[j].endTime) {
+                // Remove the route with the most transfers
+                if (routes[i].transfers < routes[j].transfers) {
+                    routes.splice(j, 1);
+                    removed = j;
+                }
+                else if (routes[i].transfers > routes[j].transfers) {
+                    routes.splice(i, 1);
+                    removed = i;
+                }
+                else {
+                    // If both routes have the same num of transfers, remove the one with the most walking.
+                    if (routes[i].walkTime < routes[j].walkTime) {
+                        routes.splice(j, 1);
+                        removed = j;
+                    }
+                    else if (routes[i].walkTime > routes[j].walkTime) {
+                        routes.splice(i, 1);
+                        removed = i;
+                    }
+                    // If num of transfers and walk time is the same, remove an arbitrary route (as they're redundant).
+                    else {
+                        routes.splice(j, 1);
+                        removed = j;
+                    }
+                }
+            }
+            // If we removed an element earlier than the current index then we need to decrement our index to prevent
+            // accidentally skipping an element
+            if (removed < i) {
+                i--;
+            }
+            // reset currentLength and removed
+            currentLength = routes.length;
+            removed = routes.length+1
+        }
+    }
+    return routes;
 }
 
 /**
