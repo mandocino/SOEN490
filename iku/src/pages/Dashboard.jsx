@@ -88,7 +88,7 @@ export default function Dashboard() {
   return (
     <>
       <BaseLayout class="flex flex-col">
-        <div class="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">
+        <div class="w-full grow flex flex-col items-center p-8">
           <div class="w-full flex flex-col justify-center">
             <div class="flex gap-8">
               <div class="w-96 flex flex-col gap-8 items-center">
