@@ -1,5 +1,6 @@
 // import connection
 import { userDBModel } from "../config/db.js";
+import bcrypt from "bcrypt";
 
 // Get All Users
 export const getUsers = (result) => {
@@ -40,31 +41,49 @@ export const getUserByEmail = (email, result) => {
 
 // Attempt to get user data by login credentials
 export const login = (data, result) => {
-  // TODO: Should hash password, currently stored in plaintext
-  userDBModel.find(
-    data,
-    "_id first_name duration_priority email frequency_priority last_name walk_priority lastPrefChangeTime",
-    (err, data) => {
+  // Get hashed password for corresponding email
+  userDBModel.find({ email: data.email }, "_id password", (err, retData) => {
+    if (err) {
+      console.log(err);
+    } else {
+      // Compare given password with hashed
+      bcrypt.compare(data.password, retData[0].password, function(err, compareResult) {
+        if (compareResult) {
+          // If matches, get rest of user data and return it
+          userDBModel.find(
+              { email: data.email },
+              "_id first_name duration_priority email frequency_priority last_name walk_priority lastPrefChangeTime",
+              (err, data) => {
+                if (err) {
+                  console.log(err);
+                } else {
+                  console.log(data);
+                  result(null, data);
+                }
+              }
+          );
+        }else{
+          console.log(err);
+        }
+      });
+    }
+  });
+};
+
+// Creates a new user using given data
+export const signup = (data, result) => {
+  console.log("signup called");
+  // Hash password
+  bcrypt.hash(data.password, 10, function(err, hash) {
+    data.password = hash;
+    userDBModel.create(data, (err, data) => {
       if (err) {
         console.log(err);
       } else {
         console.log(data);
         result(null, data);
       }
-    }
-  );
-};
-
-// Creates a new user using given data
-export const signup = (data, result) => {
-  // TODO: Should hash password, currently stored in plaintext
-  userDBModel.create(data, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(data);
-      result(null, data);
-    }
+    });
   });
 };
 
