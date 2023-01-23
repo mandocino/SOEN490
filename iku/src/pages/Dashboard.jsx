@@ -7,20 +7,31 @@ import { Link } from "react-router-dom";
 import { ReactComponent as DurationIcon } from "./../assets/clock-regular.svg";
 import { ReactComponent as FrequencyIcon } from "./../assets/table-solid.svg";
 import { ReactComponent as WalkIcon } from "./../assets/person-walking-solid.svg";
+import {loadScores} from "../backend/utils/scoring";
 
 
 
 export default function Dashboard() {
 
+  const user_id = localStorage.getItem("user_id");
   const [locations, getLocations] = useState('');
 
   const fetchLocations = () => {
-    const user_id = localStorage.getItem("user_id");
     axios.get(`http://localhost:5000/locations/${user_id}`)
     .then((response) => {
       getLocations(response.data);
     })
     .catch(err => console.error(err));
+  }
+
+  const fetchScores = () => {
+    return origins.map(o => ({
+      ...o,
+      scores: loadScores(o, null, user_id),
+      detailedScores: destinations.map(async d => {
+        await loadScores(o, d, user_id)
+      })
+    }))
   }
   
   useEffect(() => {
@@ -71,7 +82,10 @@ export default function Dashboard() {
   }
   
   if (origins.length > 0) {
+    origins = fetchScores();
+    console.log(origins);
     originCards = origins.map(function(loc){
+      const scores = loadScores(loc, null, user_id);
       return <DashboardCard loc={loc}>{loc.name}</DashboardCard>;
     })
   } else {

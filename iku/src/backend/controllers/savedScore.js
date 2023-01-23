@@ -12,6 +12,17 @@ export const showSavedScoresByLocations = (req, res) => {
     });
 }
 
+// Get saved scores by origin only
+export const showSavedScoresByOrigin = (req, res) => {
+    getSavedScoresByLocations(req.params.origin, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
 // Create a new saved score with data
 export const addSavedScore = (req, res) => {
     const data = req.body;

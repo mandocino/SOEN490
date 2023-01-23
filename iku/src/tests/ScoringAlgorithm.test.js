@@ -16,7 +16,7 @@ describe("saveScores", () => {
             rushHour: 1,
             offPeak: 2,
             weekend: 3,
-            overNight: 4
+            overnight: 4
         }
         const mockDate = null;
 
@@ -31,7 +31,7 @@ describe("saveScores", () => {
                 rushHour: mockScores.rushHour,
                 offPeak:mockScores.offPeak,
                 weekend:mockScores.weekend,
-                overNight:mockScores.overNight
+                overnight:mockScores.overnight
             }
         };
 
@@ -85,7 +85,7 @@ describe("getScores", () => {
             rushHour: 1,
             offPeak: 2,
             weekend: 3,
-            overNight: 4
+            overnight: 4
         };
         jest.spyOn(axios, "get").mockResolvedValue({ data: mockScores });
 
@@ -109,7 +109,7 @@ describe("loadScores", () => {
             rushHour: 1,
             offPeak: 2,
             weekend: 3,
-            overNight: 4
+            overnight: 4
         });
         jest.clearAllMocks();
     });
@@ -153,7 +153,7 @@ describe("loadScores", () => {
             rushHour: 1,
             offPeak: 2,
             weekend: 3,
-            overNight: 4
+            overnight: 4
         };
 
         const mockAlgoUpdatedTime = {
