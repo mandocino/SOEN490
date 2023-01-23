@@ -48,7 +48,7 @@ export async function generateNewScores(origin, destination = null) {
 }
 
 export async function getScores(origin, destination = null) {
-    const url = destination ? `http://localhost:5000/savedScores/${origin}/${destination}` : `http://localhost:5000/savedScores/${origin}`;
+    const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
     const result = await axios.get(url, {
         params:
             {

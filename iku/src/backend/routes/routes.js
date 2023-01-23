@@ -81,7 +81,7 @@ router.post('/newSavedScore/', addSavedScore);
 router.get('/savedScores/:origin/:destination', showSavedScoresByLocations);
 
 // Get the overall saved score of an origin
-router.get('/savedScores/:origin/:destination', showSavedScoresByOrigin);
+router.get('/savedScores/:origin', showSavedScoresByOrigin);
 
 // Delete a saved score by object id
 router.post('/deleteSavedScore/', deleteSavedScore);

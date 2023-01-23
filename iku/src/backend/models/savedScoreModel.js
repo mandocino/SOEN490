@@ -15,8 +15,8 @@ export const getSavedScoresByLocations = (originID, destID, result) => {
 }
 
 
-export const getSavedScoresByOrigin = (originID, destID, result) => {
-    savedScoreDBModel.find({'origin':originID,'destination':null},(err, data) => {
+export const getSavedScoresByOrigin = (originID, result) => {
+    savedScoreDBModel.find({'origin':originID,'destination':{ $exists: false }},(err, data) => {
         if (err){
             console.log(err);
         }

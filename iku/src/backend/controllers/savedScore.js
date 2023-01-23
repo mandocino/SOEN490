@@ -1,5 +1,5 @@
 // Import function from saved score Model
-import { getSavedScoresByLocations, createSavedScore, removeSavedScore } from "../models/savedScoreModel.js";
+import { getSavedScoresByLocations, getSavedScoresByOrigin, createSavedScore, removeSavedScore } from "../models/savedScoreModel.js";
 
 // Get saved scores by origin and destination
 export const showSavedScoresByLocations = (req, res) => {
@@ -14,7 +14,7 @@ export const showSavedScoresByLocations = (req, res) => {
 
 // Get saved scores by origin only
 export const showSavedScoresByOrigin = (req, res) => {
-    getSavedScoresByLocations(req.params.origin, (err, results) => {
+    getSavedScoresByOrigin(req.params.origin, (err, results) => {
         if (err){
             res.send(err);
         }else{
