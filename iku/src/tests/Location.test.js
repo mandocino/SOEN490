@@ -27,7 +27,7 @@ afterAll((done) => {
 })
 
 describe("Google Geocoding API tests", () => {
-    // Test geocoding with valid coordinates
+    // Test geocoding with valid coordinates (Address from coordinates)
     test("Get address from coordinates", async() => {
 
         const concordiaLatitude = 45.497109;
@@ -42,23 +42,17 @@ describe("Google Geocoding API tests", () => {
         expect(address).toContain("1455");
         expect(address).toContain("Maisonneuve");
     });
-    
-    // test("Get address from coordinates", async() => {
-    //     const concordiaLatitude = 45.497109;
-    //     const concordiaLongitude = -73.578734;
 
-    //     const geocodedAddress = await request(app)
-    //         .get('/address/')
-    //         .query({
-    //                 lat: concordiaLatitude,
-    //                 lng: concordiaLongitude
-    //             });
-    //     const address = geocodedAddress.body.address;
-    //     expect(address).toContain("1455");
-    //     expect(address).toContain("Maisonneuve");
-    // });
+    // Test for bad request (Address from coordinates)
+    test("Failed request for /address/", async () => {
+        const response = await axios.get('http://localhost:5000/address/', {
+            params: null
+        });
+        expect(response.data.status).toBe(400);
+    })
     
-    // Test geocoding with valid address
+
+    // Test geocoding with valid address (coordinates from address)
     test("Get coordinates from a valid address", async() => {
         const address = 'Concordia University, Boulevard de Maisonneuve Ouest';
         const geocodedCoordinates = await axios.get('http://localhost:5000/coordinates', {
@@ -71,23 +65,22 @@ describe("Google Geocoding API tests", () => {
         expect(coordinates.lng).toBe(-73.5779128);
     })
 
-    // test("Get coordinates from a valid address", async() => {
-    //     const address = 'Concordia University, Boulevard de Maisonneuve Ouest';
-    //     const geocodedCoordinates = await request(app)
-    //         .get('/coordinates/')
-    //         .query({
-    //             address: address
-    //         });
-    //     const coordinates = geocodedCoordinates.body.coordinates;
-    //     expect(coordinates.lat).toBe(45.4948363);
-    //     expect(coordinates.lng).toBe(-73.5779128);
-    // })
+     // Test for bad request (coordinates from address)
+    test("Failed request for /coordinates/", async () => {
+        const response = await axios.get('http://localhost:5000/coordinates', {
+            params: {
+                address: null
+            }
+        });
+        expect(response.data.status).toBe(400);
+
+    })
 });
 
 
 describe("Google Places Autocomplete API test", () => {
 
-    // Test to check that an Non empty array is returned
+    // Test valid request to Google autocomplete Api
     test("Get suggestions for a given input", async () => {
         const input = 'montreal';
         const suggestionsResponse = await axios.get('http://localhost:5000/suggestions', {
@@ -100,18 +93,17 @@ describe("Google Places Autocomplete API test", () => {
         expect(suggestions[0]).toBe("Montreal, QC, Canada");
     })
 
-    // test("Get suggestions for a given input", async () => {
-    //     const input = 'montreal';
-    //     const suggestionsResponse = await request(app)
-    //         .get('/suggestions/')
-    //         .query({
-    //             input: input
-    //         });
 
-    //     const suggestions = suggestionsResponse.body.predictions;
-    //     expect(suggestionsResponse.status).toBe(200); // 200 --> successful request
-    //     expect(suggestions[0]).toBe("Montreal, QC, Canada");
-    // })
+    //Test for invalid request to Google autocomplete API
+    test("Failed request for /suggestions/", async () => {
+        const response = await axios.get('http://localhost:5000/suggestions', {
+            params: {
+                input: null
+            }
+        });
+        console.log(response);
+        expect(response.data.status).toBe(400); //400 --> Invalid request
+    })
 });
 
 describe("Database tests", () => {
@@ -131,6 +123,18 @@ describe("Database tests", () => {
         locationID = resSignup.data._id;
     });
 
+    test("Create with invalid request", async () => {
+        const response = await axios.post(`http://localhost:5000/newlocation/`, {
+            user_id: null,
+            latitude: 0,
+            longitude: 0,
+            name: "Test",
+            origin: true,
+            current_home: true
+        });
+        expect(response.data.message).toContain("Location validation failed");
+    })
+
 
     test("Get", async () => {
         const resGet = await axios.get(`http://localhost:5000/locations/${objectID}`);
@@ -145,12 +149,21 @@ describe("Database tests", () => {
         expect(found).toBe(true);
     });
 
+
     test("Modify", async () => {
         const resModify = await axios.post(`http://localhost:5000/updateLocation/`, {
             _id: locationID,
             name: "ModifiedTest"
         });
         expect(resModify.data.name).toBe("ModifiedTest");
+    });
+
+    test("Modify with invalid request", async () => {
+        const response = await axios.post(`http://localhost:5000/updateLocation/`, {
+            _id: 'badID',
+            name: "ModifiedTest"
+        });
+        expect(response.data.message).toContain("failed");
     });
 
     test("Delete", async () => {
@@ -166,6 +179,13 @@ describe("Database tests", () => {
             }
         }
         expect(found).toBe(false);
+    });
+
+    test("Delete with invalid request", async () => {
+        const response = await axios.post(`http://localhost:5000/deleteLocation/`, {
+            _id: 'badID'
+        });
+        expect(response.data.message).toContain("failed");
     });
 
 });

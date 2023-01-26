@@ -50,6 +50,7 @@ export const getAddressByCoordinates = async (req, res) => {
     })
     .catch((error)=>{
         console.log(error.message);
+        res.send(error);
     });
 }
 
@@ -73,6 +74,7 @@ export const getSuggestions = async (req, res) => {
     })
     .catch((error) => {
         console.log(error.response);
+        res.send(error);
     });
 }
 
@@ -94,6 +96,7 @@ export const getCoordinatesByAddress = async (req, res) => {
     })
     .catch(error => {
         console.log(error.message);
+        res.send(error);
     })
 }
     

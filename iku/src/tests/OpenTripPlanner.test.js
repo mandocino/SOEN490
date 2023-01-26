@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { validateOptionalParams, getWalkWaitComponents, sliceRoutesList, getWalkTimeMetrics, getWaitTimeMetrics } from "../backend/utils/openTripPlanner";
+import { validateOptionalParams, getWalkWaitComponents, sliceRoutesList, getWalkTimeMetrics, getWaitTimeMetrics, getDurationMetrics} from "../backend/utils/openTripPlanner";
 
 
 describe("OpenTripPlanner tests", () => {
