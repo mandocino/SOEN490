@@ -37,23 +37,37 @@ export default function SearchBar() {
         },
       })
       .then(async (response) => {
-        console.log(response);
-        console.log(input);
+        const userId = localStorage.getItem("user_id");
+        const location = {
+          latitude: response.data.coordinates.lat,
+          longitude: response.data.coordinates.lng,
+          name: input.split(",")[0],
+          notes: input,
+          origin: true,
+          current_home: false,
+        };
 
-        await axios
-          .post("http://localhost:5000/newlocation", {
-            user_id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
-            latitude: response.data.coordinates.lat,
-            longitude: response.data.coordinates.lng,
-            name: input.split(",")[0],
-            notes: input,
-            origin: true,
-            current_home: false,
-          })
+        let locationStringArray;
+        if(userId == null) {
+          locationStringArray = sessionStorage.getItem("location")
+
+          if(locationStringArray == null) {
+            sessionStorage.setItem('location', JSON.stringify([location]));
+          } else {
+            let locationsArray = JSON.parse(locationStringArray);
+            locationsArray.push(location);
+            sessionStorage.setItem('location', JSON.stringify(locationsArray));
+          }
+        } else {
+          await axios
+            .post("http://localhost:5000/newlocation", {
+              user_id: mongoose.Types.ObjectId(userId),
+              ...location
+            })
           .catch((error) => {
             console.log(error.message);
           });
-
+        }
         navigate("/dashboard");
       })
       .catch((error) => {
