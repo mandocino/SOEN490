@@ -16,11 +16,20 @@ export default function Dashboard() {
 
   const fetchLocations = () => {
     const user_id = localStorage.getItem("user_id");
-    axios.get(`http://localhost:5000/locations/${user_id}`)
-    .then((response) => {
-      getLocations(response.data);
-    })
-    .catch(err => console.error(err));
+
+    if(user_id == null) {
+      let locationStringArray = sessionStorage.getItem('location')
+      if(locationStringArray != null) {
+        let locationArray = JSON.parse(locationStringArray);
+        getLocations(locationArray);
+      }
+    } else {
+      axios.get(`http://localhost:5000/locations/${user_id}`)
+      .then((response) => {
+        getLocations(response.data);
+      })
+      .catch(err => console.error(err));
+    }
   }
   
   useEffect(() => {
