@@ -15,27 +15,27 @@ export async function saveScores(origin, destination, scores, date) {
         overNight:scores.overNight
     }
    });
-};
+}
 
 export function generateNewScores(origin, destination, user){
-  var rushHour = (Math.random()*100) + 1;
-  Math.floor(rushHour);
+  let rushHour = (Math.random()*100) + 1;
+  rushHour = Math.floor(rushHour);
 
-  var offPeak = (Math.random()*100) + 1;
-  Math.floor(offPeak);
+  let offPeak = (Math.random()*100) + 1;
+  offPeak = Math.floor(offPeak);
 
-  var weekend = (Math.random()*100) + 1;
-  Math.floor(weekend);
+  let weekend = (Math.random()*100) + 1;
+  weekend = Math.floor(weekend);
 
-  var night = (Math.random()*100) + 1;
-  Math.floor(night);
+  let night = (Math.random()*100) + 1;
+  night = Math.floor(night);
 
-  var overall = (Math.random()*100) + 1;
-  Math.floor(night);
+  let overall = (Math.random()*100) + 1;
+  overall = Math.floor(night);
 
-  var date = Date.now();
+  let date = Date.now();
 
-  var scores =
+  let scores =
   {
     overall:overall,
     rushHour:rushHour,
