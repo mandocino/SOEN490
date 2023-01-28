@@ -5,16 +5,6 @@ import DetailModal from "./DetailModal";
 
 export default function DashboardCard(props) {
 
-  const [show, setShow] = useState(false);
-
-  const showModal = () => {
-    setShow(true);
-  }
-
-  const closeModal = () => {
-    setShow(false);
-}
-
   return (
     <>
       <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
@@ -25,11 +15,8 @@ export default function DashboardCard(props) {
             {props.children}
           </span>
           <div class="flex flex-col gap-2">
-              <button onClick={showModal} type="button" class="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white" on>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                </svg>
-              </button>
+          <DetailModal originLocation={props.loc} />
+
             <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
           </div>
           
@@ -79,7 +66,6 @@ export default function DashboardCard(props) {
             </div>
           </div>
         </div>
-        <DetailModal show={show} closeModal={closeModal} locationModel={props.loc} />
 
       </div>
     </>
