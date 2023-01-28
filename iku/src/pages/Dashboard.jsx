@@ -22,7 +22,7 @@ export default function Dashboard() {
     })
     .catch(err => console.error(err));
   }
-  
+
   useEffect(() => {
     fetchLocations();
   }, []);
@@ -72,7 +72,7 @@ export default function Dashboard() {
   
   if (origins.length > 0) {
     originCards = origins.map(function(loc){
-      return <DashboardCard loc={loc}>{loc.name}</DashboardCard>;
+      return <DashboardCard loc={loc} destinations={destinations}>{loc.name}</DashboardCard>;
     })
   } else {
     originCards =
@@ -99,7 +99,7 @@ export default function Dashboard() {
                   {
                     currentHome ?
                       <>
-                        <DashboardCard loc={currentHome} invert>{currentHome.name}</DashboardCard>
+                        <DashboardCard loc={currentHome} destinations={destinations} invert>{currentHome.name}</DashboardCard>
                       </>
                       :
                       <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">

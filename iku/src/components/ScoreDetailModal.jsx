@@ -4,8 +4,7 @@ import { ReactComponent as RightArrowIcon } from "./../assets/arrow-right.svg";
 import CircleWithText from "./custom/CircleWithText";
 import axios from "axios";
 
-function ScoreDetailModal({ originLocation }) {
-  
+function ScoreDetailModal({ originLocation, destinations }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -20,25 +19,50 @@ function ScoreDetailModal({ originLocation }) {
   const [savedScores, setSavedScores] = useState({});
 
   const defaultSavedScores = {
-    "overall": 0,
-    "rushHour": 0,
-    "offPeak": 0,
-    "weekend": 0,
-    "overnight": 0
+    overall: 0,
+    rushHour: 0,
+    offPeak: 0,
+    weekend: 0,
+    overnight: 0,
   };
 
   const fetchOverallSavedScore = () => {
     axios
       .get(`http://localhost:5000/savedScores/${originLocation._id}`)
       .then((response) => {
-        if(response.data[0]){
+        if (response.data[0]) {
           setSavedScores(response.data[0]);
-        }
-        else{
+        } else {
+          // Assign 0 to all scores and statistics if values have not been calculated yet
           setSavedScores(defaultSavedScores);
         }
       })
       .catch((err) => console.error(err));
+  };
+
+  let selectedDestination = "default";
+
+  const onChangeDestinationDropdown = (event) => {
+    selectedDestination = event.target.value;
+
+    // Case where selected item in dropdown is All destinations
+    if (selectedDestination == "default") {
+      fetchOverallSavedScore();
+    } else {
+      axios
+        .get(
+          `http://localhost:5000/savedScores/${originLocation._id}/${selectedDestination}`
+        )
+        .then((response) => {
+          if (response.data[0]) {
+            setSavedScores(response.data[0]);
+          } else {
+            // Assign 0 to all scores and statistics if values have not been calculated yet
+            setSavedScores(defaultSavedScores);
+          }
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   return (
@@ -126,6 +150,21 @@ function ScoreDetailModal({ originLocation }) {
                   <div className="text-2xl pt-7 font-normal">
                     <div className="pr-3 inline">{originLocation.name}</div>
                     <RightArrowIcon className="inline"></RightArrowIcon>
+                    <select
+                      className="form-control"
+                      onChange={onChangeDestinationDropdown}
+                    >
+                      <option key="default" value="default" selected>
+                        -- All destinations --
+                      </option>
+                      {destinations.map(function (dest) {
+                        return (
+                          <option key={dest._id} value={dest._id}>
+                            {dest.name}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
                 </Dialog.Title>
 
