@@ -1,10 +1,10 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ReactComponent as RightArrowIcon } from "./../assets/arrow-right.svg";
-import CircleWithText from "../components/custom/CircleWithText";
+import CircleWithText from "./custom/CircleWithText";
 import axios from "axios";
 
-function DetailModal({ originLocation }) {
+function ScoreDetailModal({ originLocation }) {
   
   const [isOpen, setIsOpen] = useState(false);
 
@@ -656,4 +656,4 @@ function DetailModal({ originLocation }) {
   );
 }
 
-export default DetailModal;
+export default ScoreDetailModal;
