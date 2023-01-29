@@ -3,6 +3,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ReactComponent as RightArrowIcon } from "./../assets/arrow-right.svg";
 import CircleWithText from "./custom/CircleWithText";
 import axios from "axios";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import { styled } from "@mui/material/styles";
+import Typography from "@mui/material/Typography";
 
 function ScoreDetailModal({ originLocation, destinations }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -126,12 +129,73 @@ function ScoreDetailModal({ originLocation, destinations }) {
               leaveTo="opacity-0 scale-95"
             >
               {/* Contents of the modal */}
-              <Dialog.Panel className="inline-block w-full max-w-6xl  p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-emerald-50 shadow-xl rounded-2xl">
+              <Dialog.Panel className="inline-block w-full max-w-fit  p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-emerald-50 shadow-xl rounded-2xl">
                 <Dialog.Title
                   as="h3"
                   className="text-3xl py-2.5 font-medium leading-6 text-emerald-500 pl-5 "
                 >
-                  <div>Details</div>
+                  <div className="inline">Details</div>
+
+                  <Tooltip
+                    title={
+                      <table className="table-auto border-separate">
+                        <thead>
+                          <tr>
+                            <th>
+                              <td>Transit Score</td>
+                              <td>Description</td>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>90-100</td>
+                            <td>Rider's Paradise</td>
+                          </tr>
+                          <tr>
+                            <td>70-89</td>
+                            <td>Excellent Transit</td>
+                          </tr>
+                          <tr>
+                            <td>50-69</td>
+                            <td>Good Transit</td>
+                          </tr>
+                          <tr>
+                            <td>25-49</td>
+                            <td>Some Transit</td>
+                          </tr>
+                          <tr>
+                            <td>0-24</td>
+                            <td>Minimal Transit</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    }
+                    placement="right"
+                    className="pl-3"
+                  >
+                    <button
+                      type="button"
+                      class="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
+                      on
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="2"
+                        stroke="currentColor"
+                        class="w-6 h-6 inline"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                        />
+                      </svg>
+                    </button>
+                  </Tooltip>
+
                   <div className="float-right absolute right-4 top-4 ">
                     <button type="button" onClick={closeModal}>
                       <svg
@@ -250,6 +314,11 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             </table>
                           </div>
                         </th>
+                        <th>
+                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
+                            <span>Score</span>
+                          </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -329,7 +398,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-1"
+                            class="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -415,7 +484,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-1"
+                            class="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -501,7 +570,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-1"
+                            class="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -587,7 +656,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-1"
+                            class="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -673,7 +742,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-1"
+                            class="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
