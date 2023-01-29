@@ -3,7 +3,7 @@ import {savedScoreDBModel} from "../config/db.js";
 
 // Get saved scores by origin and destination
 export const getSavedScoresByLocations = (originID, destID, result) => {
-    savedScoreDBModel.find({'origin':originID,'destination':destID},(err, data) => {
+    savedScoreDBModel.findOne({'origin':originID,'destination':destID},(err, data) => {
         if (err){
             console.log(err);
         }
@@ -16,7 +16,7 @@ export const getSavedScoresByLocations = (originID, destID, result) => {
 
 // Get saved scores by origin only
 export const getSavedScoresByOrigin = (originID, result) => {
-    savedScoreDBModel.find({'origin':originID,'destination':{ $exists: false }},(err, data) => {
+    savedScoreDBModel.findOne({'origin':originID,'destination':{ $exists: false }},(err, data) => {
         if (err){
             console.log(err);
         }

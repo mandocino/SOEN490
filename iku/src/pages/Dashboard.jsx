@@ -1,4 +1,4 @@
-import React, { useEffect , useState} from "react";
+import React, { useEffect , useState, useRef } from "react";
 import BaseLayout from "../components/BaseLayout";
 import DashboardCard from "../components/DashboardCard";
 import EditLocation from "../components/EditLocation";
@@ -19,8 +19,10 @@ export default function Dashboard() {
   const [origins, setOrigins] = useState([]);
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
   const [currentHome, setCurrentHome] = useState([]);
-  const [rawDestinations, setRawDestinations] = useState([]);
   const [destinations, setDestinations] = useState([]);
+
+  const locationsLoaded = useRef(false);
+  const locationsSplit = useRef(false);
 
   let originCards;
   let destinationCards;
@@ -31,6 +33,7 @@ export default function Dashboard() {
       getLocations(response.data);
     })
     .catch(err => console.error(err));
+    locationsLoaded.current = true;
   }
 
   const splitLocations = () => {
@@ -39,30 +42,44 @@ export default function Dashboard() {
       setRawOrigins(locations.filter(loc => !loc.current_home && loc.origin));
       setDestinations(locations.filter(loc => !loc.origin));
     }
+    locationsSplit.current = true;
   }
 
-  const fetchScores = () => {
-    setOrigins(rawOrigins.map(o => ({
-      ...o,
-      scores: loadScores(o, null, user_id),
-      detailedScores: destinations.map(async d => {
-        await loadScores(o, d, user_id)
-      })
+  const fetchScores = async () => {
+
+    async function getScores(origin) {
+      return await loadScores(origin, null, user_id);
+    }
+
+    function getDetailedScores(origin) {
+      let detailedScores = [];
+
+      for (const d of destinations) {
+        loadScores(origin, d, user_id).then((r) => {detailedScores.push(r)});
+      }
+
+      return detailedScores;
+    }
+
+    const originsWithScores = await Promise.all(rawOrigins.map(async o => ({
+      ...o, scores: await getScores(o), detailedScores: getDetailedScores(o)
     })));
+
+    setOrigins(originsWithScores);
   }
 
-  const fetchCurrentHomeScores = () => {
+  const fetchCurrentHomeScores = async () => {
+    const scores = await loadScores(rawCurrentHome, null, user_id);
+    let detailedScores = [];
+
+    for (const d of destinations) {
+      const scoreSet = await loadScores(rawCurrentHome, d, user_id);
+      detailedScores.push(scoreSet);
+    }
+
     setCurrentHome({
-      ...rawCurrentHome,
-      scores: loadScores(rawCurrentHome, null, user_id),
-      detailedScores: destinations.map(async d => {
-        await loadScores(rawCurrentHome, d, user_id)
-      })
+      ...rawCurrentHome, scores: scores, detailedScores: detailedScores
     });
-    // currentHome.scores = loadScores(currentHome, null, user_id);
-    // currentHome. detailedScores = destinations.map(async d => {
-    //   await loadScores(currentHome, d, user_id)
-    // });
   }
   
   useEffect(() => {
@@ -70,15 +87,17 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    splitLocations();
+    if (locationsLoaded.current) {
+      splitLocations();
+    }
   }, [locations]);
 
   useEffect(() => {
-    fetchScores();
-    fetchCurrentHomeScores();
-    console.log("GOT LOCATIONS");
-    console.log(origins);
-  }, [rawOrigins, rawDestinations]);
+    if (locationsSplit.current) {
+      fetchScores();
+      fetchCurrentHomeScores();
+    }
+  }, [rawOrigins, destinations]);
 
   if (destinations.length > 0) {
     destinationCards = destinations.map(function(loc){
@@ -90,8 +109,8 @@ export default function Dashboard() {
           <div class="flex flex-nowrap gap-2">
             <Link to="/" class="transition ease-in-out duration-200 rounded-lg">
               <button type="button" class="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-emerald-600 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" class="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </button>
             </Link>
@@ -179,8 +198,8 @@ export default function Dashboard() {
 
                   <Link to="/" class="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
                     <button type="button" class="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                       </svg>
                       Edit Frequencies
                     </button>
@@ -207,8 +226,8 @@ export default function Dashboard() {
 
                 <Link to="/" class="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
                   <button type="button" class="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" class="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Add Destination
                   </button>

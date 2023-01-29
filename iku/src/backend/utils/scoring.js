@@ -15,21 +15,12 @@ export async function saveScores(origin, destination, scores, date) {
     if (destination) {
         params.destination = destination;
         await axios.post(`http://localhost:5000/editSavedScore/${origin._id}/${destination._id}`, params);
-        // console.log(`DELETE ${origin._id} ${destination._id}`);
     } else {
         await axios.post(`http://localhost:5000/editSavedScore/${origin._id}`, params);
-        // console.log(`DELETE ${origin._id}`);
     }
-    // await axios.post('http://localhost:5000/newSavedScore', params);
 }
 
 export async function generateNewScores(origin, destination = null) {
-    // if (destination) {
-    //     console.log(`GENERATE ${origin._id} ${destination._id}`);
-    // } else {
-    //     console.log(`GENERATE ${origin._id}`);
-    // }
-
     let rushHour = (Math.random() * 100) + 1;
     rushHour = Math.floor(rushHour);
 
@@ -87,14 +78,17 @@ export async function loadScores(origin, destination, userID) {
         savedScores = await thisModule.getScores(origin, destination);
     }
 
-    console.log(`loading for ${origin.name}, ${destination}`)
-    console.log(savedScores);
-
-    return {
+    let scores = {
         overall: savedScores.overall,
         rushHour: savedScores.rushHour,
         offPeak: savedScores.offPeak,
         weekend: savedScores.weekend,
         overnight: savedScores.overnight
-    };
+    }
+
+    if (destination) {
+        scores.destination = destination;
+    }
+
+    return scores;
 }
