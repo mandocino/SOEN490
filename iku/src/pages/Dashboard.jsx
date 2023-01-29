@@ -14,7 +14,16 @@ import {loadScores} from "../backend/utils/scoring";
 export default function Dashboard() {
 
   const user_id = localStorage.getItem("user_id");
-  const [locations, getLocations] = useState('');
+  const [locations, getLocations] = useState([]);
+  const [rawOrigins, setRawOrigins] = useState([]);
+  const [origins, setOrigins] = useState([]);
+  const [rawCurrentHome, setRawCurrentHome] = useState([]);
+  const [currentHome, setCurrentHome] = useState([]);
+  const [rawDestinations, setRawDestinations] = useState([]);
+  const [destinations, setDestinations] = useState([]);
+
+  let originCards;
+  let destinationCards;
 
   const fetchLocations = () => {
     axios.get(`http://localhost:5000/locations/${user_id}`)
@@ -24,31 +33,52 @@ export default function Dashboard() {
     .catch(err => console.error(err));
   }
 
+  const splitLocations = () => {
+    if (locations.length > 0) {
+      setRawCurrentHome(locations.find(loc => loc.current_home));
+      setRawOrigins(locations.filter(loc => !loc.current_home && loc.origin));
+      setDestinations(locations.filter(loc => !loc.origin));
+    }
+  }
+
   const fetchScores = () => {
-    return origins.map(o => ({
+    setOrigins(rawOrigins.map(o => ({
       ...o,
       scores: loadScores(o, null, user_id),
       detailedScores: destinations.map(async d => {
         await loadScores(o, d, user_id)
       })
-    }))
+    })));
+  }
+
+  const fetchCurrentHomeScores = () => {
+    setCurrentHome({
+      ...rawCurrentHome,
+      scores: loadScores(rawCurrentHome, null, user_id),
+      detailedScores: destinations.map(async d => {
+        await loadScores(rawCurrentHome, d, user_id)
+      })
+    });
+    // currentHome.scores = loadScores(currentHome, null, user_id);
+    // currentHome. detailedScores = destinations.map(async d => {
+    //   await loadScores(currentHome, d, user_id)
+    // });
   }
   
   useEffect(() => {
     fetchLocations();
   }, []);
 
-  let origins = [];
-  let originCards;
-  let destinations = [];
-  let destinationCards;
-  let currentHome = null;
+  useEffect(() => {
+    splitLocations();
+  }, [locations]);
 
-  if (locations.length > 0) {
-    currentHome = locations.find(loc => loc.current_home);
-    origins = locations.filter(loc => !loc.current_home && loc.origin);
-    destinations = locations.filter(loc => !loc.origin);
-  }
+  useEffect(() => {
+    fetchScores();
+    fetchCurrentHomeScores();
+    console.log("GOT LOCATIONS");
+    console.log(origins);
+  }, [rawOrigins, rawDestinations]);
 
   if (destinations.length > 0) {
     destinationCards = destinations.map(function(loc){
@@ -80,12 +110,9 @@ export default function Dashboard() {
       </div>
     </div>;
   }
-  
+
   if (origins.length > 0) {
-    origins = fetchScores();
-    console.log(origins);
     originCards = origins.map(function(loc){
-      const scores = loadScores(loc, null, user_id);
       return <DashboardCard loc={loc}>{loc.name}</DashboardCard>;
     })
   } else {

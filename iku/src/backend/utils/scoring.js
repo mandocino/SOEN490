@@ -14,11 +14,22 @@ export async function saveScores(origin, destination, scores, date) {
         };
     if (destination) {
         params.destination = destination;
+        await axios.post(`http://localhost:5000/deleteSavedScore/${origin._id}/${destination._id}`);
+        // console.log(`DELETE ${origin._id} ${destination._id}`);
+    } else {
+        await axios.post(`http://localhost:5000/deleteSavedScore/${origin._id}`);
+        // console.log(`DELETE ${origin._id}`);
     }
     await axios.post('http://localhost:5000/newSavedScore', params);
 }
 
 export async function generateNewScores(origin, destination = null) {
+    // if (destination) {
+    //     console.log(`GENERATE ${origin._id} ${destination._id}`);
+    // } else {
+    //     console.log(`GENERATE ${origin._id}`);
+    // }
+
     let rushHour = (Math.random() * 100) + 1;
     rushHour = Math.floor(rushHour);
 
@@ -47,7 +58,7 @@ export async function generateNewScores(origin, destination = null) {
     await thisModule.saveScores(origin, destination, scores, date);
 }
 
-export async function getScores(origin, destination = null) {
+export async function getScores(origin, destination) {
     const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
     const result = await axios.get(url, {
         params:
@@ -71,10 +82,13 @@ export async function loadScores(origin, destination, userID) {
 
     savedScores = await thisModule.getScores(origin, destination);
 
-    if (!savedScores || savedScores.date < lastPrefChangeTime || savedScores.date < lastUpdateAlgoUpdateTime) {
+    if (!savedScores || savedScores.length === 0 || savedScores.date < lastPrefChangeTime || savedScores.date < lastUpdateAlgoUpdateTime) {
         await thisModule.generateNewScores(origin, destination);
         savedScores = await thisModule.getScores(origin, destination);
     }
+
+    console.log(`loading for ${origin.name}, ${destination}`)
+    console.log(savedScores);
 
     return {
         overall: savedScores.overall,

@@ -1,5 +1,11 @@
 // Import function from saved score Model
-import { getSavedScoresByLocations, getSavedScoresByOrigin, createSavedScore, removeSavedScore } from "../models/savedScoreModel.js";
+import {
+    getSavedScoresByLocations,
+    getSavedScoresByOrigin,
+    createSavedScore,
+    removeSavedScore,
+    removeSavedScoresByLocations, removeSavedScoresByOrigin
+} from "../models/savedScoreModel.js";
 
 // Get saved scores by origin and destination
 export const showSavedScoresByLocations = (req, res) => {
@@ -38,6 +44,28 @@ export const addSavedScore = (req, res) => {
 // Delete a SavedScore by its object ID
 export const deleteSavedScore = (req, res) => {
     removeSavedScore(req.body._id, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedScore by origin and destination
+export const deleteSavedScoreByLocations = (req, res) => {
+    removeSavedScoresByLocations(req.params.origin, req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedScore by its object ID
+export const deleteSavedScoreByOrigin = (req, res) => {
+    removeSavedScoresByOrigin(req.params.origin, (err, results) => {
         if (err){
             res.send(err);
         }else{

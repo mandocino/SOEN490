@@ -14,7 +14,7 @@ export const getSavedScoresByLocations = (originID, destID, result) => {
     });
 }
 
-
+// Get saved scores by origin only
 export const getSavedScoresByOrigin = (originID, result) => {
     savedScoreDBModel.find({'origin':originID,'destination':{ $exists: false }},(err, data) => {
         if (err){
@@ -43,6 +43,32 @@ export const createSavedScore = (data, result) => {
 // Remove a SavedScore by its Object ID
 export const removeSavedScore = (_id, result) => {
     savedScoreDBModel.findOneAndDelete({_id:_id},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Remove saved scores by origin and destination
+export const removeSavedScoresByLocations = (originID, destID, result) => {
+    savedScoreDBModel.deleteMany({'origin':originID,'destination':destID},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Remove saved scores by origin only
+export const removeSavedScoresByOrigin = (originID, result) => {
+    savedScoreDBModel.deleteMany({'origin':originID,'destination':{ $exists: false }},(err, data) => {
         if (err){
             console.log(err);
         }

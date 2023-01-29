@@ -6,7 +6,13 @@ import { showUsers, showUserByID, showUserByEmail, loginController , signupContr
 import { addLocation, getAddressByCoordinates, showLocationsByUserID, getSuggestions, getCoordinatesByAddress, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
-import {addSavedScore, showSavedScoresByLocations, showSavedScoresByOrigin, deleteSavedScore} from "../controllers/savedScore.js";
+import {
+    addSavedScore,
+    showSavedScoresByLocations,
+    showSavedScoresByOrigin,
+    deleteSavedScore,
+    deleteSavedScoreByLocations, deleteSavedScoreByOrigin
+} from "../controllers/savedScore.js";
 import { getAllRoutesOTP } from "../utils/openTripPlanner.js";
 import { modifyGlobals, showGlobals } from "../controllers/global.js";
 
@@ -85,6 +91,12 @@ router.get('/savedScores/:origin', showSavedScoresByOrigin);
 
 // Delete a saved score by object id
 router.post('/deleteSavedScore/', deleteSavedScore);
+
+// Delete a saved score by origin and destination
+router.post('/deleteSavedScore/:origin/:destination', deleteSavedScoreByLocations);
+
+// Delete a saved score by origin only
+router.post('/deleteSavedScore/:origin', deleteSavedScoreByOrigin);
 
 ///////////// EMAIL CONFIRMATION
 
