@@ -1,4 +1,4 @@
-import {React, Fragment, useState} from "react";
+import {React, useEffect, Fragment, useState} from "react";
 import { Switch, Dialog, Transition } from '@headlessui/react'
 import axios from "axios";
 import mongoose from "mongoose";
@@ -11,6 +11,26 @@ export default function EditLocation(props) {
   const [Notes, setNotes] = useState(loc.notes);
   const [Priority, setPriority] = useState(loc.priority);
   const [CurrentHome, setCurrentHome] = useState(loc.current_home);
+  const [isOrigin, setOrigin] = useState(true);
+
+   useEffect(() => {
+
+    // Check if the page has already loaded
+    if (document.readyState === 'complete') {
+      isAddressOrigin();
+    }
+  }, []);
+
+  const isAddressOrigin = async (event) => {
+    if (isOrigin) {
+      document.getElementById("currentPriority").style.display = "none";
+      document.getElementById("currentHomeBox").style.display = "initial";
+    }
+    else {
+      document.getElementById("currentPriority").style.display = "initial";
+      document.getElementById("currentHomeBox").style.display = "none";
+  }
+}
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -192,7 +212,7 @@ export default function EditLocation(props) {
 
                         {loc.origin ?
                           <>
-                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentPriority">
                               <div class="flex items-center h-8 gap-4">
                                 <span class="w-16 h-full flex items-center justify-start">
                                   Priority
@@ -207,7 +227,7 @@ export default function EditLocation(props) {
                               </div>
                             </div>
 
-                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentHomeBox">
                               <div class="flex items-center h-8 gap-4">
                                 <span class="w-16 h-full flex items-center justify-start">
                                   Current Home
@@ -225,6 +245,30 @@ export default function EditLocation(props) {
                                       pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                                   />
                                 </Switch>
+                              </div>
+                            </div>
+
+                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                              <div class="flex items-center h-8 gap-4">
+                                <span class="w-16 h-full flex items-center justify-start">
+                                  Origin
+                                </span>
+                                <Switch
+                                  checked={isOrigin}
+                                  onClick={isAddressOrigin}
+                                  onChange={setOrigin}
+                                  className={`${isOrigin ? 'bg-emerald-600' : 'bg-teal-900'}
+                                    relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                                >
+                                  <span
+                                    aria-hidden="true"
+                                    className={`${isOrigin ? 'translate-x-6' : 'translate-x-0'}
+                                      pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                                  />
+                                </Switch>
+                                <span class="w-16 h-full flex items-center justify-start">
+                                  Destination
+                                </span>
                               </div>
                             </div>
                           </>
