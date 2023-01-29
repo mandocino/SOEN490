@@ -6,7 +6,7 @@ import { showUsers, showUserByID, showUserByEmail, loginController , signupContr
 import { addLocation, getAddressByCoordinates, showLocationsByUserID, getSuggestions, getCoordinatesByAddress, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
-import {addSavedScore, showSavedScoresByLocations, deleteSavedScore} from "../controllers/savedScore.js";
+import {addSavedScore, showSavedScoresByLocations, showOverallSavedScoresByLocation, deleteSavedScore} from "../controllers/savedScore.js";
 import { getAllRoutesOTP } from "../utils/openTripPlanner.js";
 import { modifyGlobals, showGlobals } from "../controllers/global.js";
 
@@ -80,6 +80,9 @@ router.post('/newSavedScore/', addSavedScore);
 // Get all saved scores from an origin to a destination
 router.get('/savedScores/:origin/:destination', showSavedScoresByLocations);
 
+// Get overall saved scores by origin and no specific destination
+router.get('/savedScores/:origin', showOverallSavedScoresByLocation);
+
 // Delete a saved score by object id
 router.post('/deleteSavedScore/', deleteSavedScore);
 
@@ -105,7 +108,7 @@ router.post("/passwordResetRequest/", getPasswordResetRequest);
 // Update password reset request by user_id, given new code
 router.post("/updatePasswordResetRequest/", updatePasswordResetRequest);
 
-// Delete password reset request by user_id and code
+// Delete password reset request by ID
 router.post("/removePasswordResetRequest/", removePasswordResetRequest);
 
 ///////////// OPEN TRIP PLANNER

@@ -1,6 +1,30 @@
 import '@testing-library/jest-dom';
 import axios from 'axios';
 
+import express from 'express';
+import router from '../backend/routes/routes'
+import {connectToServer} from "../backend/config/db.js";
+
+const app = express();
+
+jest.setTimeout(10000);
+
+let appServer;
+
+beforeAll((done) => {
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+    app.use("/", router);
+
+    connectToServer();
+    appServer = app.listen(5000, done);
+})
+
+
+afterAll((done) => {
+    appServer.close(done);
+})
+
 const getUsers = async () => {
     const res = await axios.get('http://localhost:5000/users');
     expect(Array.isArray(res.data)).toBe(true)
@@ -26,7 +50,8 @@ describe("User tests", () => {
             email: "userSignUpTestTemp@test.com",
             first_name: "TestFirstName",
             last_name: "TestLastName",
-            password: "TestPassword"
+            password: "TestPassword",
+            lastPrefChangeTime: 0
         });
         expect(resSignup.data).toHaveProperty('_id');
     });
@@ -65,7 +90,7 @@ describe("User tests", () => {
     });
 
     test("Modify a user", async () => {
-        await axios.post(`http://localhost:5000/modifyUser/`, {
+        await axios.post(`http://localhost:5000/modifyUserByEmail/`, {
             email: "userSignUpTestTemp@test.com",
             first_name: "modifiedTestFirstName"
         });

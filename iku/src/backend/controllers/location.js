@@ -5,9 +5,10 @@ import { createLocation, getLocationsByUserID, modifyLocation, removeLocation } 
 
 // Google client for Geocoding API
 const geocodingClient = new Client({});
+const key = "AIzaSyBnuzE1B3FwqNqcD9l8ahk_dTyn6XyQ0G4";
 
 // Create a new location with data
-export const addLocation = (req, res) => {
+export const addLocation = async (req, res) => {
     const data = req.body;
     createLocation(data, (err, results) => {
         if (err){
@@ -30,17 +31,17 @@ export const showLocationsByUserID = (req, res) => {
 }
 
 // Get address by coordinates
-export const getAddressByCoordinates = (req, res) => {
+export const getAddressByCoordinates = async (req, res) => {
     const latlng = req.query.lat + ',' + req.query.lng;
-    const key = process.env.GEOCODING_KEY;
-    console.log(key);
+    // const key = process.env.GEOCODING_KEY;
+
     const params = {
         key: key,
         latlng: latlng
     };
 
     console.log("retrieving address for " + req.query.lat + ", " + req.query.lng);
-    geocodingClient.geocode({
+    await geocodingClient.geocode({
         params:params
     })
     .then((response) => {
@@ -48,19 +49,21 @@ export const getAddressByCoordinates = (req, res) => {
         res.json({'address': address});
     })
     .catch((error)=>{
-        console.log(error);
+        console.log(error.message);
+        res.send(error);
     });
 }
 
 // Get places suggestions given user input
-export const getSuggestions = (req, res) => {
-    const key = process.env.GEOCODING_KEY;
+export const getSuggestions = async (req, res) => {
     const input = req.query.input;
+    // const key = process.env.GEOCODING_KEY;
+
     const params = {
         key: key,
         input: input
     }
-    geocodingClient.placeAutocomplete({
+    await geocodingClient.placeAutocomplete({
         params: params
     })
     .then((response) => {
@@ -70,19 +73,21 @@ export const getSuggestions = (req, res) => {
         res.json({'predictions': predictions});
     })
     .catch((error) => {
-        console.log(error.message);
+        console.log(error.response);
+        res.send(error);
     });
 }
 
 //Get Coordinates of specified address
-export const getCoordinatesByAddress = (req, res) => {
-    const key = process.env.GEOCODING_KEY;
+export const getCoordinatesByAddress = async (req, res) => {
+    // const key = process.env.GEOCODING_KEY;
+
     const address = req.query.address;
     const params = {
         key: key,
         address: address
     }
-    geocodingClient.geocode({
+    await geocodingClient.geocode({
         params: params
     })
     .then(response => {
@@ -91,6 +96,7 @@ export const getCoordinatesByAddress = (req, res) => {
     })
     .catch(error => {
         console.log(error.message);
+        res.send(error);
     })
 }
     
