@@ -5,6 +5,65 @@ import ScoreDetailModal from "./ScoreDetailModal";
 
 export default function DashboardCard(props) {
 
+  function hueToHex(hue) {
+    let quotient = (hue/60>>0);
+    let remainder = (hue%60/60);
+    let r, g, b;
+
+    switch(quotient) {
+      case 0:
+        r = 255;
+        g = Math.round(255*remainder);
+        b = 0;
+        break;
+      case 1:
+        r = Math.round(255-255*remainder);
+        g = 255;
+        b = 0;
+        break;
+      case 2:
+        r = 0;
+        g = 255;
+        b = Math.round(255*remainder);
+        break;
+      case 3:
+        r = 0;
+        g = Math.round(255-255*remainder);
+        b = 255;
+        break;
+      case 4:
+        r = Math.round(255*remainder);
+        g = 0;
+        b = 255;
+        break;
+      case 5:
+        r = 255;
+        g = 0;
+        b = Math.round(255-255*remainder);
+        break;
+    }
+    const hex = '#' + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+
+    return hex;
+  }
+
+  let scores;
+
+  if (props.loc.scores) {
+    scores = JSON.parse(JSON.stringify(props.loc.scores));
+    for (let score in scores) {
+      const i = scores[score];
+      // (x*i+y): x*100+y = upper bound and y = lower bound
+      const hue = (1.8 * i + 330) % 360
+      scores[`${score}Color`] = hueToHex(hue);
+    }
+  } else {
+    scores = false;
+  }
+
   return (
     <>
       <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
@@ -19,52 +78,64 @@ export default function DashboardCard(props) {
 
             <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
           </div>
-          
+
         </div>
 
         <div class="flex flex-col gap-2 w-44">
-          <div class="w-full flex justify-center">
-            <CircleWithText class="drop-shadow-xl" size="w-24 h-24" textClass="text-5xl font-bold" bgColor="bg-white dark:bg-teal-900" gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400">
-              99
-            </CircleWithText>
-          </div>
-          <div class="grid grid-cols-2 gap-2 justify-items-center">
-            <div class="flex flex-col items-center justify-center gap-0.5">
-              <span class="text-white text-sm font-semibold text-center">
-                Rush
-              </span>
-              <CircleWithText class="drop-shadow-xl justify-self-start" size="w-16 h-16" textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900" gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400">
-                80
+          {scores ? <>
+            <div class="w-full flex justify-center">
+              <CircleWithText class="drop-shadow-xl" size="w-24 h-24" textClass="text-5xl font-bold"
+                              bgColor="bg-[#0c2927]"
+                              borderColor={scores.overallColor} textColor={scores.overallColor}>
+                {scores.overall}
               </CircleWithText>
             </div>
-            
-            <div class="flex flex-col items-center justify-center gap-0.5">
-              <span class="text-white text-sm font-semibold text-center">
-                Off-Peak
-              </span>
-              <CircleWithText class="drop-shadow-xl justify-self-end" size="w-16 h-16" textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900" gradient="bg-gradient-to-br from-yellow-200 to-yellow-500 dark:from-white dark:to-yellow-400">
-                60
-              </CircleWithText>
-            </div>
+            <div class="grid grid-cols-2 gap-2 justify-items-center">
+              <div class="flex flex-col items-center justify-center gap-0.5">
+                  <span class="text-white text-sm font-semibold text-center">
+                    Rush
+                  </span>
+                <CircleWithText class="drop-shadow-xl justify-self-start" size="w-16 h-16"
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.rushHourColor} textColor={scores.rushHourColor}>
+                  {scores.rushHour}
+                </CircleWithText>
+              </div>
 
-            <div class="flex flex-col items-center justify-center gap-0.5">
-              <span class="text-white text-sm font-semibold text-center">
-                Weekend
-              </span>
-              <CircleWithText class="drop-shadow-xl justify-self-start" size="w-16 h-16" textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900" gradient="bg-gradient-to-br from-orange-200 to-orange-500 dark:from-white dark:to-orange-400">
-                40
-              </CircleWithText>
-            </div>
+              <div class="flex flex-col items-center justify-center gap-0.5">
+                  <span class="text-white text-sm font-semibold text-center">
+                    Off-Peak
+                  </span>
+                <CircleWithText class="drop-shadow-xl justify-self-end" size="w-16 h-16"
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.offPeakColor} textColor={scores.offPeakColor}>
+                  {scores.offPeak}
+                </CircleWithText>
+              </div>
 
-            <div class="flex flex-col items-center justify-center gap-0.5">
-              <span class="text-white text-sm font-semibold text-center">
-                Night
-              </span>
-              <CircleWithText class="drop-shadow-xl justify-self-end" size="w-16 h-16" textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900" gradient="bg-gradient-to-br from-red-200 to-red-500 dark:from-white dark:to-red-500">
-                20
-              </CircleWithText>
+              <div class="flex flex-col items-center justify-center gap-0.5">
+                  <span class="text-white text-sm font-semibold text-center">
+                    Weekend
+                  </span>
+                <CircleWithText class="drop-shadow-xl justify-self-start" size="w-16 h-16"
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.weekendColor} textColor={scores.weekendColor}>
+                  {scores.weekend}
+                </CircleWithText>
+              </div>
+
+              <div class="flex flex-col items-center justify-center gap-0.5">
+                  <span class="text-white text-sm font-semibold text-center">
+                    Night
+                  </span>
+                <CircleWithText class="drop-shadow-xl justify-self-end" size="w-16 h-16"
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.overnightColor} textColor={scores.overnightColor}>
+                  {scores.overnight}
+                </CircleWithText>
+              </div>
             </div>
-          </div>
+          </> : <></>}
         </div>
 
       </div>

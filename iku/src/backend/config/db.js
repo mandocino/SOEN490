@@ -43,7 +43,7 @@ const locationSchema = new Schema(
 
 const savedScoreSchema = new Schema({
     origin: { type: Schema.Types.ObjectId, required: true},
-    destination: { type: Schema.Types.ObjectId, required: true},
+    destination: { type: Schema.Types.ObjectId },
     generatedTime: { type: Schema.Types.Date, required: true},
     overall: { type: Number, required: true},
     rushHour: { type: Number, required: true},

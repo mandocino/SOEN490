@@ -6,7 +6,13 @@ import { showUsers, showUserByID, showUserByEmail, loginController , signupContr
 import { addLocation, getAddressByCoordinates, showLocationsByUserID, getSuggestions, getCoordinatesByAddress, updateLocation, deleteLocation } from "../controllers/location.js";
 import { addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation } from "../controllers/emailConfirmation.js";
 import { addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest } from "../controllers/passwordResetRequest.js";
-import {addSavedScore, showSavedScoresByLocations, showOverallSavedScoresByLocation, deleteSavedScore} from "../controllers/savedScore.js";
+import {
+    addSavedScore,
+    showSavedScoresByLocations,
+    showSavedScoresByOrigin,
+    deleteSavedScore,
+    deleteSavedScoreByLocations, deleteSavedScoreByOrigin, editSavedScoreByLocations, editSavedScoreByOrigin
+} from "../controllers/savedScore.js";
 import { getAllRoutesOTP } from "../utils/openTripPlanner.js";
 import { modifyGlobals, showGlobals } from "../controllers/global.js";
 
@@ -80,11 +86,23 @@ router.post('/newSavedScore/', addSavedScore);
 // Get all saved scores from an origin to a destination
 router.get('/savedScores/:origin/:destination', showSavedScoresByLocations);
 
-// Get overall saved scores by origin and no specific destination
-router.get('/savedScores/:origin', showOverallSavedScoresByLocation);
+// Get the overall saved score of an origin
+router.get('/savedScores/:origin', showSavedScoresByOrigin);
 
 // Delete a saved score by object id
 router.post('/deleteSavedScore/', deleteSavedScore);
+
+// Edit a saved score by origin and destination
+router.post('/editSavedScore/:origin/:destination', editSavedScoreByLocations);
+
+// Edit a saved score by origin only
+router.post('/editSavedScore/:origin', editSavedScoreByOrigin);
+
+// Delete a saved score by origin and destination
+router.post('/deleteSavedScore/:origin/:destination', deleteSavedScoreByLocations);
+
+// Delete a saved score by origin only
+router.post('/deleteSavedScore/:origin', deleteSavedScoreByOrigin);
 
 ///////////// EMAIL CONFIRMATION
 
