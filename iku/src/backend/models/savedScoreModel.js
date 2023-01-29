@@ -27,6 +27,19 @@ export const getSavedScoresByOrigin = (originID, result) => {
     });
 }
 
+// Get overall saved scores by origin and no specific destination
+export const getOverallSavedScoresByLocation = (origin, result) => {
+    savedScoreDBModel.find({'origin':origin, 'destination':{$exists: false}}, (err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
 // Creates a new location using given data
 export const createSavedScore = (data, result) => {
     savedScoreDBModel.create(data, (err, data) => {

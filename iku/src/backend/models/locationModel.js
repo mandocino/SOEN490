@@ -7,6 +7,7 @@ export const createLocation = (data, result) => {
     locationDBModel.create(data, (err, data) => {
         if (err){
             console.log(err);
+            result(err, data);
         }
         else{
             console.log(data);
@@ -33,6 +34,7 @@ export const modifyLocation = (data, result) => {
     locationDBModel.findOneAndUpdate({_id:data._id},data, {new: true},(err, data) => {
         if (err){
             console.log(err);
+            result(err, data);
         }
         else{
             console.log(data);
@@ -46,6 +48,7 @@ export const removeLocation = (_id, result) => {
     locationDBModel.findOneAndDelete({_id:_id},(err, data) => {
         if (err){
             console.log(err);
+            result(err, data);
         }
         else{
             console.log(data);

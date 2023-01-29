@@ -28,11 +28,21 @@ export default function Dashboard() {
   let destinationCards;
 
   const fetchLocations = () => {
-    axios.get(`http://localhost:5000/locations/${user_id}`)
-    .then((response) => {
-      getLocations(response.data);
-    })
-    .catch(err => console.error(err));
+    const user_id = localStorage.getItem("user_id");
+
+    if(user_id == null) {
+      let locationStringArray = sessionStorage.getItem('location')
+      if(locationStringArray != null) {
+        let locationArray = JSON.parse(locationStringArray);
+        getLocations(locationArray);
+      }
+    } else {
+      axios.get(`http://localhost:5000/locations/${user_id}`)
+          .then((response) => {
+            getLocations(response.data);
+          })
+          .catch(err => console.error(err));
+    }
     locationsLoaded.current = true;
   }
 
@@ -81,7 +91,7 @@ export default function Dashboard() {
       ...rawCurrentHome, scores: scores, detailedScores: detailedScores
     });
   }
-  
+
   useEffect(() => {
     fetchLocations();
   }, []);
@@ -132,7 +142,7 @@ export default function Dashboard() {
 
   if (origins.length > 0) {
     originCards = origins.map(function(loc){
-      return <DashboardCard loc={loc}>{loc.name}</DashboardCard>;
+      return <DashboardCard loc={loc} destinations={destinations}>{loc.name}</DashboardCard>;
     })
   } else {
     originCards =
@@ -160,7 +170,7 @@ export default function Dashboard() {
                   {
                     currentHome ?
                       <>
-                        <DashboardCard loc={currentHome} invert>{currentHome.name}</DashboardCard>
+                        <DashboardCard loc={currentHome} destinations={destinations} invert>{currentHome.name}</DashboardCard>
                       </>
                       :
                       <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
