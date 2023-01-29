@@ -4,14 +4,64 @@ import EditLocation from "../components/EditLocation";
 import { Link } from "react-router-dom";
 
 export default function DashboardCard(props) {
+  function hueToHex(hue) {
+    let quotient = (hue/60>>0);
+    let remainder = (hue%60/60);
+    let r, g, b;
+
+    switch(quotient) {
+      case 0:
+        r = 255;
+        g = Math.round(255*remainder);
+        b = 0;
+        break;
+      case 1:
+        r = Math.round(255-255*remainder);
+        g = 255;
+        b = 0;
+        break;
+      case 2:
+        r = 0;
+        g = 255;
+        b = Math.round(255*remainder);
+        break;
+      case 3:
+        r = 0;
+        g = Math.round(255-255*remainder);
+        b = 255;
+        break;
+      case 4:
+        r = Math.round(255*remainder);
+        g = 0;
+        b = 255;
+        break;
+      case 5:
+        r = 255;
+        g = 0;
+        b = Math.round(255-255*remainder);
+        break;
+    }
+    const hex = '#' + [r, g, b].map(x => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+
+    return hex;
+  }
+
   let scores;
+
   if (props.loc.scores) {
-    scores = props.loc.scores;
+    scores = JSON.parse(JSON.stringify(props.loc.scores));
+    for (let score in scores) {
+      const i = scores[score];
+      // (x*i+y): x*100+y = upper bound and y = lower bound
+      const hue = (1.8 * i + 330) % 360
+      scores[`${score}Color`] = hueToHex(hue);
+    }
   } else {
     scores = false;
   }
-
-  console.log(props.loc);
 
   return (
     <>
@@ -38,8 +88,8 @@ export default function DashboardCard(props) {
           {scores ? <>
             <div class="w-full flex justify-center">
               <CircleWithText class="drop-shadow-xl" size="w-24 h-24" textClass="text-5xl font-bold"
-                              bgColor="bg-white dark:bg-teal-900"
-                              gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400">
+                              bgColor="bg-[#0c2927]"
+                              borderColor={scores.overallColor} textColor={scores.overallColor}>
                 {scores.overall}
               </CircleWithText>
             </div>
@@ -49,8 +99,8 @@ export default function DashboardCard(props) {
                     Rush
                   </span>
                 <CircleWithText class="drop-shadow-xl justify-self-start" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900"
-                                gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400">
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.rushHourColor} textColor={scores.rushHourColor}>
                   {scores.rushHour}
                 </CircleWithText>
               </div>
@@ -60,8 +110,8 @@ export default function DashboardCard(props) {
                     Off-Peak
                   </span>
                 <CircleWithText class="drop-shadow-xl justify-self-end" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900"
-                                gradient="bg-gradient-to-br from-yellow-200 to-yellow-500 dark:from-white dark:to-yellow-400">
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.offPeakColor} textColor={scores.offPeakColor}>
                   {scores.offPeak}
                 </CircleWithText>
               </div>
@@ -71,8 +121,8 @@ export default function DashboardCard(props) {
                     Weekend
                   </span>
                 <CircleWithText class="drop-shadow-xl justify-self-start" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900"
-                                gradient="bg-gradient-to-br from-orange-200 to-orange-500 dark:from-white dark:to-orange-400">
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.weekendColor} textColor={scores.weekendColor}>
                   {scores.weekend}
                 </CircleWithText>
               </div>
@@ -82,8 +132,8 @@ export default function DashboardCard(props) {
                     Night
                   </span>
                 <CircleWithText class="drop-shadow-xl justify-self-end" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-white dark:bg-teal-900"
-                                gradient="bg-gradient-to-br from-red-200 to-red-500 dark:from-white dark:to-red-500">
+                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                borderColor={scores.overnightColor} textColor={scores.overnightColor}>
                   {scores.overnight}
                 </CircleWithText>
               </div>

@@ -148,11 +148,12 @@ export default function Dashboard() {
   return (
     <>
       <BaseLayout class="flex flex-col">
-        <div class="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">
+        {/*<div class="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">*/}
+        <div class="w-full grow flex flex-col items-center p-8">
           <div class="w-full flex flex-col justify-center">
             <div class="flex gap-8">
               <div class="w-96 flex flex-col gap-8 items-center">
-                <div class="w-full flex flex-col items-center p-4 rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
+                <div class="w-full flex flex-col items-center p-4 rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
                   <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                     Current Home
                   </p>
@@ -172,7 +173,7 @@ export default function Dashboard() {
                   }
                 </div>
                 
-                <div class="w-96 h-fit flex flex-col items-center rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
+                <div class="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
                   <span class="flex items-center gap-2">
                     <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                       Priorities List
@@ -207,7 +208,7 @@ export default function Dashboard() {
                 </div>
                 
               </div>
-              <div class="grow h-fit flex flex-col rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
+              <div class="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
                 <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Added Homes
                 </p>
@@ -216,7 +217,7 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div class="w-96 h-fit flex flex-col items-center rounded-3xl backdrop-blur backdrop-brightness-50 p-4 gap-4">
+              <div class="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
                 <p class="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Added Destinations
                 </p>
