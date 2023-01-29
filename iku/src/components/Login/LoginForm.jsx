@@ -73,6 +73,7 @@ const LoginForm = ({ inputs, type }) => {
             first_name: inputValue[1].value,
             last_name: inputValue[2].value,
             password: inputValue[3].value,
+            lastPrefChangeTime: 0
           })
           .catch((e) => e.message);
       }
@@ -103,9 +104,7 @@ const LoginForm = ({ inputs, type }) => {
     emptyEmail(false);
 
     const checkEmail = await axios
-      .post("http://localhost:5000/login", {
-        email: inputValue[0].value.toLowerCase(),
-      })
+      .get(`http://localhost:5000/userByEmail/${inputValue[0].value.toLowerCase()}`)
       .catch((e) => e.message);
 
     if (checkEmail.data.length > 0) {
