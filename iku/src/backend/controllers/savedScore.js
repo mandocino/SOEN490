@@ -4,7 +4,10 @@ import {
     getSavedScoresByOrigin,
     createSavedScore,
     removeSavedScore,
-    removeSavedScoresByLocations, removeSavedScoresByOrigin
+    removeSavedScoresByLocations,
+    removeSavedScoresByOrigin,
+    updateSavedScoreByOrigin,
+    updateSavedScoreByLocations
 } from "../models/savedScoreModel.js";
 
 // Get saved scores by origin and destination
@@ -33,6 +36,30 @@ export const showSavedScoresByOrigin = (req, res) => {
 export const addSavedScore = (req, res) => {
     const data = req.body;
     createSavedScore(data, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Update/Upsert a saved score with data
+export const editSavedScoreByLocations = (req, res) => {
+    const updateData = req.body;
+    updateSavedScoreByLocations(req.params.origin, req.params.destination, updateData, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Update/Upsert a saved score with data
+export const editSavedScoreByOrigin = (req, res) => {
+    const updateData = req.body;
+    updateSavedScoreByOrigin(req.params.origin, updateData, (err, results) => {
         if (err){
             res.send(err);
         }else{

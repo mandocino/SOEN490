@@ -14,13 +14,13 @@ export async function saveScores(origin, destination, scores, date) {
         };
     if (destination) {
         params.destination = destination;
-        await axios.post(`http://localhost:5000/deleteSavedScore/${origin._id}/${destination._id}`);
+        await axios.post(`http://localhost:5000/editSavedScore/${origin._id}/${destination._id}`, params);
         // console.log(`DELETE ${origin._id} ${destination._id}`);
     } else {
-        await axios.post(`http://localhost:5000/deleteSavedScore/${origin._id}`);
+        await axios.post(`http://localhost:5000/editSavedScore/${origin._id}`, params);
         // console.log(`DELETE ${origin._id}`);
     }
-    await axios.post('http://localhost:5000/newSavedScore', params);
+    // await axios.post('http://localhost:5000/newSavedScore', params);
 }
 
 export async function generateNewScores(origin, destination = null) {

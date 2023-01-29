@@ -11,7 +11,7 @@ import {
     showSavedScoresByLocations,
     showSavedScoresByOrigin,
     deleteSavedScore,
-    deleteSavedScoreByLocations, deleteSavedScoreByOrigin
+    deleteSavedScoreByLocations, deleteSavedScoreByOrigin, editSavedScoreByLocations, editSavedScoreByOrigin
 } from "../controllers/savedScore.js";
 import { getAllRoutesOTP } from "../utils/openTripPlanner.js";
 import { modifyGlobals, showGlobals } from "../controllers/global.js";
@@ -91,6 +91,12 @@ router.get('/savedScores/:origin', showSavedScoresByOrigin);
 
 // Delete a saved score by object id
 router.post('/deleteSavedScore/', deleteSavedScore);
+
+// Edit a saved score by origin and destination
+router.post('/editSavedScore/:origin/:destination', editSavedScoreByLocations);
+
+// Edit a saved score by origin only
+router.post('/editSavedScore/:origin', editSavedScoreByOrigin);
 
 // Delete a saved score by origin and destination
 router.post('/deleteSavedScore/:origin/:destination', deleteSavedScoreByLocations);

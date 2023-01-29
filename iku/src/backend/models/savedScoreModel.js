@@ -40,6 +40,36 @@ export const createSavedScore = (data, result) => {
     });
 }
 
+// Updates or upserts an existing origin/destination score using given data
+export const updateSavedScoreByLocations = (originID, destID, updateData, result) => {
+    savedScoreDBModel.findOneAndUpdate({'origin': originID, 'destination': destID}, updateData, {
+        new: true,
+        upsert: true
+    }, (err, data) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
+// Updates or upserts an existing origin score using given data
+export const updateSavedScoreByOrigin = (originID, updateData, result) => {
+    savedScoreDBModel.findOneAndUpdate({'origin': originID, 'destination': {$exists: false}}, updateData, {
+        new: true,
+        upsert: true
+    }, (err, data) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(data);
+            result(null, data);
+        }
+    });
+}
+
 // Remove a SavedScore by its Object ID
 export const removeSavedScore = (_id, result) => {
     savedScoreDBModel.findOneAndDelete({_id:_id},(err, data) => {
