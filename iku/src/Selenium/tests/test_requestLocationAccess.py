@@ -13,7 +13,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 class TestRequestLocationAccess():
   def setup_method(self, method):
     options = webdriver.ChromeOptions()
-    options.addArguments("enable-geolocation")
+    options.add_argument("enable-geolocation")
     self.driver = webdriver.Chrome()
     self.vars = {}
   
