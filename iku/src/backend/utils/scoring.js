@@ -12,6 +12,8 @@ export async function saveScores(origin, destination, scores, date) {
             weekend: scores.weekend,
             overnight: scores.overnight
         };
+    // If destination is specified then save the scores for the origin/destination pair, else save the scores with no
+    // destination specified (weighted average)
     if (destination) {
         params.destination = destination;
         await axios.post(`http://localhost:5000/editSavedScore/${origin._id}/${destination._id}`, params);
@@ -21,6 +23,7 @@ export async function saveScores(origin, destination, scores, date) {
 }
 
 export async function generateNewScores(origin, destination = null) {
+    // For now, generate random scores
     let rushHour = (Math.random() * 100) + 1;
     rushHour = Math.floor(rushHour);
 
@@ -36,8 +39,10 @@ export async function generateNewScores(origin, destination = null) {
     let overall = (Math.random() * 100) + 1;
     overall = Math.floor(night);
 
+    // Get the current date and time
     let date = Date.now();
 
+    // Save the scores, making sure to keep track of the time of generation
     let scores =
         {
             overall: overall,
@@ -50,6 +55,7 @@ export async function generateNewScores(origin, destination = null) {
 }
 
 export async function getScores(origin, destination) {
+    // If a destination is specified, load scores for the specific origin/destination pair, else load for irigin only
     const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
     const result = await axios.get(url, {
         params:
@@ -66,14 +72,21 @@ export async function getScores(origin, destination) {
 
 export async function loadScores(origin, destination, userID) {
     let savedScores;
+
+    // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
     const timeValues = await axios.get('http://localhost:5000/global/');
-    const lastUpdateAlgoUpdateTime = timeValues.data.lastUpdateAlgoUpdateTime;
+    const lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
+
+    // Grab the last time the user updated their preferences
     const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
     const lastPrefChangeTime = user.data[0].lastPrefChangeTime;
 
+    // Get the latest scores for the origin/destination pair (or origin only if destination is null)
     savedScores = await thisModule.getScores(origin, destination);
 
-    if (!savedScores || savedScores.length === 0 || savedScores.date < lastPrefChangeTime || savedScores.date < lastUpdateAlgoUpdateTime) {
+    // Generate the scores if there are no saved scores.
+    // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
+    if (!savedScores || savedScores.generatedTime < lastPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
         await thisModule.generateNewScores(origin, destination);
         savedScores = await thisModule.getScores(origin, destination);
     }
@@ -91,4 +104,14 @@ export async function loadScores(origin, destination, userID) {
     }
 
     return scores;
+}
+
+export async function updateAlgorithmTime() {
+    // Update the record for when the system was updated to match the current time
+    let params =
+        {
+            lastAlgoUpdateTime: Date.now()
+        };
+
+    await axios.post('http://localhost:5000/modifyGlobal/', params);
 }
