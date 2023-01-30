@@ -11,26 +11,7 @@ export default function EditLocation(props) {
   const [Notes, setNotes] = useState(loc.notes);
   const [Priority, setPriority] = useState(loc.priority);
   const [CurrentHome, setCurrentHome] = useState(loc.current_home);
-  const [isOrigin, setOrigin] = useState(true);
-
-   useEffect(() => {
-
-    // Check if the page has already loaded
-    if (document.readyState === 'complete') {
-      isAddressOrigin();
-    }
-  }, []);
-
-  const isAddressOrigin = async (event) => {
-    if (isOrigin) {
-      document.getElementById("currentPriority").style.display = "none";
-      document.getElementById("currentHomeBox").style.display = "initial";
-    }
-    else {
-      document.getElementById("currentPriority").style.display = "initial";
-      document.getElementById("currentHomeBox").style.display = "none";
-  }
-}
+  const [isOrigin, setOrigin] = useState(loc.origin);
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -75,7 +56,7 @@ export default function EditLocation(props) {
         });
       }
     }
-    
+
     if (
       Name !== "" ||
       Notes !== "" ||
@@ -87,7 +68,8 @@ export default function EditLocation(props) {
           name: Name,
           notes: Notes,
           priority: parseInt(Priority),
-          current_home: CurrentHome,
+          current_home: isOrigin ? CurrentHome : false,
+          origin: isOrigin
         })
         .catch((error) => {
           console.log(error.message);
@@ -120,8 +102,8 @@ export default function EditLocation(props) {
 
   return (
     <>
-      <button 
-        type="button" 
+      <button
+        type="button"
         onClick={openModal}
         class={props.buttonClass}
         >
@@ -163,8 +145,8 @@ export default function EditLocation(props) {
                     >
                       Edit location
                     </Dialog.Title>
-                    
-                    <button 
+
+                    <button
                       type="button"
                       onClick={deleteHandler}
                       class="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg dark:bg-red-400 dark:hover:bg-red-600 dark:focus:ring-red-300"
@@ -194,7 +176,7 @@ export default function EditLocation(props) {
                             />
                           </div>
                         </div>
-                        
+
                         <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
                           <div class="flex items-center h-8 gap-4">
                             <span class="w-16 h-full flex items-center justify-start">
@@ -210,77 +192,72 @@ export default function EditLocation(props) {
                           </div>
                         </div>
 
-                        {loc.origin ?
+                        {isOrigin ?
                           <>
-                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentPriority">
-                              <div class="flex items-center h-8 gap-4">
-                                <span class="w-16 h-full flex items-center justify-start">
-                                  Priority
-                                </span>
-                                <input
-                                  class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
-                                  placeholder="Enter a number here"
-                                  value={Priority}
-                                  onChange={handlePriorityChange}
-                                  id="newPriority"
-                                />
-                              </div>
-                            </div>
-
                             <div class="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentHomeBox">
                               <div class="flex items-center h-8 gap-4">
-                                <span class="w-16 h-full flex items-center justify-start">
-                                  Current Home
-                                </span>
+                                  <span class="w-16 h-full flex items-center justify-start">
+                                    Current Home
+                                  </span>
                                 <Switch
-                                  checked={CurrentHome}
-                                  onChange={setCurrentHome}
-                                  className={`${CurrentHome ? 'bg-emerald-600' : 'bg-teal-900'}
-                                    relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                                    checked={CurrentHome}
+                                    onChange={setCurrentHome}
+                                    className={`${CurrentHome ? 'bg-emerald-600' : 'bg-teal-900'}
+                                      relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                                 >
                                   <span className="sr-only">Use setting</span>
                                   <span
-                                    aria-hidden="true"
-                                    className={`${CurrentHome ? 'translate-x-6' : 'translate-x-0'}
-                                      pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                                      aria-hidden="true"
+                                      className={`${CurrentHome ? 'translate-x-6' : 'translate-x-0'}
+                                        pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                                   />
                                 </Switch>
-                              </div>
-                            </div>
-
-                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
-                              <div class="flex items-center h-8 gap-4">
-                                <span class="w-16 h-full flex items-center justify-start">
-                                  Origin
-                                </span>
-                                <Switch
-                                  checked={isOrigin}
-                                  onClick={isAddressOrigin}
-                                  onChange={setOrigin}
-                                  className={`${isOrigin ? 'bg-emerald-600' : 'bg-teal-900'}
-                                    relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-                                >
-                                  <span
-                                    aria-hidden="true"
-                                    className={`${isOrigin ? 'translate-x-6' : 'translate-x-0'}
-                                      pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-                                  />
-                                </Switch>
-                                <span class="w-16 h-full flex items-center justify-start">
-                                  Destination
-                                </span>
                               </div>
                             </div>
                           </>
                           :
-                          <></>
+                          <>
+                            <div class="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentPriority">
+                              <div class="flex items-center h-8 gap-4">
+                            <span class="w-16 h-full flex items-center justify-start">
+                            Priority
+                            </span>
+                                <input
+                                    class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+                                    placeholder="Enter a number here"
+                                    value={Priority}
+                                    onChange={handlePriorityChange}
+                                    id="newPriority"
+                                />
+                              </div>
+                            </div>
+                          </>
                         }
+                        <div class="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                          <div class="flex items-center h-8 gap-4">
+                            <span class="w-16 h-full flex items-center justify-start">
+                              Origin
+                            </span>
+                            <Switch
+                              checked={isOrigin}
+                              onChange={setOrigin}
+                              className={`${isOrigin ? 'bg-emerald-600' : 'bg-teal-900'}
+                                relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                            >
+                              <span
+                                aria-hidden="true"
+                                className={`${isOrigin ? 'translate-x-6' : 'translate-x-0'}
+                                  pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+                              />
+                            </Switch>
+                          </div>
+                        </div>
                       </div>
                     </form>
                   </div>
 
                   <div class="mt-4 flex gap-2">
-                    <button 
+                    <button
                       type="button"
                       onClick={submitHandler}
                       class="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
@@ -290,7 +267,7 @@ export default function EditLocation(props) {
                       </svg>
                       Save
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={closeModal}
                       class="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg dark:bg-red-400 dark:hover:bg-red-600 dark:focus:ring-red-300"
