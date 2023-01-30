@@ -262,8 +262,9 @@ export default function Dashboard() {
       </div>;
   }
 
-  return (<>
-      <BaseLayout className="flex flex-col">
+  return (
+    <>
+      <BaseLayout className="flex flex-col" ignore={['dashboard']}>
         {/*<div className="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">*/}
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
