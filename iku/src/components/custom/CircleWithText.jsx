@@ -20,11 +20,11 @@ export default function CircleWithText(props) {
   
   return (
     <>
-      <div class={props.class}>
-        <div class={props.size + " rounded-full flex items-center justify-center p-1 " + (props.gradient || gradient)} style={{backgroundColor: props.borderColor}}>
-          <div class={"w-full h-full rounded-full flex items-center justify-center " + bgColor}>
-            <div class={"p-4 text-center gap-2 " + (textGradient)} style={{backgroundColor: props.textColor}}>
-              <span class={props.textClass}>
+      <div className={props.class}>
+        <div className={props.size + " rounded-full flex items-center justify-center p-1 " + (props.gradient || gradient)} style={{backgroundColor: props.borderColor}}>
+          <div className={"w-full h-full rounded-full flex items-center justify-center " + bgColor}>
+            <div className={"p-4 text-center gap-2 " + (textGradient)} style={{backgroundColor: props.textColor}}>
+              <span className={props.textClass}>
                 {props.children}
               </span>
             </div>

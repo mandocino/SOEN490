@@ -7,36 +7,36 @@ export default function Guide() {
     <>
       <div>
         <div>
-          <section class="hero is-small">
-            <div class="hero-body">
-              <div class={styles.guideDiv}>
-                <div class="columns has-text-weight-semibold">
-                  <div class="column is-two-fourths">
-                    <p class={styles.guideText}>
+          <section className="hero is-small">
+            <div className="hero-body">
+              <div className={styles.guideDiv}>
+                <div className="columns has-text-weight-semibold">
+                  <div className="column is-two-fourths">
+                    <p className={styles.guideText}>
                       It's pretty straight forward.
                     </p>
                     <br></br>
-                    <p class={styles.guideTextNumbered}>
+                    <p className={styles.guideTextNumbered}>
                       1. Enter the address that you would live to be your origin
                     </p>
                     <br></br>
 
-                    <p class={styles.guideTextNumbered}>
+                    <p className={styles.guideTextNumbered}>
                       2. Enter the address(es) of the place(s) you frequent
                     </p>
                     <br></br>
 
-                    <p class={styles.guideTextNumbered}>
+                    <p className={styles.guideTextNumbered}>
                       3. Use the generated scores to compare the score with
                       other addresses you would like to check
                     </p>
                     <br></br>
 
-                    <p class={styles.guideText}>Simple right?</p>
+                    <p className={styles.guideText}>Simple right?</p>
                   </div>
-                  <div class="column is-two-fourths">
+                  <div className="column is-two-fourths">
                     <img
-                      class={styles.guideImg}
+                      className={styles.guideImg}
                       src={BusImg}
                       width="800"
                       height="600"

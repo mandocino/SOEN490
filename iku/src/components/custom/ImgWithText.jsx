@@ -11,10 +11,10 @@ export default function ImgWithText(props) {
   
   return (
     <>
-      <div class="w-full h-full flex flex-col items-center">
-        <div class={"w-full shadow-lg shadow-gray-400 dark:shadow-gray-900 rounded-3xl bg-cover bg-center bg-[url(\'" + props.url + "\')]"}>
-          <div class={"rounded-3xl " + padding + " w-full backdrop-blur backdrop-brightness-50 flex items-center justify-center"}>
-            <p class="text-center text-5xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
+      <div className="w-full h-full flex flex-col items-center">
+        <div className={"w-full shadow-lg shadow-gray-400 dark:shadow-gray-900 rounded-3xl bg-cover bg-center bg-[url(\'" + props.url + "\')]"}>
+          <div className={"rounded-3xl " + padding + " w-full backdrop-blur backdrop-brightness-50 flex items-center justify-center"}>
+            <p className="text-center text-5xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
               {props.children}
             </p>
           </div>

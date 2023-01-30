@@ -7,12 +7,12 @@ export default function HomeHeader() {
   return (
     <div>
       <div>
-        <section class="hero">
-          <div class={styles.header}>
-            <div class="hero-body">
-              <nav class="navbar">
-                <div class="container">
-                  <div class="navbar-brand">
+        <section className="hero">
+          <div className={styles.header}>
+            <div className="hero-body">
+              <nav className="navbar">
+                <div className="container">
+                  <div className="navbar-brand">
                     <img
                       src={Logo}
                       width="200"
@@ -20,11 +20,11 @@ export default function HomeHeader() {
                       alt="ikulogo"
                     ></img>
                   </div>
-                  <div id="navbarMenu" class="navbar-menu is-active">
-                    <div class="navbar-end">
+                  <div id="navbarMenu" className="navbar-menu is-active">
+                    <div className="navbar-end">
                       <div>
                         <Link to="/">
-                          <p class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
+                          <p className="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
                             Home
                           </p>
                         </Link>
@@ -34,14 +34,14 @@ export default function HomeHeader() {
                         <>
                           <div>
                             <Link to="/register">
-                              <p class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
+                              <p className="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6">
                                 Sign Up
                               </p>
                             </Link>
                           </div>
                           <div>
                             <Link to="/login">
-                              <p class="has-text-white has-text-weight-bold is-size-4 mt-6">
+                              <p className="has-text-white has-text-weight-bold is-size-4 mt-6">
                                 Login
                               </p>
                             </Link>
@@ -51,13 +51,13 @@ export default function HomeHeader() {
                         <>
                           <Link
                             to='/accountpage'
-                            class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
+                            className="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
                           >
                             { localStorage.getItem('first_name') }
                           </Link>
                           <Link
                             to='/'
-                            class="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
+                            className="has-text-white has-text-weight-bold is-size-4 mt-6 mr-6"
                             onClick={() => {
                               localStorage.removeItem('authenticated');
                               localStorage.removeItem('first_name');

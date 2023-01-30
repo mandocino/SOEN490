@@ -6,15 +6,15 @@ export default function Footer() {
     <div>
       <div
         id="footer"
-        class="bg-emerald-500 dark:bg-emerald-700 text-white flex justify-between py-4 text-sm"
+        className="bg-emerald-500 dark:bg-emerald-700 text-white flex justify-between py-4 text-sm"
       >
-        <div class="ml-6">
-          <p class="has-text-white has-text-weight-bold is-size-5 m">
+        <div className="ml-6">
+          <p className="has-text-white has-text-weight-bold is-size-5 m">
             © 2022 IKU
           </p>
         </div>
-        <div class="mr-6 flex gap-2">
-          <Link class="has-text-white" to="/aboutUs">
+        <div className="mr-6 flex gap-2">
+          <Link className="has-text-white" to="/aboutUs">
             About Us
           </Link>
         </div>

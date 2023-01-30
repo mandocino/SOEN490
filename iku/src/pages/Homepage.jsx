@@ -8,7 +8,7 @@ export default function Homepage() {
   return (
     <>
       <BaseLayout class="flex items-center justify-center h-full">
-        <div class="flex flex-col grow max-w-screen-lg h-full items-center justify-center gap-8 m-8">
+        <div className="flex flex-col grow max-w-screen-lg h-full items-center justify-center gap-8 m-8">
           <SearchBar />
           <Guide />
           <Description />
