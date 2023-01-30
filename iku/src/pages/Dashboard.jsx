@@ -167,13 +167,9 @@ export default function Dashboard() {
     </div>;
   }
 
-<<<<<<< HEAD
   // Create origins' scorecards
   let count = -1
   let currentHomeObj = null
-=======
-  // Create origins' scorecards, except for the currentHome
->>>>>>> ba8e609 (IKU-144 Fixed check for lastAlgoUpdateTime)
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
       count += 1
