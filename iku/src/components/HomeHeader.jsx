@@ -8,8 +8,10 @@ import axios from "axios";
 
 import SimpleSearchBar from './SimpleSearchBar';
 
-export default function HomeHeader() {
-  
+export default function HomeHeader({ ignore }) {
+
+  if (ignore === undefined) ignore = [] ;
+
   const location = useLocation();
 
   return (
@@ -17,18 +19,18 @@ export default function HomeHeader() {
       <nav className="bg-emerald-500 dark:bg-emerald-700 px-4 lg:px-6 py-2.5 ">
         <div className="flex flex-wrap justify-between items-center mx-auto">
           <Link to="/" className="flex items-center">
-            <Logo class="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition" />
+            <Logo className="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition" />
           </Link>
           <div
             className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
             id="mobile-menu-2"
           >
             <ul className="flex flex-col mt-4 font-medium lg:flex-row space-x-4 lg:mt-0">
-              <li className="flex items-center">
+              <li className="flex items-center" style={{visibility: ignore.includes('dashboard') ? 'hidden' : 'visible'}}>
                 <LinkButton to="/dashboard">Dashboard</LinkButton>
               </li>
               {location.pathname !== "/" ? (
-                <li class="w-96">
+                <li className="w-96">
                   <SimpleSearchBar />
                 </li>
               ) : null}
