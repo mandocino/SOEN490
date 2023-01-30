@@ -144,7 +144,7 @@ export default function Dashboard() {
 
   if (origins.length > 0) {
     originCards = origins.map(function(loc){
-      return <DashboardCard loc={loc} destinations={destinations}>{loc.name}</DashboardCard>;
+      return <DashboardCard loc={loc} destinations={destinations} key={loc}>{loc.name}</DashboardCard>;
     })
   } else {
     originCards =
