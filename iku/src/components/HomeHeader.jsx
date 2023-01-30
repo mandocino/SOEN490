@@ -19,7 +19,7 @@ export default function HomeHeader({ ignore }) {
       <nav className="bg-emerald-500 dark:bg-emerald-700 px-4 lg:px-6 py-2.5 ">
         <div className="flex flex-wrap justify-between items-center mx-auto">
           <Link to="/" className="flex items-center">
-            <Logo class="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition" />
+            <Logo className="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition" />
           </Link>
           <div
             className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
