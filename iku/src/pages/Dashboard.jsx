@@ -79,11 +79,13 @@ export default function Dashboard() {
   }
 
   const fetchCurrentHomeScores = async () => {
-    const scores = await loadScores(rawCurrentHome, null, user_id);
+    const scores = await loadScores(rawCurrentHome, null, user_id)
+      .catch(e => console.log(e));
     let detailedScores = [];
 
     for (const d of destinations) {
-      const scoreSet = await loadScores(rawCurrentHome, d, user_id);
+      const scoreSet = await loadScores(rawCurrentHome, d, user_id)
+        .catch(e => console.log(e));
       detailedScores.push(scoreSet);
     }
 
