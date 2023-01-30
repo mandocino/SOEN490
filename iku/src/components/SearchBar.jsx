@@ -113,6 +113,9 @@ export default function SearchBar() {
             })
             .then(function (response) {
               inputRef.current.value = response.data.address;
+            })
+            .catch((error) => {
+              console.log(error.message)
             });
         },
         () => {
