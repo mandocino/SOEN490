@@ -2,6 +2,10 @@ import { React, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import mongoose from "mongoose";
 import axios from "axios";
+<<<<<<< HEAD
+=======
+import { ReactComponent as Location } from "./../assets/location.svg";
+>>>>>>> e38444d (Refactored searchbar into its own component for better reusibility)
 
 const SimpleSearchBar = () => {
 
@@ -75,7 +79,8 @@ const SimpleSearchBar = () => {
   const getSuggestions = async (event) => {
     setInput(event.target.value);
     if (event.target.value.length > 0) {
-      axios.get("http://localhost:5000/suggestions", {
+      await axios
+        .get("http://localhost:5000/suggestions", {
           params: {
             input: event.target.value,
           },
