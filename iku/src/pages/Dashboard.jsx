@@ -27,6 +27,7 @@ export default function Dashboard() {
   let originCards;
   let destinationCards;
 
+  // Fetch all locations from the DB
   const fetchLocations = () => {
     const user_id = localStorage.getItem("user_id");
 
@@ -46,6 +47,7 @@ export default function Dashboard() {
     locationsLoaded.current = true;
   }
 
+  // Split the fetched locations into three: the current home, the other origins, and the destinations
   const splitLocations = () => {
     if (locations.length > 0) {
       setRawCurrentHome(locations.find(loc => loc.current_home));
@@ -55,12 +57,15 @@ export default function Dashboard() {
     locationsSplit.current = true;
   }
 
+  // Fetch the scores for all origins except the current home
   const fetchScores = async () => {
 
+    // Get the weighted average scores
     async function getScores(origin) {
       return await loadScores(origin, null, user_id);
     }
 
+    // Get the individual scores related to each destination
     function getDetailedScores(origin) {
       let detailedScores = [];
 
@@ -71,6 +76,7 @@ export default function Dashboard() {
       return detailedScores;
     }
 
+    // Map all scores and set `origins` to it
     const originsWithScores = await Promise.all(rawOrigins.map(async o => ({
       ...o, scores: await getScores(o), detailedScores: getDetailedScores(o)
     })));
@@ -78,6 +84,7 @@ export default function Dashboard() {
     setOrigins(originsWithScores);
   }
 
+  // Fetch the scores for the current home
   const fetchCurrentHomeScores = async () => {
     const scores = await loadScores(rawCurrentHome, null, user_id);
     let detailedScores = [];
@@ -92,16 +99,19 @@ export default function Dashboard() {
     });
   }
 
+  // Fetch the locations from the DB
   useEffect(() => {
     fetchLocations();
   }, []);
 
+  // Split the fetched locations
   useEffect(() => {
     if (locationsLoaded.current) {
       splitLocations();
     }
   }, [locations]);
 
+  // Fetch the origins' scores from the DB
   useEffect(() => {
     if (locationsSplit.current) {
       fetchScores();
@@ -109,6 +119,7 @@ export default function Dashboard() {
     }
   }, [rawOrigins, destinations]);
 
+  // Create card with the list of destinations
   if (destinations.length > 0) {
     destinationCards = destinations.map(function(loc){
       return (
@@ -140,6 +151,7 @@ export default function Dashboard() {
     </div>;
   }
 
+  // Create origins' scorecards, except for the currentHome
   if (origins.length > 0) {
     originCards = origins.map(function(loc){
       return <DashboardCard loc={loc} destinations={destinations}>{loc.name}</DashboardCard>;
@@ -154,8 +166,6 @@ export default function Dashboard() {
       </div>
     </div>;
   }
-
-  console.log(currentHome);
 
   return (
     <>

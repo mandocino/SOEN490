@@ -5,43 +5,47 @@ import ScoreDetailModal from "./ScoreDetailModal";
 
 export default function DashboardCard(props) {
 
+  // Convert a hue value (in degrees) to a hex RGB representation
+  // Hue in this case refers to the H of an HSV value where S and V are set to 100%
   function hueToHex(hue) {
     let quotient = (hue/60>>0);
     let remainder = (hue%60/60);
     let r, g, b;
 
     switch(quotient) {
-      case 0:
+      case 0: // 0-59deg
         r = 255;
         g = Math.round(255*remainder);
         b = 0;
         break;
-      case 1:
+      case 1: // 60-119deg
         r = Math.round(255-255*remainder);
         g = 255;
         b = 0;
         break;
-      case 2:
+      case 2: // 120-179deg
         r = 0;
         g = 255;
         b = Math.round(255*remainder);
         break;
-      case 3:
+      case 3: // 180-239deg
         r = 0;
         g = Math.round(255-255*remainder);
         b = 255;
         break;
-      case 4:
+      case 4: // 240-299deg
         r = Math.round(255*remainder);
         g = 0;
         b = 255;
         break;
-      case 5:
+      case 5: // 300-359deg
         r = 255;
         g = 0;
         b = Math.round(255-255*remainder);
         break;
     }
+
+    // Convert the RGB set into its hex representation
     const hex = '#' + [r, g, b].map(x => {
       const hex = x.toString(16);
       return hex.length === 1 ? '0' + hex : hex;
@@ -53,10 +57,14 @@ export default function DashboardCard(props) {
   let scores;
 
   if (props.loc.scores) {
+    // Deep copy of the scores from the location object
     scores = JSON.parse(JSON.stringify(props.loc.scores));
+
+    // Append the corresponding colors to each score value (overall, rushHour, etc)
     for (let score in scores) {
       const i = scores[score];
       // (x*i+y): x*100+y = upper bound and y = lower bound
+      // current: 150deg upper bound, 330deg lower bound
       const hue = (1.8 * i + 330) % 360
       scores[`${score}Color`] = hueToHex(hue);
     }
