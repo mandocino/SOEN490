@@ -7,11 +7,17 @@ import mongoose from "mongoose";
 import axios from "axios";
 
 import SimpleSearchBar from './SimpleSearchBar';
+<<<<<<< HEAD
 
 export default function HomeHeader({ ignore }) {
 
   if (ignore === undefined) ignore = [] ;
 
+=======
+
+export default function HomeHeader() {
+  
+>>>>>>> e38444d (Refactored searchbar into its own component for better reusibility)
   const location = useLocation();
 
   return (
@@ -30,7 +36,11 @@ export default function HomeHeader({ ignore }) {
                 <LinkButton to="/dashboard">Dashboard</LinkButton>
               </li>
               {location.pathname !== "/" ? (
+<<<<<<< HEAD
                 <li className="w-96">
+=======
+                <li class="w-96">
+>>>>>>> e38444d (Refactored searchbar into its own component for better reusibility)
                   <SimpleSearchBar />
                 </li>
               ) : null}
