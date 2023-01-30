@@ -175,6 +175,7 @@ export default function SearchBar() {
                           className="cursor-pointer"
                           onClick={() => selectSuggestion(suggestion)}
                           value={suggestion}
+                          key={suggestion}
                         />
                       );
                     })}

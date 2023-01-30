@@ -5,7 +5,7 @@ import '../../styles/Login.css';
 const LoginInput = ({ handleInputChange, value, label, type, name, ariaLabel, count, onEnterDown }) => {
 
     return(
-        <div className='input-container'>
+        <>
             <label className='login-label' htmlFor={name}>{label}</label>
             <input
                 className='login-input'
@@ -17,7 +17,7 @@ const LoginInput = ({ handleInputChange, value, label, type, name, ariaLabel, co
                 onKeyDown={e => onEnterDown(e)}
                 required
             />
-        </div>
+        </>
     )
 }
 
