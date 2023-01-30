@@ -16,7 +16,10 @@ export const getGlobals = (result) => {
 
 // Update a global data
 export const updateGlobals = (data, result) => {
-    globalDBModel.findOneAndUpdate({}, data, (err, data) => {
+    globalDBModel.findOneAndUpdate({}, data, {
+        new: true,
+        upsert: true
+    }, (err, data) => {
         if (err){
             console.log(err);
         }
