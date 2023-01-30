@@ -282,7 +282,7 @@ const LoginForm = ({ inputs, type }) => {
     <>
       {inputValue.map(({ label, type, name, ariaLabel, value }) => {
         return (
-          <>
+          <div className='input-container' key={label}>
             <LoginInput
               label={label}
               type={type}
@@ -291,11 +291,10 @@ const LoginForm = ({ inputs, type }) => {
               value={value}
               handleInputChange={_handleOnChange}
               count={count++}
-              key={name}
               onEnterDown={onEnterPress}
             />
             {setIncorrectMessage(label)}
-          </>
+          </div>
         );
       })}
       <p id="incorrect-input-message">

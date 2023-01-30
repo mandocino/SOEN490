@@ -87,42 +87,42 @@ export default function EditAccount() {
   };
   return (
     <form>
-      <div class="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
+      <div className="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
         <div>
-          <p class="pt-7 pb-7 text-2xl">My Account Information Edit</p>
-          <p class="pb-4">First Name: {FirstName} </p>
+          <p className="pt-7 pb-7 text-2xl">My Account Information Edit</p>
+          <p className="pb-4">First Name: {FirstName} </p>
           <input
-            class="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+            className="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
             placeholder="Enter new First Name"
             id="newFirstName"
           />
-          <p class="pb-4">Last Name: {LastName} </p>
+          <p className="pb-4">Last Name: {LastName} </p>
           <input
-            class="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+            className="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
             placeholder="Enter new Last Name"
             id="newLastName"
           />
-          <p class="pb-4">Email: {Email} </p>
+          <p className="pb-4">Email: {Email} </p>
           <input
-            class="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+            className="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
             placeholder="Enter new Email"
             id="newEmail"
           />
-          <p class="pb-4">Location: {CurrentLocation}</p>
+          <p className="pb-4">Location: {CurrentLocation}</p>
           <input
-            class="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+            className="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
             placeholder="Enter new Location"
             id="newLocation"
           />
           <button
             type="button"
             onClick={SubmitHandler}
-            class="border-2 border-white mb-10 rounded	p-2"
+            className="border-2 border-white mb-10 rounded	p-2"
           >
             Submit
           </button>
-          <div class="w-60 mx-auto pb-10">
-            <LinkButton class="mb-10" to="/accountpage">
+          <div className="w-60 mx-auto pb-10">
+            <LinkButton className="mb-10" to="/accountpage">
               Return to Account
             </LinkButton>
           </div>

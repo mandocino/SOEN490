@@ -6,10 +6,10 @@ export default function Description() {
     <>
       <div>
         <div>
-          <section class="hero is-small">
-            <div class="hero-body">
-              <div class={styles.aboutDiv}>
-                <p class={styles.aboutText}>
+          <section className="hero is-small">
+            <div className="hero-body">
+              <div className={styles.aboutDiv}>
+                <p className={styles.aboutText}>
                   IKU is a free web service dedicated to helping people wishing
                   to live car free or simply reduce their dependence on a car by
                   choosing where they would like to live based on the provided

@@ -13,127 +13,90 @@ export default function Dashboard() {
     <>
       <div>
         <div>
-          <section class="hero">
-            <p class={styles.pageTitle}>Dashboard</p>
-            <div class={styles.dashboardDiv}>
-              <div class="hero is-small">
-                <div class="hero-body">
-                  <div class="columns has-text-weight-semibold">
-                    <div class="column is-two-fourths">
-                      <p class={styles.dashboardText}>
+          <section className="hero">
+            <p className={styles.pageTitle}>Dashboard</p>
+            <div className={styles.dashboardDiv}>
+              <div className="hero is-small">
+                <div className="hero-body">
+                  <div className="columns has-text-weight-semibold">
+                    <div className="column is-two-fourths">
+                      <p className={styles.dashboardText}>
                         Your Home <FontAwesomeIcon icon={faHouseChimney} />
                       </p>
                       <input
-                        class={styles.inputBoxes}
+                        className={styles.inputBoxes}
                         type="text"
                         placeholder="1234, Street Name, City, Province, A1B 2C3"
                       ></input>{" "}
                     </div>
                   </div>
-                  <div class="columns has-text-weight-semibold">
-                    <div class="column is-two-fourths">
+                  <div className="columns has-text-weight-semibold">
+                    <div className="column is-two-fourths">
                       <br />
-                      <p class={styles.dashboardText}>
+                      <p className={styles.dashboardText}>
                         Work <FontAwesomeIcon icon={faBriefcase} />
                       </p>
                       <input
-                        class={styles.inputBoxes}
+                        className={styles.inputBoxes}
                         type="text"
                         placeholder="1234, Street Name, City, Province, A1B 2C3"
                       ></input>
                       <br />
-                      <p class={styles.dashboardText}>
+                      <p className={styles.dashboardText}>
                         Gym <FontAwesomeIcon icon={faDumbbell} />
                       </p>
                       <input
-                        class={styles.inputBoxes}
+                        className={styles.inputBoxes}
                         type="text"
                         placeholder="1234, Street Name, City, Province, A1B 2C3"
                       ></input>
                       <br />
-                      <p class={styles.dashboardText}>
+                      <p className={styles.dashboardText}>
                         Friend's Home <FontAwesomeIcon icon={faHouseUser} />
                       </p>
                       <input
-                        class={styles.inputBoxes}
+                        className={styles.inputBoxes}
                         type="text"
                         placeholder="1234, Street Name, City, Province, A1B 2C3"
                       ></input>
                       <br />
                     </div>
-                    <div class="column is-two-fourths">
+                    <div className="column is-two-fourths">
                       <br />
-                      <p class={styles.optionsText}>
+                      <p className={styles.optionsText}>
                         Rush-hour Off-Peak Weekend Midnight Overall
                       </p>
                       <br />
                       <input
-                        class={styles.radioBtn1}
+                        className={styles.radioBtn1}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />{" "}
                       <input
-                        class={styles.radioBtn2}
+                        className={styles.radioBtn2}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn3}
+                        className={styles.radioBtn3}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn4}
+                        className={styles.radioBtn4}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn5}
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <br />
-                      <br />
-                      <input
-                        class={styles.radioBtn6}
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <input
-                        class={styles.radioBtn7}
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <input
-                        class={styles.radioBtn8}
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <input
-                        class={styles.radioBtn9}
-                        type="checkbox"
-                        id="vehicle1"
-                        name="vehicle1"
-                        value="Bike"
-                      />
-                      <input
-                        class={styles.radioBtn10}
+                        className={styles.radioBtn5}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
@@ -142,35 +105,72 @@ export default function Dashboard() {
                       <br />
                       <br />
                       <input
-                        class={styles.radioBtn11}
+                        className={styles.radioBtn6}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn12}
+                        className={styles.radioBtn7}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn13}
+                        className={styles.radioBtn8}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn14}
+                        className={styles.radioBtn9}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
                         value="Bike"
                       />
                       <input
-                        class={styles.radioBtn15}
+                        className={styles.radioBtn10}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <br />
+                      <br />
+                      <input
+                        className={styles.radioBtn11}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        className={styles.radioBtn12}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        className={styles.radioBtn13}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        className={styles.radioBtn14}
+                        type="checkbox"
+                        id="vehicle1"
+                        name="vehicle1"
+                        value="Bike"
+                      />
+                      <input
+                        className={styles.radioBtn15}
                         type="checkbox"
                         id="vehicle1"
                         name="vehicle1"
@@ -181,7 +181,7 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <button class={styles.editBtn}>Edit Addresses</button>{" "}
+            <button className={styles.editBtn}>Edit Addresses</button>{" "}
           </section>
         </div>
       </div>

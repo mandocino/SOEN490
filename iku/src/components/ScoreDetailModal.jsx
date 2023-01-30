@@ -73,20 +73,20 @@ function ScoreDetailModal({ originLocation, destinations }) {
       <button
         onClick={openModal}
         type="button"
-        class="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
-        on
+        className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
+        on={1}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
-          stroke-width="2"
+          strokeWidth="2"
           stroke="currentColor"
-          class="w-6 h-6"
+          className="w-6 h-6"
         >
           <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
           />
         </svg>
@@ -142,8 +142,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         <thead>
                           <tr>
                             <th>
-                              <td>Transit Score</td>
-                              <td>Description</td>
+                              Transit Score Description
                             </th>
                           </tr>
                         </thead>
@@ -176,20 +175,20 @@ function ScoreDetailModal({ originLocation, destinations }) {
                   >
                     <button
                       type="button"
-                      class="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
-                      on
+                      className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
+                      on={1}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="2"
+                        strokeWidth="2"
                         stroke="currentColor"
-                        class="w-6 h-6 inline"
+                        className="w-6 h-6 inline"
                       >
                         <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                           d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
                         />
                       </svg>
@@ -218,7 +217,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                       className="form-control"
                       onChange={onChangeDestinationDropdown}
                     >
-                      <option key="default" value="default" selected>
+                      <option key="default" value="default" defaultValue>
                         -- All destinations --
                       </option>
                       {destinations.map(function (dest) {
@@ -233,17 +232,17 @@ function ScoreDetailModal({ originLocation, destinations }) {
                 </Dialog.Title>
 
                 {/* Table contents */}
-                <div class="w-full bg-emerald-400 rounded-3xl p-4 flex mt-2">
-                  <table class="table-auto border-separate border-spacing-3">
+                <div className="w-full bg-emerald-400 rounded-3xl p-4 flex mt-2">
+                  <table className="table-auto border-separate border-spacing-3">
                     <thead>
                       <tr>
                         <th>
-                          <span class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center invisible">
+                          <span className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center invisible">
                             <p>Placeholder</p>
                           </span>
                         </th>
                         <th>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-auto border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -261,7 +260,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </th>
                         <th>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-auto border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -279,7 +278,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </th>
                         <th>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-auto border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -297,7 +296,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </th>
                         <th>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-auto border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -315,7 +314,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </th>
                         <th>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
                             <span>Score</span>
                           </div>
                         </th>
@@ -324,12 +323,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
                     <tbody>
                       <tr>
                         <td>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
                             <span>Overall</span>
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -346,7 +345,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -363,7 +362,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -380,7 +379,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -398,7 +397,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-3"
+                            className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -410,12 +409,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
                       </tr>
                       <tr>
                         <td>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
                             <span>Rush-Hour</span>
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -432,7 +431,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -449,7 +448,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1 ">
                               <tbody>
                                 <tr>
@@ -466,7 +465,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -484,7 +483,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-3"
+                            className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -496,12 +495,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
                       </tr>
                       <tr>
                         <td>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
                             <span>Off-Peak</span>
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -518,7 +517,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -535,7 +534,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -552,7 +551,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -570,7 +569,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-3"
+                            className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -582,12 +581,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
                       </tr>
                       <tr>
                         <td>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
                             <span>Weekend</span>
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -604,7 +603,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -621,7 +620,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -638,7 +637,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -656,7 +655,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-3"
+                            className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
@@ -668,12 +667,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
                       </tr>
                       <tr>
                         <td>
-                          <div class="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
                             <span>Overnight</span>
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -690,7 +689,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -707,7 +706,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -724,7 +723,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           </div>
                         </td>
                         <td>
-                          <div class="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                             <table className="text-center table-fixed border-separate border-spacing-1">
                               <tbody>
                                 <tr>
@@ -742,7 +741,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         </td>
                         <td>
                           <CircleWithText
-                            class="pl-3"
+                            className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"

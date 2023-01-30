@@ -7,28 +7,28 @@ export default function MyAccount() {
     <>
       <div>
         <div>
-          <section class="hero">
-            <div class={styles.container}>
+          <section className="hero">
+            <div className={styles.container}>
               <div>
-                <p class={styles.pageTitle}>My Account</p>
+                <p className={styles.pageTitle}>My Account</p>
               </div>
               <div>
-                <div class={styles.accountBox}>
+                <div className={styles.accountBox}>
                   <img
-                    class="is-rounded"
+                    className="is-rounded"
                     src={tempUserImg}
                     height="100px"
                     width="100px"
                   ></img>
-                  <p class={styles.pageText}>Username</p>
-                  <p class={styles.pageText}>Email</p>
-                  <p class={styles.pageText}>Location</p>
-                  <button class={styles.acctBtns}>
+                  <p className={styles.pageText}>Username</p>
+                  <p className={styles.pageText}>Email</p>
+                  <p className={styles.pageText}>Location</p>
+                  <button className={styles.acctBtns}>
                     Change Profile Picture
                   </button>
                   <br></br>
                   <br></br>
-                  <button class={styles.acctBtns}>
+                  <button className={styles.acctBtns}>
                     Edit Account Information
                   </button>
                 </div>

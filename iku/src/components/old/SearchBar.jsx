@@ -8,35 +8,35 @@ export default function SearchBar() {
     <>
       <div>
         <div>
-          <section class="hero is-small">
-            <div class="hero-body">
-              <div class={styles.searchDiv}>
-                <p class="has-text-centered is-size-1">
+          <section className="hero is-small">
+            <div className="hero-body">
+              <div className={styles.searchDiv}>
+                <p className="has-text-centered is-size-1">
                   {" "}
                   Let's find your transit scores
                 </p>
-                <div class="field">
+                <div className="field">
                   <br></br>
-                  <div class="columns">
-                    <div class="column is-three-fifths">
-                      <p class="control has-icons-left">
+                  <div className="columns">
+                    <div className="column is-three-fifths">
+                      <p className="control has-icons-left">
                         <input
-                          class={styles.searchBar}
+                          className={styles.searchBar}
                           type="email"
                           placeholder="                   Enter the address or postal code"
                         ></input>
                         <a href="/search">
-                          <span class="icon is-size-2 is-left ml-5">
+                          <span className="icon is-size-2 is-left ml-5">
                             <FontAwesomeIcon icon={faMagnifyingGlass} />
                           </span>
                         </a>
                       </p>
                     </div>
-                    <div class="column">
-                      <p class={styles.searchText}>or</p>
+                    <div className="column">
+                      <p className={styles.searchText}>or</p>
                     </div>
-                    <div class="column">
-                      <button class={styles.locationBtn}>
+                    <div className="column">
+                      <button className={styles.locationBtn}>
                         Current Location
                       </button>
                     </div>

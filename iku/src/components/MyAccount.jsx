@@ -25,19 +25,19 @@ export default function MyAccount() {
   }, []);
   return (
     <>
-      <div class="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
+      <div className="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
         <div>
-          <p class="pt-7 pb-7 text-2xl">My Account</p>
+          <p className="pt-7 pb-7 text-2xl">My Account</p>
           <img
-            class="w-20 rounded-lg mx-auto pb-7"
+            className="w-20 rounded-lg mx-auto pb-7"
             src={defaultPhoto}
             alt="default_user.jpg"
           />
-          <p class="pb-4">First Name: {FirstName} </p>
-          <p class="pb-4">Last Name: {LastName} </p>
-          <p class="pb-4">Email: {Email}</p>
-          <p class="pb-4">Location: {CurrentHome}</p>
-          <div class="w-60 mx-auto pb-10">
+          <p className="pb-4">First Name: {FirstName} </p>
+          <p className="pb-4">Last Name: {LastName} </p>
+          <p className="pb-4">Email: {Email}</p>
+          <p className="pb-4">Location: {CurrentHome}</p>
+          <div className="w-60 mx-auto pb-10">
             <LinkButton to="/editinfo">Edit Account Information</LinkButton>
             <LinkButton to="/editpassword">Change Password</LinkButton>
           </div>

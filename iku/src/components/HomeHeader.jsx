@@ -14,17 +14,17 @@ export default function HomeHeader() {
 
   return (
     <header>
-      <nav class="bg-emerald-500 dark:bg-emerald-700 px-4 lg:px-6 py-2.5 ">
-        <div class="flex flex-wrap justify-between items-center mx-auto">
-          <Link to="/" class="flex items-center">
+      <nav className="bg-emerald-500 dark:bg-emerald-700 px-4 lg:px-6 py-2.5 ">
+        <div className="flex flex-wrap justify-between items-center mx-auto">
+          <Link to="/" className="flex items-center">
             <Logo class="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition" />
           </Link>
           <div
-            class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
+            className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
             id="mobile-menu-2"
           >
-            <ul class="flex flex-col mt-4 font-medium lg:flex-row space-x-4 lg:mt-0">
-              <li class="flex items-center">
+            <ul className="flex flex-col mt-4 font-medium lg:flex-row space-x-4 lg:mt-0">
+              <li className="flex items-center">
                 <LinkButton to="/dashboard">Dashboard</LinkButton>
               </li>
               {location.pathname !== "/" ? (
@@ -32,38 +32,38 @@ export default function HomeHeader() {
                   <SimpleSearchBar />
                 </li>
               ) : null}
-              <li class="flex items-center">
+              <li className="flex items-center">
                 <LinkButton to="/">Help</LinkButton>
               </li>
             </ul>
           </div>
-          <div class="flex items-center lg:order-2">
-            <ul class="flex flex-col mt-4 font-medium lg:flex-row space-x-4 space-y-1 lg:space-y-0 lg:mt-0">
+          <div className="flex items-center lg:order-2">
+            <ul className="flex flex-col mt-4 font-medium lg:flex-row space-x-4 space-y-1 lg:space-y-0 lg:mt-0">
               {localStorage.getItem("authenticated") !== "true" ? (
                 <>
-                  <li class="flex items-center justify-end">
+                  <li className="flex items-center justify-end">
                     <LinkButton to="/login">Log In</LinkButton>
                   </li>
-                  <li class="flex items-center justify-end">
+                  <li className="flex items-center justify-end">
                     <LinkButton to="/register">Register</LinkButton>
                   </li>
                 </>
               ) : (
                 <>
-                  <li class="flex items-center">
+                  <li className="flex items-center">
                     <Link
                       to="/accountpage"
-                      class="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
+                      className="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
                     >
                       <Button>
                         {localStorage.getItem("first_name")}
                       </Button>
                     </Link>
                   </li>
-                  <li class="flex items-center">
+                  <li className="flex items-center">
                     <Link
                       to="/"
-                      class="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
+                      className="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
                       onClick={() => {
                         localStorage.removeItem("authenticated");
                         localStorage.removeItem("first_name");
@@ -82,13 +82,13 @@ export default function HomeHeader() {
             <button
               data-collapse-toggle="mobile-menu-2"
               type="button"
-              class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="mobile-menu-2"
               aria-expanded="false"
             >
-              <span class="sr-only">Open main menu</span>
+              <span className="sr-only">Open main menu</span>
               <svg
-                class="w-6 h-6"
+                className="w-6 h-6"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +100,7 @@ export default function HomeHeader() {
                 ></path>
               </svg>
               <svg
-                class="hidden w-6 h-6"
+                className="hidden w-6 h-6"
                 fill="currentColor"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
