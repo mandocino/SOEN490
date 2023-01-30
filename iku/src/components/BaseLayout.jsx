@@ -7,7 +7,7 @@ export default function Homepage(props) {
     <>
       <div className="flex flex-col gap-0 min-h-screen">
         <div className="flex-none">
-          <HomeHeader />
+          <HomeHeader ignore={props.ignore} />
         </div>
         <div className={"grow bg-emerald-50 dark:bg-emerald-darkest "+props.className}>
           {props.children}

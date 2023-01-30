@@ -8,8 +8,10 @@ import axios from "axios";
 
 import SimpleSearchBar from './SimpleSearchBar';
 
-export default function HomeHeader() {
-  
+export default function HomeHeader({ ignore }) {
+
+  if (ignore === undefined) ignore = [] ;
+
   const location = useLocation();
 
   return (
@@ -24,11 +26,11 @@ export default function HomeHeader() {
             id="mobile-menu-2"
           >
             <ul className="flex flex-col mt-4 font-medium lg:flex-row space-x-4 lg:mt-0">
-              <li className="flex items-center">
+              <li className="flex items-center" style={{visibility: ignore.includes('dashboard') ? 'hidden' : 'visible'}}>
                 <LinkButton to="/dashboard">Dashboard</LinkButton>
               </li>
               {location.pathname !== "/" ? (
-                <li class="w-96">
+                <li className="w-96">
                   <SimpleSearchBar />
                 </li>
               ) : null}

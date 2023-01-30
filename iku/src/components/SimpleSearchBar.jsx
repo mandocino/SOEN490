@@ -2,7 +2,6 @@ import { React, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import mongoose from "mongoose";
 import axios from "axios";
-import { ReactComponent as Location } from "./../assets/location.svg";
 
 const SimpleSearchBar = () => {
 
@@ -76,8 +75,7 @@ const SimpleSearchBar = () => {
   const getSuggestions = async (event) => {
     setInput(event.target.value);
     if (event.target.value.length > 0) {
-      await axios
-        .get("http://localhost:5000/suggestions", {
+      axios.get("http://localhost:5000/suggestions", {
           params: {
             input: event.target.value,
           },
@@ -127,7 +125,7 @@ const SimpleSearchBar = () => {
             class="accent-emerald-700 dark:accent-white transition ease-in-out duration-200 block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border-2 border-emerald-500 focus:border-emerald-700 dark:bg-gray-700 dark:border-emerald-400 dark:placeholder-gray-400 dark:text-white dark:focus:border-white"
             placeholder="Search Location"
             list="suggestions"
-            autocomplete="off"
+            autoComplete="off"
             required
           />
           <datalist id="suggestions">
