@@ -5,7 +5,7 @@ import { createLocation, getLocationsByUserID, modifyLocation, removeLocation } 
 
 // Google client for Geocoding API
 const geocodingClient = new Client({});
-const key = "AIzaSyBnuzE1B3FwqNqcD9l8ahk_dTyn6XyQ0G4";
+const key = "AIzaSyAB4gJlQUsQStzm67E8R_KTOAkt1fnFCAU";
 
 // Create a new location with data
 export const addLocation = async (req, res) => {

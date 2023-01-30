@@ -219,7 +219,7 @@ export default function EditLocation(props) {
                                 </span>
                                 <input
                                   class="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
-                                  placeholder="Enter new First Name"
+                                  placeholder="Enter a number here"
                                   value={Priority}
                                   onChange={handlePriorityChange}
                                   id="newPriority"

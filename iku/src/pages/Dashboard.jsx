@@ -18,7 +18,7 @@ export default function Dashboard() {
   const [rawOrigins, setRawOrigins] = useState([]);
   const [origins, setOrigins] = useState([]);
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
-  const [currentHome, setCurrentHome] = useState([]);
+  const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
 
   const locationsLoaded = useRef(false);
@@ -154,6 +154,8 @@ export default function Dashboard() {
       </div>
     </div>;
   }
+
+  console.log(currentHome);
 
   return (
     <>
