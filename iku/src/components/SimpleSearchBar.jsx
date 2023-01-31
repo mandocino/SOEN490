@@ -94,15 +94,15 @@ const SimpleSearchBar = () => {
 
   return (
     <>
-      <form class="rounded-lg drop-shadow-lg grow">
-        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">
+      <form className="rounded-lg drop-shadow-lg grow">
+        <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">
           Search
         </label>
-        <div class="relative">
-          <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+        <div className="relative">
+          <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
             <svg
                 aria-hidden="true"
-                class="w-5 h-5 text-gray-500"
+                className="w-5 h-5 text-gray-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -122,7 +122,7 @@ const SimpleSearchBar = () => {
             onKeyDown={handleEnterPressed}
             type="search"
             id="default-search"
-            class="accent-emerald-700 dark:accent-white transition ease-in-out duration-200 block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border-2 border-emerald-500 focus:border-emerald-700 dark:bg-gray-700 dark:border-emerald-400 dark:placeholder-gray-400 dark:text-white dark:focus:border-white"
+            className="accent-emerald-700 dark:accent-white transition ease-in-out duration-200 block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border-2 border-emerald-500 focus:border-emerald-700 dark:bg-gray-700 dark:border-emerald-400 dark:placeholder-gray-400 dark:text-white dark:focus:border-white"
             placeholder="Search Location"
             list="suggestions"
             autoComplete="off"
@@ -141,7 +141,7 @@ const SimpleSearchBar = () => {
           </datalist>
           <button
             onClick={handleSubmit}
-            class="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
+            className="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
           >
             Search
           </button>
