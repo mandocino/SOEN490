@@ -40,6 +40,13 @@ export default function EditPriorities(props) {
   const minValue = minDistance;
   const maxValue = 100 - minDistance;
 
+  const frequencyColor = '#38bdf8';
+  const durationColor = '#f472b6';
+  const walkTimeColor = '#facc15';
+  const sliderThumbColor = '#fff'
+  const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
+  const sliderThumbActiveShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)';
+
 
   const handleChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
@@ -213,17 +220,59 @@ export default function EditPriorities(props) {
                       Edit location
                     </Dialog.Title>
                   </div>
+
                   <hr className="mt-1 mb-8"></hr>
 
-                  <Slider
-                    track={false}
-                    getAriaLabel={() => 'Minimum distance shift'}
-                    value={sliderVal}
-                    onChange={handleChange}
-                    valueLabelDisplay="auto"
-                    getAriaValueText={valuetext}
-                    disableSwap
-                  />
+                  <p>
+                    The <b>frequency</b> refers to the gap between departures: if the departures are spaced 15 minutes
+                    apart then the frequency is 15. The frequency is by far regarded to be the most important aspect of
+                    any transit service.
+                  </p>
+
+                  <p>
+                    The <b>duration</b> refers to the the total trip time, excluding the initial wait time but including
+                    any transfer wait times: if you board your first bus at 9am and you arrive at your destination at
+                    9.45am, then the duration is 45 minutes. The frequency is generally regarded to be the second most
+                    important aspect of a transit service.
+                  </p>
+
+                  <p>
+                    The <b>walk time</b> refers to the total amount of walking involved in a route. Most generally do
+                    not worry too much about the required walk time, as long as it is not excessive; however it may be
+                    important for those with reduced or limited mobility to reduce the total walk time.
+                  </p>
+
+                  <div>
+                    <Slider
+                      track={false}
+                      getAriaLabel={() => 'Minimum distance shift'}
+                      value={sliderVal}
+                      onChange={handleChange}
+                      valueLabelDisplay="off"
+                      getAriaValueText={valuetext}
+                      disableSwap
+                      sx={{
+                        '& .MuiSlider-rail': {
+                          background: `linear-gradient(to right, ${frequencyColor} ${frequency}%,
+                        ${durationColor} ${frequency}%, ${durationColor} ${frequency+duration}%,
+                        ${walkTimeColor} ${frequency+duration}%);`,
+                          opacity: 1
+                        },
+                        '& .MuiSlider-thumb': {
+                          backgroundColor: sliderThumbColor,
+                          boxShadow: sliderThumbShadow,
+                          '&:focus, &:hover, &.Mui-active': {
+                            boxShadow: sliderThumbActiveShadow,
+                            // Reset on touch devices, it doesn't add specificity
+                            '@media (hover: none)': {
+                              boxShadow: sliderThumbShadow,
+                            },
+                          },
+                        }
+                      }}
+                    />
+                  </div>
+
 
                   {frequency} {duration} {walkTime}
 

@@ -81,10 +81,9 @@ export default function DashboardCard(props) {
           <span className="font-bold text-2xl text-center text-white line-clamp-2">
             {props.children}
           </span>
-          <div className="flex flex-col gap-2">
-          <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
-
-            <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
+          <div className="flex flex-col">
+            <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
+            <EditLocation loc={props.loc} buttonClass="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-t border-emerald-600 rounded-b-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-800 hover:bg-white"/>
           </div>
 
         </div>
@@ -93,7 +92,7 @@ export default function DashboardCard(props) {
           {scores ? <>
             <div className="w-full flex justify-center">
               <CircleWithText className="drop-shadow-xl" size="w-24 h-24" textClass="text-5xl font-bold"
-                              bgColor="bg-[#0c2927]"
+                              bgColor="bg-emerald-darker"
                               borderColor={scores.overallColor} textColor={scores.overallColor}>
                 {scores.overall}
               </CircleWithText>
@@ -104,7 +103,7 @@ export default function DashboardCard(props) {
                     Rush
                   </span>
                 <CircleWithText className="drop-shadow-xl justify-self-start" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                textClass="text-4xl font-semibold" bgColor="bg-emerald-darker"
                                 borderColor={scores.rushHourColor} textColor={scores.rushHourColor}>
                   {scores.rushHour}
                 </CircleWithText>
@@ -115,7 +114,7 @@ export default function DashboardCard(props) {
                     Off-Peak
                   </span>
                 <CircleWithText className="drop-shadow-xl justify-self-end" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                textClass="text-4xl font-semibold" bgColor="bg-emerald-darker"
                                 borderColor={scores.offPeakColor} textColor={scores.offPeakColor}>
                   {scores.offPeak}
                 </CircleWithText>
@@ -126,7 +125,7 @@ export default function DashboardCard(props) {
                     Weekend
                   </span>
                 <CircleWithText className="drop-shadow-xl justify-self-start" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                textClass="text-4xl font-semibold" bgColor="bg-emerald-darker"
                                 borderColor={scores.weekendColor} textColor={scores.weekendColor}>
                   {scores.weekend}
                 </CircleWithText>
@@ -137,7 +136,7 @@ export default function DashboardCard(props) {
                     Night
                   </span>
                 <CircleWithText className="drop-shadow-xl justify-self-end" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                                textClass="text-4xl font-semibold" bgColor="bg-emerald-darker"
                                 borderColor={scores.overnightColor} textColor={scores.overnightColor}>
                   {scores.overnight}
                 </CircleWithText>

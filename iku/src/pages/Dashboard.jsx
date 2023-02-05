@@ -82,23 +82,14 @@ export default function Dashboard() {
       ...o, scores: await getScores(o), detailedScores: getDetailedScores(o)
     })));
 
+    // Set origins to include the scores
     setOrigins(originsWithScores);
-  }
 
-  // Fetch the scores for the current home
-  const fetchCurrentHomeScores = async () => {
-    const scores = await loadScores(rawCurrentHome, null, user_id)
-      .catch(e => console.log(e));
-    let detailedScores = [];
-
-    for (const d of destinations) {
-      const scoreSet = await loadScores(rawCurrentHome, d, user_id)
-        .catch(e => console.log(e));
-      detailedScores.push(scoreSet);
-    }
-
+    // Map scores to current home
     setCurrentHome({
-      ...rawCurrentHome, scores: scores, detailedScores: detailedScores
+      ...rawCurrentHome,
+      scores: await getScores(rawCurrentHome),
+      detailedScores: getDetailedScores(rawCurrentHome)
     });
   }
 
@@ -118,9 +109,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (locationsSplit.current) {
       fetchScores();
-      fetchCurrentHomeScores();
     }
-  }, [rawOrigins, destinations]);
+  }, [rawOrigins, rawCurrentHome, destinations]);
 
   // Create card with the list of destinations
   if (destinations.length > 0) {
@@ -178,7 +168,7 @@ export default function Dashboard() {
           <div className="w-full flex flex-col justify-center">
             <div className="flex gap-8">
               <div className="w-96 flex flex-col gap-8 items-center">
-                <div className="w-full flex flex-col items-center p-4 rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+                <div className="w-full flex flex-col items-center p-4 rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
                   <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                     Current Home
                   </p>
@@ -198,7 +188,7 @@ export default function Dashboard() {
                   }
                 </div>
                 
-                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
                   <span className="flex items-center gap-2">
                     <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                       Priorities List
@@ -235,7 +225,7 @@ export default function Dashboard() {
                 </div>
                 
               </div>
-              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
                 <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Added Homes
                 </p>
@@ -244,7 +234,7 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+              <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
                 <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Added Destinations
                 </p>
