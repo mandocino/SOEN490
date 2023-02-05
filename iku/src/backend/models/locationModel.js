@@ -10,7 +10,9 @@ export const createLocation = (data, result) => {
             result(err, data);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -23,7 +25,9 @@ export const getLocationsByUserID = (ID, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -37,7 +41,9 @@ export const modifyLocation = (data, result) => {
             result(err, data);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -51,7 +57,9 @@ export const removeLocation = (_id, result) => {
             result(err, data);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });

@@ -9,7 +9,9 @@ export const getUsers = (result) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
+      if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
       result(null, data);
     }
   });
@@ -21,7 +23,9 @@ export const getUserByID = (ID, result) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
+      if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
       result(null, data);
     }
   });
@@ -33,7 +37,9 @@ export const getUserByEmail = (email, result) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
+      if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
       result(null, data);
     }
   });
@@ -57,7 +63,9 @@ export const login = (data, result) => {
                 if (err) {
                   console.log(err);
                 } else {
-                  console.log(data);
+                  if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
                   result(null, data);
                 }
               }
@@ -80,7 +88,9 @@ export const signup = (data, result) => {
       if (err) {
         console.log(err);
       } else {
+        if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
         console.log(data);
+      }
         result(null, data);
       }
     });
@@ -93,7 +103,9 @@ export const updateUserByID = (data, result) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
+      if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
       result(null, data);
     }
   });
@@ -105,7 +117,9 @@ export const updateUserByEmail = (data, result) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
+      if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
       result(null, data);
     }
   });
@@ -117,7 +131,9 @@ export const removeUserByEmail = (email, result) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(data);
+      if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+        console.log(data);
+      }
       result(null, data);
     }
   });

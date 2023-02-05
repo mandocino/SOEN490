@@ -8,7 +8,9 @@ export const createPasswordResetRequest = (data, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -21,7 +23,9 @@ export const modifyPasswordResetRequest = (data, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -34,7 +38,9 @@ export const findPasswordResetRequest = (data, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -47,7 +53,9 @@ export const deletePasswordResetRequest = (_id, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });

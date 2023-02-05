@@ -8,7 +8,9 @@ export const createEmailConfirmation = (data, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -21,7 +23,9 @@ export const findEmailConfirmation = (data, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
@@ -34,7 +38,9 @@ export const deleteEmailConfirmation = (data, result) => {
             console.log(err);
         }
         else{
-            console.log(data);
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
             result(null, data);
         }
     });
