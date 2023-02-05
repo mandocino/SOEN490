@@ -8,6 +8,7 @@ import { ReactComponent as DurationIcon } from "./../assets/clock-regular.svg";
 import { ReactComponent as FrequencyIcon } from "./../assets/table-solid.svg";
 import { ReactComponent as WalkIcon } from "./../assets/person-walking-solid.svg";
 import {loadScores} from "../backend/utils/scoring";
+import EditPriorities from "../components/EditPriorities";
 
 
 
@@ -125,7 +126,7 @@ export default function Dashboard() {
   if (destinations.length > 0) {
     destinationCards = destinations.map(function(loc){
       return (
-        <div className="bg-white text-emerald-500 rounded-2xl px-4 py-2 flex justify-between items-center" key={loc}>
+        <div className="bg-white text-emerald-500 rounded-2xl px-4 py-2 flex justify-between items-center" key={loc._id}>
           <span className="font-semibold text-xl text-left line-clamp-2">
             {loc.name}
           </span>
@@ -137,7 +138,7 @@ export default function Dashboard() {
                 </svg>
               </button>
             </Link>
-            <EditLocation loc={loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
+            <EditLocation loc={loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-emerald-600 hover:text-white"/>
           </div>
         </div>
       );
@@ -156,7 +157,7 @@ export default function Dashboard() {
   // Create origins' scorecards, except for the currentHome
   if (origins.length > 0) {
     originCards = origins.map(function(loc){
-      return <DashboardCard loc={loc} destinations={destinations} key={loc}>{loc.name}</DashboardCard>;
+      return <DashboardCard loc={loc} destinations={destinations} key={loc._id}>{loc.name}</DashboardCard>;
     })
   } else {
     originCards =
@@ -221,14 +222,16 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
-                    <button type="button" className="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                      </svg>
-                      Edit Frequencies
-                    </button>
-                  </Link>
+                  <EditPriorities buttonClass="w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2"/>
+
+                  {/*<Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">*/}
+                  {/*  <button type="button" className="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">*/}
+                  {/*    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">*/}
+                  {/*      <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />*/}
+                  {/*    </svg>*/}
+                  {/*    Edit Priorities*/}
+                  {/*  </button>*/}
+                  {/*</Link>*/}
                 </div>
                 
               </div>
