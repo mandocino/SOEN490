@@ -13,7 +13,7 @@ import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 
 function CarouselItem(props) {
   return (
-    <div className="h-64 overflow-y-auto">
+    <div className="h-72 bg-emerald-dark/10 dark:bg-black/30 to-emerald-darkest rounded-xl p-2 overflow-y-auto">
       {props.children}
     </div>
   )
@@ -27,7 +27,7 @@ export default function EditPriorities(props) {
   let walkTime = props.walkTime;
   let setWalkTime = props.setWalkTime;
 
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [sliderVal, setSliderVal] = useState([0,0]);
 
   const [oldFreq, setOldFreq] = useState(0);
@@ -40,8 +40,8 @@ export default function EditPriorities(props) {
   const minValue = minDistance;
   const maxValue = 100 - minDistance;
 
-  const frequencyColor = '#facc15';
-  const durationColor = '#34d399';
+  const frequencyColor = '#38bdf8';
+  const durationColor = '#c084fc';
   const walkTimeColor = '#f472b6';
   const sliderThumbColor = '#fff'
   const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
@@ -49,8 +49,22 @@ export default function EditPriorities(props) {
 
   // boxConicGradient1 has the center of the gradient at the bottom of the box.
   // boxConicGradient2 has the center of the gradient below the bottom of the box, giving a quasi-linear appearance.
-  const boxConicGradient1 = `conic-gradient(from 180deg at 50% 100%, ${frequencyColor} 90deg, ${durationColor} ${90 + 1.8 * (frequency)}deg, ${durationColor} ${89 + 1.8 * (frequency + duration)}deg, ${walkTimeColor} 270deg)`;
-  const boxConicGradient2 = `conic-gradient(from 180deg at 50% 200%, ${frequencyColor} 140deg, ${durationColor} ${140 + 0.8 * (frequency)}deg, ${durationColor} ${140 + 0.8 * (frequency + duration)}deg, ${walkTimeColor} 220deg)`;
+  const boxConicGradient1 = `conic-gradient(
+    from 180deg at 50% 100%, 
+    ${frequencyColor} 90deg, 
+    ${frequencyColor} ${90 + 1.8 * (frequency/2)}deg,
+    ${durationColor} ${90 + 1.8 * (frequency)}deg, 
+    ${durationColor} ${90 + 1.8 * (frequency + duration)}deg, 
+    ${walkTimeColor} ${90 + 1.8 * (frequency + duration + walkTime/2)}deg,
+    ${walkTimeColor} 270deg
+    )`;
+  const boxConicGradient2 = `conic-gradient(
+    from 180deg at 50% 200%, 
+    ${frequencyColor} 140deg, 
+    ${durationColor} ${140 + 0.8 * (frequency)}deg, 
+    ${durationColor} ${140 + 0.8 * (frequency + duration)}deg, 
+    ${walkTimeColor} 220deg
+    )`;
 
   function openModal() {
     // Save old values in case user clicks cancel
@@ -198,19 +212,19 @@ export default function EditPriorities(props) {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <div className="flex justify-between gap-2">
+                  className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-dark dark:to-emerald-darker p-6 text-left align-middle shadow-xl transition-all">
+                  <div className="flex justify-between gap-2 mb-2">
                     <Dialog.Title
                       as="h3"
-                      className="text-3xl font-semibold leading-6 text-emerald-900 flex items-center"
+                      className="text-3xl font-semibold leading-6 text-emerald-900 dark:text-emerald-50 flex items-center"
                     >
                       Edit location
                     </Dialog.Title>
                   </div>
 
-                  <hr className="mt-1 mb-8"></hr>
+                  <hr className="mt-1 mb-8 dark:border-emerald-900"></hr>
 
-                  <Carousel autoPlay={false} animation="slide" cycleNavigation={false}>
+                  <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white">
                     <CarouselItem>
                       <div className="mb-4">
                         The three adjustable scoring factors are the <b>frequency</b>, <b>duration</b>, and <b>walk
@@ -239,17 +253,15 @@ export default function EditPriorities(props) {
 
                     <CarouselItem>
                       <div className="mb-4">
-                        The <b>duration</b> refers to the the total trip time, excluding the initial wait time but
-                        including any transfer wait times: if you board your first bus at 9am and you arrive at your
-                        destination at 9.45am, then the duration is 45 minutes. The frequency is generally regarded to
-                        be the second most important aspect of a transit service.
+                        The <b>duration</b> refers to the the total trip time, including any transfer wait times: if you
+                        board your first bus at 9am and you arrive at your destination at 9.45am, then the duration is
+                        45 minutes.
                       </div>
 
                       <div className="mb-4">
-                        By default, the duration represents 20% of the grade. It may be tempting to set the duration to
-                        a large proportion, but it is worth considering that long durations do not necessarily indicate
-                        bad transit: for example, a home further away from the destination will naturally involve longer
-                        commutes, whether with transit or driving.
+                        By default, the duration represents 20% of the grade. It is tempting to set the duration to a
+                        large proportion, but consider that long durations do not necessarily indicate bad transit;
+                        longer distances naturally involve longer commutes, whether by transit or by driving.
                       </div>
                     </CarouselItem>
 
@@ -261,9 +273,9 @@ export default function EditPriorities(props) {
                       </div>
 
                       <div className="mb-4">
-                        Most generally do not worry too much about the required walk time, as long as it is not
-                        excessive; however it may be important for those with reduced or limited mobility to reduce the
-                        total walk time.
+                        By default, the walk time represents 10% of the grade. Most will not need to worry about routes'
+                        walk time; however it may be important for those with reduced or limited mobility to prioritize
+                        routes with shorter walk time.
                       </div>
 
                     </CarouselItem>
@@ -323,7 +335,7 @@ export default function EditPriorities(props) {
                     <button
                       type="button"
                       onClick={submitHandler}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
+                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                            stroke="currentColor" className="w-6 h-6">
@@ -335,7 +347,7 @@ export default function EditPriorities(props) {
                     <button
                       type="button"
                       onClick={closeModal}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg dark:bg-red-400 dark:hover:bg-red-600 dark:focus:ring-red-300"
+                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                            stroke="currentColor" className="w-6 h-6">
