@@ -1,15 +1,14 @@
-import {React, Fragment, useState} from "react";
-import {Switch, Dialog, Transition} from '@headlessui/react';
+import React, {Fragment, useState} from "react";
+import {Dialog, Transition} from '@headlessui/react';
 import {Slider} from '@mui/material';
 import Carousel from 'react-material-ui-carousel';
 
 import axios from "axios";
 import mongoose from "mongoose";
-import {Link} from "react-router-dom";
 
-import { ReactComponent as DurationIcon } from "./../assets/clock-regular.svg";
-import { ReactComponent as FrequencyIcon } from "./../assets/table-solid.svg";
-import { ReactComponent as WalkIcon } from "./../assets/person-walking-solid.svg";
+import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
+import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
+import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 
 
 function CarouselItem(props) {
@@ -21,47 +20,68 @@ function CarouselItem(props) {
 }
 
 export default function EditPriorities(props) {
+  let frequency = props.frequency;
+  let setFrequency = props.setFrequency;
+  let duration = props.duration;
+  let setDuration = props.setDuration;
+  let walkTime = props.walkTime;
+  let setWalkTime = props.setWalkTime;
+
   let [isOpen, setIsOpen] = useState(false);
+  const [sliderVal, setSliderVal] = useState([0,0]);
 
-  const [frequency, setFrequency] = useState(80);
-  const [duration, setDuration] = useState(15);
-  const [walkTime, setWalkTime] = useState(5);
-  const [sliderVal, setSliderVal] = useState([80, 95])
+  const [oldFreq, setOldFreq] = useState(0);
+  const [oldDur, setOldDur] = useState(0);
+  const [oldWalk, setOldWalk] = useState(0);
 
-
-  // const [Name, setName] = useState(loc.name);
-  // const [Notes, setNotes] = useState(loc.notes);
-  // const [Priority, setPriority] = useState(loc.priority);
-
-  // const handleNameChange = (event) => {
-  //   setName(event.target.value);
-  // }
-  //
-  // const handleNotesChange = (event) => {
-  //   setNotes(event.target.value);
-  // }
-  //
-  // const handlePriorityChange = event => {
-  //   const regex = /\D/g;
-  //   const result = event.target.value.replace(regex, '');
-  //   setPriority(result);
-  // };
-
-  function valuetext(value) {
-    return `${value}%`;
-  }
+  const user_id = localStorage.getItem("user_id");
 
   const minDistance = 5;
   const minValue = minDistance;
   const maxValue = 100 - minDistance;
 
-  const frequencyColor = '#38bdf8';
-  const durationColor = '#f472b6';
-  const walkTimeColor = '#facc15';
+  const frequencyColor = '#facc15';
+  const durationColor = '#34d399';
+  const walkTimeColor = '#f472b6';
   const sliderThumbColor = '#fff'
   const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
   const sliderThumbActiveShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)';
 
+  // boxConicGradient1 has the center of the gradient at the bottom of the box.
+  // boxConicGradient2 has the center of the gradient below the bottom of the box, giving a quasi-linear appearance.
+  const boxConicGradient1 = `conic-gradient(from 180deg at 50% 100%, ${frequencyColor} 90deg, ${durationColor} ${90 + 1.8 * (frequency)}deg, ${durationColor} ${89 + 1.8 * (frequency + duration)}deg, ${walkTimeColor} 270deg)`;
+  const boxConicGradient2 = `conic-gradient(from 180deg at 50% 200%, ${frequencyColor} 140deg, ${durationColor} ${140 + 0.8 * (frequency)}deg, ${durationColor} ${140 + 0.8 * (frequency + duration)}deg, ${walkTimeColor} 220deg)`;
+
+  function openModal() {
+    // Save old values in case user clicks cancel
+    // TODO: there's probably a better way to do this.
+    setOldFreq(frequency);
+    setOldDur(duration);
+    setOldWalk(walkTime);
+    setSliderVal([frequency, frequency + duration]);
+
+    setIsOpen(true);
+  }
+
+
+  function closeModal() {
+    // Reset to old values
+    setFrequency(oldFreq);
+    setDuration(oldDur);
+    setWalkTime(oldWalk);
+    setSliderVal([oldFreq, oldFreq + oldDur]);
+
+    // Close modal without saving changes
+    setIsOpen(false);
+  }
+  function sliderValueText(value, index) {
+    switch (index){
+      case 0:
+        return `Frequency ${value}%`;
+      case 1:
+        return `Walk time ${100-value}%`;
+    }
+  }
 
   const handleChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
@@ -119,63 +139,25 @@ export default function EditPriorities(props) {
     setWalkTime(100 - sliderVal[1]);
   };
 
+  // Submit user's scoring factor preferences
   const submitHandler = async (event) => {
     event.preventDefault();
 
-    // // Reset all other homes to false if current location changed
-    // if (CurrentHome !== loc.current_home) {
-    //   const user_id = localStorage.getItem("user_id");
-    //   let locations;
-    //
-    //   await axios.get(`http://localhost:5000/locations/${user_id}`)
-    //   .then((response) => {
-    //     locations = response.data;
-    //     locations = locations.filter(l => l._id !== loc._id && l.current_home);
-    //   })
-    //   .catch(err => console.error(err));
-    //
-    //   for (let l in locations) {
-    //     let oldHome = locations[l];
-    //     await axios
-    //     .post("http://localhost:5000/updateLocation", {
-    //       _id: mongoose.Types.ObjectId(oldHome._id),
-    //       current_home: false,
-    //     })
-    //     .catch((error) => {
-    //       console.log(error.message);
-    //     });
-    //   }
-    // }
-    //
-    // if (
-    //   Name !== "" ||
-    //   Notes !== "" ||
-    //   Priority !== ""
-    // ) {
-    //   await axios
-    //     .post("http://localhost:5000/updateLocation", {
-    //       _id: mongoose.Types.ObjectId(loc._id),
-    //       name: Name,
-    //       notes: Notes,
-    //       priority: parseInt(Priority),
-    //       current_home: isOrigin ? CurrentHome : false,
-    //       origin: isOrigin
-    //     })
-    //     .catch((error) => {
-    //       console.log(error.message);
-    //     });
-    //   window.location.reload(false);
-    // }
+    const currentDate = Date.now();
+
+    await axios
+      .post("http://localhost:5000/modifyUserByID", {
+        _id: mongoose.Types.ObjectId(user_id),
+        duration_priority: duration,
+        frequency_priority: frequency,
+        walk_priority: walkTime,
+        lastPrefChangeTime: currentDate
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+    window.location.reload(false);
   };
-
-  function closeModal() {
-    // Close modal without saving changes
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
 
   return (
     <>
@@ -189,16 +171,6 @@ export default function EditPriorities(props) {
           Edit Priorities
         </button>
       </div>
-
-      {/*<button*/}
-      {/*  type="button"*/}
-      {/*  onClick={openModal}*/}
-      {/*  className={props.buttonClass}*/}
-      {/*  >*/}
-      {/*  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">*/}
-      {/*    <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />*/}
-      {/*  </svg>*/}
-      {/*</button>*/}
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -255,7 +227,7 @@ export default function EditPriorities(props) {
                       <div className="mb-4">
                         The <b>frequency</b> refers to the gap between departures: if the departures are spaced on
                         average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM, etc.), then the
-                        frequency is 15.  The frequency is by far regarded to be the most important aspect of any
+                        frequency is 15. The frequency is by far regarded to be the most important aspect of any
                         transit service.
                       </div>
 
@@ -274,9 +246,10 @@ export default function EditPriorities(props) {
                       </div>
 
                       <div className="mb-4">
-                        It may be tempting to set the duration to represent a large proportion, but it is worth
-                        considering that long durations do not necessarily indicate bad transit: for example, a home
-                        further away from the destination will naturally be longer, but so will the drive.
+                        By default, the duration represents 20% of the grade. It may be tempting to set the duration to
+                        a large proportion, but it is worth considering that long durations do not necessarily indicate
+                        bad transit: for example, a home further away from the destination will naturally involve longer
+                        commutes, whether with transit or driving.
                       </div>
                     </CarouselItem>
 
@@ -299,11 +272,11 @@ export default function EditPriorities(props) {
                   <div>
                     <Slider
                       track={false}
-                      getAriaLabel={() => 'Minimum distance shift'}
+                      getAriaLabel={() => 'Scoring factor proportions'}
                       value={sliderVal}
                       onChange={handleChange}
                       valueLabelDisplay="off"
-                      getAriaValueText={valuetext}
+                      getAriaValueText={sliderValueText}
                       disableSwap
                       sx={{
                         '& .MuiSlider-rail': {
@@ -328,11 +301,7 @@ export default function EditPriorities(props) {
                   </div>
 
                   <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"
-                  style={{
-                    background: `conic-gradient(
-                    from 180deg at 50% 100%, ${frequencyColor} 90deg, ${durationColor} ${90+1.8*(frequency)}deg, ${durationColor} ${89+1.8*(frequency+duration)}deg, ${walkTimeColor} 270deg
-                    )`
-                  }}>
+                       style={{background: boxConicGradient1}}>
                     <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                       <FrequencyIcon className="fill-white w-6 h-6"/>
                       <span>Frequency: {frequency}%</span>

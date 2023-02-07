@@ -5,6 +5,18 @@ import ScoreDetailModal from "./ScoreDetailModal";
 
 export default function DashboardCard(props) {
 
+  const hueLowerBound = 330;
+  const hueUpperBound = 150;
+  const hueDirection = 1 // 1 = CW; -1 = CCW
+  let hueScale;
+
+  // (x*i+y): x*100+y = upper bound and y = lower bound
+  if (hueDirection === 1) {
+    hueScale = ((hueUpperBound + 360 - hueLowerBound) % 360) / 100;
+  } else {
+    hueScale = ((hueLowerBound + 360 - hueUpperBound) % 360) / -100;
+  }
+
   // Convert a hue value (in degrees) to a hex RGB representation
   // Hue in this case refers to the H of an HSV value where S and V are set to 100%
   function hueToHex(hue) {
@@ -63,9 +75,10 @@ export default function DashboardCard(props) {
     // Append the corresponding colors to each score value (overall, rushHour, etc)
     for (let score in scores) {
       const i = scores[score];
-      // (x*i+y): x*100+y = upper bound and y = lower bound
-      // current: 150deg upper bound, 330deg lower bound
-      const hue = (1.8 * i + 330) % 360
+      let hue = (hueScale * i + hueLowerBound) % 360
+      if (hue < 0) {
+        hue += 360;
+      }
       scores[`${score}Color`] = hueToHex(hue);
     }
   } else {

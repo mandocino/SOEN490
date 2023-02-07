@@ -1,15 +1,15 @@
-import React, { useEffect , useState, useRef } from "react";
+import React, {useEffect, useState, useRef} from "react";
 import BaseLayout from "../components/BaseLayout";
 import DashboardCard from "../components/DashboardCard";
 import EditLocation from "../components/EditLocation";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { ReactComponent as DurationIcon } from "./../assets/clock-regular.svg";
-import { ReactComponent as FrequencyIcon } from "./../assets/table-solid.svg";
-import { ReactComponent as WalkIcon } from "./../assets/person-walking-solid.svg";
+import {Link} from "react-router-dom";
+import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
+import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
+import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 import {loadScores} from "../backend/utils/scoring";
 import EditPriorities from "../components/EditPriorities";
-
+import mongoose from "mongoose";
 
 
 export default function Dashboard() {
@@ -22,28 +22,68 @@ export default function Dashboard() {
   const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
 
+  const [frequency, setFrequency] = useState(80);
+  const [duration, setDuration] = useState(15);
+  const [walkTime, setWalkTime] = useState(5);
+
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
 
   let originCards;
   let destinationCards;
 
+  // Fetch user's preferred scoring priorities
+  const fetchPriorities = async () => {
+
+    // Get the weighted average scores
+    const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
+    const userData = response.data[0];
+
+    let userFrequency = userData.frequency_priority;
+    let userDuration = userData.duration_priority;
+    let userWalkTime = userData.walk_priority;
+
+    if (userFrequency + userDuration + userWalkTime !== 100) {
+      const currentDate = Date.now();
+
+      await axios
+        .post("http://localhost:5000/modifyUserByID", {
+          _id: mongoose.Types.ObjectId(user_id),
+          duration_priority: 20,
+          frequency_priority: 70,
+          walk_priority: 10,
+          lastPrefChangeTime: currentDate
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+
+      setFrequency(70);
+      setDuration(20);
+      setWalkTime(10);
+    } else {
+      setFrequency(userFrequency);
+      setDuration(userDuration);
+      setWalkTime(userWalkTime);
+    }
+  }
+
   // Fetch all locations from the DB
   const fetchLocations = () => {
     const user_id = localStorage.getItem("user_id");
 
-    if(user_id == null) {
+    if (user_id == null) {
       let locationStringArray = sessionStorage.getItem('location')
-      if(locationStringArray != null) {
+      if (locationStringArray != null) {
         let locationArray = JSON.parse(locationStringArray);
         getLocations(locationArray);
       }
     } else {
       axios.get(`http://localhost:5000/locations/${user_id}`)
-          .then((response) => {
-            getLocations(response.data);
-          })
-          .catch(err => console.error(err));
+        .then((response) => {
+          getLocations(response.data);
+        })
+        .catch(err => console.error(err));
     }
     locationsLoaded.current = true;
   }
@@ -71,7 +111,9 @@ export default function Dashboard() {
       let detailedScores = [];
 
       for (const d of destinations) {
-        loadScores(origin, d, user_id).then((r) => {detailedScores.push(r)});
+        loadScores(origin, d, user_id).then((r) => {
+          detailedScores.push(r)
+        });
       }
 
       return detailedScores;
@@ -112,53 +154,101 @@ export default function Dashboard() {
     }
   }, [rawOrigins, rawCurrentHome, destinations]);
 
+  useEffect(() => {
+    fetchPriorities();
+  }, []);
+
   // Create card with the list of destinations
   if (destinations.length > 0) {
-    destinationCards = destinations.map(function(loc){
+    destinationCards = destinations.map(function (loc) {
       return (
-        <div className="bg-white text-emerald-500 rounded-2xl px-4 py-2 flex justify-between items-center" key={loc._id}>
+        <div className="bg-white text-emerald-500 rounded-2xl px-4 py-2 flex justify-between items-center"
+             key={loc._id}>
           <span className="font-semibold text-xl text-left line-clamp-2">
             {loc.name}
           </span>
           <div className="flex flex-nowrap gap-2">
             <Link to="/" className="transition ease-in-out duration-200 rounded-lg">
-              <button type="button" className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-emerald-600 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <button type="button"
+                      className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-emerald-600 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
+                     stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
               </button>
             </Link>
-            <EditLocation loc={loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-emerald-600 hover:text-white"/>
+            <EditLocation loc={loc}
+                          buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-emerald-600 hover:text-white"/>
           </div>
         </div>
       );
     })
   } else {
     destinationCards =
-    <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
-      <div className="flex justify-between items-center gap-2 drop-shadow-lg">
+      <div
+        className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
+        <div className="flex justify-between items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved destinations yet.
         </span>
-      </div>
-    </div>;
+        </div>
+      </div>;
   }
 
   // Create origins' scorecards, except for the currentHome
   if (origins.length > 0) {
-    originCards = origins.map(function(loc){
+    originCards = origins.map(function (loc) {
       return <DashboardCard loc={loc} destinations={destinations} key={loc._id}>{loc.name}</DashboardCard>;
     })
   } else {
     originCards =
-    <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
-      <div className="flex justify-between items-center gap-2 drop-shadow-lg">
+      <div
+        className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
+        <div className="flex justify-between items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved locations yet.
         </span>
-      </div>
-    </div>;
+        </div>
+      </div>;
   }
+
+  // Create card with the scoring factors
+  const frequencyIcon = <FrequencyIcon className="fill-emerald-500 w-6 h-6"/>;
+  const durationIcon = <DurationIcon className="fill-emerald-500 w-6 h-6"/>;
+  const walkIcon = <WalkIcon className="fill-emerald-500 w-6 h-6"/>
+
+  // Create an array with the three scoring factors
+  // Sort it (mutate in-place)
+  // Create divs with the position (1, 2, 3), name, value, and icon
+  const factorCards = [].concat([{name: "Frequency", value: frequency}, {name: "Duration", value: duration}, {name: "Walk Time", value: walkTime}])
+    .sort((a, b) => a.value < b.value ? 1 : -1)
+    .map((item, i) =>
+      <div key={i}
+        className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+        <span>{i+1}.</span>
+        {item.name === "Frequency" ? frequencyIcon : item.name === "Duration" ? durationIcon : walkIcon}
+        <span>{item.name}: {item.value}%</span>
+      </div>
+    );
+
+  // const freqCard = (<div
+  //   className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+  //   <span>1. Frequency: {frequency}%</span>
+  //   <FrequencyIcon className="fill-emerald-500 w-6 h-6"/>
+  // </div>);
+  //
+  // const durCard = (<div
+  //   className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+  //   <span>2. Duration: {duration}%</span>
+  //   <DurationIcon className="fill-emerald-500 w-6 h-6"/>
+  // </div>);
+  //
+  // const walkCard = (<div
+  //   className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+  //   <span>3. Walk Time: {walkTime}%</span>
+  //   <WalkIcon className="fill-emerald-500 w-6 h-6"/>
+  // </div>);
 
   return (
     <>
@@ -168,17 +258,21 @@ export default function Dashboard() {
           <div className="w-full flex flex-col justify-center">
             <div className="flex gap-8">
               <div className="w-96 flex flex-col gap-8 items-center">
-                <div className="w-full flex flex-col items-center p-4 rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
-                  <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+                <div
+                  className="w-full flex flex-col items-center p-4 rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
+                  <p
+                    className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                     Current Home
                   </p>
                   {
                     currentHome ?
                       <>
-                        <DashboardCard loc={currentHome} destinations={destinations} invert>{currentHome.name}</DashboardCard>
+                        <DashboardCard loc={currentHome} destinations={destinations}
+                                       invert>{currentHome.name}</DashboardCard>
                       </>
                       :
-                      <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
+                      <div
+                        className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
                         <div className="flex justify-between items-center gap-2 drop-shadow-lg">
                           <span className="font-bold text-2xl text-center text-white">
                             No specified current home.
@@ -187,32 +281,24 @@ export default function Dashboard() {
                       </div>
                   }
                 </div>
-                
-                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
+
+                <div
+                  className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
                   <span className="flex items-center gap-2">
-                    <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+                    <p
+                      className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                       Priorities List
                     </p>
                   </span>
 
-                  <div className="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
-                    <div className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <span>1. Frequency</span>
-                      <FrequencyIcon className="fill-emerald-500 w-6 h-6"/>
-                    </div>
-
-                    <div className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <span>2. Duration</span>
-                      <DurationIcon className="fill-emerald-500 w-6 h-6"/>
-                    </div>
-
-                    <div className="bg-white font-semibold text-2xl text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <span>3. Walk Time</span>
-                      <WalkIcon className="fill-emerald-500 w-6 h-6"/>
-                    </div>
+                  <div
+                    className="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
+                    {factorCards}
                   </div>
 
-                  <EditPriorities buttonClass="w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2"/>
+                  <EditPriorities frequency={frequency} setFrequency={setFrequency} duration={duration}
+                                  setDuration={setDuration} walkTime={walkTime} setWalkTime={setWalkTime}
+                                  buttonClass="w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2"/>
 
                   {/*<Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">*/}
                   {/*  <button type="button" className="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">*/}
@@ -223,29 +309,37 @@ export default function Dashboard() {
                   {/*  </button>*/}
                   {/*</Link>*/}
                 </div>
-                
+
               </div>
-              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
-                <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+              <div
+                className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
+                <p
+                  className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Added Homes
                 </p>
                 <div className="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
                   {originCards}
                 </div>
               </div>
-              
-              <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
-                <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+
+              <div
+                className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-emerald-dark dark:to-emerald-darker p-4 gap-4">
+                <p
+                  className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
                   Added Destinations
                 </p>
-                <div className="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
+                <div
+                  className="w-full bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col gap-2">
                   {destinationCards}
                 </div>
 
                 <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
-                  <button type="button" className="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <button type="button"
+                          className="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white px-4 py-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
+                         stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                            d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     Add Destination
                   </button>
