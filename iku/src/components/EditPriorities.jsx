@@ -1,9 +1,24 @@
 import {React, Fragment, useState} from "react";
 import {Switch, Dialog, Transition} from '@headlessui/react';
 import {Slider} from '@mui/material';
+import Carousel from 'react-material-ui-carousel';
+
 import axios from "axios";
 import mongoose from "mongoose";
 import {Link} from "react-router-dom";
+
+import { ReactComponent as DurationIcon } from "./../assets/clock-regular.svg";
+import { ReactComponent as FrequencyIcon } from "./../assets/table-solid.svg";
+import { ReactComponent as WalkIcon } from "./../assets/person-walking-solid.svg";
+
+
+function CarouselItem(props) {
+  return (
+    <div className="h-64 overflow-y-auto">
+      {props.children}
+    </div>
+  )
+}
 
 export default function EditPriorities(props) {
   let [isOpen, setIsOpen] = useState(false);
@@ -11,7 +26,7 @@ export default function EditPriorities(props) {
   const [frequency, setFrequency] = useState(80);
   const [duration, setDuration] = useState(15);
   const [walkTime, setWalkTime] = useState(5);
-  const [sliderVal, setSliderVal] = useState([80,95])
+  const [sliderVal, setSliderVal] = useState([80, 95])
 
 
   // const [Name, setName] = useState(loc.name);
@@ -100,8 +115,8 @@ export default function EditPriorities(props) {
 
     // Set frequency to left value, duration to middle value, walkTime to right value
     setFrequency(sliderVal[0]);
-    setDuration(sliderVal[1]-sliderVal[0]);
-    setWalkTime(100-sliderVal[1]);
+    setDuration(sliderVal[1] - sliderVal[0]);
+    setWalkTime(100 - sliderVal[1]);
   };
 
   const submitHandler = async (event) => {
@@ -223,24 +238,63 @@ export default function EditPriorities(props) {
 
                   <hr className="mt-1 mb-8"></hr>
 
-                  <p>
-                    The <b>frequency</b> refers to the gap between departures: if the departures are spaced 15 minutes
-                    apart then the frequency is 15. The frequency is by far regarded to be the most important aspect of
-                    any transit service.
-                  </p>
+                  <Carousel autoPlay={false} animation="slide" cycleNavigation={false}>
+                    <CarouselItem>
+                      <div className="mb-4">
+                        The three adjustable scoring factors are the <b>frequency</b>, <b>duration</b>, and <b>walk
+                        time</b>. Use the slider below to adjust the proportional impact of these factors.
+                      </div>
 
-                  <p>
-                    The <b>duration</b> refers to the the total trip time, excluding the initial wait time but including
-                    any transfer wait times: if you board your first bus at 9am and you arrive at your destination at
-                    9.45am, then the duration is 45 minutes. The frequency is generally regarded to be the second most
-                    important aspect of a transit service.
-                  </p>
+                      <div className="mb-4">
+                        If you need explanations on what these factors mean, or guidance on how to set these scoring
+                        factors, click the arrows on the sides (or swipe left) to view details.
+                      </div>
+                    </CarouselItem>
 
-                  <p>
-                    The <b>walk time</b> refers to the total amount of walking involved in a route. Most generally do
-                    not worry too much about the required walk time, as long as it is not excessive; however it may be
-                    important for those with reduced or limited mobility to reduce the total walk time.
-                  </p>
+                    <CarouselItem>
+                      <div className="mb-4">
+                        The <b>frequency</b> refers to the gap between departures: if the departures are spaced on
+                        average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM, etc.), then the
+                        frequency is 15.  The frequency is by far regarded to be the most important aspect of any
+                        transit service.
+                      </div>
+
+                      <div className="mb-4">
+                        By default, the frequency represents 70% of the grade. Because of its importance, it is
+                        recommended that the frequency remains a huge proportion of the grade.
+                      </div>
+                    </CarouselItem>
+
+                    <CarouselItem>
+                      <div className="mb-4">
+                        The <b>duration</b> refers to the the total trip time, excluding the initial wait time but
+                        including any transfer wait times: if you board your first bus at 9am and you arrive at your
+                        destination at 9.45am, then the duration is 45 minutes. The frequency is generally regarded to
+                        be the second most important aspect of a transit service.
+                      </div>
+
+                      <div className="mb-4">
+                        It may be tempting to set the duration to represent a large proportion, but it is worth
+                        considering that long durations do not necessarily indicate bad transit: for example, a home
+                        further away from the destination will naturally be longer, but so will the drive.
+                      </div>
+                    </CarouselItem>
+
+                    <CarouselItem>
+                      <div className="mb-4">
+                        The <b>walk time</b> refers to the total amount of walking involved in a route. If you have to
+                        walk 10 minutes to the train station, and then another 10 minutes from the train statin to your
+                        destination, then the total walk time is 20 minutes.
+                      </div>
+
+                      <div className="mb-4">
+                        Most generally do not worry too much about the required walk time, as long as it is not
+                        excessive; however it may be important for those with reduced or limited mobility to reduce the
+                        total walk time.
+                      </div>
+
+                    </CarouselItem>
+                  </Carousel>
 
                   <div>
                     <Slider
@@ -254,8 +308,8 @@ export default function EditPriorities(props) {
                       sx={{
                         '& .MuiSlider-rail': {
                           background: `linear-gradient(to right, ${frequencyColor} ${frequency}%,
-                        ${durationColor} ${frequency}%, ${durationColor} ${frequency+duration}%,
-                        ${walkTimeColor} ${frequency+duration}%);`,
+                        ${durationColor} ${frequency}%, ${durationColor} ${frequency + duration}%,
+                        ${walkTimeColor} ${frequency + duration}%);`,
                           opacity: 1
                         },
                         '& .MuiSlider-thumb': {
@@ -273,8 +327,27 @@ export default function EditPriorities(props) {
                     />
                   </div>
 
+                  <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"
+                  style={{
+                    background: `conic-gradient(
+                    from 180deg at 50% 100%, ${frequencyColor} 90deg, ${durationColor} ${90+1.8*(frequency)}deg, ${durationColor} ${89+1.8*(frequency+duration)}deg, ${walkTimeColor} 270deg
+                    )`
+                  }}>
+                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                      <FrequencyIcon className="fill-white w-6 h-6"/>
+                      <span>Frequency: {frequency}%</span>
+                    </div>
 
-                  {frequency} {duration} {walkTime}
+                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                      <DurationIcon className="fill-white w-6 h-6"/>
+                      <span>Duration: {duration}%</span>
+                    </div>
+
+                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                      <WalkIcon className="fill-white w-6 h-6"/>
+                      <span>Walk Time: {walkTime}%</span>
+                    </div>
+                  </div>
 
 
                   <div className="mt-4 flex gap-2">
