@@ -87,7 +87,7 @@ export default function DashboardCard(props) {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
+      <div className="bg-gradient-to-br from-emerald-darker to-black rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
 
 
         <div className="flex justify-between items-center gap-2 drop-shadow-lg h-full">
@@ -96,7 +96,7 @@ export default function DashboardCard(props) {
           </span>
           <div className="flex flex-col">
             <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
-            <EditLocation loc={props.loc} buttonClass="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-t border-emerald-600 rounded-b-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-800 hover:bg-white"/>
+            <EditLocation loc={props.loc} buttonClass="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-t border-emerald-600 rounded-b-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-dark hover:bg-white"/>
           </div>
 
         </div>

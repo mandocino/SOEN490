@@ -73,7 +73,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
       <button
         onClick={openModal}
         type="button"
-        className="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-b border-emerald-600 rounded-t-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-800 hover:bg-white"
+        className="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-b border-emerald-600 rounded-t-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-dark hover:bg-white"
         on={1}
       >
         <svg

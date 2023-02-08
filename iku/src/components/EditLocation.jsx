@@ -121,7 +121,7 @@ export default function EditLocation(props) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-75" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -135,11 +135,11 @@ export default function EditLocation(props) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-dark dark:to-emerald-darker p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl transition-all">
                   <div className="flex justify-between gap-2 mb-2">
                     <Dialog.Title
                       as="h3"
-                      className="text-3xl font-semibold leading-6 text-emerald-900 dark:text-emerald-50 flex items-center"
+                      className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center pb-1"
                     >
                       Edit location
                     </Dialog.Title>
@@ -156,7 +156,7 @@ export default function EditLocation(props) {
                     </button>
                   </div>
 
-                  <hr className="mt-1 mb-8 dark:border-emerald-900"></hr>
+                  <hr className="mt-1 mb-8 dark:border-emerald-700"></hr>
 
                   <div className="mt-2 text-emerald-darker dark:text-white">
                     <form>

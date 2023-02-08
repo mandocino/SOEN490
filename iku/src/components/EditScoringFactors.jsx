@@ -19,7 +19,7 @@ function CarouselItem(props) {
   )
 }
 
-export default function EditPriorities(props) {
+export default function EditScoringFactors(props) {
   let frequency = props.frequency;
   let setFrequency = props.setFrequency;
   let duration = props.duration;
@@ -40,9 +40,13 @@ export default function EditPriorities(props) {
   const minValue = minDistance;
   const maxValue = 100 - minDistance;
 
-  const frequencyColor = '#38bdf8';
-  const durationColor = '#c084fc';
-  const walkTimeColor = '#f472b6';
+  const frequencyColor = props.frequencyColor.hex;
+  const frequencyTextColor = props.frequencyColor.text
+  const durationColor = props.durationColor.hex;
+  const durationTextColor = props.durationColor.text;
+  const walkTimeColor = props.walkTimeColor.hex;
+  const walkTimeTextColor = props.walkTimeColor.text;
+
   const sliderThumbColor = '#fff'
   const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
   const sliderThumbActiveShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)';
@@ -182,7 +186,7 @@ export default function EditPriorities(props) {
             <path strokeLinecap="round" strokeLinejoin="round"
                   d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
           </svg>
-          Edit Priorities
+          Edit Scoring Factors
         </button>
       </div>
 
@@ -197,7 +201,7 @@ export default function EditPriorities(props) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25"/>
+            <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-75"/>
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -212,22 +216,39 @@ export default function EditPriorities(props) {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-dark dark:to-emerald-darker p-6 text-left align-middle shadow-xl transition-all">
+                  className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl transition-all">
                   <div className="flex justify-between gap-2 mb-2">
                     <Dialog.Title
                       as="h3"
-                      className="text-3xl font-semibold leading-6 text-emerald-900 dark:text-emerald-50 flex items-center"
+                      className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center pb-1"
                     >
-                      Edit location
+                      Edit scoring factors
                     </Dialog.Title>
                   </div>
 
-                  <hr className="mt-1 mb-8 dark:border-emerald-900"></hr>
+                  <hr className="mt-1 mb-8 dark:border-emerald-700"></hr>
 
-                  <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white">
+                  <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white"
+                    sx={{
+                      button: {
+                        '&:hover': {
+                          opacity: '1 !important'
+                        }
+                      },
+                      buttonWrapper: {
+                        '&:hover': {
+                          '& $button': {
+                            backgroundColor: "black",
+                            filter: "brightness(120%)",
+                            opacity: "1"
+                          }
+                        }
+                      },
+                    }}>
                     <CarouselItem>
                       <div className="mb-4">
-                        The three adjustable scoring factors are the <b>frequency</b>, <b>duration</b>, and <b>walk
+                        The three adjustable scoring factors are the <b className={frequencyTextColor}>frequency</b>,
+                        the <b className={durationTextColor}>duration</b>, and the <b className={walkTimeTextColor}>walk
                         time</b>. Use the slider below to adjust the proportional impact of these factors.
                       </div>
 
@@ -239,10 +260,10 @@ export default function EditPriorities(props) {
 
                     <CarouselItem>
                       <div className="mb-4">
-                        The <b>frequency</b> refers to the gap between departures: if the departures are spaced on
-                        average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM, etc.), then the
-                        frequency is 15. The frequency is by far regarded to be the most important aspect of any
-                        transit service.
+                        The <b className={frequencyTextColor}>frequency</b> refers to the gap between departures: if the
+                        departures are spaced on average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM,
+                        etc.), then the frequency is 15. The frequency is by far regarded to be the most important
+                        aspect of any transit service.
                       </div>
 
                       <div className="mb-4">
@@ -253,9 +274,9 @@ export default function EditPriorities(props) {
 
                     <CarouselItem>
                       <div className="mb-4">
-                        The <b>duration</b> refers to the the total trip time, including any transfer wait times: if you
-                        board your first bus at 9am and you arrive at your destination at 9.45am, then the duration is
-                        45 minutes.
+                        The <b className={durationTextColor}>duration</b> refers to the the total trip time, including
+                        any transfer wait times: if you board your first bus at 9am and you arrive at your destination
+                        at 9.45am, then the duration is 45 minutes.
                       </div>
 
                       <div className="mb-4">
@@ -267,9 +288,9 @@ export default function EditPriorities(props) {
 
                     <CarouselItem>
                       <div className="mb-4">
-                        The <b>walk time</b> refers to the total amount of walking involved in a route. If you have to
-                        walk 10 minutes to the train station, and then another 10 minutes from the train statin to your
-                        destination, then the total walk time is 20 minutes.
+                        The <b className={walkTimeTextColor}>walk time</b> refers to the total amount of walking involved
+                        in a route. If you have towalk 10 minutes to the train station, and then another 10 minutes from
+                        the train statin to your destination, then the total walk time is 20 minutes.
                       </div>
 
                       <div className="mb-4">
