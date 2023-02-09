@@ -185,7 +185,7 @@ export default function SearchBar() {
                   </datalist>
                   <button
                     onClick={handleSubmit}
-                    className="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
+                    className="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2"
                   >
                     Search
                   </button>
@@ -197,7 +197,7 @@ export default function SearchBar() {
               {/* w-14 and h-14 is the size of the adjacent searchbox */}
               <button
                 type="button"
-                className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
+                className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3"
               >
                 <Location onClick={getCurrentLocation} />
               </button>

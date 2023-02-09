@@ -121,7 +121,7 @@ export default function EditLocation(props) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-75" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -135,38 +135,42 @@ export default function EditLocation(props) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <div className="flex justify-between gap-2">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl transition-all">
+                  <div className="flex justify-between gap-2 pb-1">
                     <Dialog.Title
                       as="h3"
-                      className="text-3xl font-semibold leading-6 text-emerald-900 flex items-center"
+                      className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center pb-1"
                     >
                       Edit location
                     </Dialog.Title>
 
-                    <button
-                      type="button"
-                      onClick={deleteHandler}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg dark:bg-red-400 dark:hover:bg-red-600 dark:focus:ring-red-300"
+                    <div className="flex items-center">
+                      <button
+                        type="button"
+                        onClick={deleteHandler}
+                        className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
                       >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                      </svg>
-                      Delete Location
-                    </button>
-                  </div>
-                  <hr className="mt-1 mb-8"></hr>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                        Delete Location
+                      </button>
+                    </div>
 
-                  <div className="mt-2">
+                  </div>
+
+                  <hr className="mb-8 dark:border-emerald-700"></hr>
+
+                  <div className="mt-2 text-emerald-darker dark:text-white">
                     <form>
-                      <div className="flex flex-col gap-4">
-                        <div className="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex px-4 py-2 bg-emerald-dark/10 dark:bg-black/30 rounded-md">
                           <div className="flex items-center h-8 gap-4">
                             <span className="w-16 h-full flex items-center justify-start">
                               Name
                             </span>
                             <input
-                              className="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+                              className="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 accent-white focus:border-white dark:border-emerald-600 dark:bg-emerald-800 dark:placeholder-emerald-100"
                               placeholder="Enter new First Name"
                               onChange={handleNameChange}
                               defaultValue={Name}
@@ -175,13 +179,13 @@ export default function EditLocation(props) {
                           </div>
                         </div>
 
-                        <div className="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                        <div className="flex px-4 py-2 bg-emerald-dark/10 dark:bg-black/30 rounded-md">
                           <div className="flex items-center h-8 gap-4">
                             <span className="w-16 h-full flex items-center justify-start">
                               Notes
                             </span>
                             <input
-                              className="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+                              className="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 accent-white focus:border-white dark:border-emerald-600 dark:bg-emerald-800 dark:placeholder-emerald-100"
                               placeholder="Enter new First Name"
                               onChange={handleNotesChange}
                               defaultValue={Notes}
@@ -192,15 +196,15 @@ export default function EditLocation(props) {
 
                         {isOrigin ?
                           <>
-                            <div className="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentHomeBox">
+                            <div className="flex px-4 py-2 bg-emerald-dark/10 dark:bg-black/30 rounded-md" id="currentHomeBox">
                               <div className="flex items-center h-8 gap-4">
-                                  <span className="w-16 h-full flex items-center justify-start">
+                                  <span className="w-16 h-full flex items-center justify-start leading-none">
                                     Current Home
                                   </span>
                                 <Switch
                                     checked={CurrentHome}
                                     onChange={setCurrentHome}
-                                    className={`${CurrentHome ? 'bg-emerald-600' : 'bg-teal-900'}
+                                    className={`${CurrentHome ? 'bg-emerald-400' : 'bg-emerald-800'}
                                       relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                                 >
                                   <span className="sr-only">Use setting</span>
@@ -215,13 +219,13 @@ export default function EditLocation(props) {
                           </>
                           :
                           <>
-                            <div className="flex px-4 py-2 bg-emerald-100 rounded-xl" id="currentPriority">
+                            <div className="flex px-4 py-2 bg-emerald-dark/10 dark:bg-black/30 rounded-md" id="currentPriority">
                               <div className="flex items-center h-8 gap-4">
                             <span className="w-16 h-full flex items-center justify-start">
                             Priority
                             </span>
                                 <input
-                                    className="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
+                                    className="px-2 h-full text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 accent-white focus:border-white dark:border-emerald-600 dark:bg-emerald-800 dark:placeholder-emerald-100"
                                     placeholder="Enter a number here"
                                     value={Priority}
                                     onChange={handlePriorityChange}
@@ -231,7 +235,7 @@ export default function EditLocation(props) {
                             </div>
                           </>
                         }
-                        <div className="flex px-4 py-2 bg-emerald-100 rounded-xl">
+                        <div className="flex px-4 py-2 bg-emerald-dark/10 dark:bg-black/30 rounded-md">
                           <div className="flex items-center h-8 gap-4">
                             <span className="w-16 h-full flex items-center justify-start">
                               Origin
@@ -239,7 +243,7 @@ export default function EditLocation(props) {
                             <Switch
                               checked={isOrigin}
                               onChange={setOrigin}
-                              className={`${isOrigin ? 'bg-emerald-600' : 'bg-teal-900'}
+                              className={`${isOrigin ? 'bg-emerald-400' : 'bg-emerald-800'}
                                 relative inline-flex h-[26px] w-[50px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                             >
                               <span
@@ -258,7 +262,7 @@ export default function EditLocation(props) {
                     <button
                       type="button"
                       onClick={submitHandler}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
+                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
                       >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -268,7 +272,7 @@ export default function EditLocation(props) {
                     <button
                       type="button"
                       onClick={closeModal}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg dark:bg-red-400 dark:hover:bg-red-600 dark:focus:ring-red-300"
+                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
                       >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

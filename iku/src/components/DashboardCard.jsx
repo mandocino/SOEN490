@@ -5,6 +5,18 @@ import ScoreDetailModal from "./ScoreDetailModal";
 
 export default function DashboardCard(props) {
 
+  const hueLowerBound = 330;
+  const hueUpperBound = 150;
+  const hueDirection = 1 // 1 = CW; -1 = CCW
+  let hueScale;
+
+  // (x*i+y): x*100+y = upper bound and y = lower bound
+  if (hueDirection === 1) {
+    hueScale = ((hueUpperBound + 360 - hueLowerBound) % 360) / 100;
+  } else {
+    hueScale = ((hueLowerBound + 360 - hueUpperBound) % 360) / -100;
+  }
+
   // Convert a hue value (in degrees) to a hex RGB representation
   // Hue in this case refers to the H of an HSV value where S and V are set to 100%
   function hueToHex(hue) {
@@ -63,9 +75,10 @@ export default function DashboardCard(props) {
     // Append the corresponding colors to each score value (overall, rushHour, etc)
     for (let score in scores) {
       const i = scores[score];
-      // (x*i+y): x*100+y = upper bound and y = lower bound
-      // current: 150deg upper bound, 330deg lower bound
-      const hue = (1.8 * i + 330) % 360
+      let hue = (hueScale * i + hueLowerBound) % 360
+      if (hue < 0) {
+        hue += 360;
+      }
       scores[`${score}Color`] = hueToHex(hue);
     }
   } else {
@@ -74,17 +87,16 @@ export default function DashboardCard(props) {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
+      <div className={`${props.className} rounded-3xl p-4 flex flex-col items-center gap-2 w-64`}>
 
 
         <div className="flex justify-between items-center gap-2 drop-shadow-lg h-full">
           <span className="font-bold text-2xl text-center text-white line-clamp-2">
             {props.children}
           </span>
-          <div className="flex flex-col gap-2">
-          <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
-
-            <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
+          <div className="flex flex-col">
+            <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
+            <EditLocation loc={props.loc} buttonClass="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-t border-emerald-600 rounded-b-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white"/>
           </div>
 
         </div>
@@ -92,8 +104,7 @@ export default function DashboardCard(props) {
         <div className="flex flex-col gap-2 w-44">
           {scores ? <>
             <div className="w-full flex justify-center">
-              <CircleWithText className="drop-shadow-xl" size="w-24 h-24" textClass="text-5xl font-bold"
-                              bgColor="bg-[#0c2927]"
+              <CircleWithText size="w-24 h-24" textClass="text-5xl font-bold"
                               borderColor={scores.overallColor} textColor={scores.overallColor}>
                 {scores.overall}
               </CircleWithText>
@@ -103,8 +114,8 @@ export default function DashboardCard(props) {
                   <span className="text-white text-sm font-semibold text-center">
                     Rush
                   </span>
-                <CircleWithText className="drop-shadow-xl justify-self-start" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                <CircleWithText className="justify-self-start" size="w-16 h-16"
+                                textClass="text-4xl font-semibold"
                                 borderColor={scores.rushHourColor} textColor={scores.rushHourColor}>
                   {scores.rushHour}
                 </CircleWithText>
@@ -114,8 +125,8 @@ export default function DashboardCard(props) {
                   <span className="text-white text-sm font-semibold text-center">
                     Off-Peak
                   </span>
-                <CircleWithText className="drop-shadow-xl justify-self-end" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                <CircleWithText className="justify-self-end" size="w-16 h-16"
+                                textClass="text-4xl font-semibold"
                                 borderColor={scores.offPeakColor} textColor={scores.offPeakColor}>
                   {scores.offPeak}
                 </CircleWithText>
@@ -125,8 +136,8 @@ export default function DashboardCard(props) {
                   <span className="text-white text-sm font-semibold text-center">
                     Weekend
                   </span>
-                <CircleWithText className="drop-shadow-xl justify-self-start" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                <CircleWithText className="justify-self-start" size="w-16 h-16"
+                                textClass="text-4xl font-semibold"
                                 borderColor={scores.weekendColor} textColor={scores.weekendColor}>
                   {scores.weekend}
                 </CircleWithText>
@@ -136,8 +147,8 @@ export default function DashboardCard(props) {
                   <span className="text-white text-sm font-semibold text-center">
                     Night
                   </span>
-                <CircleWithText className="drop-shadow-xl justify-self-end" size="w-16 h-16"
-                                textClass="text-4xl font-semibold" bgColor="bg-[#0c2927]"
+                <CircleWithText className="justify-self-end" size="w-16 h-16"
+                                textClass="text-4xl font-semibold"
                                 borderColor={scores.overnightColor} textColor={scores.overnightColor}>
                   {scores.overnight}
                 </CircleWithText>
