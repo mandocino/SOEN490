@@ -13,7 +13,7 @@ import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 
 function CarouselItem(props) {
   return (
-    <div className="h-72 bg-emerald-dark/10 dark:bg-black/30 to-emerald-darkest rounded-xl p-2 overflow-y-auto">
+    <div className="h-72 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-emerald-darker dark:to-black rounded-xl p-2 overflow-y-auto">
       {props.children}
     </div>
   )
@@ -217,16 +217,16 @@ export default function EditScoringFactors(props) {
               >
                 <Dialog.Panel
                   className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl transition-all">
-                  <div className="flex justify-between gap-2 mb-2">
+                  <div className="flex justify-between gap-2 pb-1">
                     <Dialog.Title
                       as="h3"
-                      className="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center pb-1"
+                      className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center"
                     >
                       Edit scoring factors
                     </Dialog.Title>
                   </div>
 
-                  <hr className="mt-1 mb-8 dark:border-emerald-700"></hr>
+                  <hr className="mb-8 dark:border-emerald-700"></hr>
 
                   <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white"
                     sx={{

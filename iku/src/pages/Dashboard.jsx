@@ -33,7 +33,10 @@ export default function Dashboard() {
   const durationColor = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
   const walkTimeColor = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
 
-  const dashboardElementClass = "rounded-3xl bg-gradient-to-br from-emerald-900 to-emerald-dark p-4";
+  const dashboardElementClass = "rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-500 dark:from-emerald-900 dark:to-emerald-dark p-4";
+  const dashboardElementButtonClass = "w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white px-4 py-2";
+  const dashboardElementButtonClass2 = "w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-500 dark:bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-white dark:text-emerald-dark hover:bg-emerald-700 dark:hover:bg-white";
+  const dashboardInnerElementGradientClass = "bg-gradient-to-br from-emerald-900 to-emerald-darker dark:from-emerald-darker dark:to-black rounded-3xl";
 
   let originCards;
   let destinationCards;
@@ -189,11 +192,11 @@ export default function Dashboard() {
   // Create origins' scorecards, except for the currentHome
   if (origins.length > 0) {
     originCards = origins.map(function (loc) {
-      return <DashboardCard loc={loc} destinations={destinations} key={loc._id}>{loc.name}</DashboardCard>;
+      return <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id}>{loc.name}</DashboardCard>;
     })
   } else {
     originCards = <div
-      className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
+      className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2`}>
       <div className="flex justify-between items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved locations yet.
@@ -205,7 +208,7 @@ export default function Dashboard() {
   // Create card with the list of destinations
   if (destinations.length > 0) {
     destinationCards = destinations.map(function (loc) {
-      return (<div className="bg-gradient-to-br from-emerald-400 to-emerald-600 dark:from-emerald-500 dark:to-emerald-700 text-white rounded-2xl px-4 py-2 flex justify-between items-center"
+      return (<div className="bg-gradient-to-br from-white to-emerald-100 text-emerald-800 dark:from-emerald-500 dark:to-emerald-700 dark:text-white rounded-2xl px-4 py-2 flex justify-between items-center"
                    key={loc._id}>
           <span className="font-semibold text-xl text-left line-clamp-2">
             {loc.name}
@@ -213,7 +216,7 @@ export default function Dashboard() {
           <div className="flex flex-nowrap gap-2">
             <Link to="/" className="transition ease-in-out duration-200 rounded-lg">
               <button type="button"
-                      className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-dark hover:bg-white">
+                      className={dashboardElementButtonClass2}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                      stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round"
@@ -221,20 +224,17 @@ export default function Dashboard() {
                 </svg>
               </button>
             </Link>
-            <EditLocation loc={loc}
-                          buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-dark hover:bg-white"/>
+            <EditLocation loc={loc} buttonClass={dashboardElementButtonClass2}/>
           </div>
         </div>);
     })
   } else {
-    destinationCards = <div
-      className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2">
+    destinationCards =
       <div className="flex justify-between items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved destinations yet.
         </span>
-      </div>
-    </div>;
+      </div>;
   }
 
   return (<>
@@ -247,14 +247,13 @@ export default function Dashboard() {
                 <div
                   className={`w-full flex flex-col items-center gap-4 ${dashboardElementClass}`}>
                   <p
-                    className="text-center text-4xl font-bold text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
+                    className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
                     Current Home
                   </p>
                   {currentHome ? <>
-                    <DashboardCard loc={currentHome} destinations={destinations}
-                                   invert>{currentHome.name}</DashboardCard>
+                    <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert>{currentHome.name}</DashboardCard>
                   </> : <div
-                    className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
+                    className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2 w-64`}>
                     <div className="flex justify-between items-center gap-2 drop-shadow-lg">
                           <span className="font-bold text-2xl text-center text-white">
                             No specified current home.
@@ -266,28 +265,28 @@ export default function Dashboard() {
                 <div
                   className={`w-96 h-fit flex flex-col items-center gap-4 ${dashboardElementClass}`}>
                   <span className="flex items-center gap-2">
-                    <p
-                      className="text-center text-4xl font-bold text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
+                    <span
+                      className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-white to-emerald-100">
                       Scoring Factors
-                    </p>
+                    </span>
                   </span>
 
                   <div
-                    className="w-full bg-gradient-to-br from-emerald-darker to-black rounded-3xl p-4 flex flex-col gap-2">
+                    className={`${dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
                     {factorCards}
                   </div>
 
                   <EditScoringFactors frequency={frequency} setFrequency={setFrequency} frequencyColor={frequencyColor}
                                       duration={duration} setDuration={setDuration} durationColor={durationColor}
                                       walkTime={walkTime} setWalkTime={setWalkTime} walkTimeColor={walkTimeColor}
-                                      buttonClass="w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-dark hover:bg-white px-4 py-2"/>
+                                      buttonClass={dashboardElementButtonClass}/>
                 </div>
 
               </div>
               <div
                 className={`grow h-fit flex flex-col gap-4 ${dashboardElementClass}`}>
                 <p
-                  className="text-center text-4xl font-bold text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
+                  className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
                   Added Homes
                 </p>
                 <div className="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
@@ -296,19 +295,19 @@ export default function Dashboard() {
               </div>
 
               <div
-                className={`w-96 h-fit flex flex-col items-center gap-4 ${dashboardElementClass}`}>
+                className={`${dashboardElementClass} w-96 h-fit flex flex-col items-center gap-4`}>
                 <p
-                  className="text-center text-4xl font-bold text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
+                  className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
                   Added Destinations
                 </p>
                 <div
-                  className="w-full bg-gradient-to-br from-emerald-darker to-black rounded-3xl p-4 flex flex-col gap-2">
+                  className={`${dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
                   {destinationCards}
                 </div>
 
                 <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
                   <button type="button"
-                          className="w-full flex items-center justify-start gap-2 transition ease-in-out font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-dark hover:bg-white px-4 py-2">
+                          className={dashboardElementButtonClass}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                          stroke="currentColor" className="w-6 h-6">
                       <path strokeLinecap="round" strokeLinejoin="round"
