@@ -1,0 +1,38 @@
+name: Jest tests on Vercel Preview
+
+on:
+  push:
+    branches: 
+        - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start backend server
+        run: vercel dev &
+
+      - name: Wait for server to start
+        run: sleep 10
+
+      - name: Run Jest tests
+        run: npm run test
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          token: ${{ secrets.VERCEL_TOKEN }}
+          prod: false
+          alias: ${{ github.sha }}
