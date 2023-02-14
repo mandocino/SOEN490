@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Navigate to Iku
+        uses: cd iku
+
       - name: Checkout code
         uses: actions/checkout@v2
 
