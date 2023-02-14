@@ -1,8 +1,9 @@
-import { React, useState, useRef } from "react";
+import { React, useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import mongoose from "mongoose";
 import axios from "axios";
 import { ReactComponent as Location } from "./../assets/location.svg";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function SearchBar() {
   // To autofill the textbox after fetching current location
@@ -13,6 +14,43 @@ export default function SearchBar() {
 
   // Handles places suggestions returned by api
   const [suggestions, setSuggestions] = useState([]);
+
+  // Checks if user is on desktop
+  const [currentLocationButton, setCurrentLocationButton] = useState(null);
+
+  useEffect(() => {
+    if (
+      !navigator.userAgent.match(/Android/i) &&
+      !navigator.userAgent.match(/iPhone/i)
+    ) {
+      setCurrentLocationButton(
+        <div>
+          <Tooltip
+            placement="right"
+            title="WARNING: Current location may not be accurate on desktop"
+          >
+            <button
+              type="button"
+              className="w-14 h-14 border-2 border-yellow-300 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3"
+            >
+              <Location onClick={getCurrentLocation} />
+            </button>
+          </Tooltip>
+        </div>
+      );
+    } else {
+      setCurrentLocationButton(
+        <div>
+          <button
+            type="button"
+            className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3"
+          >
+            <Location onClick={getCurrentLocation} />
+          </button>
+        </div>
+      );
+    }
+  }, []);
 
   const navigate = useNavigate();
 
@@ -48,25 +86,25 @@ export default function SearchBar() {
         };
 
         let locationStringArray;
-        if(userId == null) {
-          locationStringArray = sessionStorage.getItem("location")
+        if (userId == null) {
+          locationStringArray = sessionStorage.getItem("location");
 
-          if(locationStringArray == null) {
-            sessionStorage.setItem('location', JSON.stringify([location]));
+          if (locationStringArray == null) {
+            sessionStorage.setItem("location", JSON.stringify([location]));
           } else {
             let locationsArray = JSON.parse(locationStringArray);
             locationsArray.push(location);
-            sessionStorage.setItem('location', JSON.stringify(locationsArray));
+            sessionStorage.setItem("location", JSON.stringify(locationsArray));
           }
         } else {
           await axios
             .post("http://localhost:5000/newlocation", {
               user_id: mongoose.Types.ObjectId(userId),
-              ...location
+              ...location,
             })
-          .catch((error) => {
-            console.log(error.message);
-          });
+            .catch((error) => {
+              console.log(error.message);
+            });
         }
         navigate("/dashboard");
       })
@@ -115,7 +153,7 @@ export default function SearchBar() {
               inputRef.current.value = response.data.address;
             })
             .catch((error) => {
-              console.log(error.message)
+              console.log(error.message);
             });
         },
         () => {
@@ -195,12 +233,7 @@ export default function SearchBar() {
                 <p>or</p>
               </span>
               {/* w-14 and h-14 is the size of the adjacent searchbox */}
-              <button
-                type="button"
-                className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3"
-              >
-                <Location onClick={getCurrentLocation} />
-              </button>
+              {currentLocationButton}
             </div>
           </div>
         </div>
