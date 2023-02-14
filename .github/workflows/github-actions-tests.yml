@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Navigate to Iku
-        uses: cd iku
+        run: cd iku
 
       - name: Checkout code
         uses: actions/checkout@v2
