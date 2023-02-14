@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Navigate to Iku
-        run: cd iku
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -23,6 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: iku
 
       - name: Start backend server
         run: vercel dev &
