@@ -25,9 +25,7 @@ jobs:
         working-directory: iku
 
       - name: Start backend server
-        run: vercel dev
-        with:
-          token: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }}
 
       - name: Wait for server to start
         run: sleep 10
