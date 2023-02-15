@@ -25,7 +25,7 @@ jobs:
         working-directory: iku
 
       - name: Start backend server
-        run: vercel dev &
+        run: vercel dev
         with:
           token: ${{ secrets.VERCEL_TOKEN }}
 
