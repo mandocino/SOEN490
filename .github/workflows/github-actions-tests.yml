@@ -40,7 +40,8 @@ jobs:
 
       - name: Start frontend server
         run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --yes
-        noOutputTimeout: 15s
+        with:
+          time: '15s'
 
       - name: Wait for frontend server to start
         run: sleep 10
