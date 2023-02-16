@@ -39,7 +39,7 @@ jobs:
         working-directory: iku/src/backend
 
       - name: Start frontend server
-        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --listen 5000 --forward-to-api --no-clipboard --inspect
+        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }}
 
       - name: Wait for frontend server to start
         run: sleep 10
