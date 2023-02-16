@@ -38,8 +38,17 @@ jobs:
         run: sleep 10
         working-directory: iku/src/backend
 
+      - name: Start frontend server
+        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --listen 5000 --forward-to-api --no-clipboard --inspect
+
+      - name: Wait for frontend server to start
+        run: sleep 10
+
       - name: Run Jest tests
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         run: npm test
+        working-directory: iku
 
       - name: Stop backend server
         run: kill $(cat backend.pid)
