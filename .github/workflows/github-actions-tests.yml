@@ -2,8 +2,8 @@ name: Jest tests on Vercel Preview
 
 on:
   push:
-    branches: 
-        - '*'
+    branches:
+      - '*'
 
 jobs:
   test:
@@ -18,20 +18,32 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: |
           npm i fsevents@latest -f --save-optional
           npm ci
         working-directory: iku
 
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: iku/src/backend
+
       - name: Start backend server
-        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --yes
+        run: |
+          node index &
+          echo $! > backend.pid
+        working-directory: iku/src/backend
 
       - name: Wait for server to start
         run: sleep 10
+        working-directory: iku/src/backend
 
       - name: Run Jest tests
-        run: npm run test
+        run: npm test
+
+      - name: Stop backend server
+        run: kill $(cat backend.pid)
+        working-directory: iku/src/backend
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
