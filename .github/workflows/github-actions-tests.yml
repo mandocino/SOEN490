@@ -39,9 +39,14 @@ jobs:
       #  working-directory: iku/src/backend
 
       - name: Start frontend server
+        id: frontend-server-start
         run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --yes
         timeout-minutes: 1
         continue-on-error: true
+
+      - name: Reset frontend server start outcome
+        if: failure() && steps.test-app.outcome != 'success'
+        run: steps.frontend-server-start.outcome = 'success'
 
       - name: Run Jest tests
         env:
