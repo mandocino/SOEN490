@@ -62,6 +62,4 @@ jobs:
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
         with:
-          token: ${{ secrets.VERCEL_TOKEN }}
-          prod: false
-          alias: ${{ github.sha }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
