@@ -10,6 +10,8 @@ import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 import {loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
 import mongoose from "mongoose";
+import ScoreCompareModal from '../components/ScoreCompareModal';
+import CompareIcon from '../assets/compare.png';
 
 
 export default function Dashboard() {
@@ -21,6 +23,21 @@ export default function Dashboard() {
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
   const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
+  const [cards, setCards] = useState([])
+  const [cardToCompare, setCardToCompare] = useState([]);
+  const [compare, setCompare] = useState(false)
+  const [compareModal, setCompareModal] = useState(false)
+
+  const addCardToCompare = (count) => {
+    cardToCompare.push(count)
+    if (cardToCompare.length === 2) setCompareModal(!compareModal)
+  }
+
+  const closeCompareModal = () => {
+    setCardToCompare([])
+    setCompareModal(!compareModal)
+    console.log(compareModal)
+  }
 
   const [frequency, setFrequency] = useState(80);
   const [duration, setDuration] = useState(15);
@@ -190,9 +207,12 @@ export default function Dashboard() {
       </div>);
 
   // Create origins' scorecards, except for the currentHome
+  let count = 0
   if (origins.length > 0) {
-    originCards = origins.map(function (loc) {
-      return <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id}>{loc.name}</DashboardCard>;
+    originCards = origins.map(function(loc) {
+      cards[count] = <DashboardCard loc={loc} destinations={destinations} key={count} count={count} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
+      count += 1
+      return cards[count]
     })
   } else {
     originCards = <div
@@ -262,8 +282,9 @@ export default function Dashboard() {
                   </div>}
                 </div>
 
-                <div
-                  className={`w-96 h-fit flex flex-col items-center gap-4 ${dashboardElementClass}`}>
+                <ScoreCompareModal firstLocation={cards[cardToCompare[0]]} secondLocation={cards[cardToCompare[1]]} show={compareModal} onClose={closeCompareModal} ></ScoreCompareModal>
+                
+                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
                   <span className="flex items-center gap-2">
                     <span
                       className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-white to-emerald-100">
@@ -283,12 +304,14 @@ export default function Dashboard() {
                 </div>
 
               </div>
-              <div
-                className={`grow h-fit flex flex-col gap-4 ${dashboardElementClass}`}>
-                <p
-                  className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
-                  Added Homes
-                </p>
+              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+                <div className="flex flex-row space-between justify-between">
+                  <div className="w-16"></div>
+                  <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+                    Added Homes
+                  </p>
+                  <img src={CompareIcon} className="w-16 cursor-pointer" onClick={() => setCompare(!compare)} />
+                </div>
                 <div className="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
                   {originCards}
                 </div>
