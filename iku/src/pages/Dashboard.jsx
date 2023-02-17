@@ -85,6 +85,12 @@ export default function Dashboard() {
       let locationStringArray = sessionStorage.getItem('location')
       if (locationStringArray != null) {
         let locationArray = JSON.parse(locationStringArray);
+
+        // Give unique ID to each location (for locations saved by non-logged in users)
+        for(let i = 0; i < locationArray.length; i++) {
+          locationArray[i]._id = i;
+        }
+        sessionStorage.setItem('location', JSON.stringify(locationArray));
         getLocations(locationArray);
       }
     } else {

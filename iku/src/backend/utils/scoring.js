@@ -39,8 +39,6 @@ export function createNewScores(origin, destination = null) {
   let overall = (Math.random() * 100) + 1;
   overall = Math.floor(night);
 
-
-  // Save the scores, making sure to keep track of the time of generation
   let scores =
     {
       overall: overall,
@@ -55,13 +53,20 @@ export function createNewScores(origin, destination = null) {
 }
 
 export async function generateNewScores(origin, destination = null) {
+  // Save the scores, making sure to keep track of the time of generation
   const scores = createNewScores(origin, destination);
   // Get the current date and time
   let date = Date.now();
   await thisModule.saveScores(origin, destination, scores, date);
 }
 
-
+/**
+ * Handles scores generation for non-logged-in users, with locations and
+ * scored not saved to the database.
+ * @param {*} origin 
+ * @param {*} destination 
+ * @returns 
+ */
 export function getNonLoggedInUsersScores (origin, destination) {
   let scores = createNewScores(origin, destination);
 
@@ -87,7 +92,7 @@ export async function getScores(origin, destination) {
 }
 
 export async function loadScores(origin, destination, userID) {
-  if (origin.length === 0) {
+  if (origin && origin.length === 0) {
     return null;
   }
 

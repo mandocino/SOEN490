@@ -5,6 +5,9 @@ import mongoose from "mongoose";
 
 export default function EditLocation(props) {
   let loc = props.loc
+
+  const user_id = localStorage.getItem("user_id");
+
   let [isOpen, setIsOpen] = useState(false);
 
   const [Name, setName] = useState(loc.name);
@@ -78,14 +81,24 @@ export default function EditLocation(props) {
 
   const deleteHandler = async (event) => {
     event.preventDefault();
-
-    await axios
-      .post("http://localhost:5000/deleteLocation", {
-        _id: mongoose.Types.ObjectId(loc._id),
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    if(user_id === null) {
+      let locationStringArray = sessionStorage.getItem('location')
+      let locationArray = JSON.parse(locationStringArray);
+      for(let i = 0; i < locationArray.length; i++) {
+        if(locationArray[i]._id === loc._id) {
+          locationArray.splice(i, 1);
+        }
+      }
+      sessionStorage.setItem('location', JSON.stringify(locationArray));
+    } else {
+      await axios
+        .post("http://localhost:5000/deleteLocation", {
+          _id: mongoose.Types.ObjectId(loc._id),
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    }
     window.location.reload(false);
   }
 
