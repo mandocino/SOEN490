@@ -28,23 +28,20 @@ jobs:
         run: npm ci
         working-directory: iku/src/backend
 
-      - name: Start backend server
-        run: |
-          node index &
-          echo $! > backend.pid
-        working-directory: iku/src/backend
+      #- name: Start backend server
+      #  run: |
+      #    node index &
+      #    echo $! > backend.pid
+      #  working-directory: iku/src/backend
 
-      - name: Wait for server to start
-        run: sleep 10
-        working-directory: iku/src/backend
+      #- name: Wait for server to start
+      #  run: sleep 10
+      #  working-directory: iku/src/backend
 
       - name: Start frontend server
         run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --yes
         timeout-minutes: 1
         continue-on-error: true
-
-      - name: Wait for frontend server to start
-        run: sleep 10
 
       - name: Run Jest tests
         env:
@@ -52,9 +49,9 @@ jobs:
         run: npm test
         working-directory: iku
 
-      - name: Stop backend server
-        run: kill $(cat backend.pid)
-        working-directory: iku/src/backend
+      #- name: Stop backend server
+      #  run: kill $(cat backend.pid)
+      #  working-directory: iku/src/backend
 
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v20
