@@ -22,7 +22,7 @@ export async function saveScores(origin, destination, scores, date) {
   }
 }
 
-export async function generateNewScores(origin, destination = null) {
+export function createNewScores(origin, destination = null) {
   // For now, generate random scores
   let rushHour = (Math.random() * 100) + 1;
   rushHour = Math.floor(rushHour);
@@ -39,8 +39,6 @@ export async function generateNewScores(origin, destination = null) {
   let overall = (Math.random() * 100) + 1;
   overall = Math.floor(night);
 
-  // Get the current date and time
-  let date = Date.now();
 
   // Save the scores, making sure to keep track of the time of generation
   let scores =
@@ -51,7 +49,26 @@ export async function generateNewScores(origin, destination = null) {
       weekend: weekend,
       overnight: night
     };
+
+  return scores;
+
+}
+
+export async function generateNewScores(origin, destination = null) {
+  const scores = createNewScores(origin, destination);
+  // Get the current date and time
+  let date = Date.now();
   await thisModule.saveScores(origin, destination, scores, date);
+}
+
+
+export function getNonLoggedInUsersScores (origin, destination) {
+  let scores = createNewScores(origin, destination);
+
+  if(destination) {
+    scores.destination = destination;
+  }
+  return scores
 }
 
 export async function getScores(origin, destination) {
@@ -66,7 +83,6 @@ export async function getScores(origin, destination) {
   }).then((response) => {
     return response.data;
   }).catch(err => console.log(err));
-
   return result;
 }
 
@@ -76,7 +92,6 @@ export async function loadScores(origin, destination, userID) {
   }
 
   let savedScores;
-
   // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
   const timeValues = await axios.get('http://localhost:5000/global/');
   const lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
@@ -106,7 +121,6 @@ export async function loadScores(origin, destination, userID) {
   if (destination) {
     scores.destination = destination;
   }
-
   return scores;
 }
 
