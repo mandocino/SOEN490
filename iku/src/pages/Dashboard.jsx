@@ -148,18 +148,27 @@ export default function Dashboard() {
       originsWithScores = await Promise.all(rawOrigins.map(async o => ({
         ...o, scores: await getScores(o), detailedScores: getDetailedScores(o)
       })));
+      
+      if(rawCurrentHome) {
+        setCurrentHome({
+          ...rawCurrentHome, scores: await getScores(rawCurrentHome), detailedScores: getDetailedScores(rawCurrentHome)
+        });
+      }
     } else {
       originsWithScores = rawOrigins.map(o => ({
         ...o, scores: getNonLoggedInUsersScores(o), detailedScores: getDetailedScores(o)
       }))
+      
+      if(rawCurrentHome) {
+        setCurrentHome({
+          ...rawCurrentHome, scores: await getNonLoggedInUsersScores(rawCurrentHome), detailedScores: getDetailedScores(rawCurrentHome)
+        });
+      }
     }
     // Set origins to include the scores
     setOrigins(originsWithScores);
 
     // Map scores to current home
-    setCurrentHome({
-      ...rawCurrentHome, scores: await getScores(rawCurrentHome), detailedScores: getDetailedScores(rawCurrentHome)
-    });
   }
 
   // Fetch the locations from the DB

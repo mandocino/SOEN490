@@ -68,6 +68,9 @@ export async function generateNewScores(origin, destination = null) {
  * @returns 
  */
 export function getNonLoggedInUsersScores (origin, destination) {
+  if(origin && origin.length === 0) {
+    return null;
+  }
   let scores = createNewScores(origin, destination);
 
   if(destination) {
