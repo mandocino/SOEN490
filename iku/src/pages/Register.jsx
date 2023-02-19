@@ -60,6 +60,8 @@ const Register = () => {
             <div className='half-container right'>
                 <div id='login-container'>
                     <h3 id='login-container-title'>Register</h3>
+                    <p id='registerMsg'></p>
+                    <p id='redirectMsg'></p>
                     <LoginForm inputs={inputs} type={0} />
                 </div>
             </div>

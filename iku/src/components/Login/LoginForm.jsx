@@ -76,6 +76,11 @@ const LoginForm = ({ inputs, type }) => {
             lastPrefChangeTime: 0
           })
           .catch((e) => e.message);
+        document.getElementById("registerMsg").innerHTML = "Account Successfully Registered!";
+        document.getElementById("redirectMsg").innerHTML = "Redirecting to Login...";
+        setTimeout(() => {
+          window.location.href = '/login';
+          }, 3000);
       }
     });
   };
