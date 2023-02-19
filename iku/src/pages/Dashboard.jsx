@@ -269,11 +269,14 @@ export default function Dashboard() {
                     className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
                     Current Home
                   </p>
-                  {currentHome ? <>
-                    <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert>{currentHome.name}</DashboardCard>
-                  </> : <div
-                    className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2 w-64`}>
-                    <div className="flex justify-between items-center gap-2 drop-shadow-lg">
+                  {
+                    currentHome ?
+                      <>
+                        <DashboardCard loc={currentHome} destinations={destinations} invert compare={false} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+                      </>
+                      :
+                      <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
+                        <div className="flex justify-between items-center gap-2 drop-shadow-lg">
                           <span className="font-bold text-2xl text-center text-white">
                             No specified current home.
                           </span>
