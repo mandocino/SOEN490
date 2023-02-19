@@ -78,7 +78,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                         <div className={getColor(firstLocationInfo.overall, secondLocationInfo.overall)} style={{flexGrow: firstLocationInfo.overall}}></div>
                                         <div className={getColor(secondLocationInfo.overall, firstLocationInfo.overall)} style={{flexGrow: secondLocationInfo.overall}}></div>
-                                        <div className="-ml-7">
+                                        <div className="-ml-10">
                                             <CircleWithText
                                                 className="pl-3"
                                                 size="w-14 h-14"
@@ -105,7 +105,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                         <div className={getColor(firstLocationInfo.rushHour, secondLocationInfo.rushHour)} style={{flexGrow: firstLocationInfo.rushHour}}></div>
                                         <div className={getColor(secondLocationInfo.rushHour, firstLocationInfo.rushHour)} style={{flexGrow: secondLocationInfo.rushHour}}></div>
-                                        <div className="-ml-7">
+                                        <div className="-ml-10">
                                             <CircleWithText
                                                 className="pl-3"
                                                 size="w-14 h-14"
@@ -132,7 +132,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                         <div className={getColor(firstLocationInfo.offPeak, secondLocationInfo.offPeak)} style={{flexGrow: firstLocationInfo.offPeak}}></div>
                                         <div className={getColor(secondLocationInfo.offPeak, firstLocationInfo.offPeak)} style={{flexGrow: secondLocationInfo.offPeak}}></div>
-                                        <div className="-ml-7">
+                                        <div className="-ml-10">
                                             <CircleWithText
                                                 className="pl-3"
                                                 size="w-14 h-14"
@@ -159,7 +159,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                         <div className={getColor(firstLocationInfo.weekend, secondLocationInfo.weekend)} style={{flexGrow: firstLocationInfo.weekend}}></div>
                                         <div className={getColor(secondLocationInfo.weekend, firstLocationInfo.weekend)} style={{flexGrow: secondLocationInfo.weekend}}></div>
-                                        <div className="-ml-7">
+                                        <div className="-ml-10">
                                             <CircleWithText
                                                 className="pl-3"
                                                 size="w-14 h-14"
@@ -175,7 +175,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                     <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
-                                                className="pl-3 -mr-20"
+                                                className="pl-3"
                                                 size="w-14 h-14"
                                                 textClass="text-lg font-bold"
                                                 bgColor="bg-white"
@@ -186,7 +186,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                         <div className={getColor(firstLocationInfo.overnight, secondLocationInfo.overnight)} style={{flexGrow: firstLocationInfo.overnight}}></div>
                                         <div className={getColor(secondLocationInfo.overnight, firstLocationInfo.overnight)} style={{flexGrow: secondLocationInfo.overnight}}></div>
-                                        <div className="-ml-7">
+                                        <div className="-ml-10">
                                             <CircleWithText
                                                 className="pl-3"
                                                 size="w-14 h-14"
