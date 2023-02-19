@@ -30,13 +30,12 @@ export default function Dashboard() {
 
   const addCardToCompare = (count) => {
     cardToCompare.push(count)
-    if (cardToCompare.length === 2) setCompareModal(!compareModal)
+    if (cardToCompare.length === 2) setCompareModal(true)
   }
 
   const closeCompareModal = () => {
+    setCompareModal(false)
     setCardToCompare([])
-    setCompareModal(!compareModal)
-    console.log(compareModal)
   }
 
   const [frequency, setFrequency] = useState(80);
