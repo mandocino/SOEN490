@@ -58,11 +58,13 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                             {
                                 firstLocation &&
                                 <>
-                                    <div className="flex justify-between">
-                                        <h2>{firstLocation.props.children}</h2>
-                                        <h2>{secondLocation.props.children}</h2>
+                                    <div className="flex justify-between items-center text-emerald-900 mb-5">
+                                        <h2 style={{fontSize: '30px', maxWidth: '40%', marginBottom: '0px'}}>{firstLocation.props.children}</h2>
+                                        <div className="bg-emerald-900" style={{minWidth: '3px', height: '40px', marginTop: '8px'}}> </div>
+                                        <h2 style={{fontSize: '30px', marginBottom: '0px', maxWidth: '40%'}}>{secondLocation.props.children}</h2>
                                     </div>
-                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overall</h3>
+                                    <div className="bg-emerald-900" style={{height: '2px', width: '100%', marginBottom: '15px'}}></div>
+                                    <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overall</h3>
                                     <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
@@ -89,7 +91,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                             </CircleWithText>
                                         </div>
                                     </div>
-                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Rush Hour</h3>
+                                    <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Rush Hour</h3>
                                     <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
@@ -116,7 +118,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                             </CircleWithText>
                                         </div>
                                     </div>
-                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Off Peak</h3>
+                                    <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Off Peak</h3>
                                     <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
@@ -143,7 +145,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                             </CircleWithText>
                                         </div>
                                     </div>
-                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Weekend</h3>
+                                    <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Weekend</h3>
                                     <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
@@ -170,7 +172,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                             </CircleWithText>
                                         </div>
                                     </div>
-                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overnight</h3>
+                                    <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overnight</h3>
                                     <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
