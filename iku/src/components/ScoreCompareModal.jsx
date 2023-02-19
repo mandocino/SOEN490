@@ -1,11 +1,23 @@
 import React, { useState, Fragment } from 'react';
 import { Dialog, Transition } from "@headlessui/react";
-import SimpleSearchBar from './SimpleSearchBar';
+import CircleWithText from "./custom/CircleWithText";
 
 const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => {
 
-    const getPercentage = (one, two) => {
-        return ((one / (one+two))*100).toFixed(2)
+    let firstLocationInfo = []
+    let secondLocationInfo = []
+    const setVariables = (firstLocation, secondLocation) => {
+        firstLocationInfo = firstLocation.props.loc.scores;
+        secondLocationInfo = secondLocation.props.loc.scores;
+        console.log(firstLocation)
+    }
+
+    const getColor = (objectValue, compareValue) => {
+        if (objectValue > compareValue)
+            return "bg-green-600"
+        if (objectValue === compareValue)
+            return "bg-yellow-600"
+        return "bg-red-600"
     }
 
     return (
@@ -32,7 +44,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                         &#8203;
                     </span>
                     <Transition.Child
-                    as={Fragment}
+                        as={Fragment}
                         enter="ease-out duration-300"
                         enterFrom="opacity-0 scale-95"
                         enterTo="opacity-100 scale-100"
@@ -42,35 +54,148 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                     >
                         {/* Contents of the modal */}
                         <Dialog.Panel className="inline-block w-full max-w-fit  p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-emerald-50 shadow-xl rounded-2xl">
-                            {firstLocation && console.log(firstLocation.props.loc.scores)}
-                            {secondLocation && console.log(secondLocation.props.loc.scores)}
-                            <p>{firstLocation && `${firstLocation.props.loc.scores.overall}\tvs\t${secondLocation.props.loc.scores.overall}`}</p>
-                            <p>{firstLocation && `${firstLocation.props.loc.scores.rushHour}\tvs\t${secondLocation.props.loc.scores.rushHour}`}</p>
-                            <p>{firstLocation && `${firstLocation.props.loc.scores.offPeak}\tvs\t${secondLocation.props.loc.scores.offPeak}`}</p>
-                            <p>{firstLocation && `${firstLocation.props.loc.scores.weekend}\tvs\t${secondLocation.props.loc.scores.weekend}`}</p>
-                            <p>{firstLocation && `${firstLocation.props.loc.scores.overnight}\tvs\t${secondLocation.props.loc.scores.overnight}`}</p>
+                            { firstLocation && setVariables(firstLocation, secondLocation) }
                             {
                                 firstLocation &&
                                 <>
-                                    <div className="flex min-w-30" style={{height: '30px', width: '300px'}}>
-                                        <div className="bg-green-600" style={{flexGrow: firstLocation.props.loc.scores.overall}}>{`%${getPercentage(firstLocation.props.loc.scores.overall, secondLocation.props.loc.scores.overall)}`}</div>
-                                        <div className="bg-red-600" style={{flexGrow: secondLocation.props.loc.scores.overall}}>{`%${getPercentage(secondLocation.props.loc.scores.overall, firstLocation.props.loc.scores.overall)}`}</div>
+                                    <div className="flex justify-between">
+                                        <h2>{firstLocation.props.children}</h2>
+                                        <h2>{secondLocation.props.children}</h2>
                                     </div>
-                                    <div className="flex min-w-30" style={{height: '30px', width: '300px'}}>
-                                        <div className="bg-green-600" style={{flexGrow: firstLocation.props.loc.scores.rushHour}}>{`%${getPercentage(firstLocation.props.loc.scores.rushHour, secondLocation.props.loc.scores.rushHour)}`}</div>
-                                        <div className="bg-red-600" style={{flexGrow: secondLocation.props.loc.scores.rushHour}}>{`%${getPercentage(secondLocation.props.loc.scores.rushHour, firstLocation.props.loc.scores.rushHour)}`}</div>
+                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overall</h3>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                        <div className="-mr-7 z-0">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(firstLocationInfo.overall, secondLocationInfo.overall)}
+                                            >
+                                                { firstLocationInfo.overall }
+                                            </CircleWithText>
+                                        </div>
+                                        <div className={getColor(firstLocationInfo.overall, secondLocationInfo.overall)} style={{flexGrow: firstLocationInfo.overall}}></div>
+                                        <div className={getColor(secondLocationInfo.overall, firstLocationInfo.overall)} style={{flexGrow: secondLocationInfo.overall}}></div>
+                                        <div className="-ml-7">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(secondLocationInfo.overall, firstLocationInfo.overall)}
+                                            >
+                                                { secondLocationInfo.overall }
+                                            </CircleWithText>
+                                        </div>
                                     </div>
-                                    <div className="flex min-w-30" style={{height: '30px', width: '300px'}}>
-                                        <div className="bg-green-600" style={{flexGrow: firstLocation.props.loc.scores.offPeak}}>{`%${getPercentage(firstLocation.props.loc.scores.offPeak, secondLocation.props.loc.scores.offPeak)}`}</div>
-                                        <div className="bg-red-600" style={{flexGrow: secondLocation.props.loc.scores.offPeak}}>{`%${getPercentage(secondLocation.props.loc.scores.offPeak, firstLocation.props.loc.scores.offPeak)}`}</div>
+                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Rush Hour</h3>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                        <div className="-mr-7 z-0">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(firstLocationInfo.rushHour, secondLocationInfo.rushHour)}
+                                            >
+                                                { firstLocationInfo.rushHour }
+                                            </CircleWithText>
+                                        </div>
+                                        <div className={getColor(firstLocationInfo.rushHour, secondLocationInfo.rushHour)} style={{flexGrow: firstLocationInfo.rushHour}}></div>
+                                        <div className={getColor(secondLocationInfo.rushHour, firstLocationInfo.rushHour)} style={{flexGrow: secondLocationInfo.rushHour}}></div>
+                                        <div className="-ml-7">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(secondLocationInfo.rushHour, firstLocationInfo.rushHour)}
+                                            >
+                                                { secondLocationInfo.rushHour }
+                                            </CircleWithText>
+                                        </div>
                                     </div>
-                                    <div className="flex min-w-30" style={{height: '30px', width: '300px'}}>
-                                        <div className="bg-green-600" style={{flexGrow: firstLocation.props.loc.scores.weekend}}>{`%${getPercentage(firstLocation.props.loc.scores.weekend, secondLocation.props.loc.scores.weekend)}`}</div>
-                                        <div className="bg-red-600" style={{flexGrow: secondLocation.props.loc.scores.weekend}}>{`%${getPercentage(secondLocation.props.loc.scores.weekend, firstLocation.props.loc.scores.weekend)}`}</div>
+                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Off Peak</h3>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                        <div className="-mr-7 z-0">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(firstLocationInfo.offPeak, secondLocationInfo.offPeak)}
+                                            >
+                                                { firstLocationInfo.offPeak }
+                                            </CircleWithText>
+                                        </div>
+                                        <div className={getColor(firstLocationInfo.offPeak, secondLocationInfo.offPeak)} style={{flexGrow: firstLocationInfo.offPeak}}></div>
+                                        <div className={getColor(secondLocationInfo.offPeak, firstLocationInfo.offPeak)} style={{flexGrow: secondLocationInfo.offPeak}}></div>
+                                        <div className="-ml-7">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(secondLocationInfo.offPeak, firstLocationInfo.offPeak)}
+                                            >
+                                                { secondLocationInfo.offPeak }
+                                            </CircleWithText>
+                                        </div>
                                     </div>
-                                    <div className="flex min-w-30" style={{height: '30px', width: '300px'}}>
-                                        <div className="bg-green-600" style={{flexGrow: firstLocation.props.loc.scores.overnight}}>{`%${getPercentage(firstLocation.props.loc.scores.overnight, secondLocation.props.loc.scores.overnight)}`}</div>
-                                        <div className="bg-red-600" style={{flexGrow: secondLocation.props.loc.scores.overnight}}>{`%${getPercentage(secondLocation.props.loc.scores.overnight, firstLocation.props.loc.scores.overnight)}`}</div>
+                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Weekend</h3>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                        <div className="-mr-7 z-0">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(firstLocationInfo.weekend, secondLocationInfo.weekend)}
+                                            >
+                                                { firstLocationInfo.weekend }
+                                            </CircleWithText>
+                                        </div>
+                                        <div className={getColor(firstLocationInfo.weekend, secondLocationInfo.weekend)} style={{flexGrow: firstLocationInfo.weekend}}></div>
+                                        <div className={getColor(secondLocationInfo.weekend, firstLocationInfo.weekend)} style={{flexGrow: secondLocationInfo.weekend}}></div>
+                                        <div className="-ml-7">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(secondLocationInfo.weekend, firstLocationInfo.weekend)}
+                                            >
+                                                { secondLocationInfo.weekend }
+                                            </CircleWithText>
+                                        </div>
+                                    </div>
+                                    <h3 style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overnight</h3>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                        <div className="-mr-7 z-0">
+                                            <CircleWithText
+                                                className="pl-3 -mr-20"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(firstLocationInfo.overnight, secondLocationInfo.overnight)}
+                                            >
+                                                { firstLocationInfo.overnight }
+                                            </CircleWithText>
+                                        </div>
+                                        <div className={getColor(firstLocationInfo.overnight, secondLocationInfo.overnight)} style={{flexGrow: firstLocationInfo.overnight}}></div>
+                                        <div className={getColor(secondLocationInfo.overnight, firstLocationInfo.overnight)} style={{flexGrow: secondLocationInfo.overnight}}></div>
+                                        <div className="-ml-7">
+                                            <CircleWithText
+                                                className="pl-3"
+                                                size="w-14 h-14"
+                                                textClass="text-lg font-bold"
+                                                bgColor="bg-white"
+                                                gradient={getColor(secondLocationInfo.overnight, firstLocationInfo.overnight)}
+                                            >
+                                                { secondLocationInfo.overnight }
+                                            </CircleWithText>
+                                        </div>
                                     </div>
                                 </>
                             }
