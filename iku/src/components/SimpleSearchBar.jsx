@@ -136,6 +136,7 @@ const SimpleSearchBar = () => {
                   className="cursor-pointer"
                   onClick={() => selectSuggestion(suggestion)}
                   value={suggestion}
+                  key={suggestion}
                 />
               );
             })}
