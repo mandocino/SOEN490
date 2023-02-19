@@ -205,14 +205,20 @@ export default function Dashboard() {
         <span>{item.name}: {item.value}%</span>
       </div>);
 
-  // Create origins' scorecards, except for the currentHome
-  let count = 0
+  // Create origins' scorecards
+  let count = -1
+  let currentHomeObj = null
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
-      cards[count] = <DashboardCard loc={loc} destinations={destinations} key={count} count={count} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
       count += 1
+      cards[count] = <DashboardCard loc={loc} destinations={destinations} key={count} count={count} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
       return cards[count]
     })
+    if (currentHome) {
+      count += 1
+      currentHomeObj = <DashboardCard loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+      cards[count] = currentHomeObj;
+    }
   } else {
     originCards = <div
       className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2`}>
@@ -270,9 +276,9 @@ export default function Dashboard() {
                     Current Home
                   </p>
                   {
-                    currentHome ?
+                    currentHomeObj && currentHomeObj.props.children ?
                       <>
-                        <DashboardCard loc={currentHome} destinations={destinations} invert compare={false} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+                        { currentHomeObj }
                       </>
                       :
                       <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
