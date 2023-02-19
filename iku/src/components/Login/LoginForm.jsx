@@ -206,10 +206,10 @@ const LoginForm = ({ inputs, type }) => {
         element = (
           <>
             <p id="empty-email" className="error-message">
-              Cannot have empty Email
+              Error! Cannot have empty Email.
             </p>
             <p id="email-in-use" className="error-message">
-              Email already in use
+              Error! Email already in use.
             </p>
           </>
         );
@@ -217,21 +217,21 @@ const LoginForm = ({ inputs, type }) => {
       case "First Name":
         element = (
           <p id="empty-first-name" className="error-message">
-            Cannot have empty First Name
+            Error! Cannot have empty First Name.
           </p>
         );
         break;
       case "Last Name":
         element = (
           <p id="empty-last-name" className="error-message">
-            Cannot have empty Last Name
+            Error! Cannot have empty Last Name.
           </p>
         );
         break;
       case "Password":
         element = (
           <div id="password-poor" className="error-message">
-            <p>Password requirements not met</p>
+            <p>Error! Password requirements not met.</p>
             <img
               id="password-poor-question"
               src={QuestionMarkLogo}
@@ -247,7 +247,7 @@ const LoginForm = ({ inputs, type }) => {
             />
             <div id="password-poor-info">
               <p>
-                Password must contain:
+                Error! Password must contain:
                 <br />
                 &nbsp;- 8 characters
                 <br />
@@ -267,7 +267,7 @@ const LoginForm = ({ inputs, type }) => {
       case "Confirm Password":
         element = (
           <p id="password-no-match" className="error-message">
-            Passwords do not match
+            Error! Passwords do not match
           </p>
         );
         break;
