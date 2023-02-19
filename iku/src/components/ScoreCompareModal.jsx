@@ -9,14 +9,13 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
     const setVariables = (firstLocation, secondLocation) => {
         firstLocationInfo = firstLocation.props.loc.scores;
         secondLocationInfo = secondLocation.props.loc.scores;
-        console.log(firstLocation)
     }
 
     const getColor = (objectValue, compareValue) => {
         if (objectValue > compareValue)
             return "bg-green-600"
         if (objectValue === compareValue)
-            return "bg-yellow-600"
+            return "bg-yellow-400"
         return "bg-red-600"
     }
 

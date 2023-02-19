@@ -201,7 +201,7 @@ export default function Dashboard() {
                   {
                     currentHome ?
                       <>
-                        <DashboardCard loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+                        <DashboardCard loc={currentHome} destinations={destinations} invert compare={false} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
                       </>
                       :
                       <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
