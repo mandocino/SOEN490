@@ -67,11 +67,9 @@ export default function DashboardCard(props) {
   }
 
   let scores;
-
   if (props.loc.scores) {
     // Deep copy of the scores from the location object
     scores = JSON.parse(JSON.stringify(props.loc.scores));
-
     // Append the corresponding colors to each score value (overall, rushHour, etc)
     for (let score in scores) {
       const i = scores[score];
@@ -84,7 +82,6 @@ export default function DashboardCard(props) {
   } else {
     scores = false;
   }
-
   return (
     <>
       <div className={`${props.className} rounded-3xl p-4 flex flex-col items-center gap-2 w-64`}>

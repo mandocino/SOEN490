@@ -5,6 +5,9 @@ import mongoose from "mongoose";
 
 export default function EditLocation(props) {
   let loc = props.loc
+
+  const user_id = localStorage.getItem("user_id");
+
   let [isOpen, setIsOpen] = useState(false);
 
   const [Name, setName] = useState(loc.name);
@@ -30,9 +33,49 @@ export default function EditLocation(props) {
   const submitHandler = async (event) => {
     event.preventDefault();
 
+    if(user_id === null) {
+      submitHandlerNonLoggedInUsers();
+
+    } else {
+      submitHandlerLoggedInUsers();
+    }
+  };
+
+  const submitHandlerNonLoggedInUsers = () => {
+    let locationStringArray = sessionStorage.getItem('location')
+    let locationArray = JSON.parse(locationStringArray); 
+
+    // Remove other homes if new home is set
+    if(CurrentHome !== loc.current_home) {
+      for(const l of locationArray) {
+        if(l._id != loc._id && l.current_home) {
+          l.current_home = false;
+        }
+      }
+    }
+
+    if (
+      Name !== "" ||
+      Notes !== "" ||
+      Priority !== ""
+    ) {
+      for(const l of locationArray) {
+        if(l._id === loc._id) {
+          l.name = Name;
+          l.notes = Notes;
+          l.priority = parseInt(Priority);
+          l.current_home = isOrigin ? CurrentHome : false;
+          l.origin = isOrigin;
+        }
+      }
+      sessionStorage.setItem('location', JSON.stringify(locationArray));
+      window.location.reload(false);
+    }
+  }
+
+  const submitHandlerLoggedInUsers = async () => {
     // Reset all other homes to false if current location changed
     if (CurrentHome !== loc.current_home) {
-      const user_id = localStorage.getItem("user_id");
       let locations;
 
       await axios.get(`http://localhost:5000/locations/${user_id}`)
@@ -74,18 +117,28 @@ export default function EditLocation(props) {
         });
       window.location.reload(false);
     }
-  };
+  }
 
   const deleteHandler = async (event) => {
     event.preventDefault();
-
-    await axios
-      .post("http://localhost:5000/deleteLocation", {
-        _id: mongoose.Types.ObjectId(loc._id),
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    if(user_id === null) {
+      let locationStringArray = sessionStorage.getItem('location')
+      let locationArray = JSON.parse(locationStringArray);
+      for(let i = 0; i < locationArray.length; i++) {
+        if(locationArray[i]._id === loc._id) {
+          locationArray.splice(i, 1);
+        }
+      }
+      sessionStorage.setItem('location', JSON.stringify(locationArray));
+    } else {
+      await axios
+        .post("http://localhost:5000/deleteLocation", {
+          _id: mongoose.Types.ObjectId(loc._id),
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    }
     window.location.reload(false);
   }
 

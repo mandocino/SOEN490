@@ -22,7 +22,7 @@ export async function saveScores(origin, destination, scores, date) {
   }
 }
 
-export async function generateNewScores(origin, destination = null) {
+export function createNewScores(origin, destination = null) {
   // For now, generate random scores
   let rushHour = (Math.random() * 100) + 1;
   rushHour = Math.floor(rushHour);
@@ -39,10 +39,6 @@ export async function generateNewScores(origin, destination = null) {
   let overall = (Math.random() * 100) + 1;
   overall = Math.floor(night);
 
-  // Get the current date and time
-  let date = Date.now();
-
-  // Save the scores, making sure to keep track of the time of generation
   let scores =
     {
       overall: overall,
@@ -51,7 +47,36 @@ export async function generateNewScores(origin, destination = null) {
       weekend: weekend,
       overnight: night
     };
+
+  return scores;
+
+}
+
+export async function generateNewScores(origin, destination = null) {
+  // Save the scores, making sure to keep track of the time of generation
+  const scores = createNewScores(origin, destination);
+  // Get the current date and time
+  let date = Date.now();
   await thisModule.saveScores(origin, destination, scores, date);
+}
+
+/**
+ * Handles scores generation for non-logged-in users, with locations and
+ * scored not saved to the database.
+ * @param {*} origin 
+ * @param {*} destination 
+ * @returns 
+ */
+export function getNonLoggedInUsersScores (origin, destination) {
+  if(origin && origin.length === 0) {
+    return null;
+  }
+  let scores = createNewScores(origin, destination);
+
+  if(destination) {
+    scores.destination = destination;
+  }
+  return scores
 }
 
 export async function getScores(origin, destination) {
@@ -66,17 +91,15 @@ export async function getScores(origin, destination) {
   }).then((response) => {
     return response.data;
   }).catch(err => console.log(err));
-
   return result;
 }
 
 export async function loadScores(origin, destination, userID) {
-  if (origin.length === 0) {
+  if (origin && origin.length === 0) {
     return null;
   }
 
   let savedScores;
-
   // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
   const timeValues = await axios.get('http://localhost:5000/global/');
   const lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
@@ -106,7 +129,6 @@ export async function loadScores(origin, destination, userID) {
   if (destination) {
     scores.destination = destination;
   }
-
   return scores;
 }
 

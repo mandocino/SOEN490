@@ -7,7 +7,7 @@ import {Link} from "react-router-dom";
 import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
 import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
-import {loadScores} from "../backend/utils/scoring";
+import {getNonLoggedInUsersScores, loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
 import mongoose from "mongoose";
 
@@ -85,6 +85,12 @@ export default function Dashboard() {
       let locationStringArray = sessionStorage.getItem('location')
       if (locationStringArray != null) {
         let locationArray = JSON.parse(locationStringArray);
+
+        // Give unique ID to each location (for locations saved by non-logged in users)
+        for(let i = 0; i < locationArray.length; i++) {
+          locationArray[i]._id = i;
+        }
+        sessionStorage.setItem('location', JSON.stringify(locationArray));
         getLocations(locationArray);
       }
     } else {
@@ -119,27 +125,50 @@ export default function Dashboard() {
     function getDetailedScores(origin) {
       let detailedScores = [];
 
-      for (const d of destinations) {
-        loadScores(origin, d, user_id).then((r) => {
-          detailedScores.push(r)
-        });
+      if(user_id != null) {
+        for (const d of destinations) {
+          loadScores(origin, d, user_id).then((r) => {
+            detailedScores.push(r)
+          });
+        }
+      } else {
+        let score;
+        for (const d of destinations) {
+          score = getNonLoggedInUsersScores(origin, d);
+          detailedScores.push(score);
+        }
       }
 
       return detailedScores;
     }
 
+    let originsWithScores;
     // Map all scores and set `origins` to it
-    const originsWithScores = await Promise.all(rawOrigins.map(async o => ({
-      ...o, scores: await getScores(o), detailedScores: getDetailedScores(o)
-    })));
-
+    if(user_id != null) {
+      originsWithScores = await Promise.all(rawOrigins.map(async o => ({
+        ...o, scores: await getScores(o), detailedScores: getDetailedScores(o)
+      })));
+      
+      if(rawCurrentHome) {
+        setCurrentHome({
+          ...rawCurrentHome, scores: await getScores(rawCurrentHome), detailedScores: getDetailedScores(rawCurrentHome)
+        });
+      }
+    } else {
+      originsWithScores = rawOrigins.map(o => ({
+        ...o, scores: getNonLoggedInUsersScores(o), detailedScores: getDetailedScores(o)
+      }))
+      
+      if(rawCurrentHome) {
+        setCurrentHome({
+          ...rawCurrentHome, scores: await getNonLoggedInUsersScores(rawCurrentHome), detailedScores: getDetailedScores(rawCurrentHome)
+        });
+      }
+    }
     // Set origins to include the scores
     setOrigins(originsWithScores);
 
     // Map scores to current home
-    setCurrentHome({
-      ...rawCurrentHome, scores: await getScores(rawCurrentHome), detailedScores: getDetailedScores(rawCurrentHome)
-    });
   }
 
   // Fetch the locations from the DB
