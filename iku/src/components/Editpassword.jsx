@@ -64,6 +64,7 @@ export default function EditAccount() {
           console.log(error.message);
         });
       window.location.reload(true);
+      document.getElementById("passwordChangeMsg").innerHTML = "Password Successfully Changed!";
     }
     else {
       console.log("Error in fields.");
@@ -73,7 +74,8 @@ export default function EditAccount() {
     <form>
       <div className="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
         <div>
-          <p className="pt-7 pb-7 text-2xl">My Account Password Edit</p>
+          <p className="pt-7 pb-5 text-2xl">My Account Password Edit</p>
+          <p id="passwordChangeMsg" className="pb-5 text-lg">Password Successfully Changed!</p>
           <input
             className="block p-3 mb-5 text-center w-half mx-auto text-md font-semibold text-white placeholder-white bg-emerald-500 rounded-lg border-2 border-emerald-200 dark:border-emerald-300 accent-white focus:border-white dark:bg-emerald-700 dark:placeholder-emerald-100"
             placeholder="Old Password"
