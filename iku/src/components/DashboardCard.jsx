@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import CircleWithText from "../components/custom/CircleWithText";
 import EditLocation from "../components/EditLocation";
 import ScoreDetailModal from "./ScoreDetailModal";
+import PlusIcon from "../assets/plus.png";
 
 export default function DashboardCard(props) {
 
@@ -86,14 +87,24 @@ export default function DashboardCard(props) {
     <>
       <div className={`${props.className} rounded-3xl p-4 flex flex-col items-center gap-2 w-64`}>
 
-
-        <div className="flex justify-between items-center gap-2 drop-shadow-lg h-full">
+        <div className="flex justify-between items-center gap-2 drop-shadow-lg h-full w-full">
+          <div className="self-start w-8" >
+              {
+                props.compare &&  <button
+                                    onClick={() => props.addCardToCompare(props.count)}
+                                    type="button"
+                                    className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
+                                  >
+                                    <img className="w-5 h-5" src={PlusIcon} />
+                                  </button>
+              }
+          </div>
           <span className="font-bold text-2xl text-center text-white line-clamp-2">
             {props.children}
           </span>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
-            <EditLocation loc={props.loc} buttonClass="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-t border-emerald-600 rounded-b-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white"/>
+            <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
           </div>
 
         </div>

@@ -10,6 +10,8 @@ import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 import {getNonLoggedInUsersScores, loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
 import mongoose from "mongoose";
+import ScoreCompareModal from '../components/ScoreCompareModal';
+import CompareIcon from '../assets/compare.png';
 
 
 export default function Dashboard() {
@@ -21,6 +23,20 @@ export default function Dashboard() {
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
   const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
+  const [cards, setCards] = useState([])
+  const [cardToCompare, setCardToCompare] = useState([]);
+  const [compare, setCompare] = useState(false)
+  const [compareModal, setCompareModal] = useState(false)
+
+  const addCardToCompare = (count) => {
+    cardToCompare.push(count)
+    if (cardToCompare.length === 2) setCompareModal(true)
+  }
+
+  const closeCompareModal = () => {
+    setCompareModal(false)
+    setCardToCompare([])
+  }
 
   const [frequency, setFrequency] = useState(80);
   const [duration, setDuration] = useState(15);
@@ -218,11 +234,20 @@ export default function Dashboard() {
         <span>{item.name}: {item.value}%</span>
       </div>);
 
-  // Create origins' scorecards, except for the currentHome
+  // Create origins' scorecards
+  let count = -1
+  let currentHomeObj = null
   if (origins.length > 0) {
-    originCards = origins.map(function (loc) {
-      return <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id}>{loc.name}</DashboardCard>;
+    originCards = origins.map(function(loc) {
+      count += 1
+      cards[count] = <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id} count={count} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
+      return cards[count]
     })
+    if (currentHome) {
+      count += 1
+      currentHomeObj = <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+      cards[count] = currentHomeObj;
+    }
   } else {
     originCards = <div
       className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2`}>
@@ -266,8 +291,9 @@ export default function Dashboard() {
       </div>;
   }
 
-  return (<>
-      <BaseLayout className="flex flex-col">
+  return (
+    <>
+      <BaseLayout className="flex flex-col" ignore={['dashboard']}>
         {/*<div className="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">*/}
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
@@ -279,11 +305,14 @@ export default function Dashboard() {
                     className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
                     Current Home
                   </p>
-                  {currentHome ? <>
-                    <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert>{currentHome.name}</DashboardCard>
-                  </> : <div
-                    className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2 w-64`}>
-                    <div className="flex justify-between items-center gap-2 drop-shadow-lg">
+                  {
+                    currentHomeObj && currentHomeObj.props.children ?
+                      <>
+                        { currentHomeObj }
+                      </>
+                      :
+                      <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
+                        <div className="flex justify-between items-center gap-2 drop-shadow-lg">
                           <span className="font-bold text-2xl text-center text-white">
                             No specified current home.
                           </span>
@@ -291,8 +320,9 @@ export default function Dashboard() {
                   </div>}
                 </div>
 
-                <div
-                  className={`w-96 h-fit flex flex-col items-center gap-4 ${dashboardElementClass}`}>
+                <ScoreCompareModal firstLocation={cards[cardToCompare[0]]} secondLocation={cards[cardToCompare[1]]} show={compareModal} onClose={closeCompareModal} ></ScoreCompareModal>
+                
+                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
                   <span className="flex items-center gap-2">
                     <span
                       className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-white to-emerald-100">
@@ -312,12 +342,14 @@ export default function Dashboard() {
                 </div>
 
               </div>
-              <div
-                className={`grow h-fit flex flex-col gap-4 ${dashboardElementClass}`}>
-                <p
-                  className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
-                  Added Homes
-                </p>
+              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+                <div className="flex flex-row space-between justify-between">
+                  <div className="w-16"></div>
+                  <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+                    Added Homes
+                  </p>
+                  <img src={CompareIcon} className="w-16 cursor-pointer" onClick={() => setCompare(!compare)} />
+                </div>
                 <div className="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
                   {originCards}
                 </div>
