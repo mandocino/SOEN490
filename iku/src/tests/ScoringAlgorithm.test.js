@@ -45,17 +45,17 @@ describe("generateNewScores", () => {
     it("should call saveScores when complete", () => {
         // Arrange
         const mockOrigin = {_id: 0};
-        const mockDestination = {_id: 1};
+        const mockDestinations = [{_id: 1}];
 
         // Act
-        module.generateNewScores(mockOrigin, mockDestination);
+        module.generateNewScores(mockOrigin, mockDestinations);
 
         // Assert
         expect(module.saveScores).toBeCalled();
     });
 });
 
-describe("getScores", () => {
+describe("fetchScores", () => {
     const mockOrigin = {_id: 0};
     const mockDestination = {_id: 1};
 
@@ -73,7 +73,7 @@ describe("getScores", () => {
         }
 
         // Act
-        module.getScores(mockOrigin, mockDestination);
+        module.fetchScores(mockOrigin, mockDestination);
 
         // Assert
         expect(axios.get).toHaveBeenCalledWith(expectedURI, expectedParams);
@@ -91,7 +91,7 @@ describe("getScores", () => {
         jest.spyOn(axios, "get").mockResolvedValue({ data: mockScores });
 
         // Act
-        const result = await module.getScores(mockOrigin, mockDestination);
+        const result = await module.fetchScores(mockOrigin, mockDestination);
 
         // Assert
         expect(result).toStrictEqual(mockScores);
@@ -100,17 +100,25 @@ describe("getScores", () => {
 
 describe("loadScores", () => {
     const mockOrigin = {_id: 0};
-    const mockDestination = {_id: 1};
+    const mockDestinations = [{_id: 1}];
     const mockUserID = 1;
 
     beforeEach(() => {
-        jest.spyOn(module, "getScores").mockResolvedValue({
+        jest.spyOn(module, "fetchScores").mockResolvedValueOnce({
             generatedTime: new Date(2021, 1, 1),
             overall: 0,
             rushHour: 1,
             offPeak: 2,
             weekend: 3,
             overnight: 4
+        });
+        jest.spyOn(module, "fetchScores").mockResolvedValueOnce({
+            generatedTime: new Date(2021, 1, 1),
+            overall: 10,
+            rushHour: 11,
+            offPeak: 12,
+            weekend: 13,
+            overnight: 14
         });
         jest.clearAllMocks();
     });
@@ -137,7 +145,7 @@ describe("loadScores", () => {
             .mockResolvedValueOnce(mockUserData);
 
         // Act
-        await module.loadScores(mockOrigin, mockDestination, mockUserID);
+        await module.loadScores(mockOrigin, mockDestinations, mockUserID);
 
         // Assert
         expect(axios.get).toHaveBeenCalledWith(expectedTimeURI);
@@ -147,12 +155,20 @@ describe("loadScores", () => {
     it("should fetch scores for the origin and destination", async () => {
         // Arrange
         const mockScores = {
-            destination: mockDestination,
-            overall: 0,
-            rushHour: 1,
+            detailedScores: [{
+                generatedTime: new Date(2021, 1, 1),
+                overall: 10,
+                rushHour: 11,
+                offPeak: 12,
+                weekend: 13,
+                overnight: 14
+            }],
+            generatedTime: new Date(2021, 1, 1),
             offPeak: 2,
-            weekend: 3,
-            overnight: 4
+            overall: 0,
+            overnight: 4,
+            rushHour: 1,
+            weekend: 3
         };
 
         const mockAlgoUpdatedTime = {
@@ -174,10 +190,11 @@ describe("loadScores", () => {
             .mockResolvedValueOnce(mockUserData);
 
         // Act
-        const result = await module.loadScores(mockOrigin, mockDestination, mockUserID);
+        const result = await module.loadScores(mockOrigin, mockDestinations, mockUserID);
 
         // Assert
-        expect(module.getScores).toHaveBeenCalledWith(mockOrigin, mockDestination);
+        expect(module.fetchScores).toHaveBeenCalledWith(mockOrigin, null);
+        expect(module.fetchScores).toHaveBeenCalledWith(mockOrigin, mockDestinations[0]);
         expect(result).toStrictEqual(mockScores);
     });
 
@@ -203,11 +220,11 @@ describe("loadScores", () => {
             .mockResolvedValueOnce(null);
 
         // Act
-        const result = await module.loadScores(mockOrigin, mockDestination, mockUserID);
+        const result = await module.loadScores(mockOrigin, mockDestinations, mockUserID);
 
         // Assert
-        expect(module.getScores).toHaveBeenCalledTimes(2);
-        expect(module.generateNewScores).toHaveBeenCalled();
+        expect(module.fetchScores).toHaveBeenCalledTimes(1);
+        expect(module.generateNewScores).toHaveBeenCalledTimes(1);
     });
 
     it("should regenerate and re-fetch the scores if lastAlgoUpdateTime is newer than the scores", async () => {
@@ -231,11 +248,11 @@ describe("loadScores", () => {
             .mockResolvedValueOnce(null);
 
         // Act
-        const result = await module.loadScores(mockOrigin, mockDestination, mockUserID);
+        const result = await module.loadScores(mockOrigin, mockDestinations, mockUserID);
 
         // Assert
-        expect(module.getScores).toHaveBeenCalledTimes(2);
-        expect(module.generateNewScores).toHaveBeenCalled();
+        expect(module.fetchScores).toHaveBeenCalledTimes(1);
+        expect(module.generateNewScores).toHaveBeenCalledTimes(1);
     });
 
     it("should not regenerate and re-fetch the scores if they're newer than lastPrefChangeTime and lastAlgoUpdateTime", async () => {
@@ -261,10 +278,10 @@ describe("loadScores", () => {
         jest.spyOn(module, "generateNewScores");
 
         // Act
-        const result = await module.loadScores(mockOrigin, mockDestination, mockUserID);
+        const result = await module.loadScores(mockOrigin, mockDestinations, mockUserID);
 
         // Assert
-        expect(module.getScores).toHaveBeenCalledTimes(1);
+        expect(module.fetchScores).toHaveBeenCalledTimes(2);
         expect(module.generateNewScores).not.toHaveBeenCalled();
     });
 })
