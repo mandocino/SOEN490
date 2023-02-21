@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as thisModule from './scoring.js';
+import {handleGetAllRoutesOTP} from './openTripPlanner.js';
 
 
 /**
@@ -54,7 +55,9 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
   let overnight = 0;
 
   // Get the current date and time
-  const date = Date.now();
+  // const date = Date.now();
+  // TODO: Change this back to Date.now(). This is a hack to always regenerate the origin.
+  const date = new Date(0);
 
   for (const destination of destinations) {
     const individualNewScore = await generateNewScoresForOnePair(origin, destination, loggedIn);
@@ -109,6 +112,22 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
 export async function generateNewScoresForOnePair(origin, destination, loggedIn=true) {
+  console.log(`${origin.name} --> ${destination.name}`);
+
+  // IMPORTANT
+  // Coords must be a string of the format "latitude,longitude"
+  const originCoords = `${origin.latitude},${origin.longitude}`;
+  const destinationCoords = `${destination.latitude},${destination.longitude}`;
+  const weekdayStartDate = "02-20-2023";
+  const weekdayStartTime = "6:00am";
+  const timeWindow = 23*3600;
+  const optionalParams = {
+    searchWindow: timeWindow,
+    numItineraries: 0
+  };
+  const itineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, optionalParams);
+  console.log(itineraries);
+
   // For now, generate random scores
   let rushHour = (Math.random() * 100) + 1;
   rushHour = Math.floor(rushHour);
