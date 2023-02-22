@@ -283,7 +283,7 @@ export default function Dashboard() {
 
                 <ScoreCompareModal firstLocation={cards[cardToCompare[0]]} secondLocation={cards[cardToCompare[1]]} show={compareModal} onClose={closeCompareModal} ></ScoreCompareModal>
                 
-                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+                <div className={`w-96 h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
                   <span className="flex items-center gap-2">
                     <span
                       className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-white to-emerald-100">
@@ -303,7 +303,7 @@ export default function Dashboard() {
                 </div>
 
               </div>
-              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+              <div className={`grow h-fit flex flex-col gap-4 ${dashboardElementClass}`}>
                 <div className="flex flex-row space-between justify-between">
                   <div className="w-16"></div>
                   <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">

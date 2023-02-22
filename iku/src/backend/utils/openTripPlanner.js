@@ -53,7 +53,16 @@ export function validateOptionalParams(optionalParams){
  * @param mode String, refers to the tranportation mode to use. Defaults to "TRANSIT,WALK" which means routes involving transit or walking.
  * @returns {Promise<AxiosResponse<any>|{}>}
  */
-export async function handleGetAllRoutesOTP(originCoordinates, destinationCoordinates, date, time, optionalParams=null, isArriveBy=false, isWheelchair=false, mode="TRANSIT,WALK"){
+export async function handleGetAllRoutesOTP(
+    originCoordinates,
+    destinationCoordinates,
+    date,
+    time,
+    optionalParams=null,
+    isArriveBy=false,
+    isWheelchair=false,
+    mode="TRANSIT,WALK"
+){
 
   // Mandatory parameters for API call
   // IMPORTANT: Coordinates should be a string of the form "latitude,longitude".
@@ -110,6 +119,110 @@ export const getAllRoutesOTP = (req, res) => {
   res.json({"hello":"world"});
 }
 
+export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
+  let list = [];
+  switch (mode){
+    case "END_MODE":
+      for(let i=0; i<routes.length;i++){
+        if(isInRange(routes[i].endTime,startTime,endTime)){ //verification if end time is in specific range
+          list.push(routes[i]);
+        }
+      }
+      return list;
+    case "START_MODE":
+      for(let i=0; i<routes.length;i++){
+        if(isInRange(routes[i].startTime,startTime,endTime)){ //verificatiopn if start time is in specific range
+          list.push(routes[i]);
+        }
+      }
+      return list;
+    case "WHOLE_ROUTE_MODE":
+      for(let i=0; i<routes.length;i++){
+        if(isInRange(routes[i].endTime,startTime,endTime) &&
+            isInRange(routes[i].startTime,startTime,endTime)){ //verification if both start and end time are in specific range
+          list.push(routes[i]);
+        }
+      }
+      return list;
+    default:
+      throw new Error("INVALIDE MODE. Mode must be 'START_MODE', 'END_MODE', or 'WHOLE_ROUTE_MODE'");
+  }
+
+};
+
+/**
+ * Function to clean up routes by removing unwanted, undesirable, or redundant routes.
+ * @param routes
+ * @returns {*}
+ */
+export const removeBadRoutes = (routes) => {
+  let currentLength = routes.length
+  let removed = routes.length+1
+  for (let i=0; i<currentLength; i++) {
+    for (let j=0; j<currentLength; j++) {
+      if (i === j) {
+        continue;
+      }
+      // Remove route j if j starts or ends at the same time as route i, and is a longer route.
+      if (routes[i].startTime >= routes[j].startTime && routes[i].endTime < routes[j].endTime
+          || routes[i].startTime > routes[j].startTime && routes[i].endTime <= routes[j].endTime) {
+        routes.splice(j, 1);
+        removed = j;
+      }
+      // If both routes start at the same time, remove the "worse" route.
+      else if (routes[i].startTime === routes[j].startTime && routes[i].endTime === routes[j].endTime) {
+        // Remove the route with the most transfers
+        if (routes[i].transfers < routes[j].transfers) {
+          routes.splice(j, 1);
+          removed = j;
+        }
+        else if (routes[i].transfers > routes[j].transfers) {
+          routes.splice(i, 1);
+          removed = i;
+        }
+        else {
+          // If both routes have the same num of transfers, remove the one with the most walking.
+          if (routes[i].walkTime < routes[j].walkTime) {
+            routes.splice(j, 1);
+            removed = j;
+          }
+          else if (routes[i].walkTime > routes[j].walkTime) {
+            routes.splice(i, 1);
+            removed = i;
+          }
+          // If num of transfers and walk time is the same, remove an arbitrary route (as they're redundant).
+          else {
+            routes.splice(j, 1);
+            removed = j;
+          }
+        }
+      }
+      // If we removed an element earlier than i then we need to decrement i to prevent accidentally skipping an element
+      if (removed < i) {
+        i--;
+      }
+      // If we removed an element then we need to decrement j to prevent accidentally skipping an element
+      if (removed < routes.length+1) {
+        j--;
+      }
+      // reset currentLength and removed
+      currentLength = routes.length;
+      removed = routes.length+1;
+    }
+  }
+  return routes;
+}
+
+/**
+ * Function that verifies if input time is in the specific start and end time range
+ * @param {} time
+ * @param {*} startTime
+ * @param {*} endTime
+ * @returns
+ */
+const isInRange = (time, startTime, endTime) =>{
+  return time >= startTime && time <= endTime;
+};
 
 export const getWalkWaitComponents = (route) => {
   let duration = route.duration;
@@ -143,6 +256,31 @@ export const getWalkWaitComponents = (route) => {
     }
   }
 
+}
+
+export const getFrequencyMetrics = (routes) => {
+  let frequencyList = [];
+  let gap = 0;
+
+  for(let i = 0; i < routes.length-1; i++){
+    gap = routes[i+1].startTime - routes[i].startTime;
+
+    if (gap !== 0 && !(frequencyList.includes[gap])){
+      frequencyList.push(gap);
+    }
+  }
+
+  let minGap = Math.min(...frequencyList);
+  let maxGap = Math.max(...frequencyList);
+  let averageGap = frequencyList.reduce((a, b) => a + b) / frequencyList.length;
+  let standardDeviationGap = Math.sqrt(frequencyList.map(x => Math.pow(x - averageGap, 2)).reduce((a,b) => a+b)/frequencyList.length);
+
+  return {
+    minGap: minGap,
+    maxGap: maxGap,
+    averageGap: averageGap,
+    standardDeviationGap: standardDeviationGap
+  }
 }
 
 export const getDurationMetrics = (routes) => {
@@ -209,135 +347,3 @@ export const getWaitTimeMetrics = (routes) => {
     standardDeviationWaitTime: standardDeviationWaitTime
   }
 }
-
-export const getFrequencyMetrics = (routes) => {
-  let frequencyList = [];
-  let gap = 0;
-
-  for(let i = 0; i < routes.length-1; i++){
-    gap = routes[i+1].startTime - routes[i].startTime;
-
-    if (gap != 0 && !(frequencyList.includes[gap])){
-      frequencyList.push(gap);
-    }
-  }
-
-  let minGap = 99999;
-  let maxGap = 99999;
-  let averageGap = 99999;
-  let standardDeviationGap = 99999;
-
-  minGap = Math.min(...frequencyList);
-  maxGap = Math.max(...frequencyList);
-  averageGap = frequencyList.reduce((a, b) => a + b) / frequencyList.length;
-  standardDeviationGap = Math.sqrt(frequencyList.map(x => Math.pow(x - averageGap, 2)).reduce((a,b) => a+b)/frequencyList.length);
-
-  return {
-    minGap: minGap,
-    maxGap: maxGap,
-    averageGap: averageGap,
-    standardDeviationGap: standardDeviationGap
-  }
-}
-
-export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
-  let list = [];
-  switch (mode){
-    case "END_MODE":
-      for(let i=0; i<routes.length;i++){
-        if(isInRange(routes[i].endTime,startTime,endTime)){ //verification if end time is in specific range
-          list.push(routes[i]);
-        }
-      }
-      return list;
-    case "START_MODE":
-      for(let i=0; i<routes.length;i++){
-        if(isInRange(routes[i].startTime,startTime,endTime)){ //verificatiopn if start time is in specific range
-          list.push(routes[i]);
-        }
-      }
-      return list;
-    case "WHOLE_ROUTE_MODE":
-      for(let i=0; i<routes.length;i++){
-        if(isInRange(routes[i].endTime,startTime,endTime) &&
-          isInRange(routes[i].startTime,startTime,endTime)){ //verification if both start and end time are in specific range
-          list.push(routes[i]);
-        }
-      }
-      return list;
-    default:
-      throw new Error("INVALIDE MODE. Mode must be 'START_MODE', 'END_MODE', or 'WHOLE_ROUTE_MODE'");
-  }
-
-};
-
-/**
- * Function to clean up routes by removing unwanted, undesirable, or redundant routes.
- * @param routes
- * @returns {*}
- */
-export const removeBadRoutes = (routes) => {
-  let currentLength = routes.length
-  let removed = routes.length+1
-  for (let i=0; i<currentLength; i++) {
-    for (let j=0; j<currentLength; j++) {
-      // Remove route j if j starts or ends at the same time as route i, and is a longer route.
-      if (routes[i].startTime >= routes[j].startTime && routes[i].endTime < routes[j].endTime
-        || routes[i].startTime > routes[j].startTime && routes[i].endTime <= routes[j].endTime) {
-        routes.splice(j, 1);
-        removed = j;
-      }
-      // If both routes start at the same time, remove the "worse" route.
-      else if (routes[i].startTime === routes[j].startTime && routes[i].endTime === routes[j].endTime) {
-        // Remove the route with the most transfers
-        if (routes[i].transfers < routes[j].transfers) {
-          routes.splice(j, 1);
-          removed = j;
-        }
-        else if (routes[i].transfers > routes[j].transfers) {
-          routes.splice(i, 1);
-          removed = i;
-        }
-        else {
-          // If both routes have the same num of transfers, remove the one with the most walking.
-          if (routes[i].walkTime < routes[j].walkTime) {
-            routes.splice(j, 1);
-            removed = j;
-          }
-          else if (routes[i].walkTime > routes[j].walkTime) {
-            routes.splice(i, 1);
-            removed = i;
-          }
-          // If num of transfers and walk time is the same, remove an arbitrary route (as they're redundant).
-          else {
-            routes.splice(j, 1);
-            removed = j;
-          }
-        }
-      }
-      // If we removed an element earlier than the current index then we need to decrement our index to prevent
-      // accidentally skipping an element
-      if (removed < i) {
-        i--;
-      }
-      // reset currentLength and removed
-      currentLength = routes.length;
-      removed = routes.length+1
-    }
-  }
-  return routes;
-}
-
-/**
- * Function that verifies if input time is in the specific start and end time range
- * @param {} time
- * @param {*} startTime
- * @param {*} endTime
- * @returns
- */
-const isInRange = (time, startTime, endTime) =>{
-  if(time >= startTime && time <= endTime){
-    return true;
-  }
-  return false;
-};
