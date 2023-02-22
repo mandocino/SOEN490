@@ -118,7 +118,6 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
 export async function generateNewScoresForOnePair(origin, destination, loggedIn=true) {
-  console.log(`${origin.name} --> ${destination.name}`);
 
   // IMPORTANT
   // Coords must be a string of the format "latitude,longitude"
@@ -132,9 +131,6 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
     numItineraries: 0
   };
 
-  console.log(originCoords);
-  console.log(destinationCoords);
-
   const toDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, optionalParams);
   const fromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, weekdayStartTime, optionalParams);
   const toDestStartDate = new Date("2023-02-20T06:00:00.000-05:00") .getTime();
@@ -145,7 +141,6 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
   const rushHourToDestItineraries = sliceRoutesList(toDestItineraries, toDestStartDate, toDestEndDate, "START_MODE");
   const rushHourFromDestItineraries = sliceRoutesList(fromDestItineraries, fromDestStartDate, fromDestEndDate, "START_MODE");
   // TODO: Save the slices to DB (or process then save, whichever)
-  console.log(rushHourToDestItineraries)
 
   const rushHourToDestCleanedItineraries = removeBadRoutes(rushHourToDestItineraries);
   const rushHourFromDestCleanedItineraries = removeBadRoutes(rushHourFromDestItineraries);
@@ -155,11 +150,23 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
   const walkMetrics = getWalkTimeMetrics(rushHourToDestCleanedItineraries);
   const waitMetrics = getWaitTimeMetrics(rushHourToDestCleanedItineraries);
 
+  const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, null, "WALK");
+  const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, weekdayStartTime, null, "WALK");
+  const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, null, "BICYCLE");
+  const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, weekdayStartTime, null, "BICYCLE");
+
+  console.log(`${origin.name} --> ${destination.name} (${originCoords} --> ${destinationCoords})`);
+
   console.log(rushHourToDestCleanedItineraries);
   console.log(frequencyMetrics);
   console.log(durationMetrics);
   console.log(walkMetrics);
   console.log(waitMetrics);
+
+  console.log(walkTripGoing[0]);
+  console.log(walkTripComing[0]);
+  console.log(bicycleTripGoing[0]);
+  console.log(bicycleTripComing[0]);
 
   // For now, generate random scores
   let rushHour = (Math.random() * 100) + 1;

@@ -59,9 +59,9 @@ export async function handleGetAllRoutesOTP(
     date,
     time,
     optionalParams=null,
+    mode="TRANSIT,WALK",
     isArriveBy=false,
-    isWheelchair=false,
-    mode="TRANSIT,WALK"
+    isWheelchair=false
 ){
 
   // Mandatory parameters for API call
@@ -75,8 +75,8 @@ export async function handleGetAllRoutesOTP(
     arriveBy: isArriveBy,
     wheelchair: isWheelchair,
     mode: mode, //"TRANSIT,WALK" to generate transit routes
-    debugItineraryFilter: "false",
-    showIntermediateStops: "true",
+    debugItineraryFilter: false,
+    showIntermediateStops: true,
     baseLayer: "OSM Standard Tiles",
     locale: "en"
   };
@@ -115,7 +115,7 @@ export const getAllRoutesOTP = (req, res) => {
     transferPenalty: 5,
     hello: 12345
   }
-  handleGetAllRoutesOTP("45.50083137628949,-73.63675475120546", "45.49718414083273,-73.57888340950014", "11-25-2022", "8:00pm", false, false, "TRANSIT,WALK", optionalParams);
+  handleGetAllRoutesOTP("45.50083137628949,-73.63675475120546", "45.49718414083273,-73.57888340950014", "11-25-2022", "8:00pm", optionalParams, "TRANSIT,WALK", false, false);
   res.json({"hello":"world"});
 }
 
@@ -259,13 +259,16 @@ export const getWalkWaitComponents = (route) => {
 }
 
 export const getFrequencyMetrics = (routes) => {
+  if (routes.length <= 1) {
+    return null;
+  }
   let frequencyList = [];
   let gap = 0;
 
   for(let i = 0; i < routes.length-1; i++){
     gap = routes[i+1].startTime - routes[i].startTime;
 
-    if (gap !== 0 && !(frequencyList.includes[gap])){
+    if (gap !== 0){
       frequencyList.push(gap);
     }
   }
@@ -284,6 +287,10 @@ export const getFrequencyMetrics = (routes) => {
 }
 
 export const getDurationMetrics = (routes) => {
+  if (routes.length === 0) {
+    return null;
+  }
+
   let durationTimes = [];
   for(let i = 0; i < routes.length; i++){
     durationTimes.push(routes[i].duration);
@@ -307,6 +314,10 @@ export const getDurationMetrics = (routes) => {
  * @param {*} routes
  */
 export const getWalkTimeMetrics = (routes) => {
+  if (routes.length === 0) {
+    return null;
+  }
+
   let walkTimes = [];
   for(let i = 0; i < routes.length; i++){
     walkTimes.push(routes[i].walkTime);
@@ -330,6 +341,10 @@ export const getWalkTimeMetrics = (routes) => {
  * @param {*} routes
  */
 export const getWaitTimeMetrics = (routes) => {
+  if (routes.length === 0) {
+    return null;
+  }
+
   let waitTimes = [];
   for(let i = 0; i < routes.length; i++){
     waitTimes.push(routes[i].waitingTime);
