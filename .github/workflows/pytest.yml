@@ -33,7 +33,6 @@ jobs:
       - name: Test with pytest
         run: |
           pip install pytest
-          pytest
       - name: Run test suite
         run: |
           pipenv run test -v
