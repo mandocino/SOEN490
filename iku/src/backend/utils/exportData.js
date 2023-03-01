@@ -15,16 +15,22 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
   const originCoords = `${origin.latitude},${origin.longitude}`;
   const destinationCoords = `${destination.latitude},${destination.longitude}`;
   const weekdayStartDate = "2023-02-20";
-  const weekdayStartTime = "1:00am";
-  const timeWindow = 24*3600+900; // 24 hours, plus 15 minutes
+  const saturdayStartDate = "2023-02-25";
+  const sundayStartDate = "2023-02-26";
+  const searchStartTime = "1:00am";
+  const searchTimeWindow = 24*3600+900; // 24 hours, plus 15 minutes
   const optionalParams = {
-    searchWindow: timeWindow,
+    searchWindow: searchTimeWindow,
     numItineraries: 0,
     walkReluctance: 2
   };
 
-  const toDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, optionalParams);
-  const fromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, weekdayStartTime, optionalParams);
+  const weekdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, optionalParams);
+  const weekdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, optionalParams);
+  const saturdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, saturdayStartDate, searchStartTime, optionalParams);
+  const saturdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, saturdayStartDate, searchStartTime, optionalParams);
+  const sundayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, sundayStartDate, searchStartTime, optionalParams);
+  const sundayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, sundayStartDate, searchStartTime, optionalParams);
 
   let toDestStartDate;
   let toDestEndDate;
@@ -32,9 +38,29 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
   let fromDestEndDate;
   let sliceName;
 
+  let toDestItineraries;
+  let fromDestItineraries;
+
   let jsonArr = [];
 
-  for (let i=0; i<4; i++) {
+  /**
+   * The time slices are as such:
+   * Rush hour: 6am-10am weekday to dest, 3pm-7pm weekday from dest
+   * Off-peak:  6am-1am both directions except when not rush hour.
+   * Overnight: 1am-5am both directions (friday and/or saturday night service is SOMETIMES enhanced)
+   * Weekend:   5am-1am both directions saturday and sunday
+   *
+   * Corresponding cases:
+   * case 0: Rush hour:       weekday 6-10am origin->dest + 3-7pm dest->origin
+   * case 1: Off peak:        weekday 10am-1am origin->dest + 6am->3pm dest->origin
+   * case 2: Off peak (cont): weekday 7pm-1am dest->origin
+   * case 3: Weeknight:       weeknight 1am-5am both directions
+   * case 4: Friday night:    saturday 1am-5am both directions (friday night is saturday AM)
+   * case 5: Saturday:        saturday 5am-1am both directions
+   * case 6: Saturday night:  sunday 1am-5am both directions (saturday night is sunday AM)
+   * case 7: Sunday:          sunday 5am-1am both directions
+   */
+  for (let i=0; i<8; i++) {
     // No need for a default case in this switch.
     // eslint-disable-next-line
     switch(i) {
@@ -59,29 +85,75 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
         fromDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
         sliceName = "offPeak2";
         break;
-      case 3: // overnight
+      case 3: // weeknight
         toDestStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-20T04:30:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
         fromDestStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-20T04:30:00.000-05:00").getTime();
-        sliceName = "night";
+        fromDestEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
+        sliceName = "night1";
+        break;
+      case 4: // friday night
+        toDestStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
+        sliceName = "night2";
+        break;
+      case 5: // saturday
+        toDestStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
+        sliceName = "weekend1";
+        break;
+      case 6: // saturday night
+        toDestStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
+        sliceName = "night3";
+        break;
+      case 7: // sunday
+        toDestStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
+        sliceName = "weekend2";
         break;
     }
 
-    const rushHourToDestItineraries = sliceRoutesList(toDestItineraries, toDestStartDate, toDestEndDate, "START_MODE");
-    const rushHourFromDestItineraries = sliceRoutesList(fromDestItineraries, fromDestStartDate, fromDestEndDate, "START_MODE");
+    // Saturday itineraries
+    if (i === 4 || i === 5) {
+      toDestItineraries = saturdayToDestItineraries;
+      fromDestItineraries = saturdayFromDestItineraries;
+    }
 
-    const rushHourToDestCleanedItineraries = removeBadRoutes(rushHourToDestItineraries);
-    const rushHourFromDestCleanedItineraries = removeBadRoutes(rushHourFromDestItineraries);
+    // Sunday itineraries
+    else if (i === 6 || i === 7) {
+      toDestItineraries = sundayToDestItineraries;
+      fromDestItineraries = sundayFromDestItineraries;
+    }
 
-    const itineraries = i !== 2 ? [rushHourToDestCleanedItineraries, rushHourFromDestCleanedItineraries] : [rushHourFromDestCleanedItineraries];
+    // Weekday itineraries
+    else {
+      toDestItineraries = weekdayToDestItineraries;
+      fromDestItineraries = weekdayFromDestItineraries;
+    }
+
+    const slicedToDestItineraries = sliceRoutesList(toDestItineraries, toDestStartDate, toDestEndDate, "START_MODE");
+    const slicedFromDestItineraries = sliceRoutesList(fromDestItineraries, fromDestStartDate, fromDestEndDate, "START_MODE");
+
+    const cleanedToDestItineraries = removeBadRoutes(slicedToDestItineraries);
+    const cleanedFromDestItineraries = removeBadRoutes(slicedFromDestItineraries);
+
+    const itineraries = i !== 2 ? [cleanedToDestItineraries, cleanedFromDestItineraries] : [cleanedFromDestItineraries];
 
     for (let j of itineraries) {
       let direction;
       let startDate;
       let endDate;
 
-      if (j === rushHourFromDestCleanedItineraries) {
+      if (j === cleanedFromDestItineraries) {
         direction = "fromDest";
         startDate = fromDestStartDate;
         endDate = fromDestEndDate;
@@ -126,10 +198,11 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
         }
       }
 
-      const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, null, "WALK");
-      const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, weekdayStartTime, null, "WALK");
-      const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, weekdayStartTime, null, "BICYCLE");
-      const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, weekdayStartTime, null, "BICYCLE");
+      // The day of the week for this search doesn't matter.
+      const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "WALK");
+      const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "WALK");
+      const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
+      const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
 
       const json = {
         name: `${origin.name}-${destination.name}-${sliceName}-${direction}`,
