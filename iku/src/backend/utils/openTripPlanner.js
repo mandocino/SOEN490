@@ -82,7 +82,7 @@ export async function handleGetAllRoutesOTP(
     locale: "en"
   };
 
-  let queryString = null;
+  let queryString;
 
   validateOptionalParams(optionalParams);
 
@@ -216,10 +216,10 @@ export const removeBadRoutes = (routes) => {
 
 /**
  * Function that verifies if input time is in the specific start and end time range
- * @param {} time
- * @param {*} startTime
- * @param {*} endTime
- * @returns
+ * @param time
+ * @param startTime
+ * @param endTime
+ * @returns {boolean}
  */
 const isInRange = (time, startTime, endTime) =>{
   return time >= startTime && time <= endTime;

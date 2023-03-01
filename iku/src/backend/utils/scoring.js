@@ -1,15 +1,5 @@
 import axios from "axios";
 import * as thisModule from './scoring.js';
-import {
-  getDurationMetrics,
-  getFirstRouteAfterTime,
-  getFrequencyMetrics,
-  getWaitTimeMetrics,
-  getWalkTimeMetrics,
-  handleGetAllRoutesOTP,
-  removeBadRoutes,
-  sliceRoutesList
-} from './openTripPlanner.js';
 import {generateJsonData} from "./exportData.js";
 
 
@@ -49,7 +39,7 @@ export async function saveScores(origin, destination, scores, date) {
  * @param origin
  * @param destinations
  * @param loggedIn
- * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
+ * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
 export async function generateNewScores(origin, destinations, loggedIn=true) {
   // The new scores that were generated
@@ -141,7 +131,7 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
   night = Math.floor(night);
 
   let overall = (Math.random() * 100) + 1;
-  overall = Math.floor(night);
+  overall = Math.floor(overall);
 
   // Get the current date and time
   let date = Date.now();
@@ -182,7 +172,7 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
 export async function fetchScores(origin, destination) {
   // If a destination is specified, load scores for the specific origin/destination pair, else load for irigin only
   const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
-  const result = await axios.get(url, {
+  return await axios.get(url, {
     params:
       {
         origin: origin,
@@ -191,7 +181,6 @@ export async function fetchScores(origin, destination) {
   }).then((response) => {
     return response.data;
   }).catch(err => console.log(err));
-  return result;
 }
 
 /**
