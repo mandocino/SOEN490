@@ -1,12 +1,5 @@
-import {
-    getDurationMetrics,
-    getFrequencyMetrics,
-    getWaitTimeMetrics,
-    getWalkTimeMetrics,
-    handleGetAllRoutesOTP,
-    removeBadRoutes,
-    sliceRoutesList
-} from "./openTripPlanner.js";
+import {sliceRoutesList} from "./openTripPlanner.js";
+import {getItinerariesFromOTP, processItineraries} from "./routeProcessing.js";
 
 
 export async function generateJsonData(origin, destination, exportDownloadableFile=true) {
@@ -14,23 +7,20 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
   // Coords must be a string of the format "latitude,longitude"
   const originCoords = `${origin.latitude},${origin.longitude}`;
   const destinationCoords = `${destination.latitude},${destination.longitude}`;
-  const weekdayStartDate = "2023-02-20";
-  const saturdayStartDate = "2023-02-25";
-  const sundayStartDate = "2023-02-26";
-  const searchStartTime = "1:00am";
-  const searchTimeWindow = 24*3600+900; // 24 hours, plus 15 minutes
-  const optionalParams = {
-    searchWindow: searchTimeWindow,
-    numItineraries: 0,
-    walkReluctance: 2
-  };
+  const startDates = {
+    weekdayStartDate: "2023-02-20",
+    saturdayStartDate: "2023-02-25",
+    sundayStartDate: "2023-02-26"
+  }
 
-  const weekdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, optionalParams);
-  const weekdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, optionalParams);
-  const saturdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, saturdayStartDate, searchStartTime, optionalParams);
-  const saturdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, saturdayStartDate, searchStartTime, optionalParams);
-  const sundayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, sundayStartDate, searchStartTime, optionalParams);
-  const sundayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, sundayStartDate, searchStartTime, optionalParams);
+  const itineraries = await getItinerariesFromOTP(origin, destination, startDates);
+
+  const weekdayToDestItineraries = itineraries.weekdayToDestItineraries;
+  const weekdayFromDestItineraries = itineraries.weekdayFromDestItineraries;
+  const saturdayToDestItineraries = itineraries.saturdayToDestItineraries;
+  const saturdayFromDestItineraries = itineraries.saturdayFromDestItineraries;
+  const sundayToDestItineraries = itineraries.sundayToDestItineraries;
+  const sundayFromDestItineraries = itineraries.sundayFromDestItineraries;
 
   let toDestStartDate;
   let toDestEndDate;
@@ -43,21 +33,7 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
 
   let jsonArr = [];
 
-  // The day of the week for this search doesn't matter.
-  const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "WALK");
-  const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "WALK");
-  const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
-  const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
-
-  const walkBikeRoutes = {
-    name: `${origin.name}-${destination.name}-walkBikeRoutes`,
-    walkTripGoing: walkTripGoing[0],
-    walkTripComing: walkTripComing[0],
-    bicycleTripGoing: bicycleTripGoing[0],
-    bicycleTripComing: bicycleTripComing[0]
-  }
-
-  jsonArr.push(walkBikeRoutes);
+  jsonArr.push(itineraries.walkBikeRoutes);
 
 
   /**
@@ -157,62 +133,24 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
       fromDestItineraries = weekdayFromDestItineraries;
     }
 
-    const slicedToDestItineraries = sliceRoutesList(toDestItineraries, toDestStartDate, toDestEndDate, "START_MODE");
-    const slicedFromDestItineraries = sliceRoutesList(fromDestItineraries, fromDestStartDate, fromDestEndDate, "START_MODE");
+    let processedToDestItineraries;
+    const processedFromDestItineraries = processItineraries(fromDestItineraries, fromDestStartDate, fromDestEndDate);
+    if (i !== 2) {
+      processedToDestItineraries = processItineraries(toDestItineraries, toDestStartDate, toDestEndDate);
+    }
 
-    const cleanedToDestItineraries = removeBadRoutes(slicedToDestItineraries);
-    const cleanedFromDestItineraries = removeBadRoutes(slicedFromDestItineraries);
+    const processedItineraries = i !== 2 ? [processedToDestItineraries, processedFromDestItineraries] : [processedFromDestItineraries];
 
-    const itineraries = i !== 2 ? [cleanedToDestItineraries, cleanedFromDestItineraries] : [cleanedFromDestItineraries];
-
-    for (let j of itineraries) {
+    for (let j of processedItineraries) {
       let direction;
-      let startDate;
-      let endDate;
+      let itineraries;
 
-      if (j === cleanedFromDestItineraries) {
+      if (j === processedFromDestItineraries) {
         direction = "fromDest";
-        startDate = fromDestStartDate;
-        endDate = fromDestEndDate;
+        itineraries = sliceRoutesList(fromDestItineraries, fromDestStartDate, fromDestEndDate, "START_MODE");
       } else {
         direction = "toDest";
-        startDate = toDestStartDate;
-        endDate = toDestEndDate;
-      }
-
-
-      let frequencyMetrics = getFrequencyMetrics(j);
-      const durationMetrics = getDurationMetrics(j);
-      const walkMetrics = getWalkTimeMetrics(j);
-      const waitMetrics = getWaitTimeMetrics(j);
-
-      let startCutoff = null;
-      let endCutoff = null;
-
-      if (j.length >= 1) {
-        startCutoff = j[0].startTime;
-        endCutoff = j[j.length - 1].startTime;
-
-        if (j.length >= 2) {
-          let modifiedItineraries = null;
-          const minimumGapToConsider = frequencyMetrics.averageGap + frequencyMetrics.standardDeviationGap;
-
-          if (startCutoff-startDate >= minimumGapToConsider) {
-            modifiedItineraries = structuredClone(j);
-            modifiedItineraries.unshift({startTime: startDate});
-          }
-
-          if (endDate-endCutoff >= minimumGapToConsider) {
-            if (modifiedItineraries === null) {
-              modifiedItineraries = structuredClone(j);
-            }
-            modifiedItineraries.push({startTime: endDate});
-          }
-
-          if (modifiedItineraries !== null) {
-            frequencyMetrics = getFrequencyMetrics(modifiedItineraries);
-          }
-        }
+        itineraries = sliceRoutesList(toDestItineraries, toDestStartDate, toDestEndDate, "START_MODE");
       }
 
       const json = {
@@ -220,13 +158,13 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
         route: `${origin.name} --> ${destination.name} (${originCoords} --> ${destinationCoords})`,
         direction: direction,
         sliceName: sliceName,
-        startCutoff: startCutoff,
-        endCutoff: endCutoff,
-        itineraries: j,
-        frequencyMetrics: frequencyMetrics,
-        durationMetrics: durationMetrics,
-        walkMetrics: walkMetrics,
-        waitMetrics: waitMetrics
+        startCutoff: j.startCutoff,
+        endCutoff: j.endCutoff,
+        itineraries: itineraries,
+        frequencyMetrics: j.frequencyMetrics,
+        durationMetrics: j.durationMetrics,
+        walkMetrics: j.walkMetrics,
+        waitMetrics: j.waitMetrics
       }
 
       jsonArr.push(json);
