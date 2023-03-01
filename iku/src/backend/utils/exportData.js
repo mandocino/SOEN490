@@ -43,6 +43,23 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
 
   let jsonArr = [];
 
+  // The day of the week for this search doesn't matter.
+  const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "WALK");
+  const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "WALK");
+  const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
+  const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
+
+  const walkBikeRoutes = {
+    name: `${origin.name}-${destination.name}-walkBikeRoutes`,
+    walkTripGoing: walkTripGoing[0],
+    walkTripComing: walkTripComing[0],
+    bicycleTripGoing: bicycleTripGoing[0],
+    bicycleTripComing: bicycleTripComing[0]
+  }
+
+  jsonArr.push(walkBikeRoutes);
+
+
   /**
    * The time slices are as such:
    * Rush hour: 6am-10am weekday to dest, 3pm-7pm weekday from dest
@@ -198,12 +215,6 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
         }
       }
 
-      // The day of the week for this search doesn't matter.
-      const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "WALK");
-      const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "WALK");
-      const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
-      const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
-
       const json = {
         name: `${origin.name}-${destination.name}-${sliceName}-${direction}`,
         route: `${origin.name} --> ${destination.name} (${originCoords} --> ${destinationCoords})`,
@@ -215,11 +226,7 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
         frequencyMetrics: frequencyMetrics,
         durationMetrics: durationMetrics,
         walkMetrics: walkMetrics,
-        waitMetrics: waitMetrics,
-        walkTripGoing: walkTripGoing[0],
-        walkTripComing: walkTripComing[0],
-        bicycleTripGoing: bicycleTripGoing[0],
-        bicycleTripComing: bicycleTripComing[0]
+        waitMetrics: waitMetrics
       }
 
       jsonArr.push(json);
