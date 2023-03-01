@@ -27,6 +27,7 @@ let otpParameterKeys = [
   'waitReluctance',
   'walkBoardCost',
   'walkSpeed',
+  'walkReluctance',
   'searchWindow',
   'numItineraries'
 ];
@@ -164,8 +165,8 @@ export const removeBadRoutes = (routes) => {
         continue;
       }
       // Remove route j if j starts or ends at the same time as route i, and is a longer route.
-      if (routes[i].startTime >= routes[j].startTime && routes[i].endTime < routes[j].endTime
-          || routes[i].startTime > routes[j].startTime && routes[i].endTime <= routes[j].endTime) {
+      if ((routes[i].startTime >= routes[j].startTime && routes[i].endTime < routes[j].endTime)
+          || (routes[i].startTime > routes[j].startTime && routes[i].endTime <= routes[j].endTime)) {
         routes.splice(j, 1);
         removed = j;
       }
@@ -235,9 +236,9 @@ export const getWalkWaitComponents = (route) => {
 
   for (let i = 0; i < legs.length; i++) {
     const leg = legs[i];
-    if(leg.mode == 'WALK') { // Get walk components
+    if(leg.mode === 'WALK') { // Get walk components
       walkComponents.push(leg);
-    } else if ( i != 0 && (leg.from.departure - leg.from.arrival) > 0) {
+    } else if ( i !== 0 && (leg.from.departure - leg.from.arrival) > 0) {
       // Get wait component and compute wait time
       waitComponents.push(leg);
       waitTime += (leg.from.departure - leg.from.arrival) / 1000;
