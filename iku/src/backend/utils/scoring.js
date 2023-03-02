@@ -220,17 +220,20 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
     sundayStartDate: "2023-02-26"
   }
   const itineraries = await getItinerariesFromOTP(origin, destination, startDates);
-  const rushHourScores = generateRushHourScores(itineraries);
 
+  const rushHourScores = generateRushHourScores(itineraries);
   const rushHourFrequencyScore = rushHourScores.frequencyScore*frequencyWeight;
   const rushHourDurationScore = rushHourScores.durationScore*durationWeight;
   const rushHourWalkScore = rushHourScores.walkScore*walkWeight;
   const rushHour = rushHourFrequencyScore + rushHourDurationScore + rushHourWalkScore;
 
-  // For now, generate random scores for the other time periods
-  let offPeak = (Math.random() * 100) + 1;
-  offPeak = Math.floor(offPeak);
+  const offPeakScores = generateOffPeakScores(itineraries);
+  const offPeakFrequencyScore = offPeakScores.frequencyScore*frequencyWeight;
+  const offPeakDurationScore = offPeakScores.durationScore*durationWeight;
+  const offPeakWalkScore = offPeakScores.walkScore*walkWeight;
+  const offPeak = offPeakFrequencyScore + offPeakDurationScore + offPeakWalkScore;
 
+  // For now, generate random scores for the other time periods
   let weekend = (Math.random() * 100) + 1;
   weekend = Math.floor(weekend);
 
@@ -298,6 +301,50 @@ function generateRushHourScores(itineraries) {
     walkScore: walkScore
   }
 }
+
+
+function generateOffPeakScores(itineraries) {
+  const toDestStartDate = new Date("2023-02-20T10:00:00.000-05:00").getTime();
+  const toDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
+  const fromDestStartDate1 = new Date("2023-02-20T06:00:00.000-05:00").getTime();
+  const fromDestEndDate1 = new Date("2023-02-20T15:15:00.000-05:00").getTime();
+  const fromDestStartDate2 = new Date("2023-02-20T19:00:00.000-05:00").getTime();
+  const fromDestEndDate2 = new Date("2023-02-21T01:15:00.000-05:00").getTime();
+
+  const toDestItineraries = itineraries.weekdayToDestItineraries;
+  const fromDestItineraries = itineraries.weekdayFromDestItineraries;
+
+  const processedToDestItineraries = processItineraries(toDestItineraries, toDestStartDate, toDestEndDate);
+  const processedFromDestItineraries1 = processItineraries(fromDestItineraries, fromDestStartDate1, fromDestEndDate1);
+  const processedFromDestItineraries2 = processItineraries(fromDestItineraries, fromDestStartDate2, fromDestEndDate2);
+
+  const processedItineraries = [processedToDestItineraries, processedFromDestItineraries1, processedFromDestItineraries2];
+
+  const scores = calculateListOfScores(processedItineraries);
+
+  /**
+   * Since toDest represents a 15-hour slice (of the 30 hours that constitute the offPeak period), it represents 50%
+   * of the total score.
+   * Since fromDest1 represents a 9-hour slice and fromDest2 represents a 6-hour slice, they represent 30% and 20% of
+   * the total score respectively.
+   * @param x Array of [toDest, fromDest1, fromDest2] scores
+   * @returns {number} Weighted average of the three scores
+   */
+  const reduce = (x) => {
+    return (x[0]*.5 + x[1]*0.3 + x[2]*0.2);
+  }
+
+  const frequencyScore = reduce(scores.frequencyScores);
+  const durationScore = reduce(scores.durationScores);
+  const walkScore = reduce(scores.walkScores);
+
+  return {
+    frequencyScore: frequencyScore,
+    durationScore: durationScore,
+    walkScore: walkScore
+  }
+}
+
 
 function calculateListOfScores(processedItineraries) {
   let frequencyScores = []
