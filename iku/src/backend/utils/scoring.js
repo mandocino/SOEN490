@@ -131,6 +131,46 @@ export async function loadScores(origin, destinations, userID) {
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
 export async function generateNewScores(origin, destinations, loggedIn=true) {
+  // TODO: fetch user's preferred weights
+  const frequencyWeight = 0.7;
+  const durationWeight = 0.25;
+  const walkWeight = 0.05;
+
+  const weeknightWeight = 1/3;
+  const fridayNightWeight = 1/3;
+  const saturdayNightWeight = 1/3;
+
+  const saturdayWeight = 0.6;
+  const sundayWeight = 0.4;
+
+  const rushHourWeight = 0.4;
+  const offPeakWeight = 0.3;
+  const nightWeight = 0.1;
+  const weekendWeight = 0.2;
+
+  const scoringWeights = {
+    factorWeights: {
+      frequencyWeight: frequencyWeight,
+      durationWeight: durationWeight,
+      walkWeight: walkWeight
+    },
+    nightWeights: {
+      weeknightWeight: weeknightWeight,
+      fridayNightWeight: fridayNightWeight,
+      saturdayNightWeight: saturdayNightWeight
+    },
+    weekendWeights: {
+      saturdayWeight: saturdayWeight,
+      sundayWeight: sundayWeight
+    },
+    overallWeights: {
+      rushHourWeight: rushHourWeight,
+      offPeakWeight: offPeakWeight,
+      nightWeight: nightWeight,
+      weekendWeight: weekendWeight
+    }
+  }
+
   // The new scores that were generated
   let newScores = [];
 
@@ -149,7 +189,7 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
   const date = new Date(0);
 
   for (const destination of destinations) {
-    const individualNewScore = await generateNewScoresForOnePair(origin, destination, loggedIn);
+    const individualNewScore = await generateNewScoresForOnePair(origin, destination, scoringWeights, loggedIn);
     newScores.push(individualNewScore);
   }
 
@@ -205,14 +245,14 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
  * Generates scores for a specific (origin, destination) pair
  * @param origin
  * @param destination
+ * @param scoringWeights
  * @param loggedIn
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
-export async function generateNewScoresForOnePair(origin, destination, loggedIn=true) {
-  // TODO: fetch user's preferred weights
-  const frequencyWeight = 0.7;
-  const durationWeight = 0.25;
-  const walkWeight = 0.05;
+export async function generateNewScoresForOnePair(origin, destination, scoringWeights, loggedIn=true) {
+  const frequencyWeight = scoringWeights.factorWeights.frequencyWeight;
+  const durationWeight = scoringWeights.factorWeights.durationWeight;
+  const walkWeight = scoringWeights.factorWeights.walkWeight
 
   const startDates = {
     weekdayStartDate: "2023-02-20",
@@ -222,23 +262,17 @@ export async function generateNewScoresForOnePair(origin, destination, loggedIn=
   const itineraries = await getItinerariesFromOTP(origin, destination, startDates);
 
   const rushHourScores = generateRushHourScores(itineraries);
-  const rushHourFrequencyScore = rushHourScores.frequencyScore*frequencyWeight;
-  const rushHourDurationScore = rushHourScores.durationScore*durationWeight;
-  const rushHourWalkScore = rushHourScores.walkScore*walkWeight;
-  const rushHour = rushHourFrequencyScore + rushHourDurationScore + rushHourWalkScore;
+  const rushHour = computeWeightedScore(rushHourScores, frequencyWeight, durationWeight, walkWeight);
 
   const offPeakScores = generateOffPeakScores(itineraries);
-  const offPeakFrequencyScore = offPeakScores.frequencyScore*frequencyWeight;
-  const offPeakDurationScore = offPeakScores.durationScore*durationWeight;
-  const offPeakWalkScore = offPeakScores.walkScore*walkWeight;
-  const offPeak = offPeakFrequencyScore + offPeakDurationScore + offPeakWalkScore;
+  const offPeak = computeWeightedScore(offPeakScores, frequencyWeight, durationWeight, walkWeight);
+
+  const nightScores = generateOvernightScores(itineraries, scoringWeights.nightWeights);
+  const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight, walkWeight);
 
   // For now, generate random scores for the other time periods
   let weekend = (Math.random() * 100) + 1;
   weekend = Math.floor(weekend);
-
-  let night = (Math.random() * 100) + 1;
-  night = Math.floor(night);
 
   let overall = (Math.random() * 100) + 1;
   // NOTE: Insert weights for individual slices here
@@ -289,7 +323,7 @@ function generateRushHourScores(itineraries) {
 
   const processedItineraries = [processedToDestItineraries, processedFromDestItineraries];
 
-  const scores = calculateListOfScores(processedItineraries);
+  const scores = calculateScoresFromList(processedItineraries);
 
   const frequencyScore = scores.frequencyScores.reduce((a,b) => {return a+b})/2;
   const durationScore = scores.durationScores.reduce((a,b) => {return a+b})/2;
@@ -320,7 +354,7 @@ function generateOffPeakScores(itineraries) {
 
   const processedItineraries = [processedToDestItineraries, processedFromDestItineraries1, processedFromDestItineraries2];
 
-  const scores = calculateListOfScores(processedItineraries);
+  const scores = calculateScoresFromList(processedItineraries);
 
   /**
    * Since toDest represents a 15-hour slice (of the 30 hours that constitute the offPeak period), it represents 50%
@@ -346,41 +380,115 @@ function generateOffPeakScores(itineraries) {
 }
 
 
-function calculateListOfScores(processedItineraries) {
+function generateOvernightScores(itineraries, scoringWeights) {
+  const weeknightWeight = scoringWeights.weeknightWeight;
+  const fridayNightWeight = scoringWeights.fridayNightWeight;
+  const saturdayNightWeight = scoringWeights.saturdayNightWeight;
+
+  const weeknightStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
+  const weeknightEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
+
+  // Recall: Friday night is saturday AM
+  const fridayStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
+  const fridayEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
+
+  // Recall: Saturday night is sunday AM
+  const saturdayStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
+  const saturdayEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
+
+  // Recall: Friday night is saturday AM, saturday night is sunday AM.
+  const toDestItineraries = itineraries.weekdayToDestItineraries;
+  const fromDestItineraries = itineraries.weekdayFromDestItineraries;
+  const fridayToDestItineraries = itineraries.saturdayToDestItineraries;
+  const fridayFromDestItineraries = itineraries.saturdayFromDestItineraries;
+  const saturdayToDestItineraries = itineraries.sundayToDestItineraries;
+  const saturdayFromDestItineraries = itineraries.sundayFromDestItineraries;
+
+  const processedToDestItineraries = processItineraries(toDestItineraries, weeknightStartDate, weeknightEndDate);
+  const processedFromDestItineraries = processItineraries(fromDestItineraries, weeknightStartDate, weeknightEndDate);
+  const processedFridayToDestItineraries = processItineraries(fridayToDestItineraries, fridayStartDate, fridayEndDate);
+  const processedFridayFromDestItineraries = processItineraries(fridayFromDestItineraries, fridayStartDate, fridayEndDate);
+  const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
+  const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
+
+  const processedItineraries = [
+    processedToDestItineraries,
+    processedFromDestItineraries,
+    processedFridayToDestItineraries,
+    processedFridayFromDestItineraries,
+    processedSaturdayToDestItineraries,
+    processedSaturdayFromDestItineraries
+  ];
+
+  const scores = calculateScoresFromList(processedItineraries);
+
+  const reduce = (x) => {
+    const weeknight = (x[0]+x[1])/2;
+    const fridayNight = (x[2]+x[3])/2;
+    const saturdayNight = (x[4]+x[5])/2;
+    return (weeknight*weeknightWeight + fridayNight*fridayNightWeight + saturdayNight*saturdayNightWeight);
+  }
+
+  const frequencyScore = reduce(scores.frequencyScores);
+  const durationScore = reduce(scores.durationScores);
+  const walkScore = reduce(scores.walkScores);
+
+  return {
+    frequencyScore: frequencyScore,
+    durationScore: durationScore,
+    walkScore: walkScore
+  }
+}
+
+
+function calculateScoresFromList(processedItineraries) {
   let frequencyScores = []
   let durationScores = []
   let walkScores = []
 
   for (let i of processedItineraries) {
-    // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
-    const frequencyMetrics = {
-      max: i.frequencyMetrics.maxGap/60000,
-      min: i.frequencyMetrics.minGap/60000,
-      average: i.frequencyMetrics.averageGap/60000,
-      standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
-    }
-    const frequencyScore = calculateScore(frequencyMetrics, 120, 0.6, 0.2, 0.8);
-    frequencyScores.push(frequencyScore);
 
-    // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
-    const durationMetrics = {
-      max: i.durationMetrics.maxDurationTime/60,
-      min: i.durationMetrics.minDurationTime/60,
-      average: i.durationMetrics.averageDurationTime/60,
-      standardDeviation: i.durationMetrics.standardDeviationDurationTime/60
+    if (i.frequencyMetrics == null) {
+      frequencyScores.push(0);
+    } else {
+      // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
+      const frequencyMetrics = {
+        max: i.frequencyMetrics.maxGap/60000,
+        min: i.frequencyMetrics.minGap/60000,
+        average: i.frequencyMetrics.averageGap/60000,
+        standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
+      }
+      const frequencyScore = calculateScore(frequencyMetrics, 120, 0.6, 0.2, 0.8);
+      frequencyScores.push(frequencyScore);
     }
-    const durationScore = calculateScore(durationMetrics, 180, 0.4, 0.2, 0.8);
-    durationScores.push(durationScore);
 
-    // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
-    const walkMetrics = {
-      max: i.walkMetrics.maxWalkTime/60,
-      min: i.walkMetrics.minWalkTime/60,
-      average: i.walkMetrics.averageWalkTime/60,
-      standardDeviation: i.walkMetrics.standardDeviationWalkTime/60
+    if (i.durationMetrics == null) {
+      durationScores.push(0);
+    } else {
+      // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
+      const durationMetrics = {
+        max: i.durationMetrics.maxDurationTime/60,
+        min: i.durationMetrics.minDurationTime/60,
+        average: i.durationMetrics.averageDurationTime/60,
+        standardDeviation: i.durationMetrics.standardDeviationDurationTime/60
+      }
+      const durationScore = calculateScore(durationMetrics, 180, 0.4, 0.2, 0.8);
+      durationScores.push(durationScore);
     }
-    const walkScore = calculateScore(walkMetrics, 60, 0.5, 0.2 ,0.8);
-    walkScores.push(walkScore);
+
+    if (i.walkMetrics == null) {
+      walkScores.push(0);
+    } else {
+      // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
+      const walkMetrics = {
+        max: i.walkMetrics.maxWalkTime/60,
+        min: i.walkMetrics.minWalkTime/60,
+        average: i.walkMetrics.averageWalkTime/60,
+        standardDeviation: i.walkMetrics.standardDeviationWalkTime/60
+      }
+      const walkScore = calculateScore(walkMetrics, 60, 0.5, 0.2 ,0.8);
+      walkScores.push(walkScore);
+    }
   }
 
   return {
@@ -446,6 +554,23 @@ function calculateScore(metrics, worst, cvBonus, fmaxWeight, favgWeight) {
   // In such cases, the floor should be 0 (service "too bad to bother measuring")
   //
   // For now the scores will be left as-is and will be capped/floored in the generateNewScores() function.
+}
+
+
+/**
+ * Function to take an object containing the frequency, duration, and walk scores, and returns the weighted average of
+ * the three using specified weights
+ * @param scores Object containing frequencyScore, durationScore, and walkScore
+ * @param frequencyWeight Weight of the frequency score
+ * @param durationWeight Weight of the duration score
+ * @param walkWeight Weight of the walk score
+ * @returns {number} Weighted average of the three
+ */
+function computeWeightedScore(scores, frequencyWeight, durationWeight, walkWeight) {
+  const frequencyScore = scores.frequencyScore*frequencyWeight;
+  const durationScore = scores.durationScore*durationWeight;
+  const walkScore = scores.walkScore*walkWeight;
+  return frequencyScore + durationScore + walkScore;
 }
 
 
