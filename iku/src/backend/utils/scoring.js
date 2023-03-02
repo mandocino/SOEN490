@@ -184,9 +184,7 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
   let overnight = 0;
 
   // Get the current date and time
-  // const date = Date.now();
-  // TODO: Change this back to Date.now(). This is a hack to always regenerate the origin.
-  const date = new Date(0);
+  const date = Date.now();
 
   for (const destination of destinations) {
     const individualNewScore = await generateNewScoresForOnePair(origin, destination, scoringWeights, loggedIn);
