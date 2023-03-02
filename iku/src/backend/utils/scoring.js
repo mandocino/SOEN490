@@ -273,10 +273,11 @@ export async function generateNewScoresForOnePair(origin, destination, scoringWe
   const weekendScores = generateWeekendScores(itineraries, scoringWeights.weekendWeights);
   const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight, walkWeight);
 
-  // For now, generate random scores for the overall time
-  let overall = (Math.random() * 100) + 1;
-  // NOTE: Insert weights for individual slices here
-  overall = Math.floor(overall);
+  const weightedRushHour = rushHour * scoringWeights.overallWeights.rushHourWeight;
+  const weightedOffPeak = offPeak * scoringWeights.overallWeights.offPeakWeight;
+  const weightedNight = night * scoringWeights.overallWeights.nightWeight;
+  const weightedWeekend = weekend * scoringWeights.overallWeights.weekendWeight;
+  const overall = weightedRushHour + weightedOffPeak + weightedNight + weightedWeekend;
 
   // Get the current date and time
   let date = Date.now();
