@@ -270,10 +270,10 @@ export async function generateNewScoresForOnePair(origin, destination, scoringWe
   const nightScores = generateOvernightScores(itineraries, scoringWeights.nightWeights);
   const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight, walkWeight);
 
-  // For now, generate random scores for the other time periods
-  let weekend = (Math.random() * 100) + 1;
-  weekend = Math.floor(weekend);
+  const weekendScores = generateWeekendScores(itineraries, scoringWeights.weekendWeights);
+  const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight, walkWeight);
 
+  // For now, generate random scores for the overall time
   let overall = (Math.random() * 100) + 1;
   // NOTE: Insert weights for individual slices here
   overall = Math.floor(overall);
@@ -427,6 +427,52 @@ function generateOvernightScores(itineraries, scoringWeights) {
     const fridayNight = (x[2]+x[3])/2;
     const saturdayNight = (x[4]+x[5])/2;
     return (weeknight*weeknightWeight + fridayNight*fridayNightWeight + saturdayNight*saturdayNightWeight);
+  }
+
+  const frequencyScore = reduce(scores.frequencyScores);
+  const durationScore = reduce(scores.durationScores);
+  const walkScore = reduce(scores.walkScores);
+
+  return {
+    frequencyScore: frequencyScore,
+    durationScore: durationScore,
+    walkScore: walkScore
+  }
+}
+
+
+function generateWeekendScores(itineraries, scoringWeights) {
+  const saturdayWeight = scoringWeights.saturdayWeight;
+  const sundayWeight = scoringWeights.sundayWeight;
+
+  const saturdayStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
+  const saturdayEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
+  const sundayStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
+  const sundayEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
+
+  const saturdayToDestItineraries = itineraries.saturdayToDestItineraries;
+  const saturdayFromDestItineraries = itineraries.saturdayFromDestItineraries;
+  const sundayToDestItineraries = itineraries.sundayToDestItineraries;
+  const sundayFromDestItineraries = itineraries.sundayFromDestItineraries;
+
+  const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
+  const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
+  const processedSundayToDestItineraries = processItineraries(sundayToDestItineraries, sundayStartDate, sundayEndDate);
+  const processedSundayFromDestItineraries = processItineraries(sundayFromDestItineraries, sundayStartDate, sundayEndDate);
+
+  const processedItineraries = [
+    processedSaturdayToDestItineraries,
+    processedSaturdayFromDestItineraries,
+    processedSundayToDestItineraries,
+    processedSundayFromDestItineraries
+  ];
+
+  const scores = calculateScoresFromList(processedItineraries);
+
+  const reduce = (x) => {
+    const saturday = (x[0]+x[1])/2;
+    const sunday = (x[2]+x[3])/2;
+    return (saturday*saturdayWeight + sunday*sundayWeight);
   }
 
   const frequencyScore = reduce(scores.frequencyScores);
