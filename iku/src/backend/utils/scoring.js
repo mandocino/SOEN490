@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as thisModule from './scoring.js';
-import {generateJsonData} from "./exportData.js";
+import {getItinerariesFromOTP, processItineraries} from "./routeProcessing.js";
 
 
 /**
@@ -31,136 +31,6 @@ export async function saveScores(origin, destination, scores, date) {
   } else {
     await axios.post(`http://localhost:5000/editSavedScore/${origin._id}`, params);
   }
-}
-
-/**
- * Generates scores between a specific origin and all destinations by repeatedly invoking the
- * `generateNewScoresForOnePair` function. Also computes the weighted average of all scores for this specific origin.
- * @param origin
- * @param destinations
- * @param loggedIn
- * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
- */
-export async function generateNewScores(origin, destinations, loggedIn=true) {
-  // The new scores that were generated
-  let newScores = [];
-
-  // The denominator for the average weighted scores calculation
-  let denominator = 0;
-
-  let overall = 0;
-  let rushHour = 0;
-  let offPeak = 0;
-  let weekend = 0;
-  let overnight = 0;
-
-  // Get the current date and time
-  // const date = Date.now();
-  // TODO: Change this back to Date.now(). This is a hack to always regenerate the origin.
-  const date = new Date(0);
-
-  for (const destination of destinations) {
-    const individualNewScore = await generateNewScoresForOnePair(origin, destination, loggedIn);
-    newScores.push(individualNewScore);
-  }
-
-  for (const score of newScores) {
-    let priority = score.priority;
-
-    if (priority == null || priority < 1) {
-      priority = 1
-    }
-
-
-    overall += score.overall*priority;
-    rushHour += score.rushHour*priority;
-    offPeak += score.offPeak*priority;
-    weekend += score.weekend*priority;
-    overnight += score.overnight*priority;
-    denominator += priority;
-  }
-
-  let scores = {
-    overall: Math.round(overall/denominator),
-    rushHour: Math.round(rushHour/denominator),
-    offPeak: Math.round(offPeak/denominator),
-    weekend: Math.round(weekend/denominator),
-    overnight: Math.round(overnight/denominator)
-  };
-
-  if (loggedIn) {
-    await thisModule.saveScores(origin, null, scores, date);
-  }
-
-  return {
-    origin: origin,
-    generatedTime: date,
-    overall: scores.overall,
-    rushHour: scores.rushHour,
-    offPeak: scores.offPeak,
-    weekend: scores.weekend,
-    overnight: scores.overnight,
-    detailedScores: newScores
-  };
-}
-
-/**
- * Generates scores for a specific (origin, destination) pair
- * @param origin
- * @param destination
- * @param loggedIn
- * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
- */
-export async function generateNewScoresForOnePair(origin, destination, loggedIn=true) {
-
-  // TODO: Remove this function call after data collection is complete
-  const data = await generateJsonData(origin, destination);
-  console.log(data);
-
-  // For now, generate random scores
-  let rushHour = (Math.random() * 100) + 1;
-  rushHour = Math.floor(rushHour);
-
-  let offPeak = (Math.random() * 100) + 1;
-  offPeak = Math.floor(offPeak);
-
-  let weekend = (Math.random() * 100) + 1;
-  weekend = Math.floor(weekend);
-
-  let night = (Math.random() * 100) + 1;
-  night = Math.floor(night);
-
-  let overall = (Math.random() * 100) + 1;
-  overall = Math.floor(overall);
-
-  // Get the current date and time
-  let date = Date.now();
-
-  // Save the scores, making sure to keep track of the time of generation
-  let scores =
-    {
-      overall: overall,
-      rushHour: rushHour,
-      offPeak: offPeak,
-      weekend: weekend,
-      overnight: night
-    };
-
-  if (loggedIn) {
-    await thisModule.saveScores(origin, destination, scores, date);
-  }
-
-  return {
-    origin: origin,
-    destination: destination,
-    priority: destination.priority,
-    generatedTime: date,
-    overall: scores.overall,
-    rushHour: scores.rushHour,
-    offPeak: scores.offPeak,
-    weekend: scores.weekend,
-    overnight: scores.overnight
-  };
 }
 
 /**
@@ -250,6 +120,287 @@ export async function loadScores(origin, destinations, userID) {
 
   return savedScores;
 }
+
+
+/**
+ * Generates scores between a specific origin and all destinations by repeatedly invoking the
+ * `generateNewScoresForOnePair` function. Also computes the weighted average of all scores for this specific origin.
+ * @param origin
+ * @param destinations
+ * @param loggedIn
+ * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
+ */
+export async function generateNewScores(origin, destinations, loggedIn=true) {
+  // The new scores that were generated
+  let newScores = [];
+
+  // The denominator for the average weighted scores calculation
+  let denominator = 0;
+
+  let overall = 0;
+  let rushHour = 0;
+  let offPeak = 0;
+  let weekend = 0;
+  let overnight = 0;
+
+  // Get the current date and time
+  // const date = Date.now();
+  // TODO: Change this back to Date.now(). This is a hack to always regenerate the origin.
+  const date = new Date(0);
+
+  for (const destination of destinations) {
+    const individualNewScore = await generateNewScoresForOnePair(origin, destination, loggedIn);
+    newScores.push(individualNewScore);
+  }
+
+  for (const score of newScores) {
+    let priority = score.priority;
+
+    if (priority == null || priority < 1) {
+      priority = 1
+    }
+
+    overall += score.overall*priority;
+    rushHour += score.rushHour*priority;
+    offPeak += score.offPeak*priority;
+    weekend += score.weekend*priority;
+    overnight += score.overnight*priority;
+    denominator += priority;
+  }
+
+  // Round to whole numbers
+  overall = Math.round(overall/denominator);
+  rushHour = Math.round(rushHour/denominator);
+  offPeak = Math.round(offPeak/denominator);
+  weekend = Math.round(weekend/denominator);
+  overnight = Math.round(overnight/denominator);
+
+  // Cap to 100 and floor to 0.
+  // See the note at the bottom of calculateScore() for more details.
+  let scores = {
+    overall: Math.max(Math.min(overall, 100), 0),
+    rushHour: Math.max(Math.min(rushHour, 100), 0),
+    offPeak: Math.max(Math.min(offPeak, 100), 0),
+    weekend: Math.max(Math.min(weekend, 100), 0),
+    overnight: Math.max(Math.min(overnight, 100), 0)
+  };
+
+  if (loggedIn) {
+    await thisModule.saveScores(origin, null, scores, date);
+  }
+
+  return {
+    origin: origin,
+    generatedTime: date,
+    overall: scores.overall,
+    rushHour: scores.rushHour,
+    offPeak: scores.offPeak,
+    weekend: scores.weekend,
+    overnight: scores.overnight,
+    detailedScores: newScores
+  };
+}
+
+/**
+ * Generates scores for a specific (origin, destination) pair
+ * @param origin
+ * @param destination
+ * @param loggedIn
+ * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
+ */
+export async function generateNewScoresForOnePair(origin, destination, loggedIn=true) {
+  // TODO: fetch user's preferred weights
+  const frequencyWeight = 0.7;
+  const durationWeight = 0.25;
+  const walkWeight = 0.05;
+
+  const startDates = {
+    weekdayStartDate: "2023-02-20",
+    saturdayStartDate: "2023-02-25",
+    sundayStartDate: "2023-02-26"
+  }
+  const itineraries = await getItinerariesFromOTP(origin, destination, startDates);
+  const rushHourScores = generateRushHourScores(itineraries);
+
+  const rushHourFrequencyScore = rushHourScores.frequencyScore*frequencyWeight;
+  const rushHourDurationScore = rushHourScores.durationScore*durationWeight;
+  const rushHourWalkScore = rushHourScores.walkScore*walkWeight;
+  const rushHour = rushHourFrequencyScore + rushHourDurationScore + rushHourWalkScore;
+
+  // For now, generate random scores for the other time periods
+  let offPeak = (Math.random() * 100) + 1;
+  offPeak = Math.floor(offPeak);
+
+  let weekend = (Math.random() * 100) + 1;
+  weekend = Math.floor(weekend);
+
+  let night = (Math.random() * 100) + 1;
+  night = Math.floor(night);
+
+  let overall = (Math.random() * 100) + 1;
+  // NOTE: Insert weights for individual slices here
+  overall = Math.floor(overall);
+
+  // Get the current date and time
+  let date = Date.now();
+
+  // Save the scores, making sure to keep track of the time of generation
+  let scores =
+    {
+      overall: overall,
+      rushHour: rushHour,
+      offPeak: offPeak,
+      weekend: weekend,
+      overnight: night
+    };
+
+  if (loggedIn) {
+    await thisModule.saveScores(origin, destination, scores, date);
+  }
+
+  return {
+    origin: origin,
+    destination: destination,
+    priority: destination.priority,
+    generatedTime: date,
+    overall: scores.overall,
+    rushHour: scores.rushHour,
+    offPeak: scores.offPeak,
+    weekend: scores.weekend,
+    overnight: scores.overnight
+  };
+}
+
+
+function generateRushHourScores(itineraries) {
+  const toDestStartDate = new Date("2023-02-20T06:00:00.000-05:00").getTime();
+  const toDestEndDate = new Date("2023-02-20T10:15:00.000-05:00").getTime();
+  const fromDestStartDate = new Date("2023-02-20T15:00:00.000-05:00").getTime();
+  const fromDestEndDate = new Date("2023-02-20T19:15:00.000-05:00").getTime();
+
+  const toDestItineraries = itineraries.weekdayToDestItineraries;
+  const fromDestItineraries = itineraries.weekdayFromDestItineraries;
+
+  const processedToDestItineraries = processItineraries(toDestItineraries, toDestStartDate, toDestEndDate);
+  const processedFromDestItineraries = processItineraries(fromDestItineraries, fromDestStartDate, fromDestEndDate);
+
+  const processedItineraries = [processedToDestItineraries, processedFromDestItineraries];
+
+  const scores = calculateListOfScores(processedItineraries);
+
+  const frequencyScore = scores.frequencyScores.reduce((a,b) => {return a+b})/2;
+  const durationScore = scores.durationScores.reduce((a,b) => {return a+b})/2;
+  const walkScore = scores.walkScores.reduce((a,b) => {return a+b})/2;
+
+  return {
+    frequencyScore: frequencyScore,
+    durationScore: durationScore,
+    walkScore: walkScore
+  }
+}
+
+function calculateListOfScores(processedItineraries) {
+  let frequencyScores = []
+  let durationScores = []
+  let walkScores = []
+
+  for (let i of processedItineraries) {
+    // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
+    const frequencyMetrics = {
+      max: i.frequencyMetrics.maxGap/60000,
+      min: i.frequencyMetrics.minGap/60000,
+      average: i.frequencyMetrics.averageGap/60000,
+      standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
+    }
+    const frequencyScore = calculateScore(frequencyMetrics, 120, 0.6, 0.2, 0.8);
+    frequencyScores.push(frequencyScore);
+
+    // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
+    const durationMetrics = {
+      max: i.durationMetrics.maxDurationTime/60,
+      min: i.durationMetrics.minDurationTime/60,
+      average: i.durationMetrics.averageDurationTime/60,
+      standardDeviation: i.durationMetrics.standardDeviationDurationTime/60
+    }
+    const durationScore = calculateScore(durationMetrics, 180, 0.4, 0.2, 0.8);
+    durationScores.push(durationScore);
+
+    // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
+    const walkMetrics = {
+      max: i.walkMetrics.maxWalkTime/60,
+      min: i.walkMetrics.minWalkTime/60,
+      average: i.walkMetrics.averageWalkTime/60,
+      standardDeviation: i.walkMetrics.standardDeviationWalkTime/60
+    }
+    const walkScore = calculateScore(walkMetrics, 60, 0.5, 0.2 ,0.8);
+    walkScores.push(walkScore);
+  }
+
+  return {
+    frequencyScores: frequencyScores,
+    durationScores: durationScores,
+    walkScores: walkScores
+  }
+}
+
+
+/**
+ * Function to calculate a score based on metrics.
+ *
+ * @param metrics List of frequency metrics. If a list of all metrics is passed then the frequency metrics will be extracted.
+ * @param worst The case that will result in a score of zero. Cases worse than the specified worst case will floor at zero.
+ * @param cvBonus A constant value added to the CV (coefficient of variation) to skew the scoring into giving higher numbers
+ * @param fmaxWeight The weight of the score computed on the maximum value, relative to the final score
+ * @param favgWeight The weight of the score computed on the average value, relative to the final score
+ * @returns {number} A number from 0-100 representing the final score
+ */
+function calculateScore(metrics, worst, cvBonus, fmaxWeight, favgWeight) {
+  /**
+   * FORMULA FOR DETERMINING BASE SCORE:
+   *
+   * f(x) = a * log_10(x+10) + b, where...
+   *   x is the average or max gap
+   *   a and b are constants to ensure f(0) = 100 and f(worst) = 0
+   */
+
+  const a = -100/(Math.log10(worst+10)-1);
+  const b = 100-a;
+  const f = (x) => {
+    return a*Math.log10(x+10)+b;
+  }
+
+  const f_max = f(metrics.max);
+  const f_avg = f(metrics.average);
+
+
+  let cv;
+  if (metrics.average > 0) {
+    // CV (coefficient of variation) represents the amount of variability from the mean.
+    cv = metrics.standardDeviation / metrics.average;
+  } else {
+    // If the average is 0 then the data is effectively invalid.
+    // Setting the cv to (1+cvBonus) will force the final score to be zero since it is multiplied by (1+cvBonus-cv) later
+    cv = 1+cvBonus
+  }
+
+
+  // Using the CV as-is results in very low scores even for conventionally "good" transit (eg metro)
+  // Adding a bonus to the CV skews the scores higher, making it easier to "understand" the scores at the expense of
+  // the accuracy of the scores.
+  return (f_max * fmaxWeight + f_avg * favgWeight) * (1 - cv + cvBonus);
+
+  // NOTE:
+  //
+  // By adding a bonus to the CV, the multiplier could be >1 resulting in scores above 100.
+  // In such cases, cap it to 100
+  //
+  // Furthermore, f(x) may return a negative value, if the max/average is worse than the "worst" case
+  // For example, an average case of 150min when the worst case is defined as 120min will yield a negative number
+  // In such cases, the floor should be 0 (service "too bad to bother measuring")
+  //
+  // For now the scores will be left as-is and will be capped/floored in the generateNewScores() function.
+}
+
 
 /**
  * Function to set the global `lastAlgoUpdateTime` to the current time
