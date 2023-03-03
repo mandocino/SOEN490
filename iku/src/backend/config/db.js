@@ -21,6 +21,7 @@ const userSchema = new Schema(
     frequency_priority: { type: Number, default: 0 },
     walk_priority: { type: Number, default: 0 },
     lastPrefChangeTime: { type: Schema.Types.Date, required: true },
+    administrator: { type: Schema.Types.Boolean, default: false },
   },
   { collection: "Users" }
 );

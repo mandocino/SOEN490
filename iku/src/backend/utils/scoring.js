@@ -36,6 +36,7 @@ export async function saveScores(origin, destination, scores, date) {
 /**
  * Fetch the scores for a defined origin, destination pair.
  * @param origin
+ * @param origin
  * @param destination
  * @returns {Promise<AxiosResponse<any>|void>}
  */
@@ -621,7 +622,7 @@ function computeWeightedScore(scores, frequencyWeight, durationWeight, walkWeigh
 
 /**
  * Function to set the global `lastAlgoUpdateTime` to the current time
- * @returns {Promise<void>}
+ * @returns {Promise<{lastAlgoUpdateTime: number}>}
  */
 export async function updateAlgorithmTime() {
   // Update the record for when the system was updated to match the current time
@@ -631,4 +632,5 @@ export async function updateAlgorithmTime() {
     };
 
   await axios.post('http://localhost:5000/modifyGlobal/', params);
+  return params;
 }
