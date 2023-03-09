@@ -13,7 +13,7 @@ from selenium.webdriver.chrome.service import Service
 
 class TestDashboardElementsPresent():
   def setup_method(self, method):
-    service = Service('./chromedriver/chromedriver.exe')
+    service = Service('./chromedriver/chromedriver')
     self.driver = webdriver.Chrome(service=service)
     self.vars = {}
   

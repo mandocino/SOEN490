@@ -15,7 +15,7 @@ class TestRequestLocationAccess():
   def setup_method(self, method):
     options = webdriver.ChromeOptions()
     options.add_argument("enable-geolocation")
-    service = Service('./chromedriver/chromedriver.exe')
+    service = Service('./chromedriver/chromedriver')
     self.driver = webdriver.Chrome(service=service)
     self.vars = {}
   
