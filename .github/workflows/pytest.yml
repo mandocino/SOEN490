@@ -34,6 +34,7 @@ jobs:
         run: |
           pip install pytest
           pip install selenium
+          pip install webdriver_manager
       - name: Run test suite
         run: |
           pipenv run test -v
