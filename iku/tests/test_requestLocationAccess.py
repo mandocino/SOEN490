@@ -9,12 +9,14 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.service import Service
 
 class TestRequestLocationAccess():
   def setup_method(self, method):
     options = webdriver.ChromeOptions()
     options.add_argument("enable-geolocation")
-    self.driver = webdriver.Chrome()
+    service = Service('./chromedriver/chromedriver.exe')
+    self.driver = webdriver.Chrome(service=service)
     self.vars = {}
   
   def teardown_method(self, method):
