@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as thisModule from './scoring.js';
-import {getItinerariesFromOTP, processItineraries} from "./routeProcessing.js";
+import {getRoutingData} from "./routeProcessing.js";
 
 
 /**
@@ -84,7 +84,7 @@ export async function loadScores(origin, destinations, userID) {
     // Get the latest scores for the origin only
     savedScores = await thisModule.fetchScores(origin, null);
   } else {
-    // For non logged in users, set both times to 1970 to force re-generation
+    // For non-logged-in users, set both times to 1970 to force re-generation
     const aLongTimeAgo = new Date(0);
     lastPrefChangeTime = aLongTimeAgo;
     lastAlgoUpdateTime = aLongTimeAgo
@@ -130,7 +130,7 @@ export async function loadScores(origin, destinations, userID) {
  * @param loggedIn
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
-export async function generateNewScores(origin, destinations, loggedIn=true) {
+export async function generateNewScores(origin, destinations, loggedIn=false) {
   // TODO: fetch user's preferred weights
   const frequencyWeight = 0.7;
   const durationWeight = 0.25;
@@ -147,6 +147,10 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
   const offPeakWeight = 0.3;
   const nightWeight = 0.1;
   const weekendWeight = 0.2;
+
+  // TODO: fetch user walkReluctance, isWheelChair
+  const walkReluctance = 2;
+  const isWheelChair = false;
 
   const scoringWeights = {
     factorWeights: {
@@ -187,7 +191,7 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
   const date = Date.now();
 
   for (const destination of destinations) {
-    const individualNewScore = await generateNewScoresForOnePair(origin, destination, scoringWeights, loggedIn);
+    const individualNewScore = await generateNewScoresForOnePair(origin, destination, scoringWeights, walkReluctance, isWheelChair, loggedIn);
     newScores.push(individualNewScore);
   }
 
@@ -244,10 +248,12 @@ export async function generateNewScores(origin, destinations, loggedIn=true) {
  * @param origin
  * @param destination
  * @param scoringWeights
+ * @param walkReluctance
+ * @param isWheelChair
  * @param loggedIn
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
-export async function generateNewScoresForOnePair(origin, destination, scoringWeights, loggedIn=true) {
+export async function generateNewScoresForOnePair(origin, destination, scoringWeights, walkReluctance, isWheelChair, loggedIn=false) {
   const frequencyWeight = scoringWeights.factorWeights.frequencyWeight;
   const durationWeight = scoringWeights.factorWeights.durationWeight;
   const walkWeight = scoringWeights.factorWeights.walkWeight
@@ -257,18 +263,19 @@ export async function generateNewScoresForOnePair(origin, destination, scoringWe
     saturdayStartDate: "2023-02-25",
     sundayStartDate: "2023-02-26"
   }
-  const itineraries = await getItinerariesFromOTP(origin, destination, startDates);
 
-  const rushHourScores = generateRushHourScores(itineraries);
+  const metrics = await getRoutingData(origin, destination, startDates, loggedIn);
+
+  const rushHourScores = generateRushHourScores(metrics.rushHourMetrics);
   const rushHour = computeWeightedScore(rushHourScores, frequencyWeight, durationWeight, walkWeight);
 
-  const offPeakScores = generateOffPeakScores(itineraries);
+  const offPeakScores = generateOffPeakScores(metrics.offPeakMetrics);
   const offPeak = computeWeightedScore(offPeakScores, frequencyWeight, durationWeight, walkWeight);
 
-  const nightScores = generateOvernightScores(itineraries, scoringWeights.nightWeights);
+  const nightScores = generateOvernightScores(metrics.overnightMetrics, scoringWeights.nightWeights);
   const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight, walkWeight);
 
-  const weekendScores = generateWeekendScores(itineraries, scoringWeights.weekendWeights);
+  const weekendScores = generateWeekendScores(metrics.weekendMetrics, scoringWeights.weekendWeights);
   const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight, walkWeight);
 
   const weightedRushHour = rushHour * scoringWeights.overallWeights.rushHourWeight;
@@ -308,21 +315,8 @@ export async function generateNewScoresForOnePair(origin, destination, scoringWe
 }
 
 
-function generateRushHourScores(itineraries) {
-  const toDestStartDate = new Date("2023-02-20T06:00:00.000-05:00").getTime();
-  const toDestEndDate = new Date("2023-02-20T10:15:00.000-05:00").getTime();
-  const fromDestStartDate = new Date("2023-02-20T15:00:00.000-05:00").getTime();
-  const fromDestEndDate = new Date("2023-02-20T19:15:00.000-05:00").getTime();
-
-  const toDestItineraries = itineraries.weekdayToDestItineraries;
-  const fromDestItineraries = itineraries.weekdayFromDestItineraries;
-
-  const processedToDestItineraries = processItineraries(toDestItineraries, toDestStartDate, toDestEndDate);
-  const processedFromDestItineraries = processItineraries(fromDestItineraries, fromDestStartDate, fromDestEndDate);
-
-  const processedItineraries = [processedToDestItineraries, processedFromDestItineraries];
-
-  const scores = calculateScoresFromList(processedItineraries);
+function generateRushHourScores(metrics) {
+  const scores = calculateScoresFromMetrics(metrics);
 
   const frequencyScore = scores.frequencyScores.reduce((a,b) => {return a+b})/2;
   const durationScore = scores.durationScores.reduce((a,b) => {return a+b})/2;
@@ -336,24 +330,8 @@ function generateRushHourScores(itineraries) {
 }
 
 
-function generateOffPeakScores(itineraries) {
-  const toDestStartDate = new Date("2023-02-20T10:00:00.000-05:00").getTime();
-  const toDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
-  const fromDestStartDate1 = new Date("2023-02-20T06:00:00.000-05:00").getTime();
-  const fromDestEndDate1 = new Date("2023-02-20T15:15:00.000-05:00").getTime();
-  const fromDestStartDate2 = new Date("2023-02-20T19:00:00.000-05:00").getTime();
-  const fromDestEndDate2 = new Date("2023-02-21T01:15:00.000-05:00").getTime();
-
-  const toDestItineraries = itineraries.weekdayToDestItineraries;
-  const fromDestItineraries = itineraries.weekdayFromDestItineraries;
-
-  const processedToDestItineraries = processItineraries(toDestItineraries, toDestStartDate, toDestEndDate);
-  const processedFromDestItineraries1 = processItineraries(fromDestItineraries, fromDestStartDate1, fromDestEndDate1);
-  const processedFromDestItineraries2 = processItineraries(fromDestItineraries, fromDestStartDate2, fromDestEndDate2);
-
-  const processedItineraries = [processedToDestItineraries, processedFromDestItineraries1, processedFromDestItineraries2];
-
-  const scores = calculateScoresFromList(processedItineraries);
+function generateOffPeakScores(metrics) {
+  const scores = calculateScoresFromMetrics(metrics);
 
   /**
    * Since toDest represents a 15-hour slice (of the 30 hours that constitute the offPeak period), it represents 50%
@@ -379,47 +357,12 @@ function generateOffPeakScores(itineraries) {
 }
 
 
-function generateOvernightScores(itineraries, scoringWeights) {
+function generateOvernightScores(metrics, scoringWeights) {
   const weeknightWeight = scoringWeights.weeknightWeight;
   const fridayNightWeight = scoringWeights.fridayNightWeight;
   const saturdayNightWeight = scoringWeights.saturdayNightWeight;
 
-  const weeknightStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
-  const weeknightEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
-
-  // Recall: Friday night is saturday AM
-  const fridayStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
-  const fridayEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
-
-  // Recall: Saturday night is sunday AM
-  const saturdayStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
-  const saturdayEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
-
-  // Recall: Friday night is saturday AM, saturday night is sunday AM.
-  const toDestItineraries = itineraries.weekdayToDestItineraries;
-  const fromDestItineraries = itineraries.weekdayFromDestItineraries;
-  const fridayToDestItineraries = itineraries.saturdayToDestItineraries;
-  const fridayFromDestItineraries = itineraries.saturdayFromDestItineraries;
-  const saturdayToDestItineraries = itineraries.sundayToDestItineraries;
-  const saturdayFromDestItineraries = itineraries.sundayFromDestItineraries;
-
-  const processedToDestItineraries = processItineraries(toDestItineraries, weeknightStartDate, weeknightEndDate);
-  const processedFromDestItineraries = processItineraries(fromDestItineraries, weeknightStartDate, weeknightEndDate);
-  const processedFridayToDestItineraries = processItineraries(fridayToDestItineraries, fridayStartDate, fridayEndDate);
-  const processedFridayFromDestItineraries = processItineraries(fridayFromDestItineraries, fridayStartDate, fridayEndDate);
-  const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
-  const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
-
-  const processedItineraries = [
-    processedToDestItineraries,
-    processedFromDestItineraries,
-    processedFridayToDestItineraries,
-    processedFridayFromDestItineraries,
-    processedSaturdayToDestItineraries,
-    processedSaturdayFromDestItineraries
-  ];
-
-  const scores = calculateScoresFromList(processedItineraries);
+  const scores = calculateScoresFromMetrics(metrics);
 
   const reduce = (x) => {
     const weeknight = (x[0]+x[1])/2;
@@ -440,33 +383,11 @@ function generateOvernightScores(itineraries, scoringWeights) {
 }
 
 
-function generateWeekendScores(itineraries, scoringWeights) {
+function generateWeekendScores(metrics, scoringWeights) {
   const saturdayWeight = scoringWeights.saturdayWeight;
   const sundayWeight = scoringWeights.sundayWeight;
 
-  const saturdayStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
-  const saturdayEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
-  const sundayStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
-  const sundayEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
-
-  const saturdayToDestItineraries = itineraries.saturdayToDestItineraries;
-  const saturdayFromDestItineraries = itineraries.saturdayFromDestItineraries;
-  const sundayToDestItineraries = itineraries.sundayToDestItineraries;
-  const sundayFromDestItineraries = itineraries.sundayFromDestItineraries;
-
-  const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
-  const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
-  const processedSundayToDestItineraries = processItineraries(sundayToDestItineraries, sundayStartDate, sundayEndDate);
-  const processedSundayFromDestItineraries = processItineraries(sundayFromDestItineraries, sundayStartDate, sundayEndDate);
-
-  const processedItineraries = [
-    processedSaturdayToDestItineraries,
-    processedSaturdayFromDestItineraries,
-    processedSundayToDestItineraries,
-    processedSundayFromDestItineraries
-  ];
-
-  const scores = calculateScoresFromList(processedItineraries);
+  const scores = calculateScoresFromMetrics(metrics);
 
   const reduce = (x) => {
     const saturday = (x[0]+x[1])/2;
@@ -486,54 +407,20 @@ function generateWeekendScores(itineraries, scoringWeights) {
 }
 
 
-function calculateScoresFromList(processedItineraries) {
+function calculateScoresFromMetrics(metrics) {
   let frequencyScores = []
   let durationScores = []
   let walkScores = []
 
-  for (let i of processedItineraries) {
+  for (let i of metrics) {
+    const frequencyScore = calculateScore(i.frequencyMetrics, 120, 0.6, 0.2, 0.8);
+    frequencyScores.push(frequencyScore);
 
-    if (i.frequencyMetrics == null) {
-      frequencyScores.push(0);
-    } else {
-      // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
-      const frequencyMetrics = {
-        max: i.frequencyMetrics.maxGap/60000,
-        min: i.frequencyMetrics.minGap/60000,
-        average: i.frequencyMetrics.averageGap/60000,
-        standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
-      }
-      const frequencyScore = calculateScore(frequencyMetrics, 120, 0.6, 0.2, 0.8);
-      frequencyScores.push(frequencyScore);
-    }
+    const durationScore = calculateScore(i.durationMetrics, 180, 0.4, 0.2, 0.8);
+    durationScores.push(durationScore);
 
-    if (i.durationMetrics == null) {
-      durationScores.push(0);
-    } else {
-      // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
-      const durationMetrics = {
-        max: i.durationMetrics.maxDurationTime/60,
-        min: i.durationMetrics.minDurationTime/60,
-        average: i.durationMetrics.averageDurationTime/60,
-        standardDeviation: i.durationMetrics.standardDeviationDurationTime/60
-      }
-      const durationScore = calculateScore(durationMetrics, 180, 0.4, 0.2, 0.8);
-      durationScores.push(durationScore);
-    }
-
-    if (i.walkMetrics == null) {
-      walkScores.push(0);
-    } else {
-      // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
-      const walkMetrics = {
-        max: i.walkMetrics.maxWalkTime/60,
-        min: i.walkMetrics.minWalkTime/60,
-        average: i.walkMetrics.averageWalkTime/60,
-        standardDeviation: i.walkMetrics.standardDeviationWalkTime/60
-      }
-      const walkScore = calculateScore(walkMetrics, 60, 0.5, 0.2 ,0.8);
-      walkScores.push(walkScore);
-    }
+    const walkScore = calculateScore(i.walkMetrics, 60, 0.5, 0.2, 0.8);
+    walkScores.push(walkScore);
   }
 
   return {
@@ -555,6 +442,11 @@ function calculateScoresFromList(processedItineraries) {
  * @returns {number} A number from 0-100 representing the final score
  */
 function calculateScore(metrics, worst, cvBonus, fmaxWeight, favgWeight) {
+
+  if (metrics == null) {
+    return 0;
+  }
+
   /**
    * FORMULA FOR DETERMINING BASE SCORE:
    *

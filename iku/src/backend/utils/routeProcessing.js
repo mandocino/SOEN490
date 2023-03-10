@@ -7,35 +7,138 @@ import {
   removeBadRoutes,
   sliceRoutesList
 } from './openTripPlanner.js';
+import axios from "axios";
+import * as thisModule from "./routeProcessing.js";
 
 
 const defaultStartTime = "1:00am";
 const defaultTimeWindow = 24 * 3600 + 900; // 24 hours, plus 15 minutes
 
 
-export async function getItinerariesFromOTP(origin, destination, startDates, searchStartTime = defaultStartTime, searchTimeWindow = defaultTimeWindow) {
+export async function getRoutingData(
+    origin,
+    destination,
+    startDates,
+    loggedIn = false,
+    isWheelChair = false,
+    walkReluctance = 2,
+    searchStartTime = defaultStartTime,
+    searchTimeWindow = defaultTimeWindow
+) {
+
+  const optionalParams = {
+    searchWindow: searchTimeWindow,
+    numItineraries: 0,
+    walkReluctance: walkReluctance
+  };
+
+  return await thisModule.handleGetRoutingData(origin, destination, startDates, searchStartTime, loggedIn, optionalParams, isWheelChair);
+}
+
+export async function handleGetRoutingData(
+    origin,
+    destination,
+    startDates,
+    time,
+    loggedIn=false,
+    optionalParams=null,
+    isWheelchair=false
+){
+  // Attempt to fetch the routes data from the db
+  let routingData;
+  const fetchedData = await thisModule.fetchRoutingData(origin, destination);
+
+  // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
+  const timeValues = await axios.get('http://localhost:5000/global/');
+  const lastRoutingUpdateTime = timeValues.data.lastRoutingUpdateTime;
+
+  // Compute metrics for scoring if there are none saved.
+  // Or, re-compute them if the routing algorithm was updated.
+  if (!fetchedData || fetchedData.generatedTime < lastRoutingUpdateTime) {
+    const generatedTime = Date.now();
+    routingData = await generateMetricsSubroutine(origin, destination, startDates, time, loggedIn, optionalParams, isWheelchair);
+
+    // Save the scores if the user is logged in
+    if (loggedIn) {
+      await thisModule.saveRoutingData(origin, destination, routingData, generatedTime)
+    }
+  } else {
+    routingData = fetchedData.routingData;
+  }
+
+  return routingData;
+}
+
+/**
+ * Fetch the scores for a defined origin, destination pair.
+ * @param origin
+ * @param destination
+ * @returns {Promise<AxiosResponse<any>|void>}
+ */
+export async function fetchRoutingData(origin, destination) {
+  // If a destination is specified, load scores for the specific origin/destination pair, else load for origin only
+  const url =`http://localhost:5000/savedRoutingData/${origin._id}/${destination._id}`;
+  return await axios.get(url, {
+    params:
+      {
+        origin: origin,
+        destination: destination
+      }
+  }).then((response) => {
+    return response.data;
+  }).catch(err => console.log(err));
+}
+
+/**
+ * Saves the scores of a specific (origin, dstination) pair to the DB, or the weighted average scores of a specific
+ * origin (in which case there is no destination).
+ * @param origin
+ * @param destination
+ * @param routingData
+ * @param generatedTime
+ * @returns {Promise<void>}
+ */
+export async function saveRoutingData(origin, destination, routingData, generatedTime) {
+  let params =
+    {
+      origin: origin,
+      destination: destination,
+      generatedTime: generatedTime,
+      routingData: routingData
+    };
+
+  await axios.post(`http://localhost:5000/editRoutingData/${origin._id}/${destination._id}`, params);
+}
+
+
+async function generateMetricsSubroutine(
+    origin,
+    destination,
+    startDates,
+    searchStartTime,
+    loggedIn=false,
+    optionalParams=null,
+    isWheelchair=false
+){
   const originCoords = `${origin.latitude},${origin.longitude}`;
   const destinationCoords = `${destination.latitude},${destination.longitude}`;
 
   const weekdayStartDate = startDates.weekdayStartDate;
   const saturdayStartDate = startDates.saturdayStartDate;
   const sundayStartDate = startDates.sundayStartDate;
-  const optionalParams = {
-    searchWindow: searchTimeWindow, numItineraries: 0, walkReluctance: 2
-  };
 
-  const weekdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, optionalParams);
-  const weekdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, optionalParams);
-  const saturdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, saturdayStartDate, searchStartTime, optionalParams);
-  const saturdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, saturdayStartDate, searchStartTime, optionalParams);
-  const sundayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, sundayStartDate, searchStartTime, optionalParams);
-  const sundayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, sundayStartDate, searchStartTime, optionalParams);
+  const weekdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, optionalParams, isWheelchair);
+  const weekdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, optionalParams, isWheelchair);
+  const saturdayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, saturdayStartDate, searchStartTime, optionalParams, isWheelchair);
+  const saturdayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, saturdayStartDate, searchStartTime, optionalParams, isWheelchair);
+  const sundayToDestItineraries = await handleGetAllRoutesOTP(originCoords, destinationCoords, sundayStartDate, searchStartTime, optionalParams, isWheelchair);
+  const sundayFromDestItineraries = await handleGetAllRoutesOTP(destinationCoords, originCoords, sundayStartDate, searchStartTime, optionalParams, isWheelchair);
 
   // The day of the week for this search doesn't matter.
-  const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "WALK");
-  const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "WALK");
-  const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
-  const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, "BICYCLE");
+  const walkTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "WALK");
+  const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "WALK");
+  const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "BICYCLE");
+  const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "BICYCLE");
 
   const walkBikeRoutes = {
     name: `${origin.name}-${destination.name}-walkBikeRoutes`,
@@ -45,15 +148,142 @@ export async function getItinerariesFromOTP(origin, destination, startDates, sea
     bicycleTripComing: bicycleTripComing[0]
   }
 
+
+  const rushHourMetrics = processRushHourItineraries(
+      weekdayToDestItineraries,
+      weekdayFromDestItineraries
+  );
+  const offPeakMetrics = processOffPeakItineraries(
+      weekdayToDestItineraries,
+      weekdayFromDestItineraries
+  );
+  const overnightMetrics = processOvernightItineraries(
+      weekdayToDestItineraries,
+      weekdayFromDestItineraries,
+      saturdayToDestItineraries,
+      saturdayFromDestItineraries,
+      sundayToDestItineraries,
+      sundayFromDestItineraries
+  );
+  const weekendMetrics = processWeekendItineraries(
+      saturdayToDestItineraries,
+      saturdayFromDestItineraries,
+      sundayToDestItineraries,
+      sundayFromDestItineraries
+  );
+
   return {
-    weekdayToDestItineraries: weekdayToDestItineraries,
-    weekdayFromDestItineraries: weekdayFromDestItineraries,
-    saturdayToDestItineraries: saturdayToDestItineraries,
-    saturdayFromDestItineraries: saturdayFromDestItineraries,
-    sundayToDestItineraries: sundayToDestItineraries,
-    sundayFromDestItineraries: sundayFromDestItineraries,
+    rushHourMetrics: rushHourMetrics,
+    offPeakMetrics: offPeakMetrics,
+    overnightMetrics: overnightMetrics,
+    weekendMetrics: weekendMetrics,
     walkBikeRoutes: walkBikeRoutes
-  };
+  }
+}
+
+function processRushHourItineraries(
+    weekdayToDestItineraries,
+    weekdayFromDestItineraries
+) {
+  const toDestStartDate = new Date("2023-02-20T06:00:00.000-05:00").getTime();
+  const toDestEndDate = new Date("2023-02-20T10:15:00.000-05:00").getTime();
+  const fromDestStartDate = new Date("2023-02-20T15:00:00.000-05:00").getTime();
+  const fromDestEndDate = new Date("2023-02-20T19:15:00.000-05:00").getTime();
+
+  const processedToDestItineraries = processItineraries(weekdayToDestItineraries, toDestStartDate, toDestEndDate);
+  const processedFromDestItineraries = processItineraries(weekdayFromDestItineraries, fromDestStartDate, fromDestEndDate);
+
+  const processedItineraries = [processedToDestItineraries, processedFromDestItineraries];
+  return computeMetricsFromList(processedItineraries);
+}
+
+function processOffPeakItineraries(
+    weekdayToDestItineraries,
+    weekdayFromDestItineraries
+) {
+  const toDestStartDate = new Date("2023-02-20T10:00:00.000-05:00").getTime();
+  const toDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
+  const fromDestStartDate1 = new Date("2023-02-20T06:00:00.000-05:00").getTime();
+  const fromDestEndDate1 = new Date("2023-02-20T15:15:00.000-05:00").getTime();
+  const fromDestStartDate2 = new Date("2023-02-20T19:00:00.000-05:00").getTime();
+  const fromDestEndDate2 = new Date("2023-02-21T01:15:00.000-05:00").getTime();
+
+  const processedToDestItineraries = processItineraries(weekdayToDestItineraries, toDestStartDate, toDestEndDate);
+  const processedFromDestItineraries1 = processItineraries(weekdayFromDestItineraries, fromDestStartDate1, fromDestEndDate1);
+  const processedFromDestItineraries2 = processItineraries(weekdayFromDestItineraries, fromDestStartDate2, fromDestEndDate2);
+
+  const processedItineraries = [processedToDestItineraries, processedFromDestItineraries1, processedFromDestItineraries2];
+  return computeMetricsFromList(processedItineraries);
+}
+
+function processOvernightItineraries(
+    weekdayToDestItineraries,
+    weekdayFromDestItineraries,
+    saturdayToDestItineraries,
+    saturdayFromDestItineraries,
+    sundayToDestItineraries,
+    sundayFromDestItineraries
+) {
+  // Recall: Friday night is saturday AM, saturday night is sunday AM.
+  // Renaming these variables will help with readability.
+  const fridayNightToDestItineraries = saturdayToDestItineraries;
+  const fridayNightFromDestItineraries = saturdayFromDestItineraries;
+  const saturdayNightToDestItineraries = sundayToDestItineraries;
+  const saturdayNightFromDestItineraries = sundayFromDestItineraries;
+
+  const weeknightStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
+  const weeknightEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
+
+  // Recall: Friday night is saturday AM
+  const fridayStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
+  const fridayEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
+
+  // Recall: Saturday night is sunday AM
+  const saturdayStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
+  const saturdayEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
+
+  const processedToDestItineraries = processItineraries(weekdayToDestItineraries, weeknightStartDate, weeknightEndDate);
+  const processedFromDestItineraries = processItineraries(weekdayFromDestItineraries, weeknightStartDate, weeknightEndDate);
+  const processedFridayToDestItineraries = processItineraries(fridayNightToDestItineraries, fridayStartDate, fridayEndDate);
+  const processedFridayFromDestItineraries = processItineraries(fridayNightFromDestItineraries, fridayStartDate, fridayEndDate);
+  const processedSaturdayToDestItineraries = processItineraries(saturdayNightToDestItineraries, saturdayStartDate, saturdayEndDate);
+  const processedSaturdayFromDestItineraries = processItineraries(saturdayNightFromDestItineraries, saturdayStartDate, saturdayEndDate);
+
+  const processedItineraries = [
+    processedToDestItineraries,
+    processedFromDestItineraries,
+    processedFridayToDestItineraries,
+    processedFridayFromDestItineraries,
+    processedSaturdayToDestItineraries,
+    processedSaturdayFromDestItineraries
+  ];
+
+  return computeMetricsFromList(processedItineraries);
+}
+
+function processWeekendItineraries(
+    saturdayToDestItineraries,
+    saturdayFromDestItineraries,
+    sundayToDestItineraries,
+    sundayFromDestItineraries
+) {
+  const saturdayStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
+  const saturdayEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
+  const sundayStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
+  const sundayEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
+
+  const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
+  const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
+  const processedSundayToDestItineraries = processItineraries(sundayToDestItineraries, sundayStartDate, sundayEndDate);
+  const processedSundayFromDestItineraries = processItineraries(sundayFromDestItineraries, sundayStartDate, sundayEndDate);
+
+  const processedItineraries = [
+    processedSaturdayToDestItineraries,
+    processedSaturdayFromDestItineraries,
+    processedSundayToDestItineraries,
+    processedSundayFromDestItineraries
+  ];
+  return computeMetricsFromList(processedItineraries);
 }
 
 
@@ -113,4 +343,58 @@ export function processItineraries(itineraries, startDate, endDate, considerGap 
     walkMetrics: walkMetrics,
     waitMetrics: waitMetrics
   };
+}
+
+
+function computeMetricsFromList(processedItineraries) {
+  let metrics = []
+
+  for (let i of processedItineraries) {
+    let currentFrequencyMetrics;
+    let currentDurationMetrics;
+    let currentWalkMetrics;
+
+    if (i.frequencyMetrics == null) {
+      currentFrequencyMetrics = null;
+    } else {
+      // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
+      currentFrequencyMetrics = {
+        max: i.frequencyMetrics.maxGap/60000,
+        min: i.frequencyMetrics.minGap/60000,
+        average: i.frequencyMetrics.averageGap/60000,
+        standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
+      };
+    }
+
+    if (i.durationMetrics == null) {
+      currentDurationMetrics = null;
+    } else {
+      // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
+      currentDurationMetrics = {
+        max: i.durationMetrics.maxDurationTime/60,
+        min: i.durationMetrics.minDurationTime/60,
+        average: i.durationMetrics.averageDurationTime/60,
+        standardDeviation: i.durationMetrics.standardDeviationDurationTime/60
+      }
+    }
+
+    if (i.walkMetrics == null) {
+      currentWalkMetrics = null;
+    } else {
+      // Normalize metrics from seconds to minutes, and provide them in the format expected by calculateScore()
+      currentWalkMetrics = {
+        max: i.walkMetrics.maxWalkTime/60,
+        min: i.walkMetrics.minWalkTime/60,
+        average: i.walkMetrics.averageWalkTime/60,
+        standardDeviation: i.walkMetrics.standardDeviationWalkTime/60
+      };
+    }
+    metrics.push({
+      frequencyMetrics: currentFrequencyMetrics,
+      durationMetrics: currentDurationMetrics,
+      walkMetrics: currentWalkMetrics
+    })
+  }
+
+  return metrics;
 }

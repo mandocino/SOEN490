@@ -14,7 +14,8 @@ const app = express();
 app.disable("x-powered-by");
 
 // use express json
-app.use(express.json());
+// with payload limit as 10mb
+app.use(express.json({limit: '10mb'}));
 
 // use cors
 app.use(cors());

@@ -6,6 +6,7 @@ const connectionString =
 const globalSchema = new Schema(
   {
     lastAlgoUpdateTime: { type: Schema.Types.Date, required: true },
+    lastRoutingUpdateTime: { type: Schema.Types.Date, required: true }
   },
   { collection: "Global" }
 );
@@ -42,19 +43,26 @@ const locationSchema = new Schema(
 );
 
 const savedScoreSchema = new Schema({
-    origin: { type: Schema.Types.ObjectId, required: true},
-    destination: { type: Schema.Types.ObjectId },
-    generatedTime: { type: Schema.Types.Date, required: true},
-    overall: { type: Number, required: true},
-    rushHour: { type: Number, required: true},
-    offPeak: { type: Number, required: true},
-    weekend: { type: Number, required: true},
-    overnight: { type: Number, required: true}
+  origin: { type: Schema.Types.ObjectId, required: true },
+  destination: { type: Schema.Types.ObjectId },
+  generatedTime: { type: Schema.Types.Date, required: true },
+  overall: { type: Number, required: true },
+  rushHour: { type: Number, required: true },
+  offPeak: { type: Number, required: true },
+  weekend: { type: Number, required: true },
+  overnight: { type: Number, required: true }
 }, { collection : 'SavedScores' });
 
+const savedRoutingDataSchema = new Schema({
+  origin: { type: Schema.Types.ObjectId, required: true },
+  destination: { type: Schema.Types.ObjectId, required: true },
+  generatedTime: { type: Schema.Types.Date, required: true },
+  routingData: { type: Object, required: true }
+}, { collection : 'SavedRoutingData' });
+
 const emailConfirmationSchema = new Schema({
-    email: { type: String, required: true},
-    code: { type: String, required: true}
+  email: { type: String, required: true },
+  code: { type: String, required: true }
 }, { collection : 'EmailConfirmations' });
 
 const passwordResetRequestSchema = new Schema(
@@ -69,6 +77,7 @@ export const globalDBModel = model("Global", globalSchema);
 export const userDBModel = model("User", userSchema);
 export const locationDBModel = model("Location", locationSchema);
 export const savedScoreDBModel = model("SavedScore", savedScoreSchema);
+export const savedRoutesDBModel = model("SavedRoutingData", savedRoutingDataSchema);
 export const emailConfirmationDBModel = model("EmailConfirmation", emailConfirmationSchema);
 export const passwordResetRequestDBModel = model("PasswordResetRequest", passwordResetRequestSchema);
 
