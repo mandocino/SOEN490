@@ -3,6 +3,38 @@ import { Schema, model, connect } from "mongoose";
 const connectionString =
   "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
 
+
+///////////// DEFAULTS
+
+export const defaultUserScoringPreferences = {
+  factorWeights: {
+    frequencyWeight: 0.7,
+    durationWeight: 0.3,
+  },
+  nightWeights: {
+    weeknightWeight: 0.3,
+    fridayNightWeight: 0.35,
+    saturdayNightWeight: 0.35
+  },
+  weekendWeights: {
+    saturdayWeight: 0.6,
+    sundayWeight: 0.4
+  },
+  overallWeights: {
+    rushHourWeight: 0.4,
+    offPeakWeight: 0.3,
+    nightWeight: 0.1,
+    weekendWeight: 0.2
+  }
+}
+
+export const defaultUserRoutingPreferences = {
+  walkReluctance: 2,
+  isWheelChair: false
+}
+
+///////////// SCHEMAS
+
 const globalSchema = new Schema(
   {
     lastAlgoUpdateTime: { type: Schema.Types.Date, required: true },
@@ -18,9 +50,8 @@ const userSchema = new Schema(
     last_name: { type: String, required: true },
     password: { type: String, required: true },
     current_location: { type: String, default: "" },
-    duration_priority: { type: Number, default: 0 },
-    frequency_priority: { type: Number, default: 0 },
-    walk_priority: { type: Number, default: 0 },
+    scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
+    routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
     lastPrefChangeTime: { type: Schema.Types.Date, required: true },
   },
   { collection: "Users" }

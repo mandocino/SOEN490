@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as thisModule from './scoring.js';
 import {getRoutingData} from "./routeProcessing.js";
+import {defaultUserRoutingPreferences, defaultUserScoringPreferences} from "../config/db.js";
 
 
 /**
@@ -93,7 +94,7 @@ export async function loadScores(origin, destinations, userID) {
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
   if (!savedScores || savedScores.generatedTime < lastPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
-    savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn);
+    savedScores = await thisModule.generateNewScores(origin, destinations, userID);
   }
   // Get the latest scores for each origin/destination pair
   else {
@@ -130,50 +131,12 @@ export async function loadScores(origin, destinations, userID) {
  * @param loggedIn
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
-export async function generateNewScores(origin, destinations, loggedIn=false) {
-  // TODO: fetch user's preferred weights
-  const frequencyWeight = 0.7;
-  const durationWeight = 0.25;
-  const walkWeight = 0.05;
+export async function generateNewScores(origin, destinations, userID) {
+  const loggedIn = (userID != null);
 
-  const weeknightWeight = 1/3;
-  const fridayNightWeight = 1/3;
-  const saturdayNightWeight = 1/3;
-
-  const saturdayWeight = 0.6;
-  const sundayWeight = 0.4;
-
-  const rushHourWeight = 0.4;
-  const offPeakWeight = 0.3;
-  const nightWeight = 0.1;
-  const weekendWeight = 0.2;
-
-  // TODO: fetch user walkReluctance, isWheelChair
-  const walkReluctance = 2;
-  const isWheelChair = false;
-
-  const scoringWeights = {
-    factorWeights: {
-      frequencyWeight: frequencyWeight,
-      durationWeight: durationWeight,
-      walkWeight: walkWeight
-    },
-    nightWeights: {
-      weeknightWeight: weeknightWeight,
-      fridayNightWeight: fridayNightWeight,
-      saturdayNightWeight: saturdayNightWeight
-    },
-    weekendWeights: {
-      saturdayWeight: saturdayWeight,
-      sundayWeight: sundayWeight
-    },
-    overallWeights: {
-      rushHourWeight: rushHourWeight,
-      offPeakWeight: offPeakWeight,
-      nightWeight: nightWeight,
-      weekendWeight: weekendWeight
-    }
-  }
+  // User's scoring and routing preferences
+  let scoringPreferences;
+  let routingPreferences;
 
   // The new scores that were generated
   let newScores = [];
@@ -187,11 +150,27 @@ export async function generateNewScores(origin, destinations, loggedIn=false) {
   let weekend = 0;
   let overnight = 0;
 
+  const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
+  const userData = user.data[0];
+
+  // TODO: Either update user document in db to the default preferences or show an alert in frontend
+  if (userData.hasOwnProperty('scoringPreferences')) {
+    scoringPreferences = userData.scoringPreferences;
+  } else {
+    scoringPreferences = defaultUserScoringPreferences;
+  }
+
+  if (userData.hasOwnProperty('routingPreferences')) {
+    routingPreferences = userData.routingPreferences;
+  } else {
+    routingPreferences = defaultUserRoutingPreferences;
+  }
+
   // Get the current date and time
   const date = Date.now();
 
   for (const destination of destinations) {
-    const individualNewScore = await generateNewScoresForOnePair(origin, destination, scoringWeights, walkReluctance, isWheelChair, loggedIn);
+    const individualNewScore = await generateNewScoresForOnePair(origin, destination, routingPreferences, scoringPreferences, loggedIn);
     newScores.push(individualNewScore);
   }
 
@@ -247,41 +226,39 @@ export async function generateNewScores(origin, destinations, loggedIn=false) {
  * Generates scores for a specific (origin, destination) pair
  * @param origin
  * @param destination
- * @param scoringWeights
- * @param walkReluctance
- * @param isWheelChair
+ * @param routingPreferences
+ * @param scoringPreferences
  * @param loggedIn
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
-export async function generateNewScoresForOnePair(origin, destination, scoringWeights, walkReluctance, isWheelChair, loggedIn=false) {
-  const frequencyWeight = scoringWeights.factorWeights.frequencyWeight;
-  const durationWeight = scoringWeights.factorWeights.durationWeight;
-  const walkWeight = scoringWeights.factorWeights.walkWeight
+export async function generateNewScoresForOnePair(origin, destination, routingPreferences, scoringPreferences, loggedIn=false) {
+  const frequencyWeight = scoringPreferences.factorWeights.frequencyWeight;
+  const durationWeight = scoringPreferences.factorWeights.durationWeight;
 
   const startDates = {
     weekdayStartDate: "2023-02-20",
     saturdayStartDate: "2023-02-25",
     sundayStartDate: "2023-02-26"
-  }
+  };
 
-  const metrics = await getRoutingData(origin, destination, startDates, loggedIn);
+  const metrics = await getRoutingData(origin, destination, startDates, routingPreferences, loggedIn);
 
   const rushHourScores = generateRushHourScores(metrics.rushHourMetrics);
-  const rushHour = computeWeightedScore(rushHourScores, frequencyWeight, durationWeight, walkWeight);
+  const rushHour = computeWeightedScore(rushHourScores, frequencyWeight, durationWeight);
 
   const offPeakScores = generateOffPeakScores(metrics.offPeakMetrics);
-  const offPeak = computeWeightedScore(offPeakScores, frequencyWeight, durationWeight, walkWeight);
+  const offPeak = computeWeightedScore(offPeakScores, frequencyWeight, durationWeight);
 
-  const nightScores = generateOvernightScores(metrics.overnightMetrics, scoringWeights.nightWeights);
-  const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight, walkWeight);
+  const nightScores = generateOvernightScores(metrics.overnightMetrics, scoringPreferences.nightWeights);
+  const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight);
 
-  const weekendScores = generateWeekendScores(metrics.weekendMetrics, scoringWeights.weekendWeights);
-  const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight, walkWeight);
+  const weekendScores = generateWeekendScores(metrics.weekendMetrics, scoringPreferences.weekendWeights);
+  const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight);
 
-  const weightedRushHour = rushHour * scoringWeights.overallWeights.rushHourWeight;
-  const weightedOffPeak = offPeak * scoringWeights.overallWeights.offPeakWeight;
-  const weightedNight = night * scoringWeights.overallWeights.nightWeight;
-  const weightedWeekend = weekend * scoringWeights.overallWeights.weekendWeight;
+  const weightedRushHour = rushHour * scoringPreferences.overallWeights.rushHourWeight;
+  const weightedOffPeak = offPeak * scoringPreferences.overallWeights.offPeakWeight;
+  const weightedNight = night * scoringPreferences.overallWeights.nightWeight;
+  const weightedWeekend = weekend * scoringPreferences.overallWeights.weekendWeight;
   const overall = weightedRushHour + weightedOffPeak + weightedNight + weightedWeekend;
 
   // Get the current date and time
@@ -503,7 +480,7 @@ function calculateScore(metrics, worst, cvBonus, fmaxWeight, favgWeight) {
  * @param walkWeight Weight of the walk score
  * @returns {number} Weighted average of the three
  */
-function computeWeightedScore(scores, frequencyWeight, durationWeight, walkWeight) {
+function computeWeightedScore(scores, frequencyWeight, durationWeight, walkWeight=0) {
   const frequencyScore = scores.frequencyScore*frequencyWeight;
   const durationScore = scores.durationScore*durationWeight;
   const walkScore = scores.walkScore*walkWeight;

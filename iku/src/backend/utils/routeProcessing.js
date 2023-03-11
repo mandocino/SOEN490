@@ -19,9 +19,8 @@ export async function getRoutingData(
     origin,
     destination,
     startDates,
+    routingPreferences,
     loggedIn = false,
-    isWheelChair = false,
-    walkReluctance = 2,
     searchStartTime = defaultStartTime,
     searchTimeWindow = defaultTimeWindow
 ) {
@@ -29,10 +28,10 @@ export async function getRoutingData(
   const optionalParams = {
     searchWindow: searchTimeWindow,
     numItineraries: 0,
-    walkReluctance: walkReluctance
+    walkReluctance: routingPreferences.walkReluctance
   };
 
-  return await thisModule.handleGetRoutingData(origin, destination, startDates, searchStartTime, loggedIn, optionalParams, isWheelChair);
+  return await thisModule.handleGetRoutingData(origin, destination, startDates, searchStartTime, loggedIn, optionalParams, routingPreferences.isWheelChair);
 }
 
 export async function handleGetRoutingData(
