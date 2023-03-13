@@ -45,6 +45,7 @@ describe("User tests", () => {
         await getUsers();
     });
 
+    let testUserID;
     test("Signup", async () => {
         const resSignup = await axios.post(`http://localhost:5000/signup/`, {
             email: "userSignUpTestTemp@test.com",
@@ -54,6 +55,7 @@ describe("User tests", () => {
             lastPrefChangeTime: 0
         });
         expect(resSignup.data).toHaveProperty('_id');
+        testUserID = resSignup.data._id;
     });
 
     test("Get user by ID", async () => {
@@ -77,16 +79,14 @@ describe("User tests", () => {
     });
 
     test("Login", async () => {
-        const res = await getUsers();
-
         const resLogin = await axios.post(`http://localhost:5000/login/`, {
-            email: res.data[0].email,
-            password: res.data[0].password // TODO: This will need to be rewritten when we implement password hashing
+            email: "userSignUpTestTemp@test.com",
+            password: "TestPassword"
         });
         expect(Array.isArray(resLogin.data)).toBe(true)
         expect(resLogin.data.length).toBeGreaterThan(0);
         expect(resLogin.data[0]).toHaveProperty('_id');
-        expect(resLogin.data[0]._id).toEqual(res.data[0]._id);
+        expect(resLogin.data[0]._id).toEqual(testUserID);
     });
 
     test("Modify a user", async () => {

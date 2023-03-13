@@ -1708,7 +1708,7 @@ describe("OTP List Route Parsing Functions Test (with start time, end time and a
     });
 
     test("Calculate metrics on frequncy", () => {
-        let frequncyMetrics = getFrequencyMetrics(testingRoute);
+        let frequncyMetrics = getFrequencyMetrics(testingListRoute);
 
         expect(frequncyMetrics.minGap).toBe(762000);
         expect(frequncyMetrics.maxGap).toBe(762000);
