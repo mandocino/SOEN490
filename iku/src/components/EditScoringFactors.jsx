@@ -151,18 +151,26 @@ export default function EditScoringFactors(props) {
 
     const currentDate = Date.now();
 
-    await axios
-      .post("http://localhost:5000/modifyUserByID", {
-        _id: mongoose.Types.ObjectId(user_id),
-        factorWeights: {
-          frequencyWeight: factorWeights[0]/100,
-          durationWeight: factorWeights[1]/100
-        },
-        lastPrefChangeTime: currentDate
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    if(user_id === null) {
+      let preferences = JSON.parse(sessionStorage.getItem("preferences"));
+
+      preferences.factorWeights = factorWeights;
+
+      sessionStorage.setItem("preferences", JSON.stringify(preferences));
+    } else {
+      await axios
+        .post("http://localhost:5000/modifyUserByID", {
+          _id: mongoose.Types.ObjectId(user_id),
+          factorWeights: {
+            frequencyWeight: factorWeights[0]/100,
+            durationWeight: factorWeights[1]/100
+          },
+          lastPrefChangeTime: currentDate
+        })
+        .catch((error) => {
+          console.log(error.message);
+        });
+    }
     window.location.reload(false);
   };
 

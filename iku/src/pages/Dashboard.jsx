@@ -58,31 +58,49 @@ export default function Dashboard() {
   // Fetch user's preferred scoring priorities
   const fetchScoringFactors = async () => {
 
-    // Get the weighted average scores
-    const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
-    const userData = response.data[0];
+    if(user_id === null) {
 
-    let userFactorWeights = userData.factorWeights;
-
-    if (userFactorWeights.frequencyWeight + userFactorWeights.durationWeight !== 1) {
-      const currentDate = Date.now();
-
-      await axios
-        .post("http://localhost:5000/modifyUserByID", {
-          _id: mongoose.Types.ObjectId(user_id),
+      if(sessionStorage.getItem("preferences") === null) {
+        sessionStorage.setItem("preferences", JSON.stringify({
           factorWeights: {
             frequencyWeight: 0.7,
             durationWeight: 0.3
-          },
-          lastPrefChangeTime: currentDate
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
+          }
+        }))
+      } else {
+        let preferences = JSON.parse(sessionStorage.getItem("preferences"));
+        let userFactorWeights = preferences.factorWeights;
 
-      setFactorWeights([70, 30]);
+        setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
+      }
     } else {
-      setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
+
+      // Get the weighted average scores
+      const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
+      const userData = response.data[0];
+
+      let userFactorWeights = userData.factorWeights;
+
+      if (userFactorWeights.frequencyWeight + userFactorWeights.durationWeight !== 1) {
+        const currentDate = Date.now();
+
+        await axios
+          .post("http://localhost:5000/modifyUserByID", {
+            _id: mongoose.Types.ObjectId(user_id),
+            factorWeights: {
+              frequencyWeight: 0.7,
+              durationWeight: 0.3
+            },
+            lastPrefChangeTime: currentDate
+          })
+          .catch((error) => {
+            console.log(error.message);
+          });
+
+        setFactorWeights([70, 30]);
+      } else {
+        setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
+      }
     }
   }
 
