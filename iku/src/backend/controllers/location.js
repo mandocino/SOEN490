@@ -3,9 +3,11 @@ import {Client} from "@googlemaps/google-maps-services-js";
 // Import function from location Model
 import { createLocation, getLocationsByUserID, modifyLocation, removeLocation } from "../models/locationModel.js";
 
+import "dotenv/config"
+
 // Google client for Geocoding API
 const geocodingClient = new Client({});
-const key = "AIzaSyAB4gJlQUsQStzm67E8R_KTOAkt1fnFCAU";
+const key = process.env.REACT_APP_GEOCODING_KEY;
 
 // Create a new location with data
 export const addLocation = async (req, res) => {
