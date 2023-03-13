@@ -36,6 +36,12 @@ export const getUserByEmail = (email, result) => {
   userDBModel.find({ email: email }, "_id", (err, data) => {
     if (err) {
       console.log(err);
+    } 
+    if (!user) {
+      // Handle case where user is not found
+      const error = new Error('User not found');
+      error.status = 404;
+      return result(error);
     } else {
       if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
         console.log(data);
@@ -51,6 +57,11 @@ export const login = (data, result) => {
   userDBModel.find({ email: data.email }, "_id password", (err, retData) => {
     if (err) {
       console.log(err);
+    } else if (!retData || retData.length === 0) {
+      // Handle case where user is not found
+      const error = new Error('User not found');
+      error.status = 404;
+      return result(error);
     } else {
       // Compare given password with hashed
       bcrypt.compare(data.password, retData[0].password, function(err, compareResult) {
@@ -64,8 +75,8 @@ export const login = (data, result) => {
                   console.log(err);
                 } else {
                   if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
-        console.log(data);
-      }
+                    console.log(data);
+                  }
                   result(null, data);
                 }
               }
