@@ -49,15 +49,8 @@ describe("Database tests", () => {
 
     test("Get", async () => {
         const resGet = await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`);
-        expect(Array.isArray(resGet.data)).toBe(true);
-        expect(resGet.data.length).toBeGreaterThanOrEqual(1);
-        let found = false;
-        for(let i = 0;i<resGet.data.length;++i){
-            if(resGet.data[i]._id == scoreID){
-                found = true;
-            }
-        }
-        expect(found).toBe(true);
+        expect(Array.isArray(resGet.data)).toBe(false);
+        expect(resGet.data._id).toBe(scoreID);
     });
 
     test("Delete", async () => {
@@ -65,13 +58,7 @@ describe("Database tests", () => {
             _id: scoreID
         });
         const resGet = await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`);
-        expect(Array.isArray(resGet.data)).toBe(true);
-        let found = false;
-        for(let i = 0;i<resGet.data.length;++i){
-            if(resGet.data[i]._id == scoreID){
-                found = true;
-            }
-        }
-        expect(found).toBe(false);
+        expect(Array.isArray(resGet.data)).toBe(false);
+        expect(resGet.data).toBe(null);
     });
 });

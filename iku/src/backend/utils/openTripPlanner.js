@@ -25,6 +25,7 @@ let otpParameterKeys = [
     'unpreferredRoutes',
     'waitAtBeginningFactor',
     'waitReluctance',
+    'walkReluctance',
     'walkBoardCost',
     'walkSpeed'
 ];

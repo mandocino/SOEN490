@@ -81,7 +81,7 @@ export const updatePasswordResetRequest = (req, res) => {
             // If Successful, send email to User
             const mailData = {
                 from: 'ikumailer@gmail.com',  // sender address
-                to: data.email,   // list of receivers
+                to: req.body.email,   // list of receivers
                 subject: 'Iku Password Reset Request',
                 text: '',
                 html: `<b>A request was done to reset your Iku password</b><br>Here is your code: ${data.code}`,
