@@ -98,6 +98,7 @@ export default function SearchBar() {
             locationsArray.push(location);
             sessionStorage.setItem("location", JSON.stringify(locationsArray));
           }
+
         } else {
           await axios
             .post("http://localhost:5000/newlocation", {

@@ -60,36 +60,57 @@ export default function Dashboard() {
   // Fetch user's preferred scoring priorities
   const fetchScoringFactors = async () => {
 
-    // Get the weighted average scores
-    const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
-    const userData = response.data[0];
+    if(user_id === null) {
 
-    let userFrequency = userData.frequency_priority;
-    let userDuration = userData.duration_priority;
-    let userWalkTime = userData.walk_priority;
+      if(sessionStorage.getItem("preferences") === null) {
+        sessionStorage.setItem("preferences", JSON.stringify({
+          duration_priority: 80,
+          frequency_priority: 15,
+          walk_priority: 5 
+        }))
+      } else {
+        let preferences = JSON.parse(sessionStorage.getItem("preferences"));
+        let userFrequency = preferences.frequency_priority;
+        let userDuration = preferences.duration_priority;
+        let userWalkTime = preferences.walk_priority;
 
-    if (userFrequency + userDuration + userWalkTime !== 100) {
-      const currentDate = Date.now();
-
-      await axios
-        .post("http://localhost:5000/modifyUserByID", {
-          _id: mongoose.Types.ObjectId(user_id),
-          duration_priority: 20,
-          frequency_priority: 70,
-          walk_priority: 10,
-          lastPrefChangeTime: currentDate
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-
-      setFrequency(70);
-      setDuration(20);
-      setWalkTime(10);
+        setFrequency(userFrequency);
+        setDuration(userDuration);
+        setWalkTime(userWalkTime);
+      } 
     } else {
-      setFrequency(userFrequency);
-      setDuration(userDuration);
-      setWalkTime(userWalkTime);
+
+      // Get the weighted average scores
+      const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
+      const userData = response.data[0];
+
+      let userFrequency = userData.frequency_priority;
+      let userDuration = userData.duration_priority;
+      let userWalkTime = userData.walk_priority;
+
+      if (userFrequency + userDuration + userWalkTime !== 100) {
+        const currentDate = Date.now();
+
+        await axios
+          .post("http://localhost:5000/modifyUserByID", {
+            _id: mongoose.Types.ObjectId(user_id),
+            duration_priority: 20,
+            frequency_priority: 70,
+            walk_priority: 10,
+            lastPrefChangeTime: currentDate
+          })
+          .catch((error) => {
+            console.log(error.message);
+          });
+
+        setFrequency(70);
+        setDuration(20);
+        setWalkTime(10);
+      } else {
+        setFrequency(userFrequency);
+        setDuration(userDuration);
+        setWalkTime(userWalkTime);
+      }
     }
   }
 
