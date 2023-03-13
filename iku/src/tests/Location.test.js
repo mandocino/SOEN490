@@ -128,7 +128,7 @@ describe("Database tests", () => {
             user_id: null,
             latitude: 0,
             longitude: 0,
-            name: "Test",
+            name: "Fail Test",
             origin: true,
             current_home: true
         });

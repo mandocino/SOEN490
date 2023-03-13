@@ -1,6 +1,9 @@
 {
   "version": 2,
   "builds": [
-    { "src": "iku/src/backend/index.js", "use": "@vercel/node" }
+    {
+      "src": "iku/src/backend/index.js",
+      "use": "@vercel/node"
+    }
   ]
 }
