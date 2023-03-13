@@ -6,26 +6,27 @@ const connectionString =
 
 ///////////// DEFAULTS
 
-export const defaultUserScoringPreferences = {
-  factorWeights: {
-    frequencyWeight: 0.7,
-    durationWeight: 0.3,
-  },
-  nightWeights: {
-    weeknightWeight: 0.3,
-    fridayNightWeight: 0.35,
-    saturdayNightWeight: 0.35
-  },
-  weekendWeights: {
-    saturdayWeight: 0.6,
-    sundayWeight: 0.4
-  },
-  overallWeights: {
-    rushHourWeight: 0.4,
-    offPeakWeight: 0.3,
-    nightWeight: 0.1,
-    weekendWeight: 0.2
-  }
+export const defaultUserFactorWeights = {
+  frequencyWeight: 0.7,
+  durationWeight: 0.3,
+};
+
+export const defaultUserNightWeights = {
+  weeknightWeight: 0.3,
+  fridayNightWeight: 0.35,
+  saturdayNightWeight: 0.35
+};
+
+export const defaultUserWeekendWeights = {
+  saturdayWeight: 0.6,
+  sundayWeight: 0.4
+};
+
+export const defaultUserScoringWeights = {
+  rushHourWeight: 0.4,
+  offPeakWeight: 0.3,
+  nightWeight: 0.1,
+  weekendWeight: 0.2
 }
 
 export const defaultUserRoutingPreferences = {
@@ -50,7 +51,10 @@ const userSchema = new Schema(
     last_name: { type: String, required: true },
     password: { type: String, required: true },
     current_location: { type: String, default: "" },
-    scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
+    factorWeights: { type: Object, default: defaultUserFactorWeights },
+    nightWeights: { type: Object, default: defaultUserNightWeights },
+    weekendWeights: { type: Object, default: defaultUserWeekendWeights },
+    scoringWeights: { type: Object, default: defaultUserScoringWeights },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
     lastPrefChangeTime: { type: Schema.Types.Date, required: true },
   },

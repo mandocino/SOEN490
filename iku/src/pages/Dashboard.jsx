@@ -38,9 +38,7 @@ export default function Dashboard() {
     setCardToCompare([])
   }
 
-  const [frequency, setFrequency] = useState(80);
-  const [duration, setDuration] = useState(15);
-  const [walkTime, setWalkTime] = useState(5);
+  const [factorWeights, setFactorWeights] = useState([70, 30]);
 
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
@@ -64,32 +62,27 @@ export default function Dashboard() {
     const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
     const userData = response.data[0];
 
-    let userFrequency = userData.frequency_priority;
-    let userDuration = userData.duration_priority;
-    let userWalkTime = userData.walk_priority;
+    let userFactorWeights = userData.factorWeights;
 
-    if (userFrequency + userDuration + userWalkTime !== 100) {
+    if (userFactorWeights.frequencyWeight + userFactorWeights.durationWeight !== 1) {
       const currentDate = Date.now();
 
       await axios
         .post("http://localhost:5000/modifyUserByID", {
           _id: mongoose.Types.ObjectId(user_id),
-          duration_priority: 20,
-          frequency_priority: 70,
-          walk_priority: 10,
+          factorWeights: {
+            frequencyWeight: 0.7,
+            durationWeight: 0.3
+          },
           lastPrefChangeTime: currentDate
         })
         .catch((error) => {
           console.log(error.message);
         });
 
-      setFrequency(70);
-      setDuration(20);
-      setWalkTime(10);
+      setFactorWeights([70, 30]);
     } else {
-      setFrequency(userFrequency);
-      setDuration(userDuration);
-      setWalkTime(userWalkTime);
+      setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
     }
   }
 
@@ -176,11 +169,9 @@ export default function Dashboard() {
   const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
   const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
   const factorCardsArray = [{
-    name: "Frequency", bg: frequencyColor.bgGradient, value: frequency
+    name: "Frequency", bg: frequencyColor.bgGradient, value: factorWeights[0]
   }, {
-    name: "Duration", bg: durationColor.bgGradient, value: duration
-  }, {
-    name: "Walk Time", bg: walkTimeColor.bgGradient, value: walkTime
+    name: "Duration", bg: durationColor.bgGradient, value: factorWeights[1]
   }];
 
   // Create an array with the three scoring factors
@@ -296,9 +287,8 @@ export default function Dashboard() {
                     {factorCards}
                   </div>
 
-                  <EditScoringFactors frequency={frequency} setFrequency={setFrequency} frequencyColor={frequencyColor}
-                                      duration={duration} setDuration={setDuration} durationColor={durationColor}
-                                      walkTime={walkTime} setWalkTime={setWalkTime} walkTimeColor={walkTimeColor}
+                  <EditScoringFactors factorWeights={factorWeights} setFactorWeights={setFactorWeights}
+                                      factorColors={[frequencyColor, durationColor]}
                                       buttonClass={dashboardElementButtonClass}/>
                 </div>
 
