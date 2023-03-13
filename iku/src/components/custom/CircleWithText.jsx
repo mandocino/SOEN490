@@ -9,7 +9,7 @@ export default function CircleWithText(props) {
   if (props.gradient != null) {
     textGradient = props.gradient + " text-transparent bg-clip-text ";
   } else {
-    gradient = " bg-gradient-to-br from-white/60 to-transparent ";
+    gradient = " bg-gradient-to-br from-white/30 to-transparent ";
     textGradient = gradient + " text-transparent bg-clip-text ";
   }
 

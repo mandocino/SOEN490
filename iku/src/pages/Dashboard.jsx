@@ -38,9 +38,7 @@ export default function Dashboard() {
     setCardToCompare([])
   }
 
-  const [frequency, setFrequency] = useState(80);
-  const [duration, setDuration] = useState(15);
-  const [walkTime, setWalkTime] = useState(5);
+  const [factorWeights, setFactorWeights] = useState([70, 30]);
 
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
@@ -64,52 +62,44 @@ export default function Dashboard() {
 
       if(sessionStorage.getItem("preferences") === null) {
         sessionStorage.setItem("preferences", JSON.stringify({
-          duration_priority: 80,
-          frequency_priority: 15,
-          walk_priority: 5 
+          factorWeights: {
+            frequencyWeight: 0.7,
+            durationWeight: 0.3
+          }
         }))
       } else {
         let preferences = JSON.parse(sessionStorage.getItem("preferences"));
-        let userFrequency = preferences.frequency_priority;
-        let userDuration = preferences.duration_priority;
-        let userWalkTime = preferences.walk_priority;
+        let userFactorWeights = preferences.factorWeights;
 
-        setFrequency(userFrequency);
-        setDuration(userDuration);
-        setWalkTime(userWalkTime);
-      } 
+        setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
+      }
     } else {
 
       // Get the weighted average scores
       const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
       const userData = response.data[0];
 
-      let userFrequency = userData.frequency_priority;
-      let userDuration = userData.duration_priority;
-      let userWalkTime = userData.walk_priority;
+      let userFactorWeights = userData.factorWeights;
 
-      if (userFrequency + userDuration + userWalkTime !== 100) {
+      if (userFactorWeights.frequencyWeight + userFactorWeights.durationWeight !== 1) {
         const currentDate = Date.now();
 
         await axios
           .post("http://localhost:5000/modifyUserByID", {
             _id: mongoose.Types.ObjectId(user_id),
-            duration_priority: 20,
-            frequency_priority: 70,
-            walk_priority: 10,
+            factorWeights: {
+              frequencyWeight: 0.7,
+              durationWeight: 0.3
+            },
             lastPrefChangeTime: currentDate
           })
           .catch((error) => {
             console.log(error.message);
           });
 
-        setFrequency(70);
-        setDuration(20);
-        setWalkTime(10);
+        setFactorWeights([70, 30]);
       } else {
-        setFrequency(userFrequency);
-        setDuration(userDuration);
-        setWalkTime(userWalkTime);
+        setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
       }
     }
   }
@@ -197,11 +187,9 @@ export default function Dashboard() {
   const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
   const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
   const factorCardsArray = [{
-    name: "Frequency", bg: frequencyColor.bgGradient, value: frequency
+    name: "Frequency", bg: frequencyColor.bgGradient, value: factorWeights[0]
   }, {
-    name: "Duration", bg: durationColor.bgGradient, value: duration
-  }, {
-    name: "Walk Time", bg: walkTimeColor.bgGradient, value: walkTime
+    name: "Duration", bg: durationColor.bgGradient, value: factorWeights[1]
   }];
 
   // Create an array with the three scoring factors
@@ -304,7 +292,7 @@ export default function Dashboard() {
 
                 <ScoreCompareModal firstLocation={cards[cardToCompare[0]]} secondLocation={cards[cardToCompare[1]]} show={compareModal} onClose={closeCompareModal} ></ScoreCompareModal>
                 
-                <div className="w-96 h-fit flex flex-col items-center rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+                <div className={`w-96 h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
                   <span className="flex items-center gap-2">
                     <span
                       className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-white to-emerald-100">
@@ -317,14 +305,13 @@ export default function Dashboard() {
                     {factorCards}
                   </div>
 
-                  <EditScoringFactors frequency={frequency} setFrequency={setFrequency} frequencyColor={frequencyColor}
-                                      duration={duration} setDuration={setDuration} durationColor={durationColor}
-                                      walkTime={walkTime} setWalkTime={setWalkTime} walkTimeColor={walkTimeColor}
+                  <EditScoringFactors factorWeights={factorWeights} setFactorWeights={setFactorWeights}
+                                      factorColors={[frequencyColor, durationColor]}
                                       buttonClass={dashboardElementButtonClass}/>
                 </div>
 
               </div>
-              <div className="grow h-fit flex flex-col rounded-3xl bg-gradient-to-br from-teal-700 to-teal-900 dark:from-[#0e3331] dark:to-[#0c2927] p-4 gap-4">
+              <div className={`grow h-fit flex flex-col gap-4 ${dashboardElementClass}`}>
                 <div className="flex flex-row space-between justify-between">
                   <div className="w-16"></div>
                   <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">

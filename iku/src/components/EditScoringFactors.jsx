@@ -20,19 +20,14 @@ function CarouselItem(props) {
 }
 
 export default function EditScoringFactors(props) {
-  let frequency = props.frequency;
-  let setFrequency = props.setFrequency;
-  let duration = props.duration;
-  let setDuration = props.setDuration;
-  let walkTime = props.walkTime;
-  let setWalkTime = props.setWalkTime;
+  let factorWeights = props.factorWeights;
+  let setFactorWeights = props.setFactorWeights;
+  let factorColors= props.factorColors;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [sliderVal, setSliderVal] = useState([0,0]);
+  const [sliderVal, setSliderVal] = useState(0);
 
-  const [oldFreq, setOldFreq] = useState(0);
-  const [oldDur, setOldDur] = useState(0);
-  const [oldWalk, setOldWalk] = useState(0);
+  const [oldFactorWeights, setOldFactorWeights] = useState(0);
 
   const user_id = localStorage.getItem("user_id");
 
@@ -40,12 +35,12 @@ export default function EditScoringFactors(props) {
   const minValue = minDistance;
   const maxValue = 100 - minDistance;
 
-  const frequencyColor = props.frequencyColor.hex;
-  const frequencyTextColor = props.frequencyColor.text
-  const durationColor = props.durationColor.hex;
-  const durationTextColor = props.durationColor.text;
-  const walkTimeColor = props.walkTimeColor.hex;
-  const walkTimeTextColor = props.walkTimeColor.text;
+  const frequencyColor = factorColors[0].hex;
+  const frequencyTextColor = factorColors[0].text
+  const durationColor = factorColors[1].hex;
+  const durationTextColor = factorColors[1].text;
+  // const walkTimeColor = props.walkTimeColor.hex;
+  // const walkTimeTextColor = props.walkTimeColor.text;
 
   const sliderThumbColor = '#fff'
   const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
@@ -56,27 +51,24 @@ export default function EditScoringFactors(props) {
   const boxConicGradient1 = `conic-gradient(
     from 180deg at 50% 100%, 
     ${frequencyColor} 90deg, 
-    ${frequencyColor} ${90 + 1.8 * (frequency/2)}deg,
-    ${durationColor} ${90 + 1.8 * (frequency)}deg, 
-    ${durationColor} ${90 + 1.8 * (frequency + duration)}deg, 
-    ${walkTimeColor} ${90 + 1.8 * (frequency + duration + walkTime/2)}deg,
-    ${walkTimeColor} 270deg
+    ${frequencyColor} ${90 + 1.8 * (factorWeights[0]/2)}deg,
+    ${durationColor} ${90 + 1.8 * (factorWeights[0])}deg, 
+    ${durationColor} ${90 + 1.8 * (factorWeights[0] + factorWeights[1])}deg,
+    ${durationColor} 270deg
     )`;
-  const boxConicGradient2 = `conic-gradient(
-    from 180deg at 50% 200%, 
-    ${frequencyColor} 140deg, 
-    ${durationColor} ${140 + 0.8 * (frequency)}deg, 
-    ${durationColor} ${140 + 0.8 * (frequency + duration)}deg, 
-    ${walkTimeColor} 220deg
-    )`;
+  // const boxConicGradient2 = `conic-gradient(
+  //   from 180deg at 50% 200%,
+  //   ${frequencyColor} 140deg,
+  //   ${durationColor} ${140 + 0.8 * (frequency)}deg,
+  //   ${durationColor} ${140 + 0.8 * (frequency + duration)}deg,
+  //   ${walkTimeColor} 220deg
+  //   )`;
 
   function openModal() {
     // Save old values in case user clicks cancel
     // TODO: there's probably a better way to do this.
-    setOldFreq(frequency);
-    setOldDur(duration);
-    setOldWalk(walkTime);
-    setSliderVal([frequency, frequency + duration]);
+    setOldFactorWeights(factorWeights);
+    setSliderVal(factorWeights[0]);
 
     setIsOpen(true);
   }
@@ -84,78 +76,74 @@ export default function EditScoringFactors(props) {
 
   function closeModal() {
     // Reset to old values
-    setFrequency(oldFreq);
-    setDuration(oldDur);
-    setWalkTime(oldWalk);
-    setSliderVal([oldFreq, oldFreq + oldDur]);
+    setFactorWeights(oldFactorWeights);
+    setSliderVal(oldFactorWeights[0]);
 
     // Close modal without saving changes
     setIsOpen(false);
   }
-  function sliderValueText(value, index) {
-    switch (index){
-      case 0:
-        return `Frequency ${value}%`;
-      case 1:
-        return `Walk time ${100-value}%`;
-    }
-  }
 
   const handleChange = (event, newValue, activeThumb) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
+    setSliderVal(newValue);
+    setFactorWeights([newValue, 100-newValue]);
+    console.log(sliderVal)
+  }
 
-    // If the user tries to set the middle value below the minimum distance
-    if (newValue[1] - newValue[0] < minDistance) {
-      // If the user was adjusting the left thumb (button)
-      if (activeThumb === 0) {
-        const clamped = Math.min(newValue[0], 100 - minDistance);
-        // If the right value is valid (user is not trying to set the right value above maximum)
-        if (clamped + minDistance <= maxValue) {
-          setSliderVal([clamped, clamped + minDistance]);
-        } else {
-          setSliderVal([maxValue - minDistance, maxValue])
-        }
-      }
-
-      // If the user was adjusting the right thumb (button)
-      else {
-        const clamped = Math.max(newValue[1], minDistance);
-        // If the left value is valid (user is not trying to set the left value below minimum)
-        if (clamped - minDistance >= minValue) {
-          setSliderVal([clamped - minDistance, clamped]);
-        } else {
-          setSliderVal([minValue, minValue + minDistance])
-        }
-      }
-    }
-
-    // Middle value is good
-    else {
-      // If the user was adjusting the left thumb (button)
-      if (activeThumb === 0) {
-        // If the left value is valid (user is not trying to set the left value below minimum)
-        if (newValue[0] >= minValue) {
-          setSliderVal(newValue);
-        } else {
-          setSliderVal([minValue, newValue[1]]);
-        }
-      } else {
-        // If the right value is valid (user is not trying to set the right value above maximum)
-        if (newValue[1] <= maxValue) {
-          setSliderVal(newValue);
-        } else {
-          setSliderVal([newValue[0], maxValue]);
-        }
-      }
-    }
-
-    // Set frequency to left value, duration to middle value, walkTime to right value
-    setFrequency(sliderVal[0]);
-    setDuration(sliderVal[1] - sliderVal[0]);
-    setWalkTime(100 - sliderVal[1]);
-  };
+  // const handleChange = (event, newValue, activeThumb) => {
+  //   if (!Array.isArray(newValue)) {
+  //     return;
+  //   }
+  //
+  //   // If the user tries to set the middle value below the minimum distance
+  //   if (newValue[1] - newValue[0] < minDistance) {
+  //     // If the user was adjusting the left thumb (button)
+  //     if (activeThumb === 0) {
+  //       const clamped = Math.min(newValue[0], 100 - minDistance);
+  //       // If the right value is valid (user is not trying to set the right value above maximum)
+  //       if (clamped + minDistance <= maxValue) {
+  //         setSliderVal([clamped, clamped + minDistance]);
+  //       } else {
+  //         setSliderVal([maxValue - minDistance, maxValue])
+  //       }
+  //     }
+  //
+  //     // If the user was adjusting the right thumb (button)
+  //     else {
+  //       const clamped = Math.max(newValue[1], minDistance);
+  //       // If the left value is valid (user is not trying to set the left value below minimum)
+  //       if (clamped - minDistance >= minValue) {
+  //         setSliderVal([clamped - minDistance, clamped]);
+  //       } else {
+  //         setSliderVal([minValue, minValue + minDistance])
+  //       }
+  //     }
+  //   }
+  //
+  //   // Middle value is good
+  //   else {
+  //     // If the user was adjusting the left thumb (button)
+  //     if (activeThumb === 0) {
+  //       // If the left value is valid (user is not trying to set the left value below minimum)
+  //       if (newValue[0] >= minValue) {
+  //         setSliderVal(newValue);
+  //       } else {
+  //         setSliderVal([minValue, newValue[1]]);
+  //       }
+  //     } else {
+  //       // If the right value is valid (user is not trying to set the right value above maximum)
+  //       if (newValue[1] <= maxValue) {
+  //         setSliderVal(newValue);
+  //       } else {
+  //         setSliderVal([newValue[0], maxValue]);
+  //       }
+  //     }
+  //   }
+  //
+  //   // Set frequency to left value, duration to middle value, walkTime to right value
+  //   setFrequency(sliderVal[0]);
+  //   setDuration(sliderVal[1] - sliderVal[0]);
+  //   setWalkTime(100 - sliderVal[1]);
+  // };
 
   // Submit user's scoring factor preferences
   const submitHandler = async (event) => {
@@ -166,18 +154,17 @@ export default function EditScoringFactors(props) {
     if(user_id === null) {
       let preferences = JSON.parse(sessionStorage.getItem("preferences"));
 
-      preferences.duration_priority = duration;
-      preferences.frequency_priority = frequency;
-      preferences.walk_priority = walkTime;
+      preferences.factorWeights = factorWeights;
 
       sessionStorage.setItem("preferences", JSON.stringify(preferences));
     } else {
       await axios
         .post("http://localhost:5000/modifyUserByID", {
           _id: mongoose.Types.ObjectId(user_id),
-          duration_priority: duration,
-          frequency_priority: frequency,
-          walk_priority: walkTime,
+          factorWeights: {
+            frequencyWeight: factorWeights[0]/100,
+            durationWeight: factorWeights[1]/100
+          },
           lastPrefChangeTime: currentDate
         })
         .catch((error) => {
@@ -257,9 +244,9 @@ export default function EditScoringFactors(props) {
                     }}>
                     <CarouselItem>
                       <div className="mb-4">
-                        The three adjustable scoring factors are the <b className={frequencyTextColor}>frequency</b>,
-                        the <b className={durationTextColor}>duration</b>, and the <b className={walkTimeTextColor}>walk
-                        time</b>. Use the slider below to adjust the proportional impact of these factors.
+                        The three adjustable scoring factors are the <b className={frequencyTextColor}>frequency</b> and
+                        the <b className={durationTextColor}>duration</b>. Use the slider below to adjust the
+                        proportional impact of these factors.
                       </div>
 
                       <div className="mb-4">
@@ -296,20 +283,20 @@ export default function EditScoringFactors(props) {
                       </div>
                     </CarouselItem>
 
-                    <CarouselItem>
-                      <div className="mb-4">
-                        The <b className={walkTimeTextColor}>walk time</b> refers to the total amount of walking involved
-                        in a route. If you have towalk 10 minutes to the train station, and then another 10 minutes from
-                        the train statin to your destination, then the total walk time is 20 minutes.
-                      </div>
+                    {/*<CarouselItem>*/}
+                    {/*  <div className="mb-4">*/}
+                    {/*    The <b className={walkTimeTextColor}>walk time</b> refers to the total amount of walking involved*/}
+                    {/*    in a route. If you have towalk 10 minutes to the train station, and then another 10 minutes from*/}
+                    {/*    the train statin to your destination, then the total walk time is 20 minutes.*/}
+                    {/*  </div>*/}
 
-                      <div className="mb-4">
-                        By default, the walk time represents 10% of the grade. Most will not need to worry about routes'
-                        walk time; however it may be important for those with reduced or limited mobility to prioritize
-                        routes with shorter walk time.
-                      </div>
+                    {/*  <div className="mb-4">*/}
+                    {/*    By default, the walk time represents 10% of the grade. Most will not need to worry about routes'*/}
+                    {/*    walk time; however it may be important for those with reduced or limited mobility to prioritize*/}
+                    {/*    routes with shorter walk time.*/}
+                    {/*  </div>*/}
 
-                    </CarouselItem>
+                    {/*</CarouselItem>*/}
                   </Carousel>
 
                   <div>
@@ -319,13 +306,12 @@ export default function EditScoringFactors(props) {
                       value={sliderVal}
                       onChange={handleChange}
                       valueLabelDisplay="off"
-                      getAriaValueText={sliderValueText}
                       disableSwap
                       sx={{
                         '& .MuiSlider-rail': {
-                          background: `linear-gradient(to right, ${frequencyColor} ${frequency}%,
-                        ${durationColor} ${frequency}%, ${durationColor} ${frequency + duration}%,
-                        ${walkTimeColor} ${frequency + duration}%);`,
+                          background: `linear-gradient(to right, ${frequencyColor} ${factorWeights[0]}%,
+                        ${durationColor} ${factorWeights[0]}%, ${durationColor} ${factorWeights[0] + factorWeights[1]}%,
+                        );`,
                           opacity: 1
                         },
                         '& .MuiSlider-thumb': {
@@ -347,17 +333,12 @@ export default function EditScoringFactors(props) {
                        style={{background: boxConicGradient1}}>
                     <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                       <FrequencyIcon className="fill-white w-6 h-6"/>
-                      <span>Frequency: {frequency}%</span>
+                      <span>Frequency: {factorWeights[0]}%</span>
                     </div>
 
                     <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                       <DurationIcon className="fill-white w-6 h-6"/>
-                      <span>Duration: {duration}%</span>
-                    </div>
-
-                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <WalkIcon className="fill-white w-6 h-6"/>
-                      <span>Walk Time: {walkTime}%</span>
+                      <span>Duration: {factorWeights[1]}%</span>
                     </div>
                   </div>
 
