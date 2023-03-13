@@ -26,6 +26,3 @@ app.use(Router);
 connectToServer();
 
 app.listen(5000, () => console.log("Server running at http://localhost:5000"));
-
-// Export the Express API
-module.exports = app;
