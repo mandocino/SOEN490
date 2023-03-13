@@ -20,7 +20,6 @@
     "axios": "^1.1.3",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
-    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -40,7 +39,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"cd src && cd backend && node index.js\"",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --forceExit --runInBand",
     "eject": "react-scripts eject"
