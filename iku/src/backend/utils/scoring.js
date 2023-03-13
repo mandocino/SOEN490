@@ -424,13 +424,13 @@ function calculateScoresFromMetrics(metrics) {
   let walkScores = []
 
   for (let i of metrics) {
-    const frequencyScore = calculateScore(i.frequencyMetrics, 120, 0.6, 0.2, 0.8);
+    const frequencyScore = calculateScore(i.frequencyMetrics, 120, -0.6, 1, 0.2, 0.8);
     frequencyScores.push(frequencyScore);
 
-    const durationScore = calculateScore(i.durationMetrics, 180, 0.4, 0.2, 0.8);
+    const durationScore = calculateScore(i.durationMetrics, 180, -0.6, 1,0.2, 0.8);
     durationScores.push(durationScore);
 
-    const walkScore = calculateScore(i.walkMetrics, 60, 0.5, 0.2, 0.8);
+    const walkScore = calculateScore(i.walkMetrics, 60, -0.6, 1,0.2, 0.8);
     walkScores.push(walkScore);
   }
 
@@ -447,12 +447,13 @@ function calculateScoresFromMetrics(metrics) {
  *
  * @param metrics List of frequency metrics. If a list of all metrics is passed then the frequency metrics will be extracted.
  * @param worst The case that will result in a score of zero. Cases worse than the specified worst case will floor at zero.
- * @param cvBonus A constant value added to the CV (coefficient of variation) to skew the scoring into giving higher numbers
+ * @param cvOffset A constant value added to the CV (coefficient of variation) to skew the scoring into giving higher numbers
+ * @param cvRatio
  * @param fmaxWeight The weight of the score computed on the maximum value, relative to the final score
  * @param favgWeight The weight of the score computed on the average value, relative to the final score
  * @returns {number} A number from 0-100 representing the final score
  */
-function calculateScore(metrics, worst, cvBonus, fmaxWeight, favgWeight) {
+function calculateScore(metrics, worst, cvOffset, cvRatio, fmaxWeight, favgWeight) {
 
   if (metrics == null) {
     return 0;
@@ -477,24 +478,26 @@ function calculateScore(metrics, worst, cvBonus, fmaxWeight, favgWeight) {
 
 
   let cv;
+  let multiplier;
+
   if (metrics.average > 0) {
     // CV (coefficient of variation) represents the amount of variability from the mean.
     cv = metrics.standardDeviation / metrics.average;
+
+    // Using the CV as-is results in very low scores even for conventionally "good" transit (eg metro)
+    // Adding a bonus to the CV skews the scores higher, making it easier to "understand" the scores at the expense of
+    // the "raw accuracy" of the scores. Note that the scores will still be correct, relative to one another.
+    multiplier = 1-((cv+cvOffset)/cvRatio);
   } else {
     // If the average is 0 then the data is effectively invalid.
-    // Setting the cv to (1+cvBonus) will force the final score to be zero since it is multiplied by (1+cvBonus-cv) later
-    cv = 1+cvBonus
+    multiplier = 0;
   }
 
-
-  // Using the CV as-is results in very low scores even for conventionally "good" transit (eg metro)
-  // Adding a bonus to the CV skews the scores higher, making it easier to "understand" the scores at the expense of
-  // the accuracy of the scores.
-  return (f_max * fmaxWeight + f_avg * favgWeight) * (1 - cv + cvBonus);
+  return (f_max * fmaxWeight + f_avg * favgWeight) * multiplier;
 
   // NOTE:
   //
-  // By adding a bonus to the CV, the multiplier could be >1 resulting in scores above 100.
+  // By adding an offset to the CV, the multiplier could be >1 resulting in scores above 100.
   // In such cases, cap it to 100
   //
   // Furthermore, f(x) may return a negative value, if the max/average is worse than the "worst" case
