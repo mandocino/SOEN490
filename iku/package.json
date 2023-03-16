@@ -43,7 +43,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"cd src && cd backend && node index.js\"",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --forceExit --runInBand",
     "eject": "react-scripts eject"
