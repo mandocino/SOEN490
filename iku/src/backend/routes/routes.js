@@ -23,6 +23,9 @@ const router = express.Router();
 
 ///////////// GLOBAL
 
+// Get 
+router.get("/", (req, res)=>{res.send("this is a test")});
+
 // Get global data
 router.get("/global/", showGlobals);
 
@@ -30,6 +33,9 @@ router.get("/global/", showGlobals);
 router.post("/modifyGlobal/", modifyGlobals);
 
 ///////////// USER
+
+// Get all data for all users
+router.get("/users/", showUsers);
 
 // Get all data for all users
 router.get("/users/", showUsers);
