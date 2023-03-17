@@ -1,20 +1,41 @@
-// index.js
-const express = require('express')
+//import * as dotenv from 'dotenv' 
+//dotenv.config()
+// import express
+//import express from "express";
+// import cors
+//import cors from "cors";
+// import routes
+//import Router from "./routes/routes.js";
 
-const app = express()
-const PORT = 4000
+//import {connectToServer} from "./config/db.js";
 
-app.listen(PORT, () => {
-  console.log(`API listening on PORT ${PORT} `)
-})
-
-app.get('/', (req, res) => {
-  res.send('Hey this is my API running 🥳')
-})
-
-app.get('/about', (req, res) => {
-  res.send('This is my about route..... ')
-})
-
+const express = require("express");
+const app = express();
+app.get("/", (req, res) => {
+  res.send("Express on Vercel");
+});
+app.listen(5000, () => {
+  console.log("Running on port 5000.");
+});
 // Export the Express API
-module.exports = app
+module.exports = app;
+
+// // init express
+// const app = express();
+// app.disable("x-powered-by");
+
+// // use express json
+// app.use(express.json());
+
+// use cors
+// app.use(cors());
+
+// // use router
+// app.use(Router);
+
+// // Connect to DB
+// connectToServer();
+
+// app.listen(5000, () => console.log("Server running at http://localhost:5000"));
+
+//module.exports = app;
