@@ -11,24 +11,28 @@ import {connectToServer} from "./config/db.js";
 
 // init express
 const app = express();
-app.disable("x-powered-by");
+//app.disable("x-powered-by");
 
 // use express json
 // with payload limit as 10mb
 
 
 // Connect to DB
-connectToServer();
+//connectToServer();
 
 app.listen(5000, () => console.log("Server running at http://localhost:5000"));
 
 app.use(express.json({limit: '10mb'}));
 
+app.get('/', (req, res) => {
+  res.send('Hey this is my API running 🥳')
+})
+
 // use cors
-app.use(cors());
+//app.use(cors());
 
 // use router
-app.use(Router);
+//app.use(Router);
 
 //module.exports = app
 
