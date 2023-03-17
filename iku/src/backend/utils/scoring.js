@@ -4,8 +4,10 @@ import {getRoutingData} from "./routeProcessing.js";
 import {
   defaultUserRoutingPreferences,
   defaultUserFactorWeights,
-  defaultUserNightWeights,
-  defaultUserWeekendWeights, defaultUserScoringWeights
+  defaultUserWeekendWeights,
+  defaultUserScoringWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights
 } from "../config/db.js";
 
 
@@ -142,7 +144,8 @@ export async function generateNewScores(origin, destinations, userID) {
   // User's scoring and routing preferences
   let userPreferences;
   let factorWeights;
-  let nightWeights;
+  let nightDayWeights;
+  let nightDirectionWeights;
   let weekendWeights;
   let scoringWeights;
   let routingPreferences;
@@ -169,10 +172,16 @@ export async function generateNewScores(origin, destinations, userID) {
     factorWeights = defaultUserFactorWeights;
   }
 
-  if (userData.hasOwnProperty('nightWeights')) {
-    nightWeights = userData.nightWeights;
+  if (userData.hasOwnProperty('nightDayWeights')) {
+    nightDayWeights = userData.nightDayWeights;
   } else {
-    nightWeights = defaultUserNightWeights;
+    nightDayWeights = defaultUserNightDayWeights;
+  }
+
+  if (userData.hasOwnProperty('nightDirectionWeights')) {
+    nightDirectionWeights = userData.nightDirectionWeights;
+  } else {
+    nightDirectionWeights = defaultUserNightDirectionWeights;
   }
 
   if (userData.hasOwnProperty('weekendWeights')) {
@@ -195,7 +204,8 @@ export async function generateNewScores(origin, destinations, userID) {
 
   userPreferences = {
     factorWeights: factorWeights,
-    nightWeights: nightWeights,
+    nightDayWeights: nightDayWeights,
+    nightDirectionWeights: nightDirectionWeights,
     weekendWeights: weekendWeights,
     scoringWeights: scoringWeights,
     routingPreferences: routingPreferences
@@ -283,7 +293,7 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
   const offPeakScores = generateOffPeakScores(metrics.offPeakMetrics);
   const offPeak = computeWeightedScore(offPeakScores, frequencyWeight, durationWeight);
 
-  const nightScores = generateOvernightScores(metrics.overnightMetrics, userPreferences.nightWeights);
+  const nightScores = generateOvernightScores(metrics.overnightMetrics, userPreferences.nightDayWeights, userPreferences.nightDirectionWeights);
   const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight);
 
   const weekendScores = generateWeekendScores(metrics.weekendMetrics, userPreferences.weekendWeights);
@@ -368,17 +378,20 @@ function generateOffPeakScores(metrics) {
 }
 
 
-function generateOvernightScores(metrics, scoringWeights) {
-  const weeknightWeight = scoringWeights.weeknightWeight;
-  const fridayNightWeight = scoringWeights.fridayNightWeight;
-  const saturdayNightWeight = scoringWeights.saturdayNightWeight;
+function generateOvernightScores(metrics, dayScoringWeights, directionScoringWeights) {
+  const weeknightWeight = dayScoringWeights.weeknightWeight;
+  const fridayNightWeight = dayScoringWeights.fridayNightWeight;
+  const saturdayNightWeight = dayScoringWeights.saturdayNightWeight;
+
+  const toDestWeight = directionScoringWeights.toDestWeight;
+  const fromDestWeight = directionScoringWeights.fromDestWeight;
 
   const scores = calculateScoresFromMetrics(metrics);
 
   const reduce = (x) => {
-    const weeknight = (x[0]+x[1])/2;
-    const fridayNight = (x[2]+x[3])/2;
-    const saturdayNight = (x[4]+x[5])/2;
+    const weeknight = (x[0]*toDestWeight+x[1]*fromDestWeight);
+    const fridayNight = (x[2]*toDestWeight+x[3]*fromDestWeight);
+    const saturdayNight = (x[4]*toDestWeight+x[5]*fromDestWeight);
     return (weeknight*weeknightWeight + fridayNight*fridayNightWeight + saturdayNight*saturdayNightWeight);
   }
 
@@ -424,13 +437,13 @@ function calculateScoresFromMetrics(metrics) {
   let walkScores = []
 
   for (let i of metrics) {
-    const frequencyScore = calculateScore(i.frequencyMetrics, 120, -0.6, 1, 0.2, 0.8);
+    const frequencyScore = calculateScore(i.frequencyMetrics, 120, -0.9, 1, 0.2, 0.8);
     frequencyScores.push(frequencyScore);
 
-    const durationScore = calculateScore(i.durationMetrics, 180, -0.6, 1,0.2, 0.8);
+    const durationScore = calculateScore(i.durationMetrics, 180, -0.9, 1,0.2, 0.8);
     durationScores.push(durationScore);
 
-    const walkScore = calculateScore(i.walkMetrics, 60, -0.6, 1,0.2, 0.8);
+    const walkScore = calculateScore(i.walkMetrics, 60, -0.9, 1,0.2, 0.8);
     walkScores.push(walkScore);
   }
 
@@ -467,10 +480,10 @@ function calculateScore(metrics, worst, cvOffset, cvRatio, fmaxWeight, favgWeigh
    *   a and b are constants to ensure f(0) = 100 and f(worst) = 0
    */
 
-  const a = -100/(Math.log10(worst+10)-1);
+  const a = -100/(Math.log2(worst+2)-1);
   const b = 100-a;
   const f = (x) => {
-    return a*Math.log10(x+10)+b;
+    return a*Math.log2(x+2)+b;
   }
 
   const f_max = f(metrics.max);

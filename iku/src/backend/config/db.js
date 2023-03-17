@@ -11,10 +11,15 @@ export const defaultUserFactorWeights = {
   durationWeight: 0.3,
 };
 
-export const defaultUserNightWeights = {
+export const defaultUserNightDayWeights = {
   weeknightWeight: 0.3,
   fridayNightWeight: 0.35,
   saturdayNightWeight: 0.35
+};
+
+export const defaultUserNightDirectionWeights = {
+  toDestWeight: 0.3,
+  fromDestWeight: 0.7
 };
 
 export const defaultUserWeekendWeights = {
@@ -52,7 +57,8 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     current_location: { type: String, default: "" },
     factorWeights: { type: Object, default: defaultUserFactorWeights },
-    nightWeights: { type: Object, default: defaultUserNightWeights },
+    nightDayWeights: { type: Object, default: defaultUserNightDayWeights },
+    nightDirectionWeights: { type: Object, default: defaultUserNightDirectionWeights },
     weekendWeights: { type: Object, default: defaultUserWeekendWeights },
     scoringWeights: { type: Object, default: defaultUserScoringWeights },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
