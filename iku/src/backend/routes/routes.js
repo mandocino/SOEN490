@@ -24,7 +24,7 @@ const router = express.Router();
 ///////////// GLOBAL
 
 // Get 
-router.get("/", (req, res)=>{res.send("this is a test")});
+router.get("/", (req, res)=>{res.sendFile("this is a test")});
 
 // Get global data
 router.get("/global/", showGlobals);
