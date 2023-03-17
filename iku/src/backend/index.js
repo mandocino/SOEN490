@@ -20,7 +20,7 @@ app.disable("x-powered-by");
 // Connect to DB
 connectToServer();
 
-app.listen(4000, () => console.log("Server running at http://localhost:4000"));
+app.listen(5000, () => console.log("Server running at http://localhost:5000"));
 
 app.use(express.json({limit: '10mb'}));
 
