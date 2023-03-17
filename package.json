@@ -1,0 +1,23 @@
+{
+  "name": "soen490",
+  "version": "1.0.0",
+  "description": "Provide users a tool to determine the quality of public transit services at a specified location.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mandocino/SOEN490.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mandocino/SOEN490/issues"
+  },
+  "homepage": "https://github.com/mandocino/SOEN490#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
