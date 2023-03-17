@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Provide users a tool to determine the quality of public transit services at a specified location.",
   "main": "index.js",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
