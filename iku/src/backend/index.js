@@ -1,13 +1,14 @@
-import * as dotenv from 'dotenv' 
-dotenv.config()
+//import * as dotenv from 'dotenv' 
+//dotenv.config()
 // import express
-import express from "express";
+//import express from "express";
 // import cors
-import cors from "cors";
+//import cors from "cors";
 // import routes
-import Router from "./routes/routes.js";
+//import Router from "./routes/routes.js";
 
-import {connectToServer} from "./config/db.js";
+//import {connectToServer} from "./config/db.js";
+const express = require('express')
 
 // init express
 const app = express();
