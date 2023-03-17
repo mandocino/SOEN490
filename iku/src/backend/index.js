@@ -22,7 +22,7 @@ const app = express();
 
 app.listen(5000, () => console.log("Server running at http://localhost:5000"));
 
-app.use(express.json({limit: '10mb'}));
+//app.use(express.json({limit: '10mb'}));
 
 app.get('/', (req, res) => {
   res.send('Hey this is my API running 🥳')
