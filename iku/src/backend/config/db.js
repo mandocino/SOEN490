@@ -34,6 +34,13 @@ export const defaultUserScoringWeights = {
   weekendWeight: 0.2
 }
 
+export const defaultUserScoringPreferences = {
+  consistencyImportance: 2,
+  worstAcceptableFrequency: 75,
+  worstAcceptableDuration: 120,
+  worstAcceptableWalk: 60
+}
+
 export const defaultUserRoutingPreferences = {
   walkReluctance: 2,
   isWheelChair: false

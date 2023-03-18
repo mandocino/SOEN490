@@ -7,7 +7,7 @@ import {
   defaultUserWeekendWeights,
   defaultUserScoringWeights,
   defaultUserNightDayWeights,
-  defaultUserNightDirectionWeights
+  defaultUserNightDirectionWeights, defaultUserScoringPreferences
 } from "../config/db.js";
 
 
@@ -148,6 +148,7 @@ export async function generateNewScores(origin, destinations, userID) {
   let nightDirectionWeights;
   let weekendWeights;
   let scoringWeights;
+  let scoringPreferences;
   let routingPreferences;
 
   // The new scores that were generated
@@ -166,37 +167,69 @@ export async function generateNewScores(origin, destinations, userID) {
   const userData = user.data[0];
 
   // TODO: Either update user document in db to the default preferences or show an alert in frontend
-  if (userData.hasOwnProperty('factorWeights')) {
+  if (userData.hasOwnProperty('factorWeights')
+    && userData.factorWeights.hasOwnProperty('frequencyWeight')
+    && userData.factorWeights.hasOwnProperty('durationWeight')
+  ) {
     factorWeights = userData.factorWeights;
   } else {
     factorWeights = defaultUserFactorWeights;
   }
 
-  if (userData.hasOwnProperty('nightDayWeights')) {
+  if (userData.hasOwnProperty('nightDayWeights')
+    && userData.factorWeights.hasOwnProperty('weeknightWeight')
+    && userData.factorWeights.hasOwnProperty('fridayNightWeight')
+    && userData.factorWeights.hasOwnProperty('saturdayNightWeight')
+  ) {
     nightDayWeights = userData.nightDayWeights;
   } else {
     nightDayWeights = defaultUserNightDayWeights;
   }
 
-  if (userData.hasOwnProperty('nightDirectionWeights')) {
+  if (userData.hasOwnProperty('nightDirectionWeights')
+    && userData.factorWeights.hasOwnProperty('toDestWeight')
+    && userData.factorWeights.hasOwnProperty('fromDestWeight')
+  ) {
     nightDirectionWeights = userData.nightDirectionWeights;
   } else {
     nightDirectionWeights = defaultUserNightDirectionWeights;
   }
 
-  if (userData.hasOwnProperty('weekendWeights')) {
+  if (userData.hasOwnProperty('weekendWeights')
+    && userData.factorWeights.hasOwnProperty('saturdayWeight')
+    && userData.factorWeights.hasOwnProperty('sundayWeight')
+  ) {
     weekendWeights = userData.weekendWeights;
   } else {
     weekendWeights = defaultUserWeekendWeights;
   }
 
-  if (userData.hasOwnProperty('scoringWeights')) {
+  if (userData.hasOwnProperty('scoringWeights')
+    && userData.factorWeights.hasOwnProperty('rushHourWeight')
+    && userData.factorWeights.hasOwnProperty('offPeakWeight')
+    && userData.factorWeights.hasOwnProperty('nightWeight')
+    && userData.factorWeights.hasOwnProperty('weekendWeight')
+  ) {
     scoringWeights = userData.scoringWeights;
   } else {
     scoringWeights = defaultUserScoringWeights;
   }
 
-  if (userData.hasOwnProperty('routingPreferences')) {
+  if (userData.hasOwnProperty('scoringPreferences')
+    && userData.factorWeights.hasOwnProperty('consistencyImportance')
+    && userData.factorWeights.hasOwnProperty('worstAcceptableFrequency')
+    && userData.factorWeights.hasOwnProperty('worstAcceptableDuration')
+    && userData.factorWeights.hasOwnProperty('worstAcceptableWalk')
+  ) {
+    scoringPreferences = userData.scoringPreferences;
+  } else {
+    scoringPreferences = defaultUserScoringPreferences;
+  }
+
+  if (userData.hasOwnProperty('routingPreferences')
+    && userData.factorWeights.hasOwnProperty('walkReluctance')
+    && userData.factorWeights.hasOwnProperty('isWheelChair')
+  ) {
     routingPreferences = userData.routingPreferences;
   } else {
     routingPreferences = defaultUserRoutingPreferences;
@@ -208,6 +241,7 @@ export async function generateNewScores(origin, destinations, userID) {
     nightDirectionWeights: nightDirectionWeights,
     weekendWeights: weekendWeights,
     scoringWeights: scoringWeights,
+    scoringPreferences: scoringPreferences,
     routingPreferences: routingPreferences
   }
 
@@ -285,18 +319,49 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
     sundayStartDate: "2023-02-26"
   };
 
+  const cvRatioBase = 8
+
+  let cvParams = {
+    minRatio: 1/cvRatioBase,
+    maxRatio: cvRatioBase
+  };
+
+  const cvParamIndex = userPreferences.scoringPreferences.consistencyImportance;
+
+  switch (cvParamIndex) {
+    case 1:
+      cvParams.offset = 2.4;
+      cvParams.ratio = 0.125;
+      break;
+    case 2:
+      cvParams.offset = 1.4;
+      cvParams.ratio = 0.5;
+      break;
+    case 3:
+      cvParams.offset = 0.8;
+      cvParams.ratio = 8;
+      break;
+  }
+
+  const scoringParams = {
+    cvParams: cvParams,
+    worstAcceptableFrequency: userPreferences.scoringPreferences.worstAcceptableFrequency,
+    worstAcceptableDuration: userPreferences.scoringPreferences.worstAcceptableDuration,
+    worstAcceptableWalk: userPreferences.scoringPreferences.worstAcceptableWalk
+  }
+
   const metrics = await getRoutingData(origin, destination, startDates, userPreferences.routingPreferences, loggedIn);
 
-  const rushHourScores = generateRushHourScores(metrics.rushHourMetrics);
+  const rushHourScores = generateRushHourScores(metrics.rushHourMetrics, scoringParams);
   const rushHour = computeWeightedScore(rushHourScores, frequencyWeight, durationWeight);
 
-  const offPeakScores = generateOffPeakScores(metrics.offPeakMetrics);
+  const offPeakScores = generateOffPeakScores(metrics.offPeakMetrics, scoringParams);
   const offPeak = computeWeightedScore(offPeakScores, frequencyWeight, durationWeight);
 
-  const nightScores = generateOvernightScores(metrics.overnightMetrics, userPreferences.nightDayWeights, userPreferences.nightDirectionWeights);
+  const nightScores = generateOvernightScores(metrics.overnightMetrics, scoringParams, userPreferences.nightDayWeights, userPreferences.nightDirectionWeights);
   const night = computeWeightedScore(nightScores, frequencyWeight, durationWeight);
 
-  const weekendScores = generateWeekendScores(metrics.weekendMetrics, userPreferences.weekendWeights);
+  const weekendScores = generateWeekendScores(metrics.weekendMetrics, scoringParams, userPreferences.weekendWeights);
   const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight);
 
   const weightedRushHour = rushHour * userPreferences.scoringWeights.rushHourWeight;
@@ -336,8 +401,8 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
 }
 
 
-function generateRushHourScores(metrics) {
-  const scores = calculateScoresFromMetrics(metrics);
+function generateRushHourScores(metrics, scoringParams) {
+  const scores = calculateScoresFromMetrics(metrics, scoringParams);
 
   const frequencyScore = scores.frequencyScores.reduce((a,b) => {return a+b})/2;
   const durationScore = scores.durationScores.reduce((a,b) => {return a+b})/2;
@@ -351,8 +416,8 @@ function generateRushHourScores(metrics) {
 }
 
 
-function generateOffPeakScores(metrics) {
-  const scores = calculateScoresFromMetrics(metrics);
+function generateOffPeakScores(metrics, scoringParams) {
+  const scores = calculateScoresFromMetrics(metrics, scoringParams);
 
   /**
    * Since toDest represents a 15-hour slice (of the 30 hours that constitute the offPeak period), it represents 50%
@@ -378,7 +443,7 @@ function generateOffPeakScores(metrics) {
 }
 
 
-function generateOvernightScores(metrics, dayScoringWeights, directionScoringWeights) {
+function generateOvernightScores(metrics, scoringParams, dayScoringWeights, directionScoringWeights) {
   const weeknightWeight = dayScoringWeights.weeknightWeight;
   const fridayNightWeight = dayScoringWeights.fridayNightWeight;
   const saturdayNightWeight = dayScoringWeights.saturdayNightWeight;
@@ -386,7 +451,7 @@ function generateOvernightScores(metrics, dayScoringWeights, directionScoringWei
   const toDestWeight = directionScoringWeights.toDestWeight;
   const fromDestWeight = directionScoringWeights.fromDestWeight;
 
-  const scores = calculateScoresFromMetrics(metrics);
+  const scores = calculateScoresFromMetrics(metrics, scoringParams);
 
   const reduce = (x) => {
     const weeknight = (x[0]*toDestWeight+x[1]*fromDestWeight);
@@ -407,11 +472,11 @@ function generateOvernightScores(metrics, dayScoringWeights, directionScoringWei
 }
 
 
-function generateWeekendScores(metrics, scoringWeights) {
+function generateWeekendScores(metrics, scoringParams, scoringWeights) {
   const saturdayWeight = scoringWeights.saturdayWeight;
   const sundayWeight = scoringWeights.sundayWeight;
 
-  const scores = calculateScoresFromMetrics(metrics);
+  const scores = calculateScoresFromMetrics(metrics, scoringParams);
 
   const reduce = (x) => {
     const saturday = (x[0]+x[1])/2;
@@ -431,19 +496,24 @@ function generateWeekendScores(metrics, scoringWeights) {
 }
 
 
-function calculateScoresFromMetrics(metrics) {
+function calculateScoresFromMetrics(metrics, scoringParams) {
+  const worstFreq = scoringParams.worstAcceptableFrequency;
+  const worstDur = scoringParams.worstAcceptableDuration;
+  const worstWalk = scoringParams.worstAcceptableWalk;
+  const cvParams = scoringParams.cvParams;
+
   let frequencyScores = []
   let durationScores = []
   let walkScores = []
 
   for (let i of metrics) {
-    const frequencyScore = calculateScore(i.frequencyMetrics, 120, -0.9, 1, 0.2, 0.8);
+    const frequencyScore = calculateScore(i.frequencyMetrics, worstFreq, cvParams, 0.2, 0.8);
     frequencyScores.push(frequencyScore);
 
-    const durationScore = calculateScore(i.durationMetrics, 180, -0.9, 1,0.2, 0.8);
+    const durationScore = calculateScore(i.durationMetrics, worstDur, cvParams,0.2, 0.8);
     durationScores.push(durationScore);
 
-    const walkScore = calculateScore(i.walkMetrics, 60, -0.9, 1,0.2, 0.8);
+    const walkScore = calculateScore(i.walkMetrics, 60, cvParams,0.2, 0.8);
     walkScores.push(walkScore);
   }
 
@@ -460,13 +530,12 @@ function calculateScoresFromMetrics(metrics) {
  *
  * @param metrics List of frequency metrics. If a list of all metrics is passed then the frequency metrics will be extracted.
  * @param worst The case that will result in a score of zero. Cases worse than the specified worst case will floor at zero.
- * @param cvOffset A constant value added to the CV (coefficient of variation) to skew the scoring into giving higher numbers
- * @param cvRatio
+ * @param cvParams
  * @param fmaxWeight The weight of the score computed on the maximum value, relative to the final score
  * @param favgWeight The weight of the score computed on the average value, relative to the final score
  * @returns {number} A number from 0-100 representing the final score
  */
-function calculateScore(metrics, worst, cvOffset, cvRatio, fmaxWeight, favgWeight) {
+function calculateScore(metrics, worst, cvParams, fmaxWeight, favgWeight) {
 
   if (metrics == null) {
     return 0;
@@ -492,6 +561,10 @@ function calculateScore(metrics, worst, cvOffset, cvRatio, fmaxWeight, favgWeigh
 
   let cv;
   let multiplier;
+  const cvOffset = cvParams.offset;
+  const cvRatio = cvParams.ratio;
+  const minRatio = cvParams.minRatio;
+  const maxRatio = cvParams.maxRatio;
 
   if (metrics.average > 0) {
     // CV (coefficient of variation) represents the amount of variability from the mean.
@@ -500,7 +573,8 @@ function calculateScore(metrics, worst, cvOffset, cvRatio, fmaxWeight, favgWeigh
     // Using the CV as-is results in very low scores even for conventionally "good" transit (eg metro)
     // Adding a bonus to the CV skews the scores higher, making it easier to "understand" the scores at the expense of
     // the "raw accuracy" of the scores. Note that the scores will still be correct, relative to one another.
-    multiplier = 1-((cv+cvOffset)/cvRatio);
+    // multiplier = 1-((cv+cvOffset)/cvRatio);
+    multiplier = 1 - cv/(minRatio+cvRatio) + cv/(minRatio+maxRatio)+cvOffset;
   } else {
     // If the average is 0 then the data is effectively invalid.
     multiplier = 0;
