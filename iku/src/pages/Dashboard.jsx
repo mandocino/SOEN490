@@ -39,6 +39,7 @@ export default function Dashboard() {
   }
 
   const [factorWeights, setFactorWeights] = useState([70, 30]);
+  const [nightDayWeights, setNightDayWeights] = useState([30, 35, 35]);
 
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
@@ -305,8 +306,9 @@ export default function Dashboard() {
                     {factorCards}
                   </div>
 
-                  <EditScoringFactors factorWeights={factorWeights} setFactorWeights={setFactorWeights}
-                                      factorColors={[frequencyColor, durationColor]}
+                  <EditScoringFactors factorState={[factorWeights, setFactorWeights]}
+                                      factorColors={[frequencyColor, durationColor, walkTimeColor]}
+                                      nightDayState={[nightDayWeights, setNightDayWeights]}
                                       buttonClass={dashboardElementButtonClass}/>
                 </div>
 

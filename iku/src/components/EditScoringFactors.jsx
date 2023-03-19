@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
 import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
+import ProportionalSlider from "./custom/ProportionalSlider";
 
 
 function CarouselItem(props) {
@@ -20,14 +21,20 @@ function CarouselItem(props) {
 }
 
 export default function EditScoringFactors(props) {
-  let factorWeights = props.factorWeights;
-  let setFactorWeights = props.setFactorWeights;
+  let factorWeights = props.factorState[0];
+  let setFactorWeights = props.factorState[1];
+  let nightDayWeights = props.nightDayState[0];
+  let setNightDayWeights = props.nightDayState[1];
   let factorColors= props.factorColors;
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [sliderVal, setSliderVal] = useState(0);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [sliderVal, setSliderVal] = useState(0);
   const [oldFactorWeights, setOldFactorWeights] = useState(0);
+
+  const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
+  const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
 
   const user_id = localStorage.getItem("user_id");
 
@@ -39,7 +46,7 @@ export default function EditScoringFactors(props) {
   const frequencyTextColor = factorColors[0].text
   const durationColor = factorColors[1].hex;
   const durationTextColor = factorColors[1].text;
-  // const walkTimeColor = props.walkTimeColor.hex;
+  const walkTimeColor = factorColors[2].hex;
   // const walkTimeTextColor = props.walkTimeColor.text;
 
   const sliderThumbColor = '#fff'
@@ -64,11 +71,22 @@ export default function EditScoringFactors(props) {
   //   ${walkTimeColor} 220deg
   //   )`;
 
+  function createCumulativeArray(val) {
+    let newArr = [val[0]];
+    for (let i=1; i<val.length-1; i++) {
+      newArr.push(val[i]+newArr[i-1]);
+    }
+    return newArr;
+  }
+
   function openModal() {
     // Save old values in case user clicks cancel
     // TODO: there's probably a better way to do this.
     setOldFactorWeights(factorWeights);
     setSliderVal(factorWeights[0]);
+
+    setOldNightDayWeights(nightDayWeights);
+    setNightDaySliderVal(createCumulativeArray(nightDayWeights));
 
     setIsOpen(true);
   }
@@ -78,6 +96,9 @@ export default function EditScoringFactors(props) {
     // Reset to old values
     setFactorWeights(oldFactorWeights);
     setSliderVal(oldFactorWeights[0]);
+
+    setOldNightDayWeights(oldNightDayWeights);
+    setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
 
     // Close modal without saving changes
     setIsOpen(false);
@@ -327,6 +348,15 @@ export default function EditScoringFactors(props) {
                         }
                       }}
                     />
+                  </div>
+
+                  <div>
+                    <ProportionalSlider
+                      sliderState={[nightDaySliderVal, setNightDaySliderVal]}
+                      valueState={[nightDayWeights, setNightDayWeights]}
+                      sliderColors={[frequencyColor, durationColor, walkTimeColor]}
+                    />
+                    {nightDayWeights}
                   </div>
 
                   <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"
