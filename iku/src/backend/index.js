@@ -1,51 +1,31 @@
-// import * as dotenv from 'dotenv' 
-// dotenv.config()
-// // import express
-// import express from "express";
-// // import cors
-// import cors from "cors";
-// // import routes
-// import Router from "./routes/routes.js";
+import * as dotenv from 'dotenv' 
+dotenv.config()
+// import express
+import express from "express";
+// import cors
+import cors from "cors";
+// import routes
+import Router from "./routes/routes.js";
 
-// import {connectToServer} from "./config/db.js";
+import {connectToServer} from "./config/db.js";
 
-// // init express
-// const app = express();
-// app.disable("x-powered-by");
+// init express
+const app = express();
+app.disable("x-powered-by");
 
-// // use express json
-// // with payload limit as 10mb
-// app.use(express.json({limit: '10mb'}));
+// use express json
+// with payload limit as 10mb
+app.use(express.json({limit: '10mb'}));
 
-// // use cors
-// app.use(cors());
+// use cors
+app.use(cors());
 
-// // use router
-// app.use(Router);
+// use router
+app.use(Router);
 
-// // Connect to DB
-// connectToServer();
+// Connect to DB
+connectToServer();
 
-// app.listen(5000, () => console.log("Server running at http://localhost:5000"));
+app.listen(5000, () => console.log("Server running at http://localhost:5000"));
 
 
-// index.js
-import express from 'express'
-
-const app = express()
-const PORT = 4000
-
-app.listen(PORT, () => {
-  console.log(`API listening on PORT ${PORT} `)
-})
-
-app.get('/', (req, res) => {
-  res.send('Hey this is my API running 🥳')
-})
-
-app.get('/about', (req, res) => {
-  res.send('This is my about route..... ')
-})
-
-// Export the Express API
-// module.exports = app
