@@ -1,49 +1,51 @@
-// import express
-import express from "express";
-
 // import functions from controllers
-import {
-    showUsers,
-    showUserByID,
-    showUserByEmail,
-    loginController,
-    signupController,
-    modifyUserByID,
-    modifyUserByEmail,
-    deleteUserByEmail
-} from "../controllers/user.js";
-import {
-    addLocation,
-    getAddressByCoordinates,
-    showLocationsByUserID,
-    getSuggestions,
-    getCoordinatesByAddress,
-    updateLocation,
-    deleteLocation
-} from "../controllers/location.js";
-import {addEmailConfirmation, getEmailConfirmation, removeEmailConfirmation} from "../controllers/emailConfirmation.js";
-import {
-    addPasswordResetRequest, getPasswordResetRequest, updatePasswordResetRequest, removePasswordResetRequest
-} from "../controllers/passwordResetRequest.js";
-import {
-    addSavedScore,
-    showSavedScoresByLocations,
-    showSavedScoresByOrigin,
-    deleteSavedScore,
-    deleteSavedScoreByLocations,
-    deleteSavedScoreByOrigin,
-    editSavedScoreByLocations,
-    editSavedScoreByOrigin
-} from "../controllers/savedScore.js";
-import {getAllRoutesOTP} from "../utils/openTripPlanner.js";
-import {modifyGlobals, showGlobals} from "../controllers/global.js";
-import {
-    addSavedRoutingData,
-    deleteSavedRoutingData,
-    deleteSavedRoutingDataByLocations,
-    editSavedRoutingDataByLocations,
-    showSavedRoutingDataByLocations
-} from "../controllers/savedRoutes.js";
+const express = require('express')
+
+const showUsers = require('../controllers/user.js')
+const showUserByID = require('../controllers/user.js')
+const showUserByEmail = require('../controllers/user.js')
+const loginController = require('../controllers/user.js')
+const signupController = require('../controllers/user.js')
+const modifyUserByID = require('../controllers/user.js')
+const modifyUserByEmail = require('../controllers/user.js')
+const deleteUserByEmail = require('../controllers/user.js')
+
+const addLocation = require('../controllers/location.js')
+const getAddressByCoordinates = require('../controllers/location.js')
+const showLocationsByUserID = require('../controllers/location.js')
+const getSuggestions = require('../controllers/location.js')
+const getCoordinatesByAddress = require('../controllers/location.js')
+const updateLocation = require('../controllers/location.js')
+const deleteLocation = require('../controllers/location.js')
+
+const addEmailConfirmation = require('../controllers/emailConfirmation.js')
+const getEmailConfirmation = require('../controllers/emailConfirmation.js')
+const removeEmailConfirmation = require('../controllers/emailConfirmation.js')
+
+const addPasswordResetRequest = require('../controllers/passwordResetRequest.js')
+const getPasswordResetRequest = require('../controllers/passwordResetRequest.js')
+const updatePasswordResetRequest = require('../controllers/passwordResetRequest.js')
+const removePasswordResetRequest = require('../controllers/passwordResetRequest.js')
+
+const addSavedScore = require('../controllers/savedScore.js')
+const showSavedScoresByLocations = require('../controllers/savedScore.js')
+const showSavedScoresByOrigin = require('../controllers/savedScore.js')
+const deleteSavedScore = require('../controllers/savedScore.js')
+const deleteSavedScoreByLocations = require('../controllers/savedScore.js')
+const deleteSavedScoreByOrigin = require('../controllers/savedScore.js')
+const editSavedScoreByLocations = require('../controllers/savedScore.js')
+const editSavedScoreByOrigin = require('../controllers/savedScore.js')
+
+const getAllRoutesOTP = require('../utils/openTripPlanner.js')
+
+const modifyGlobals = require('../controllers/global.js')
+const showGlobals = require('../controllers/global.js')
+
+const addSavedRoutingData = require('../controllers/savedRoutes.js')
+const deleteSavedRoutingData = require('../controllers/savedRoutes.js')
+const deleteSavedRoutingDataByLocations = require('../controllers/savedRoutes.js')
+const editSavedRoutingDataByLocations = require('../controllers/savedRoutes.js')
+const showSavedRoutingDataByLocations = require('../controllers/savedRoutes.js')
 
 // init express router
 const router = express.Router();
