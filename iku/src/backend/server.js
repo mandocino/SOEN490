@@ -2,7 +2,7 @@
 require = require("esm")(module);
 module.exports = require("./index.js");
 
-module.exports = require("./routes/routes.js");
+/*module.exports = require("./routes/routes.js");
 
 module.exports = require("./models/emailConfirmationModel.js");
 module.exports = require("./models/globalModel.js");
@@ -22,3 +22,4 @@ module.exports = require("./controllers/user.js");
 
 module.exports = require("./config/db.js");
 module.exports = require("./config/email.js");
+*/

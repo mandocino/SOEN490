@@ -1,5 +1,5 @@
 // index.js
-const express = require('express')
+import express from 'express'
 
 const app = express()
 const PORT = 4000
@@ -17,4 +17,4 @@ app.get('/about', (req, res) => {
 })
 
 // Export the Express API
-module.exports = app
+//module.exports = app
