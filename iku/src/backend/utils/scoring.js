@@ -310,8 +310,8 @@ export async function generateNewScores(origin, destinations, userID) {
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
 export async function generateNewScoresForOnePair(origin, destination, userPreferences, loggedIn=false) {
-  const frequencyWeight = userPreferences.factorWeights.frequencyWeight;
-  const durationWeight = userPreferences.factorWeights.durationWeight;
+  const frequencyWeight = userPreferences.factorWeights.frequencyWeight / 100;
+  const durationWeight = userPreferences.factorWeights.durationWeight / 100;
 
   const startDates = {
     weekdayStartDate: "2023-02-20",
@@ -364,10 +364,10 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
   const weekendScores = generateWeekendScores(metrics.weekendMetrics, scoringParams, userPreferences.weekendWeights);
   const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight);
 
-  const weightedRushHour = rushHour * userPreferences.scoringWeights.rushHourWeight;
-  const weightedOffPeak = offPeak * userPreferences.scoringWeights.offPeakWeight;
-  const weightedNight = night * userPreferences.scoringWeights.nightWeight;
-  const weightedWeekend = weekend * userPreferences.scoringWeights.weekendWeight;
+  const weightedRushHour = rushHour * userPreferences.scoringWeights.rushHourWeight / 100;
+  const weightedOffPeak = offPeak * userPreferences.scoringWeights.offPeakWeight / 100;
+  const weightedNight = night * userPreferences.scoringWeights.nightWeight / 100;
+  const weightedWeekend = weekend * userPreferences.scoringWeights.weekendWeight / 100;
   const overall = weightedRushHour + weightedOffPeak + weightedNight + weightedWeekend;
 
   // Get the current date and time
@@ -444,12 +444,12 @@ function generateOffPeakScores(metrics, scoringParams) {
 
 
 function generateOvernightScores(metrics, scoringParams, dayScoringWeights, directionScoringWeights) {
-  const weeknightWeight = dayScoringWeights.weeknightWeight;
-  const fridayNightWeight = dayScoringWeights.fridayNightWeight;
-  const saturdayNightWeight = dayScoringWeights.saturdayNightWeight;
+  const weeknightWeight = dayScoringWeights.weeknightWeight / 100;
+  const fridayNightWeight = dayScoringWeights.fridayNightWeight / 100;
+  const saturdayNightWeight = dayScoringWeights.saturdayNightWeight / 100;
 
-  const toDestWeight = directionScoringWeights.toDestWeight;
-  const fromDestWeight = directionScoringWeights.fromDestWeight;
+  const toDestWeight = directionScoringWeights.toDestWeight / 100;
+  const fromDestWeight = directionScoringWeights.fromDestWeight / 100;
 
   const scores = calculateScoresFromMetrics(metrics, scoringParams);
 
@@ -473,8 +473,8 @@ function generateOvernightScores(metrics, scoringParams, dayScoringWeights, dire
 
 
 function generateWeekendScores(metrics, scoringParams, scoringWeights) {
-  const saturdayWeight = scoringWeights.saturdayWeight;
-  const sundayWeight = scoringWeights.sundayWeight;
+  const saturdayWeight = scoringWeights.saturdayWeight / 100;
+  const sundayWeight = scoringWeights.sundayWeight / 100;
 
   const scores = calculateScoresFromMetrics(metrics, scoringParams);
 

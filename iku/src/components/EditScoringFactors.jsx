@@ -107,7 +107,6 @@ export default function EditScoringFactors(props) {
   const handleChange = (event, newValue, activeThumb) => {
     setSliderVal(newValue);
     setFactorWeights([newValue, 100-newValue]);
-    console.log(sliderVal)
   }
 
   // const handleChange = (event, newValue, activeThumb) => {
@@ -183,8 +182,8 @@ export default function EditScoringFactors(props) {
         .post("http://localhost:5000/modifyUserByID", {
           _id: mongoose.Types.ObjectId(user_id),
           factorWeights: {
-            frequencyWeight: factorWeights[0]/100,
-            durationWeight: factorWeights[1]/100
+            frequencyWeight: factorWeights[0],
+            durationWeight: factorWeights[1]
           },
           lastPrefChangeTime: currentDate
         })

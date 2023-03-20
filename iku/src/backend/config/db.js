@@ -7,31 +7,31 @@ const connectionString =
 ///////////// DEFAULTS
 
 export const defaultUserFactorWeights = {
-  frequencyWeight: 0.7,
-  durationWeight: 0.3,
+  frequencyWeight: 70,
+  durationWeight: 30,
 };
 
 export const defaultUserNightDayWeights = {
-  weeknightWeight: 0.3,
-  fridayNightWeight: 0.35,
-  saturdayNightWeight: 0.35
+  weeknightWeight: 30,
+  fridayNightWeight: 35,
+  saturdayNightWeight: 35
 };
 
 export const defaultUserNightDirectionWeights = {
-  toDestWeight: 0.3,
-  fromDestWeight: 0.7
+  toDestWeight: 30,
+  fromDestWeight: 70
 };
 
 export const defaultUserWeekendWeights = {
-  saturdayWeight: 0.6,
-  sundayWeight: 0.4
+  saturdayWeight: 60,
+  sundayWeight: 40
 };
 
 export const defaultUserScoringWeights = {
-  rushHourWeight: 0.4,
-  offPeakWeight: 0.3,
-  nightWeight: 0.1,
-  weekendWeight: 0.2
+  rushHourWeight: 40,
+  offPeakWeight: 30,
+  nightWeight: 10,
+  weekendWeight: 20
 }
 
 export const defaultUserScoringPreferences = {
@@ -69,7 +69,7 @@ const userSchema = new Schema(
     weekendWeights: { type: Object, default: defaultUserWeekendWeights },
     scoringWeights: { type: Object, default: defaultUserScoringWeights },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
-    lastPrefChangeTime: { type: Schema.Types.Date, required: true },
+    lastPrefChangeTime: { type: Schema.Types.Date, required: true }
   },
   { collection: "Users" }
 );

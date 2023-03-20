@@ -72,7 +72,7 @@ export default function Dashboard() {
         let preferences = JSON.parse(sessionStorage.getItem("preferences"));
         let userFactorWeights = preferences.factorWeights;
 
-        setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
+        setFactorWeights([userFactorWeights.frequencyWeight, userFactorWeights.durationWeight]);
       }
     } else {
 
@@ -82,25 +82,12 @@ export default function Dashboard() {
 
       let userFactorWeights = userData.factorWeights;
 
-      if (userFactorWeights.frequencyWeight + userFactorWeights.durationWeight !== 1) {
-        const currentDate = Date.now();
-
-        await axios
-          .post("http://localhost:5000/modifyUserByID", {
-            _id: mongoose.Types.ObjectId(user_id),
-            factorWeights: {
-              frequencyWeight: 0.7,
-              durationWeight: 0.3
-            },
-            lastPrefChangeTime: currentDate
-          })
-          .catch((error) => {
-            console.log(error.message);
-          });
-
+      if (userFactorWeights.frequencyWeight + userFactorWeights.durationWeight !== 100) {
+        // TODO: Reset user factor weights
+        //  Don't forget to update the user pref time when resetting
         setFactorWeights([70, 30]);
       } else {
-        setFactorWeights([userFactorWeights.frequencyWeight*100, userFactorWeights.durationWeight*100]);
+        setFactorWeights([userFactorWeights.frequencyWeight, userFactorWeights.durationWeight]);
       }
     }
   }
