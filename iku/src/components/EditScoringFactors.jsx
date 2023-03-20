@@ -1,14 +1,29 @@
-import React, {Fragment, useState} from "react";
-import {Dialog, Transition} from '@headlessui/react';
+import React, {Fragment, useEffect, useState} from "react";
 import Carousel from 'react-material-ui-carousel';
-
+import ProportionalSlider from "./custom/ProportionalSlider";
 import axios from "axios";
-import mongoose from "mongoose";
-
+import {Dialog, Transition} from '@headlessui/react';
 import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
 import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
-import ProportionalSlider from "./custom/ProportionalSlider";
+import mongoose from "mongoose";
+import {
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights,
+  defaultUserScoringWeights,
+  defaultUserWeekendWeights
+} from "../backend/config/db";
+
+
+const frequencyColor = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
+const durationColor = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
+const walkTimeColor = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
+
+const factorHexColors = [frequencyColor.hex, durationColor.hex];
+const nightDayHexColors = [frequencyColor.hex, durationColor.hex, walkTimeColor.hex];
+
+const user_id = localStorage.getItem("user_id");
 
 
 function CarouselItem(props) {
@@ -20,11 +35,148 @@ function CarouselItem(props) {
 }
 
 export default function EditScoringFactors(props) {
-  let factorWeights = props.factorState[0];
-  let setFactorWeights = props.factorState[1];
-  let nightDayWeights = props.nightDayState[0];
-  let setNightDayWeights = props.nightDayState[1];
-  let factorColors= props.factorColors;
+  const [factorWeights, setFactorWeights] = useState([
+    defaultUserFactorWeights.frequencyWeight,
+    defaultUserFactorWeights.durationWeight
+  ]);
+  const [nightDayWeights, setNightDayWeights] = useState([
+    defaultUserNightDayWeights.weeknightWeight,
+    defaultUserNightDayWeights.fridayNightWeight,
+    defaultUserNightDayWeights.saturdayNightWeight
+  ]);
+  const [nightDirectionWeights, setNightDirectionWeights] = useState([
+    defaultUserNightDirectionWeights.toDestWeight,
+    defaultUserNightDirectionWeights.fromDestWeight
+  ]);
+  const [weekendWeights, setWeekendWeights] = useState([
+    defaultUserWeekendWeights.saturdayWeight,
+    defaultUserWeekendWeights.sundayWeight
+  ]);
+  const [scoringWeights, setScoringWeights] = useState([
+    defaultUserScoringWeights.rushHourWeight,
+    defaultUserScoringWeights.offPeakWeight,
+    defaultUserScoringWeights.nightWeight,
+    defaultUserScoringWeights.weekendWeight
+  ]);
+
+  // Fetch user's preferred scoring priorities
+  const fetchUserPreferences = async () => {
+    if(user_id === null) {
+
+      if(sessionStorage.getItem("factorWeights") === null) {
+        sessionStorage.setItem("factorWeights", JSON.stringify(defaultUserFactorWeights))
+      } else {
+        let preferences = JSON.parse(sessionStorage.getItem("factorWeights"));
+        let userFactorWeights = preferences.factorWeights;
+
+        setFactorWeights([userFactorWeights.frequencyWeight, userFactorWeights.durationWeight]);
+      }
+    } else {
+
+      // Get the weighted average scores
+      const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
+      const userData = response.data[0];
+
+      if (userData.factorWeights.frequencyWeight + userData.factorWeights.durationWeight !== 100) {
+        // TODO: Reset user factor weights
+        //  Don't forget to update the user pref time when resetting
+        setFactorWeights([
+          defaultUserFactorWeights.frequencyWeight,
+          defaultUserFactorWeights.durationWeight
+        ]);
+      } else {
+        setFactorWeights([
+          userData.factorWeights.frequencyWeight,
+          userData.factorWeights.durationWeight
+        ]);
+      }
+
+      if (userData.nightDayWeights.weeknightWeight + userData.nightDayWeights.fridayNightWeight + userData.nightDayWeights.saturdayNightWeight !== 100) {
+        // TODO: Reset user factor weights
+        setNightDayWeights([
+          defaultUserNightDayWeights.weeknightWeight,
+          defaultUserNightDayWeights.fridayNightWeight,
+          defaultUserNightDayWeights.saturdayNightWeight
+        ]);
+      } else {
+        setNightDayWeights([
+          userData.nightDayWeights.weeknightWeight,
+          userData.nightDayWeights.fridayNightWeight,
+          userData.nightDayWeights.saturdayNightWeight
+        ]);
+      }
+
+      if (userData.nightDirectionWeights.toDestWeight + userData.nightDirectionWeights.fromDestWeight !== 100) {
+        // TODO: Reset user factor weights
+        setNightDirectionWeights([
+          defaultUserNightDirectionWeights.toDestWeight,
+          defaultUserNightDirectionWeights.fromDestWeight
+        ]);
+      } else {
+        setNightDirectionWeights([
+          userData.nightDirectionWeights.toDestWeight,
+          userData.nightDirectionWeights.fromDestWeight
+        ]);
+      }
+
+      if (userData.weekendWeights.saturdayWeight + userData.weekendWeights.sundayWeight !== 100) {
+        // TODO: Reset user factor weights
+        setWeekendWeights([
+          defaultUserWeekendWeights.saturdayWeight,
+          defaultUserWeekendWeights.sundayWeight
+        ]);
+      } else {
+        setWeekendWeights([
+          userData.weekendWeights.saturdayWeight,
+          userData.weekendWeights.sundayWeight
+        ]);
+      }
+
+      if (userData.scoringWeights.rushHourWeight + userData.scoringWeights.offPeakWeight + userData.scoringWeights.nightWeight + userData.scoringWeights.weekendWeight !== 100) {
+        // TODO: Reset user factor weights
+        setScoringWeights([
+          defaultUserScoringWeights.rushHourWeight,
+          defaultUserScoringWeights.offPeakWeight,
+          defaultUserScoringWeights.nightWeight,
+          defaultUserScoringWeights.weekendWeight
+        ]);
+      } else {
+        setScoringWeights([
+          userData.scoringWeights.rushHourWeight,
+          userData.scoringWeights.offPeakWeight,
+          userData.scoringWeights.nightWeight,
+          userData.scoringWeights.weekendWeight
+        ]);
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchUserPreferences();
+  }, []);
+
+
+  // Create card with the scoring factors
+  const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
+  const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
+  const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
+  const factorCardsArray = [{
+    name: "Frequency", bg: frequencyColor.bgGradient, value: factorWeights[0]
+  }, {
+    name: "Duration", bg: durationColor.bgGradient, value: factorWeights[1]
+  }];
+
+  // Create an array with the three scoring factors
+  // Sort it (mutate in-place)
+  // Create divs with the position (1, 2, 3), name, value, and icon
+  const factorCards = [].concat(factorCardsArray)
+    .sort((a, b) => a.value < b.value ? 1 : -1)
+    .map((item, i) =>
+      <div key={i} className={`${item.bg} font-semibold text-2xl text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center`}>
+        <span>{i + 1}.</span>
+        {item.name === "Frequency" ? frequencyIcon : item.name === "Duration" ? durationIcon : walkIcon}
+        <span>{item.name}: {item.value}%</span>
+      </div>);
 
 
   const [isOpen, setIsOpen] = useState(false);
@@ -35,31 +187,22 @@ export default function EditScoringFactors(props) {
   const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
   const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
 
-  const user_id = localStorage.getItem("user_id");
-
-  const frequencyColor = factorColors[0].hex;
-  const frequencyTextColor = factorColors[0].text
-  const durationColor = factorColors[1].hex;
-  const durationTextColor = factorColors[1].text;
-  const walkTimeColor = factorColors[2].hex;
-  // const walkTimeTextColor = props.walkTimeColor.text;
-
   // boxConicGradient1 has the center of the gradient at the bottom of the box.
   // boxConicGradient2 has the center of the gradient below the bottom of the box, giving a quasi-linear appearance.
   const boxConicGradient1 = `conic-gradient(
     from 180deg at 50% 100%, 
-    ${frequencyColor} 90deg, 
-    ${frequencyColor} ${90 + 1.8 * (factorWeights[0]/2)}deg,
-    ${durationColor} ${90 + 1.8 * (factorWeights[0])}deg, 
-    ${durationColor} ${90 + 1.8 * (factorWeights[0] + factorWeights[1])}deg,
-    ${durationColor} 270deg
+    ${frequencyColor.hex} 90deg, 
+    ${frequencyColor.hex} ${90 + 1.8 * (factorWeights[0]/2)}deg,
+    ${durationColor.hex} ${90 + 1.8 * (factorWeights[0])}deg, 
+    ${durationColor.hex} ${90 + 1.8 * (factorWeights[0] + factorWeights[1])}deg,
+    ${durationColor.hex} 270deg
     )`;
   // const boxConicGradient2 = `conic-gradient(
   //   from 180deg at 50% 200%,
-  //   ${frequencyColor} 140deg,
-  //   ${durationColor} ${140 + 0.8 * (frequency)}deg,
-  //   ${durationColor} ${140 + 0.8 * (frequency + duration)}deg,
-  //   ${walkTimeColor} 220deg
+  //   ${frequencyColor.hex} 140deg,
+  //   ${durationColor.hex} ${140 + 0.8 * (frequency)}deg,
+  //   ${durationColor.hex} ${140 + 0.8 * (frequency + duration)}deg,
+  //   ${walkTimeColor.hex} 220deg
   //   )`;
 
   function createCumulativeArray(val) {
@@ -127,6 +270,11 @@ export default function EditScoringFactors(props) {
   return (
     <>
       <div>
+        <div
+          className={`${props.dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
+          {factorCards}
+        </div>
+
         <button onClick={openModal} type="button" className={props.buttonClass}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                stroke="currentColor" className="w-6 h-6">
@@ -194,8 +342,8 @@ export default function EditScoringFactors(props) {
                     }}>
                     <CarouselItem>
                       <div className="mb-4">
-                        The three adjustable scoring factors are the <b className={frequencyTextColor}>frequency</b> and
-                        the <b className={durationTextColor}>duration</b>. Use the slider below to adjust the
+                        The three adjustable scoring factors are the <b className={frequencyColor.text}>frequency</b> and
+                        the <b className={durationColor.text}>duration</b>. Use the slider below to adjust the
                         proportional impact of these factors.
                       </div>
 
@@ -207,7 +355,7 @@ export default function EditScoringFactors(props) {
 
                     <CarouselItem>
                       <div className="mb-4">
-                        The <b className={frequencyTextColor}>frequency</b> refers to the gap between departures: if the
+                        The <b className={frequencyColor.text}>frequency</b> refers to the gap between departures: if the
                         departures are spaced on average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM,
                         etc.), then the frequency is 15. The frequency is by far regarded to be the most important
                         aspect of any transit service.
@@ -221,7 +369,7 @@ export default function EditScoringFactors(props) {
 
                     <CarouselItem>
                       <div className="mb-4">
-                        The <b className={durationTextColor}>duration</b> refers to the the total trip time, including
+                        The <b className={durationColor.text}>duration</b> refers to the the total trip time, including
                         any transfer wait times: if you board your first bus at 9am and you arrive at your destination
                         at 9.45am, then the duration is 45 minutes.
                       </div>
@@ -238,7 +386,7 @@ export default function EditScoringFactors(props) {
                     <ProportionalSlider
                       sliderState={[factorSliderVal, setFactorSliderVal]}
                       valueState={[factorWeights, setFactorWeights]}
-                      sliderColors={[frequencyColor, durationColor]}
+                      sliderColors={factorHexColors}
                     />
                   </div>
 
@@ -246,7 +394,7 @@ export default function EditScoringFactors(props) {
                     <ProportionalSlider
                       sliderState={[nightDaySliderVal, setNightDaySliderVal]}
                       valueState={[nightDayWeights, setNightDayWeights]}
-                      sliderColors={[frequencyColor, durationColor, walkTimeColor]}
+                      sliderColors={nightDayHexColors}
                     />
                   </div>
 

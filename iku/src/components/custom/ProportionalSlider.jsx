@@ -24,8 +24,6 @@ export default function ProportionalSlider({sliderState, valueState, sliderColor
     } else {
       sliderColorClass += `${sliderColors[1]} ${values[0]}%`;
     }
-
-    console.log(sliderColorClass)
   }
 
   setSliderColor(values);
