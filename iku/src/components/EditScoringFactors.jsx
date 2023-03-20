@@ -30,6 +30,8 @@ const factorNames = ["Frequency", "Duration"];
 const factorIcons = [frequencyIcon, durationIcon];
 
 const nightDayHexColors = [frequencyColor.hex, durationColor.hex, walkTimeColor.hex];
+const nightDayNames = ["Friday", "Saturday", "Sunday"];
+const nightDayIcons = [frequencyIcon, frequencyIcon, frequencyIcon]
 
 const user_id = localStorage.getItem("user_id");
 
@@ -369,21 +371,34 @@ export default function EditScoringFactors(props) {
                     </CarouselItem>
                   </Carousel>
 
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[factorSliderVal, setFactorSliderVal]}
-                      valueState={[factorWeights, setFactorWeights]}
-                      sliderColors={factorHexColors}
-                    />
-                  </div>
-                  <BoxConicGradientDisplay values={factorWeights} colors={factorHexColors} names={factorNames} icons={factorIcons}/>
+                  <div className="flex flex-col gap-8">
+                    <div>
+                      <ProportionalSlider
+                        sliderState={[factorSliderVal, setFactorSliderVal]}
+                        valueState={[factorWeights, setFactorWeights]}
+                        sliderColors={factorHexColors}
+                      />
+                      <BoxConicGradientDisplay
+                        values={factorWeights}
+                        colors={factorHexColors}
+                        names={factorNames}
+                        icons={factorIcons}
+                      />
+                    </div>
 
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[nightDaySliderVal, setNightDaySliderVal]}
-                      valueState={[nightDayWeights, setNightDayWeights]}
-                      sliderColors={nightDayHexColors}
-                    />
+                    <div>
+                      <ProportionalSlider
+                        sliderState={[nightDaySliderVal, setNightDaySliderVal]}
+                        valueState={[nightDayWeights, setNightDayWeights]}
+                        sliderColors={nightDayHexColors}
+                      />
+                      <BoxConicGradientDisplay
+                        values={nightDayWeights}
+                        colors={nightDayHexColors}
+                        names={nightDayNames}
+                        icons={nightDayIcons}
+                      />
+                    </div>
                   </div>
 
 

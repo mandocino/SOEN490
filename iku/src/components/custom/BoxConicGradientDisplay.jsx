@@ -5,8 +5,9 @@ export default function BoxConicGradientDisplay({values, colors, names, icons, m
 
   let gradientLines = `${colors[0]} 90deg, `;
   for (let i=0; i<numValues-1; i++) {
-    gradientLines += `${colors[i]} ${90 + 1.8 * (values[i] - values[i]/2)}deg, `;
-    gradientLines += `${colors[i+1]} ${90 + 1.8 * (values[i] + values[i+1]/2)}deg, `;
+    const base = values.slice(0, i+1).reduce((x,y)=>{return x+y});
+    gradientLines += `${colors[i]} ${90 + 1.8 * (base - values[i]/2)}deg, `;
+    gradientLines += `${colors[i+1]} ${90 + 1.8 * (base + values[i+1]/2)}deg, `;
   }
   gradientLines += `${colors[numValues-1]} 270deg`;
   const boxConicGradient = `conic-gradient(from 180deg at 50% 100%, ${gradientLines})`;
