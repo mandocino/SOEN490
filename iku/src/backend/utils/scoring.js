@@ -5,7 +5,7 @@ import {
   defaultUserRoutingPreferences,
   defaultUserFactorWeights,
   defaultUserWeekendWeights,
-  defaultUserScoringWeights,
+  defaultUserTimeSliceWeights,
   defaultUserNightDayWeights,
   defaultUserNightDirectionWeights, defaultUserScoringPreferences
 } from "../config/db.js";
@@ -212,7 +212,7 @@ export async function generateNewScores(origin, destinations, userID) {
   ) {
     scoringWeights = userData.scoringWeights;
   } else {
-    scoringWeights = defaultUserScoringWeights;
+    scoringWeights = defaultUserTimeSliceWeights;
   }
 
   if (userData.hasOwnProperty('scoringPreferences')
@@ -364,10 +364,10 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
   const weekendScores = generateWeekendScores(metrics.weekendMetrics, scoringParams, userPreferences.weekendWeights);
   const weekend = computeWeightedScore(weekendScores, frequencyWeight, durationWeight);
 
-  const weightedRushHour = rushHour * userPreferences.scoringWeights.rushHourWeight / 100;
-  const weightedOffPeak = offPeak * userPreferences.scoringWeights.offPeakWeight / 100;
-  const weightedNight = night * userPreferences.scoringWeights.nightWeight / 100;
-  const weightedWeekend = weekend * userPreferences.scoringWeights.weekendWeight / 100;
+  const weightedRushHour = rushHour * userPreferences.timeSliceWeights.rushHourWeight / 100;
+  const weightedOffPeak = offPeak * userPreferences.timeSliceWeights.offPeakWeight / 100;
+  const weightedNight = night * userPreferences.timeSliceWeights.nightWeight / 100;
+  const weightedWeekend = weekend * userPreferences.timeSliceWeights.weekendWeight / 100;
   const overall = weightedRushHour + weightedOffPeak + weightedNight + weightedWeekend;
 
   // Get the current date and time

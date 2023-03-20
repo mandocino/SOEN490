@@ -15,12 +15,17 @@ export default function ProportionalSlider({sliderState, valueState, sliderColor
   let sliderColorClass;
 
   const setSliderColor = (values) => {
+    const sumUpTo = (x, index) => {
+      const sliced = x.slice(0, index);
+      return sliced.reduce((a,b)=>{return a+b});
+    }
+
     sliderColorClass = `${sliderColors[0]} ${values[0]}%, `;
     if (numThumbs > 1) {
       for (let i=1; i<numThumbs; i++) {
-        sliderColorClass += `${sliderColors[i]} ${values[i-1]}%, ${sliderColors[i]} ${values[i-1]+values[i]}%, `
+        sliderColorClass += `${sliderColors[i]} ${sumUpTo(values, i)}%, ${sliderColors[i]} ${sumUpTo(values, i+1)}%, `
       }
-      sliderColorClass += `${sliderColors[numThumbs]} ${values[numThumbs-1]+values[numThumbs-2]}%`;
+      sliderColorClass += `${sliderColors[numThumbs]} ${sumUpTo(values, numThumbs)}%`;
     } else {
       sliderColorClass += `${sliderColors[1]} ${values[0]}%`;
     }
@@ -88,11 +93,11 @@ export default function ProportionalSlider({sliderState, valueState, sliderColor
           }
 
           else if (values[index+1] - values[index] < minDistance) {
-            if (values[index] <= (numThumbs-index-1)*minDistance) {
+            if (values[index] <= maxValue-(numThumbs-index)*minDistance) {
               values[index+1] = values[index]+minDistance;
               toReturn = correctChangedValue(values, index+1);
             } else {
-              values[index] = (numThumbs-index-1)*minDistance;
+              values[index] = maxValue-(numThumbs-index)*minDistance;
               if (values[index+1] - values[index] < minDistance) {
                 values[index+1] = values[index]+minDistance;
               }

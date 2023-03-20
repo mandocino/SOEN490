@@ -27,7 +27,7 @@ export const defaultUserWeekendWeights = {
   sundayWeight: 40
 };
 
-export const defaultUserScoringWeights = {
+export const defaultUserTimeSliceWeights = {
   rushHourWeight: 40,
   offPeakWeight: 30,
   nightWeight: 10,
@@ -67,7 +67,7 @@ const userSchema = new Schema(
     nightDayWeights: { type: Object, default: defaultUserNightDayWeights },
     nightDirectionWeights: { type: Object, default: defaultUserNightDirectionWeights },
     weekendWeights: { type: Object, default: defaultUserWeekendWeights },
-    scoringWeights: { type: Object, default: defaultUserScoringWeights },
+    timeSliceWeights: { type: Object, default: defaultUserTimeSliceWeights },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
     lastPrefChangeTime: { type: Schema.Types.Date, required: true }
   },
