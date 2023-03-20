@@ -7,7 +7,8 @@ import {
   defaultUserNightDirectionWeights,
   defaultUserRoutingPreferences,
   defaultUserScoringPreferences,
-  defaultUserTimeSliceWeights, defaultUserWeekendWeights
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
 } from "../config/defaultUserPreferences.js";
 
 
@@ -147,7 +148,7 @@ export async function generateNewScores(origin, destinations, userID) {
   let nightDayWeights;
   let nightDirectionWeights;
   let weekendWeights;
-  let scoringWeights;
+  let timeSliceWeights;
   let scoringPreferences;
   let routingPreferences;
 
@@ -177,9 +178,9 @@ export async function generateNewScores(origin, destinations, userID) {
   }
 
   if (userData.hasOwnProperty('nightDayWeights')
-    && userData.factorWeights.hasOwnProperty('weeknightWeight')
-    && userData.factorWeights.hasOwnProperty('fridayNightWeight')
-    && userData.factorWeights.hasOwnProperty('saturdayNightWeight')
+    && userData.nightDayWeights.hasOwnProperty('weeknightWeight')
+    && userData.nightDayWeights.hasOwnProperty('fridayNightWeight')
+    && userData.nightDayWeights.hasOwnProperty('saturdayNightWeight')
   ) {
     nightDayWeights = userData.nightDayWeights;
   } else {
@@ -187,8 +188,8 @@ export async function generateNewScores(origin, destinations, userID) {
   }
 
   if (userData.hasOwnProperty('nightDirectionWeights')
-    && userData.factorWeights.hasOwnProperty('toDestWeight')
-    && userData.factorWeights.hasOwnProperty('fromDestWeight')
+    && userData.nightDirectionWeights.hasOwnProperty('toDestWeight')
+    && userData.nightDirectionWeights.hasOwnProperty('fromDestWeight')
   ) {
     nightDirectionWeights = userData.nightDirectionWeights;
   } else {
@@ -196,30 +197,30 @@ export async function generateNewScores(origin, destinations, userID) {
   }
 
   if (userData.hasOwnProperty('weekendWeights')
-    && userData.factorWeights.hasOwnProperty('saturdayWeight')
-    && userData.factorWeights.hasOwnProperty('sundayWeight')
+    && userData.weekendWeights.hasOwnProperty('saturdayWeight')
+    && userData.weekendWeights.hasOwnProperty('sundayWeight')
   ) {
     weekendWeights = userData.weekendWeights;
   } else {
     weekendWeights = defaultUserWeekendWeights;
   }
 
-  if (userData.hasOwnProperty('scoringWeights')
-    && userData.factorWeights.hasOwnProperty('rushHourWeight')
-    && userData.factorWeights.hasOwnProperty('offPeakWeight')
-    && userData.factorWeights.hasOwnProperty('nightWeight')
-    && userData.factorWeights.hasOwnProperty('weekendWeight')
+  if (userData.hasOwnProperty('timeSliceWeights')
+    && userData.timeSliceWeights.hasOwnProperty('rushHourWeight')
+    && userData.timeSliceWeights.hasOwnProperty('offPeakWeight')
+    && userData.timeSliceWeights.hasOwnProperty('nightWeight')
+    && userData.timeSliceWeights.hasOwnProperty('weekendWeight')
   ) {
-    scoringWeights = userData.scoringWeights;
+    timeSliceWeights = userData.timeSliceWeights;
   } else {
-    scoringWeights = defaultUserTimeSliceWeights;
+    timeSliceWeights = defaultUserTimeSliceWeights;
   }
 
   if (userData.hasOwnProperty('scoringPreferences')
-    && userData.factorWeights.hasOwnProperty('consistencyImportance')
-    && userData.factorWeights.hasOwnProperty('worstAcceptableFrequency')
-    && userData.factorWeights.hasOwnProperty('worstAcceptableDuration')
-    && userData.factorWeights.hasOwnProperty('worstAcceptableWalk')
+    && userData.scoringPreferences.hasOwnProperty('consistencyImportance')
+    && userData.scoringPreferences.hasOwnProperty('worstAcceptableFrequency')
+    && userData.scoringPreferences.hasOwnProperty('worstAcceptableDuration')
+    && userData.scoringPreferences.hasOwnProperty('worstAcceptableWalk')
   ) {
     scoringPreferences = userData.scoringPreferences;
   } else {
@@ -227,8 +228,8 @@ export async function generateNewScores(origin, destinations, userID) {
   }
 
   if (userData.hasOwnProperty('routingPreferences')
-    && userData.factorWeights.hasOwnProperty('walkReluctance')
-    && userData.factorWeights.hasOwnProperty('isWheelChair')
+    && userData.routingPreferences.hasOwnProperty('walkReluctance')
+    && userData.routingPreferences.hasOwnProperty('isWheelChair')
   ) {
     routingPreferences = userData.routingPreferences;
   } else {
@@ -240,7 +241,7 @@ export async function generateNewScores(origin, destinations, userID) {
     nightDayWeights: nightDayWeights,
     nightDirectionWeights: nightDirectionWeights,
     weekendWeights: weekendWeights,
-    scoringWeights: scoringWeights,
+    timeSliceWeights: timeSliceWeights,
     scoringPreferences: scoringPreferences,
     routingPreferences: routingPreferences
   }

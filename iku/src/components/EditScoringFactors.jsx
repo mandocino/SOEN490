@@ -121,45 +121,29 @@ export default function EditScoringFactors(props) {
       const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
       const userData = response.data[0];
 
-      const fetchedFactorWeights = convertUserFactorWeightsToArr(userData.factorWeights);
-      if (checkIfWeightsAddTo100(fetchedFactorWeights)) {
-        setFactorWeights(fetchedFactorWeights);
-      } else {
-        // TODO: Reset user factor weights
-        //  Don't forget to update the user pref time when resetting
-        setFactorWeights(convertUserFactorWeightsToArr(defaultUserFactorWeights));
-      }
+      const toFetch = [
+        // [converter function, weight name, state setter function, default weights]
+        [convertUserFactorWeightsToArr, "factorWeights", setFactorWeights, defaultUserFactorWeights],
+        [convertUserNightDayWeightsToArr, "nightDayWeights", setNightDayWeights, defaultUserNightDayWeights],
+        [convertUserNightDirectionWeightsToArr, "nightDirectionWeights", setNightDirectionWeights, defaultUserNightDirectionWeights],
+        [convertUserWeekendWeightsToArr, "weekendWeights", setWeekendWeights, defaultUserWeekendWeights],
+        [convertUserTimeSliceWeightsToArr, "timeSliceWeights", setTimeSliceWeights, defaultUserTimeSliceWeights],
+      ]
 
-      const fetchedNightDayWeights = convertUserNightDayWeightsToArr(userData.nightDayWeights);
-      if (checkIfWeightsAddTo100(fetchedNightDayWeights)) {
-        setNightDayWeights(fetchedNightDayWeights);
-      } else {
-        // TODO: Reset user night day weights
-        setNightDayWeights(convertUserNightDayWeightsToArr(defaultUserNightDayWeights));
-      }
+      for (let i of toFetch) {
+        const convert = i[0];
+        const weightName = i[1];
+        const setState = i[2];
+        const defaults = i[3];
 
-      const fetchedNightDirectionWeights = convertUserNightDirectionWeightsToArr(userData.nightDirectionWeights);
-      if (checkIfWeightsAddTo100(fetchedNightDirectionWeights)) {
-        setNightDirectionWeights(fetchedNightDirectionWeights);
-      } else {
-        // TODO: Reset user factor weights
-        setNightDirectionWeights(convertUserNightDirectionWeightsToArr(defaultUserNightDirectionWeights));
-      }
-
-      const fetchedWeekendWeights = convertUserWeekendWeightsToArr(userData.weekendWeights);
-      if (checkIfWeightsAddTo100(fetchedWeekendWeights)) {
-        setWeekendWeights(fetchedWeekendWeights);
-      } else {
-        // TODO: Reset user factor weights
-        setWeekendWeights(convertUserWeekendWeightsToArr(defaultUserWeekendWeights));
-      }
-
-      const fetchedTimeSliceWeights = convertUserTimeSliceWeightsToArr(userData.timeSliceWeights)
-      if (checkIfWeightsAddTo100(fetchedTimeSliceWeights)) {
-        setTimeSliceWeights(fetchedTimeSliceWeights);
-      } else {
-        // TODO: Reset user factor weights
-        setTimeSliceWeights(convertUserTimeSliceWeightsToArr(defaultUserTimeSliceWeights));
+        const fetched = convert(userData[weightName]);
+        if (checkIfWeightsAddTo100(fetched)) {
+          setState(fetched);
+        } else {
+          // TODO: Reset user weights
+          //  Don't forget to update the user pref time when resetting
+          setState(convert(defaults));
+        }
       }
     }
   }
