@@ -1,6 +1,5 @@
 import React, {Fragment, useState} from "react";
 import {Dialog, Transition} from '@headlessui/react';
-import {Slider} from '@mui/material';
 import Carousel from 'react-material-ui-carousel';
 
 import axios from "axios";
@@ -30,17 +29,13 @@ export default function EditScoringFactors(props) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [sliderVal, setSliderVal] = useState(0);
-  const [oldFactorWeights, setOldFactorWeights] = useState(0);
+  const [factorSliderVal, setFactorSliderVal] = useState([]);
+  const [oldFactorWeights, setOldFactorWeights] = useState([]);
 
   const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
   const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
 
   const user_id = localStorage.getItem("user_id");
-
-  const minDistance = 5;
-  const minValue = minDistance;
-  const maxValue = 100 - minDistance;
 
   const frequencyColor = factorColors[0].hex;
   const frequencyTextColor = factorColors[0].text
@@ -48,10 +43,6 @@ export default function EditScoringFactors(props) {
   const durationTextColor = factorColors[1].text;
   const walkTimeColor = factorColors[2].hex;
   // const walkTimeTextColor = props.walkTimeColor.text;
-
-  const sliderThumbColor = '#fff'
-  const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
-  const sliderThumbActiveShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)';
 
   // boxConicGradient1 has the center of the gradient at the bottom of the box.
   // boxConicGradient2 has the center of the gradient below the bottom of the box, giving a quasi-linear appearance.
@@ -83,7 +74,7 @@ export default function EditScoringFactors(props) {
     // Save old values in case user clicks cancel
     // TODO: there's probably a better way to do this.
     setOldFactorWeights(factorWeights);
-    setSliderVal(factorWeights[0]);
+    setFactorSliderVal(createCumulativeArray(factorWeights));
 
     setOldNightDayWeights(nightDayWeights);
     setNightDaySliderVal(createCumulativeArray(nightDayWeights));
@@ -95,7 +86,7 @@ export default function EditScoringFactors(props) {
   function closeModal() {
     // Reset to old values
     setFactorWeights(oldFactorWeights);
-    setSliderVal(oldFactorWeights[0]);
+    setFactorSliderVal(createCumulativeArray(oldFactorWeights));
 
     setOldNightDayWeights(oldNightDayWeights);
     setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
@@ -103,67 +94,6 @@ export default function EditScoringFactors(props) {
     // Close modal without saving changes
     setIsOpen(false);
   }
-
-  const handleChange = (event, newValue, activeThumb) => {
-    setSliderVal(newValue);
-    setFactorWeights([newValue, 100-newValue]);
-  }
-
-  // const handleChange = (event, newValue, activeThumb) => {
-  //   if (!Array.isArray(newValue)) {
-  //     return;
-  //   }
-  //
-  //   // If the user tries to set the middle value below the minimum distance
-  //   if (newValue[1] - newValue[0] < minDistance) {
-  //     // If the user was adjusting the left thumb (button)
-  //     if (activeThumb === 0) {
-  //       const clamped = Math.min(newValue[0], 100 - minDistance);
-  //       // If the right value is valid (user is not trying to set the right value above maximum)
-  //       if (clamped + minDistance <= maxValue) {
-  //         setSliderVal([clamped, clamped + minDistance]);
-  //       } else {
-  //         setSliderVal([maxValue - minDistance, maxValue])
-  //       }
-  //     }
-  //
-  //     // If the user was adjusting the right thumb (button)
-  //     else {
-  //       const clamped = Math.max(newValue[1], minDistance);
-  //       // If the left value is valid (user is not trying to set the left value below minimum)
-  //       if (clamped - minDistance >= minValue) {
-  //         setSliderVal([clamped - minDistance, clamped]);
-  //       } else {
-  //         setSliderVal([minValue, minValue + minDistance])
-  //       }
-  //     }
-  //   }
-  //
-  //   // Middle value is good
-  //   else {
-  //     // If the user was adjusting the left thumb (button)
-  //     if (activeThumb === 0) {
-  //       // If the left value is valid (user is not trying to set the left value below minimum)
-  //       if (newValue[0] >= minValue) {
-  //         setSliderVal(newValue);
-  //       } else {
-  //         setSliderVal([minValue, newValue[1]]);
-  //       }
-  //     } else {
-  //       // If the right value is valid (user is not trying to set the right value above maximum)
-  //       if (newValue[1] <= maxValue) {
-  //         setSliderVal(newValue);
-  //       } else {
-  //         setSliderVal([newValue[0], maxValue]);
-  //       }
-  //     }
-  //   }
-  //
-  //   // Set frequency to left value, duration to middle value, walkTime to right value
-  //   setFrequency(sliderVal[0]);
-  //   setDuration(sliderVal[1] - sliderVal[0]);
-  //   setWalkTime(100 - sliderVal[1]);
-  // };
 
   // Submit user's scoring factor preferences
   const submitHandler = async (event) => {
@@ -302,50 +232,13 @@ export default function EditScoringFactors(props) {
                         longer distances naturally involve longer commutes, whether by transit or by driving.
                       </div>
                     </CarouselItem>
-
-                    {/*<CarouselItem>*/}
-                    {/*  <div className="mb-4">*/}
-                    {/*    The <b className={walkTimeTextColor}>walk time</b> refers to the total amount of walking involved*/}
-                    {/*    in a route. If you have towalk 10 minutes to the train station, and then another 10 minutes from*/}
-                    {/*    the train statin to your destination, then the total walk time is 20 minutes.*/}
-                    {/*  </div>*/}
-
-                    {/*  <div className="mb-4">*/}
-                    {/*    By default, the walk time represents 10% of the grade. Most will not need to worry about routes'*/}
-                    {/*    walk time; however it may be important for those with reduced or limited mobility to prioritize*/}
-                    {/*    routes with shorter walk time.*/}
-                    {/*  </div>*/}
-
-                    {/*</CarouselItem>*/}
                   </Carousel>
 
                   <div>
-                    <Slider
-                      track={false}
-                      getAriaLabel={() => 'Scoring factor proportions'}
-                      value={sliderVal}
-                      onChange={handleChange}
-                      valueLabelDisplay="off"
-                      disableSwap
-                      sx={{
-                        '& .MuiSlider-rail': {
-                          background: `linear-gradient(to right, ${frequencyColor} ${factorWeights[0]}%,
-                        ${durationColor} ${factorWeights[0]}%, ${durationColor} ${factorWeights[0] + factorWeights[1]}%,
-                        );`,
-                          opacity: 1
-                        },
-                        '& .MuiSlider-thumb': {
-                          backgroundColor: sliderThumbColor,
-                          boxShadow: sliderThumbShadow,
-                          '&:focus, &:hover, &.Mui-active': {
-                            boxShadow: sliderThumbActiveShadow,
-                            // Reset on touch devices, it doesn't add specificity
-                            '@media (hover: none)': {
-                              boxShadow: sliderThumbShadow,
-                            },
-                          },
-                        }
-                      }}
+                    <ProportionalSlider
+                      sliderState={[factorSliderVal, setFactorSliderVal]}
+                      valueState={[factorWeights, setFactorWeights]}
+                      sliderColors={[frequencyColor, durationColor]}
                     />
                   </div>
 
@@ -355,7 +248,6 @@ export default function EditScoringFactors(props) {
                       valueState={[nightDayWeights, setNightDayWeights]}
                       sliderColors={[frequencyColor, durationColor, walkTimeColor]}
                     />
-                    {nightDayWeights}
                   </div>
 
                   <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"

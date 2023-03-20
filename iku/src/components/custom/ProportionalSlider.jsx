@@ -16,10 +16,16 @@ export default function ProportionalSlider({sliderState, valueState, sliderColor
 
   const setSliderColor = (values) => {
     sliderColorClass = `${sliderColors[0]} ${values[0]}%, `;
-    for (let i=1; i<numThumbs; i++) {
-      sliderColorClass += `${sliderColors[i]} ${values[i-1]}%, ${sliderColors[i]} ${values[i-1]+values[i]}%, `
+    if (numThumbs > 1) {
+      for (let i=1; i<numThumbs; i++) {
+        sliderColorClass += `${sliderColors[i]} ${values[i-1]}%, ${sliderColors[i]} ${values[i-1]+values[i]}%, `
+      }
+      sliderColorClass += `${sliderColors[numThumbs]} ${values[numThumbs-1]+values[numThumbs-2]}%`;
+    } else {
+      sliderColorClass += `${sliderColors[1]} ${values[0]}%`;
     }
-    sliderColorClass += `${sliderColors[numThumbs]} ${values[numThumbs-1]+values[numThumbs-2]}%`;
+
+    console.log(sliderColorClass)
   }
 
   setSliderColor(values);

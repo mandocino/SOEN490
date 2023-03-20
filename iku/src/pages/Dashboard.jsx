@@ -9,7 +9,6 @@ import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 import {loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
-import mongoose from "mongoose";
 import ScoreCompareModal from '../components/ScoreCompareModal';
 import CompareIcon from '../assets/compare.png';
 
@@ -252,7 +251,6 @@ export default function Dashboard() {
   return (
     <>
       <BaseLayout className="flex flex-col" ignore={['dashboard']}>
-        {/*<div className="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">*/}
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
             <div className="flex gap-8">
