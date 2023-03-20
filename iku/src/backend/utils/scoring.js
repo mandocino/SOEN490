@@ -135,7 +135,7 @@ export async function loadScores(origin, destinations, userID) {
  * `generateNewScoresForOnePair` function. Also computes the weighted average of all scores for this specific origin.
  * @param origin
  * @param destinations
- * @param loggedIn
+ * @param userID
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
 export async function generateNewScores(origin, destinations, userID) {

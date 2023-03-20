@@ -14,13 +14,21 @@ import {
   defaultUserScoringWeights,
   defaultUserWeekendWeights
 } from "../backend/config/db";
+import BoxConicGradientDisplay from "./custom/BoxConicGradientDisplay";
 
 
 const frequencyColor = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
 const durationColor = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
 const walkTimeColor = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
 
+const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
+const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
+const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
+
 const factorHexColors = [frequencyColor.hex, durationColor.hex];
+const factorNames = ["Frequency", "Duration"];
+const factorIcons = [frequencyIcon, durationIcon];
+
 const nightDayHexColors = [frequencyColor.hex, durationColor.hex, walkTimeColor.hex];
 
 const user_id = localStorage.getItem("user_id");
@@ -157,9 +165,6 @@ export default function EditScoringFactors(props) {
 
 
   // Create card with the scoring factors
-  const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
-  const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
-  const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
   const factorCardsArray = [{
     name: "Frequency", bg: frequencyColor.bgGradient, value: factorWeights[0]
   }, {
@@ -186,24 +191,6 @@ export default function EditScoringFactors(props) {
 
   const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
   const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
-
-  // boxConicGradient1 has the center of the gradient at the bottom of the box.
-  // boxConicGradient2 has the center of the gradient below the bottom of the box, giving a quasi-linear appearance.
-  const boxConicGradient1 = `conic-gradient(
-    from 180deg at 50% 100%, 
-    ${frequencyColor.hex} 90deg, 
-    ${frequencyColor.hex} ${90 + 1.8 * (factorWeights[0]/2)}deg,
-    ${durationColor.hex} ${90 + 1.8 * (factorWeights[0])}deg, 
-    ${durationColor.hex} ${90 + 1.8 * (factorWeights[0] + factorWeights[1])}deg,
-    ${durationColor.hex} 270deg
-    )`;
-  // const boxConicGradient2 = `conic-gradient(
-  //   from 180deg at 50% 200%,
-  //   ${frequencyColor.hex} 140deg,
-  //   ${durationColor.hex} ${140 + 0.8 * (frequency)}deg,
-  //   ${durationColor.hex} ${140 + 0.8 * (frequency + duration)}deg,
-  //   ${walkTimeColor.hex} 220deg
-  //   )`;
 
   function createCumulativeArray(val) {
     let newArr = [val[0]];
@@ -389,6 +376,7 @@ export default function EditScoringFactors(props) {
                       sliderColors={factorHexColors}
                     />
                   </div>
+                  <BoxConicGradientDisplay values={factorWeights} colors={factorHexColors} names={factorNames} icons={factorIcons}/>
 
                   <div>
                     <ProportionalSlider
@@ -396,19 +384,6 @@ export default function EditScoringFactors(props) {
                       valueState={[nightDayWeights, setNightDayWeights]}
                       sliderColors={nightDayHexColors}
                     />
-                  </div>
-
-                  <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"
-                       style={{background: boxConicGradient1}}>
-                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <FrequencyIcon className="fill-white w-6 h-6"/>
-                      <span>Frequency: {factorWeights[0]}%</span>
-                    </div>
-
-                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <DurationIcon className="fill-white w-6 h-6"/>
-                      <span>Duration: {factorWeights[1]}%</span>
-                    </div>
                   </div>
 
 
