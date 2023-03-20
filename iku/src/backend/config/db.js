@@ -1,50 +1,15 @@
-import { Schema, model, connect } from "mongoose";
+import {connect, model, Schema} from "mongoose";
+import {
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
+} from "./defaultUserPreferences.js";
 
 const connectionString =
   "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
-
-
-///////////// DEFAULTS
-
-export const defaultUserFactorWeights = {
-  frequencyWeight: 70,
-  durationWeight: 30,
-};
-
-export const defaultUserNightDayWeights = {
-  weeknightWeight: 30,
-  fridayNightWeight: 35,
-  saturdayNightWeight: 35
-};
-
-export const defaultUserNightDirectionWeights = {
-  toDestWeight: 30,
-  fromDestWeight: 70
-};
-
-export const defaultUserWeekendWeights = {
-  saturdayWeight: 60,
-  sundayWeight: 40
-};
-
-export const defaultUserTimeSliceWeights = {
-  rushHourWeight: 40,
-  offPeakWeight: 30,
-  nightWeight: 10,
-  weekendWeight: 20
-}
-
-export const defaultUserScoringPreferences = {
-  consistencyImportance: 2,
-  worstAcceptableFrequency: 75,
-  worstAcceptableDuration: 120,
-  worstAcceptableWalk: 60
-}
-
-export const defaultUserRoutingPreferences = {
-  walkReluctance: 2,
-  isWheelChair: false
-}
 
 ///////////// SCHEMAS
 

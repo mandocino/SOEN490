@@ -2,13 +2,13 @@ import axios from "axios";
 import * as thisModule from './scoring.js';
 import {getRoutingData} from "./routeProcessing.js";
 import {
-  defaultUserRoutingPreferences,
   defaultUserFactorWeights,
-  defaultUserWeekendWeights,
-  defaultUserTimeSliceWeights,
   defaultUserNightDayWeights,
-  defaultUserNightDirectionWeights, defaultUserScoringPreferences
-} from "../config/db.js";
+  defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
+  defaultUserTimeSliceWeights, defaultUserWeekendWeights
+} from "../config/defaultUserPreferences.js";
 
 
 /**

@@ -13,14 +13,20 @@ import {ReactComponent as SundayIcon} from "./../assets/calendar-sun-solid.svg";
 import {ReactComponent as ToDestIcon} from "./../assets/arrow-right-to-city-solid.svg";
 import {ReactComponent as FromDestIcon} from "./../assets/arrow-left-from-city-solid.svg";
 import mongoose from "mongoose";
+import BoxConicGradientDisplay from "./custom/BoxConicGradientDisplay";
 import {
+  checkIfWeightsAddTo100,
+  convertUserFactorWeightsToArr,
+  convertUserNightDayWeightsToArr,
+  convertUserNightDirectionWeightsToArr,
+  convertUserTimeSliceWeightsToArr,
+  convertUserWeekendWeightsToArr,
   defaultUserFactorWeights,
   defaultUserNightDayWeights,
   defaultUserNightDirectionWeights,
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
-} from "../backend/config/db";
-import BoxConicGradientDisplay from "./custom/BoxConicGradientDisplay";
+} from "../backend/config/defaultUserPreferences";
 
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
@@ -108,82 +114,52 @@ export default function EditScoringFactors(props) {
 
         setFactorWeights([userFactorWeights.frequencyWeight, userFactorWeights.durationWeight]);
       }
-    } else {
+    }
 
+    else {
       // Get the weighted average scores
       const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
       const userData = response.data[0];
 
-      if (userData.factorWeights.frequencyWeight + userData.factorWeights.durationWeight !== 100) {
+      const fetchedFactorWeights = convertUserFactorWeightsToArr(userData.factorWeights);
+      if (checkIfWeightsAddTo100(fetchedFactorWeights)) {
+        setFactorWeights(fetchedFactorWeights);
+      } else {
         // TODO: Reset user factor weights
         //  Don't forget to update the user pref time when resetting
-        setFactorWeights([
-          defaultUserFactorWeights.frequencyWeight,
-          defaultUserFactorWeights.durationWeight
-        ]);
-      } else {
-        setFactorWeights([
-          userData.factorWeights.frequencyWeight,
-          userData.factorWeights.durationWeight
-        ]);
+        setFactorWeights(convertUserFactorWeightsToArr(defaultUserFactorWeights));
       }
 
-      if (userData.nightDayWeights.weeknightWeight + userData.nightDayWeights.fridayNightWeight + userData.nightDayWeights.saturdayNightWeight !== 100) {
-        // TODO: Reset user factor weights
-        setNightDayWeights([
-          defaultUserNightDayWeights.weeknightWeight,
-          defaultUserNightDayWeights.fridayNightWeight,
-          defaultUserNightDayWeights.saturdayNightWeight
-        ]);
+      const fetchedNightDayWeights = convertUserNightDayWeightsToArr(userData.nightDayWeights);
+      if (checkIfWeightsAddTo100(fetchedNightDayWeights)) {
+        setNightDayWeights(fetchedNightDayWeights);
       } else {
-        setNightDayWeights([
-          userData.nightDayWeights.weeknightWeight,
-          userData.nightDayWeights.fridayNightWeight,
-          userData.nightDayWeights.saturdayNightWeight
-        ]);
+        // TODO: Reset user night day weights
+        setNightDayWeights(convertUserNightDayWeightsToArr(defaultUserNightDayWeights));
       }
 
-      if (userData.nightDirectionWeights.toDestWeight + userData.nightDirectionWeights.fromDestWeight !== 100) {
-        // TODO: Reset user factor weights
-        setNightDirectionWeights([
-          defaultUserNightDirectionWeights.toDestWeight,
-          defaultUserNightDirectionWeights.fromDestWeight
-        ]);
+      const fetchedNightDirectionWeights = convertUserNightDirectionWeightsToArr(userData.nightDirectionWeights);
+      if (checkIfWeightsAddTo100(fetchedNightDirectionWeights)) {
+        setNightDirectionWeights(fetchedNightDirectionWeights);
       } else {
-        setNightDirectionWeights([
-          userData.nightDirectionWeights.toDestWeight,
-          userData.nightDirectionWeights.fromDestWeight
-        ]);
+        // TODO: Reset user factor weights
+        setNightDirectionWeights(convertUserNightDirectionWeightsToArr(defaultUserNightDirectionWeights));
       }
 
-      if (userData.weekendWeights.saturdayWeight + userData.weekendWeights.sundayWeight !== 100) {
-        // TODO: Reset user factor weights
-        setWeekendWeights([
-          defaultUserWeekendWeights.saturdayWeight,
-          defaultUserWeekendWeights.sundayWeight
-        ]);
+      const fetchedWeekendWeights = convertUserWeekendWeightsToArr(userData.weekendWeights);
+      if (checkIfWeightsAddTo100(fetchedWeekendWeights)) {
+        setWeekendWeights(fetchedWeekendWeights);
       } else {
-        setWeekendWeights([
-          userData.weekendWeights.saturdayWeight,
-          userData.weekendWeights.sundayWeight
-        ]);
+        // TODO: Reset user factor weights
+        setWeekendWeights(convertUserWeekendWeightsToArr(defaultUserWeekendWeights));
       }
 
-      if (userData.scoringWeights.rushHourWeight + userData.scoringWeights.offPeakWeight + userData.scoringWeights.nightWeight + userData.scoringWeights.weekendWeight !== 100) {
-        // TODO: Reset user factor weights
-        setTimeSliceWeights([
-          defaultUserTimeSliceWeights.rushHourWeight,
-          defaultUserTimeSliceWeights.offPeakWeight,
-          defaultUserTimeSliceWeights.nightWeight,
-          defaultUserTimeSliceWeights.weekendWeight
-        ]);
+      const fetchedTimeSliceWeights = convertUserTimeSliceWeightsToArr(userData.timeSliceWeights)
+      if (checkIfWeightsAddTo100(fetchedTimeSliceWeights)) {
+        setTimeSliceWeights(fetchedTimeSliceWeights);
       } else {
-        setTimeSliceWeights([
-          userData.scoringWeights.rushHourWeight,
-          userData.scoringWeights.offPeakWeight,
-          userData.scoringWeights.nightWeight,
-          userData.scoringWeights.weekendWeight
-        ]);
+        // TODO: Reset user factor weights
+        setTimeSliceWeights(convertUserTimeSliceWeightsToArr(defaultUserTimeSliceWeights));
       }
     }
   }
