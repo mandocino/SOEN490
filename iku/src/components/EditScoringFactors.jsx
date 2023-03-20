@@ -6,6 +6,12 @@ import {Dialog, Transition} from '@headlessui/react';
 import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
 import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
+import {ReactComponent as WeekIcon} from "./../assets/calendar-week-solid.svg";
+import {ReactComponent as FridayIcon} from "./../assets/calendar-fri-solid.svg";
+import {ReactComponent as SaturdayIcon} from "./../assets/calendar-sat-solid.svg";
+import {ReactComponent as SundayIcon} from "./../assets/calendar-sun-solid.svg";
+import {ReactComponent as ToDestIcon} from "./../assets/arrow-right-to-city-solid.svg";
+import {ReactComponent as FromDestIcon} from "./../assets/arrow-left-from-city-solid.svg";
 import mongoose from "mongoose";
 import {
   defaultUserFactorWeights,
@@ -23,15 +29,27 @@ const walkTimeColor = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400'
 
 const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
 const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
-const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
+const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>;
+
+const weekIcon = <WeekIcon className="fill-white w-6 h-6"/>;
+const friIcon = <FridayIcon className="fill-white w-6 h-6"/>;
+const satIcon = <SaturdayIcon className="fill-white w-6 h-6"/>;
+const sunIcon = <SundayIcon className="fill-white w-6 h-6"/>;
+
+const toDestIcon = <ToDestIcon className="fill-white w-6 h-6"/>;
+const fromDestIcon = <FromDestIcon className="fill-white w-6 h-6"/>;
 
 const factorHexColors = [frequencyColor.hex, durationColor.hex];
 const factorNames = ["Frequency", "Duration"];
 const factorIcons = [frequencyIcon, durationIcon];
 
 const nightDayHexColors = [frequencyColor.hex, durationColor.hex, walkTimeColor.hex];
-const nightDayNames = ["Friday", "Saturday", "Sunday"];
-const nightDayIcons = [frequencyIcon, frequencyIcon, frequencyIcon]
+const nightDayNames = ["Weeknight", "Fri. Night", "Sat. Night"];
+const nightDayIcons = [weekIcon, friIcon, satIcon]
+
+const nightDirectionHexColors = [frequencyColor.hex, durationColor.hex];
+const nightDirectionNames = ["Towards Dest.", "From Dest."];
+const nightDirectionIcons = [toDestIcon, fromDestIcon];
 
 const user_id = localStorage.getItem("user_id");
 
@@ -191,8 +209,11 @@ export default function EditScoringFactors(props) {
   const [factorSliderVal, setFactorSliderVal] = useState([]);
   const [oldFactorWeights, setOldFactorWeights] = useState([]);
 
-  const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
   const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
+  const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
+
+  const [nightDirectionSliderVal, setNightDirectionSliderVal] = useState([]);
+  const [oldNightDirectionWeights, setOldNightDirectionWeights] = useState([]);
 
   function createCumulativeArray(val) {
     let newArr = [val[0]];
@@ -211,6 +232,9 @@ export default function EditScoringFactors(props) {
     setOldNightDayWeights(nightDayWeights);
     setNightDaySliderVal(createCumulativeArray(nightDayWeights));
 
+    setOldNightDirectionWeights(nightDirectionWeights);
+    setNightDirectionSliderVal(createCumulativeArray(nightDirectionWeights));
+
     setIsOpen(true);
   }
 
@@ -222,6 +246,9 @@ export default function EditScoringFactors(props) {
 
     setOldNightDayWeights(oldNightDayWeights);
     setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
+
+    setOldNightDirectionWeights(oldNightDirectionWeights);
+    setNightDirectionSliderVal(createCumulativeArray(oldNightDirectionWeights));
 
     // Close modal without saving changes
     setIsOpen(false);
@@ -397,6 +424,20 @@ export default function EditScoringFactors(props) {
                         colors={nightDayHexColors}
                         names={nightDayNames}
                         icons={nightDayIcons}
+                      />
+                    </div>
+
+                    <div>
+                      <ProportionalSlider
+                        sliderState={[nightDirectionSliderVal, setNightDirectionSliderVal]}
+                        valueState={[nightDirectionWeights, setNightDirectionWeights]}
+                        sliderColors={nightDirectionHexColors}
+                      />
+                      <BoxConicGradientDisplay
+                        values={nightDirectionWeights}
+                        colors={nightDirectionHexColors}
+                        names={nightDirectionNames}
+                        icons={nightDirectionIcons}
                       />
                     </div>
                   </div>
