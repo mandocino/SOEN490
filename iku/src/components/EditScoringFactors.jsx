@@ -48,8 +48,12 @@ const nightDayNames = ["Weeknight", "Fri. Night", "Sat. Night"];
 const nightDayIcons = [weekIcon, friIcon, satIcon]
 
 const nightDirectionHexColors = [frequencyColor.hex, durationColor.hex];
-const nightDirectionNames = ["Towards Dest.", "From Dest."];
+const nightDirectionNames = ["Towards Dest", "From Dest"];
 const nightDirectionIcons = [toDestIcon, fromDestIcon];
+
+const weekendHexColors = [frequencyColor.hex, durationColor.hex];
+const weekendNames = ["Saturday", "Sunday"];
+const weekendIcons = [satIcon, sunIcon];
 
 const user_id = localStorage.getItem("user_id");
 
@@ -215,6 +219,9 @@ export default function EditScoringFactors(props) {
   const [nightDirectionSliderVal, setNightDirectionSliderVal] = useState([]);
   const [oldNightDirectionWeights, setOldNightDirectionWeights] = useState([]);
 
+  const [weekendSliderVal, setWeekendSliderVal] = useState([]);
+  const [oldWeekendWeights, setOldWeekendWeights] = useState([]);
+
   function createCumulativeArray(val) {
     let newArr = [val[0]];
     for (let i=1; i<val.length-1; i++) {
@@ -235,6 +242,9 @@ export default function EditScoringFactors(props) {
     setOldNightDirectionWeights(nightDirectionWeights);
     setNightDirectionSliderVal(createCumulativeArray(nightDirectionWeights));
 
+    setOldWeekendWeights(weekendWeights);
+    setWeekendSliderVal(createCumulativeArray(weekendWeights));
+
     setIsOpen(true);
   }
 
@@ -244,11 +254,14 @@ export default function EditScoringFactors(props) {
     setFactorWeights(oldFactorWeights);
     setFactorSliderVal(createCumulativeArray(oldFactorWeights));
 
-    setOldNightDayWeights(oldNightDayWeights);
+    setNightDayWeights(oldNightDayWeights);
     setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
 
-    setOldNightDirectionWeights(oldNightDirectionWeights);
+    setNightDirectionWeights(oldNightDirectionWeights);
     setNightDirectionSliderVal(createCumulativeArray(oldNightDirectionWeights));
+
+    setWeekendWeights(oldWeekendWeights);
+    setWeekendSliderVal(createCumulativeArray(oldWeekendWeights));
 
     // Close modal without saving changes
     setIsOpen(false);
@@ -438,6 +451,20 @@ export default function EditScoringFactors(props) {
                         colors={nightDirectionHexColors}
                         names={nightDirectionNames}
                         icons={nightDirectionIcons}
+                      />
+                    </div>
+
+                    <div>
+                      <ProportionalSlider
+                        sliderState={[weekendSliderVal, setWeekendSliderVal]}
+                        valueState={[weekendWeights, setWeekendWeights]}
+                        sliderColors={weekendHexColors}
+                      />
+                      <BoxConicGradientDisplay
+                        values={weekendWeights}
+                        colors={weekendHexColors}
+                        names={weekendNames}
+                        icons={weekendIcons}
                       />
                     </div>
                   </div>
