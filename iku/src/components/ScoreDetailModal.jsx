@@ -141,9 +141,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                       <table className="table-auto border-separate">
                         <thead>
                           <tr>
-                            <th>
-                              Transit Score Description
-                            </th>
+                            <th>Transit Score Description</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -232,256 +230,42 @@ function ScoreDetailModal({ originLocation, destinations }) {
                 </Dialog.Title>
 
                 {/* Table contents */}
-                <div className="w-full bg-emerald-400 rounded-3xl p-4 flex mt-2">
-                  <table className="table-auto border-separate border-spacing-3">
-                    <thead>
-                      <tr>
-                        <th>
-                          <span className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center invisible">
-                            <p>Placeholder</p>
-                          </span>
-                        </th>
-                        <th>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-auto border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td colSpan={3} className="border-b">
-                                    Frequency
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="border-r px-2">Min</td>
-                                  <td className="border-r px-2">Avg</td>
-                                  <td className="px-2">Max</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                <div className="w-full bg-emerald-400 rounded-3xl p-4 flex flex-col mt-2">
+                  <div className="w-full grow flex flex-col items-center p-3">
+                    <div className="w-full flex flex-col justify-center">
+                      <div className="flex gap-1">
+                        {/* First column: Times */}
+                        <div className="flex flex-col gap-2 items-center">
+                          <div className="invisible bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-3 py-7 h-28 flex flex-col gap-2 justify-between items-center">
+                            <span>Placeholder</span>
                           </div>
-                        </th>
-                        <th>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-auto border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td colSpan={3} className="border-b">
-                                    Duration
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="border-r px-2">Min</td>
-                                  <td className="border-r px-2">Avg</td>
-                                  <td className="px-2">Max</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </th>
-                        <th>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-auto border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td colSpan={3} className="border-b">
-                                    Walk
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="border-r px-2">Min</td>
-                                  <td className="border-r px-2">Avg</td>
-                                  <td className="px-2">Max</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </th>
-                        <th>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-auto border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td colSpan={3} className="border-b">
-                                    Transfers
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="border-r px-2">Min</td>
-                                  <td className="border-r px-2">Avg</td>
-                                  <td className="px-2">Max</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </th>
-                        <th>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
-                            <span>Score</span>
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center">
                             <span>Overall</span>
                           </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                            <span>Rush-Hour</span>
                           </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-between items-center">
+                            <span>Off-Peak</span>
                           </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                            <span>Weekend</span>
                           </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                            <span>Overnight</span>
                           </div>
-                        </td>
-                        <td>
+                        </div>
+                        {/* Second column: Score */}
+                        <div className="flex flex-col gap-2 items-center">
                           <CircleWithText
-                            className="pl-3"
+                            className="pl-3 invisible h-28"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
                             gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
                           >
-                            {savedScores.overall}
+                            {savedScores.rushHour}
                           </CircleWithText>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
-                            <span>Rush-Hour</span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1 ">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
                           <CircleWithText
                             className="pl-3"
                             size="w-14 h-14"
@@ -491,268 +275,195 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           >
                             {savedScores.rushHour}
                           </CircleWithText>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14  flex gap-2 justify-start items-center">
-                            <span>Off-Peak</span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
                           <CircleWithText
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-yellow-300 to-yellow-500 dark:from-white dark:to-yellow-400"
+                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
                           >
-                            {savedScores.offPeak}
+                            {savedScores.rushHour}
                           </CircleWithText>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
-                            <span>Weekend</span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
                           <CircleWithText
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-orange-300 to-orange-500 dark:from-white dark:to-orange-400"
+                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
                           >
-                            {savedScores.weekend}
+                            {savedScores.rushHour}
                           </CircleWithText>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-start items-center">
-                            <span>Overnight</span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                            <table className="text-center table-fixed border-separate border-spacing-1">
-                              <tbody>
-                                <tr>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    20
-                                  </td>
-                                  <td className="border-r border-emerald-900/30 px-3 w-12">
-                                    25
-                                  </td>
-                                  <td className="px-3 w-12">30</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        <td>
                           <CircleWithText
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
                             bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-red-300 to-red-500 dark:from-white dark:to-red-400"
+                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
                           >
-                            {savedScores.overnight}
+                            {savedScores.rushHour}
                           </CircleWithText>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                          <CircleWithText
+                            className="pl-3"
+                            size="w-14 h-14"
+                            textClass="text-lg font-bold"
+                            bgColor="bg-white dark:bg-teal-900"
+                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
+                          >
+                            {savedScores.rushHour}
+                          </CircleWithText>
+                        </div>
+                        {/* Third column: Table and caroussel */}
+                        <div className="flex flex-col gap-2 items-center">
+                          <table className="border-separate border-spacing-3">
+                            <tr>
+                              <th>
+                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                  <table className="text-center border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td colSpan={3} className="border-b">
+                                          Frequency
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="border-r px-2">Min</td>
+                                        <td className="border-r px-2">Avg</td>
+                                        <td className="px-2">Max</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </th>
+                              <th>
+                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                  <table className="text-center border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td colSpan={3} className="border-b">
+                                          Duration
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="border-r px-2">Min</td>
+                                        <td className="border-r px-2">Avg</td>
+                                        <td className="px-2">Max</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </th>
+                              <th>
+                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                  <table className="text-center border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td colSpan={3} className="border-b">
+                                          Walk
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="border-r px-2">Min</td>
+                                        <td className="border-r px-2">Avg</td>
+                                        <td className="px-2">Max</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </th>
+                              <th>
+                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                  <table className="text-center border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td colSpan={3} className="border-b">
+                                          Transfers
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="border-r px-2">Min</td>
+                                        <td className="border-r px-2">Avg</td>
+                                        <td className="px-2">Max</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </th>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                  <table className="text-center table-fixed border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          20
+                                        </td>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          25
+                                        </td>
+                                        <td className="px-3 w-12">30</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                  <table className="text-center table-fixed border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          20
+                                        </td>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          25
+                                        </td>
+                                        <td className="px-3 w-12">30</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                  <table className="text-center table-fixed border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          20
+                                        </td>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          25
+                                        </td>
+                                        <td className="px-3 w-12">30</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </td>
+                              <td>
+                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                  <table className="text-center table-fixed border-separate border-spacing-1">
+                                    <tbody>
+                                      <tr>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          20
+                                        </td>
+                                        <td className="border-r border-emerald-900/30 px-3 w-12">
+                                          25
+                                        </td>
+                                        <td className="px-3 w-12">30</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
