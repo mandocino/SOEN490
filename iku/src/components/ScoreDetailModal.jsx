@@ -1,11 +1,10 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ReactComponent as RightArrowIcon } from "./../assets/arrow-right.svg";
 import CircleWithText from "./custom/CircleWithText";
 import axios from "axios";
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import { styled } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import Carousel from "react-material-ui-carousel";
 
 function ScoreDetailModal({ originLocation, destinations }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,15 +28,103 @@ function ScoreDetailModal({ originLocation, destinations }) {
     overnight: 0,
   };
 
+
+
+  const addColorsToScores = (allScores) => {
+
+      // Convert a hue value (in degrees) to a hex RGB representation
+  // Hue in this case refers to the H of an HSV value where S and V are set to 100%
+  function hueToHex(hue) {
+    let quotient = (hue / 60) >> 0;
+    let remainder = (hue % 60) / 60;
+    let r, g, b;
+
+    switch (quotient) {
+      case 0: // 0-59deg
+        r = 255;
+        g = Math.round(255 * remainder);
+        b = 0;
+        break;
+      case 1: // 60-119deg
+        r = Math.round(255 - 255 * remainder);
+        g = 255;
+        b = 0;
+        break;
+      case 2: // 120-179deg
+        r = 0;
+        g = 255;
+        b = Math.round(255 * remainder);
+        break;
+      case 3: // 180-239deg
+        r = 0;
+        g = Math.round(255 - 255 * remainder);
+        b = 255;
+        break;
+      case 4: // 240-299deg
+        r = Math.round(255 * remainder);
+        g = 0;
+        b = 255;
+        break;
+      case 5: // 300-359deg
+        r = 255;
+        g = 0;
+        b = Math.round(255 - 255 * remainder);
+        break;
+    }
+
+    // Convert the RGB set into its hex representation
+    const hex =
+      "#" +
+      [r, g, b]
+        .map((x) => {
+          const hex = x.toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        })
+        .join("");
+
+    return hex;
+  }
+
+
+    const hueLowerBound = 310;
+    const hueUpperBound = 160;
+    const hueDirection = 1; // 1 = CW; -1 = CCW
+    let hueScale;
+
+    // (x*i+y): x*100+y = upper bound and y = lower bound
+    if (hueDirection === 1) {
+      hueScale = ((hueUpperBound + 360 - hueLowerBound) % 360) / 100;
+    } else {
+      hueScale = ((hueLowerBound + 360 - hueUpperBound) % 360) / -100;
+    }
+
+    let scores;
+    // Deep copy of the scores from the location object
+    scores = JSON.parse(JSON.stringify(allScores));
+    // Append the corresponding colors to each score value (overall, rushHour, etc)
+    for (let score in scores) {
+      const i = scores[score];
+      let hue = (hueScale * i + hueLowerBound) % 360
+      if (hue < 0) {
+        hue += 360;
+      }
+      scores[`${score}Color`] = hueToHex(hue);
+    }
+
+    return scores;
+  };
+
   const fetchOverallSavedScore = () => {
     axios
       .get(`http://localhost:5000/savedScores/${originLocation._id}`)
       .then((response) => {
         if (response.data[0]) {
-          setSavedScores(response.data[0]);
+          let processedScores = addColorsToScores(response.data[0]);
+          setSavedScores(processedScores);
         } else {
           // Assign 0 to all scores and statistics if values have not been calculated yet
-          setSavedScores(defaultSavedScores);
+          let processedScores = addColorsToScores(defaultSavedScores);
+          setSavedScores(processedScores);
         }
       })
       .catch((err) => console.error(err));
@@ -49,7 +136,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
     selectedDestination = event.target.value;
 
     // Case where selected item in dropdown is All destinations
-    if (selectedDestination == "default") {
+    if (selectedDestination === "default") {
       fetchOverallSavedScore();
     } else {
       axios
@@ -58,10 +145,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
         )
         .then((response) => {
           if (response.data[0]) {
-            setSavedScores(response.data[0]);
+            let processedScores = addColorsToScores(response.data[0]);
+            setSavedScores(processedScores);
           } else {
             // Assign 0 to all scores and statistics if values have not been calculated yet
-            setSavedScores(defaultSavedScores);
+            let processedScores = addColorsToScores(defaultSavedScores);
+            setSavedScores(processedScores);
           }
         })
         .catch((err) => console.error(err));
@@ -270,8 +359,15 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
+                            borderColor={savedScores.overallColor} textColor={savedScores.overallColor}
+                          >
+                            {savedScores.overall}
+                          </CircleWithText>
+                          <CircleWithText
+                            className="pl-3"
+                            size="w-14 h-14"
+                            textClass="text-lg font-bold"
+                            borderColor={savedScores.rushHourColor} textColor={savedScores.rushHourColor}
                           >
                             {savedScores.rushHour}
                           </CircleWithText>
@@ -279,197 +375,219 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
+                            borderColor={savedScores.offPeakColor} textColor={savedScores.offPeakColor}
                           >
-                            {savedScores.rushHour}
+                            {savedScores.offPeak}
                           </CircleWithText>
                           <CircleWithText
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
+                            borderColor={savedScores.weekendColor} textColor={savedScores.weekendColor}
                           >
-                            {savedScores.rushHour}
+                            {savedScores.weekend}
                           </CircleWithText>
                           <CircleWithText
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
+                            borderColor={savedScores.overnightColor} textColor={savedScores.overnightColor}
                           >
-                            {savedScores.rushHour}
-                          </CircleWithText>
-                          <CircleWithText
-                            className="pl-3"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
-                          >
-                            {savedScores.rushHour}
+                            {savedScores.overnight}
                           </CircleWithText>
                         </div>
                         {/* Third column: Table and caroussel */}
                         <div className="flex flex-col gap-2 items-center">
+                          {/* Score statistics */}
                           <table className="border-separate border-spacing-3">
                             <thead>
-                            <tr>
-                              <th>
-                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                                  <table className="text-center border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td colSpan={3} className="border-b">
-                                          Frequency
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="border-r px-2">Min</td>
-                                        <td className="border-r px-2">Avg</td>
-                                        <td className="px-2">Max</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </th>
-                              <th>
-                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                                  <table className="text-center border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td colSpan={3} className="border-b">
-                                          Duration
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="border-r px-2">Min</td>
-                                        <td className="border-r px-2">Avg</td>
-                                        <td className="px-2">Max</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </th>
-                              <th>
-                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                                  <table className="text-center border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td colSpan={3} className="border-b">
-                                          Walk
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="border-r px-2">Min</td>
-                                        <td className="border-r px-2">Avg</td>
-                                        <td className="px-2">Max</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </th>
-                              <th>
-                                <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                                  <table className="text-center border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td colSpan={3} className="border-b">
-                                          Transfers
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="border-r px-2">Min</td>
-                                        <td className="border-r px-2">Avg</td>
-                                        <td className="px-2">Max</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </th>
-                            </tr>
+                              <tr>
+                                <th>
+                                  <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                    <table className="text-center border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td colSpan={3} className="border-b">
+                                            Frequency
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border-r px-2">Min</td>
+                                          <td className="border-r px-2">Avg</td>
+                                          <td className="px-2">Max</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </th>
+                                <th>
+                                  <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                    <table className="text-center border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td colSpan={3} className="border-b">
+                                            Duration
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border-r px-2">Min</td>
+                                          <td className="border-r px-2">Avg</td>
+                                          <td className="px-2">Max</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </th>
+                                <th>
+                                  <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                    <table className="text-center border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td colSpan={3} className="border-b">
+                                            Walk
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border-r px-2">Min</td>
+                                          <td className="border-r px-2">Avg</td>
+                                          <td className="px-2">Max</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </th>
+                                <th>
+                                  <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
+                                    <table className="text-center border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td colSpan={3} className="border-b">
+                                            Transfers
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border-r px-2">Min</td>
+                                          <td className="border-r px-2">Avg</td>
+                                          <td className="px-2">Max</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </th>
+                              </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                              <td>
-                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                                  <table className="text-center table-fixed border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          20
-                                        </td>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          25
-                                        </td>
-                                        <td className="px-3 w-12">30</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                                  <table className="text-center table-fixed border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          20
-                                        </td>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          25
-                                        </td>
-                                        <td className="px-3 w-12">30</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                                  <table className="text-center table-fixed border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          20
-                                        </td>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          25
-                                        </td>
-                                        <td className="px-3 w-12">30</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </td>
-                              <td>
-                                <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                                  <table className="text-center table-fixed border-separate border-spacing-1">
-                                    <tbody>
-                                      <tr>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          20
-                                        </td>
-                                        <td className="border-r border-emerald-900/30 px-3 w-12">
-                                          25
-                                        </td>
-                                        <td className="px-3 w-12">30</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </td>
-                            </tr>
+                              <tr>
+                                <td>
+                                  <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                    <table className="text-center table-fixed border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            20
+                                          </td>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            25
+                                          </td>
+                                          <td className="px-3 w-12">30</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                    <table className="text-center table-fixed border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            20
+                                          </td>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            25
+                                          </td>
+                                          <td className="px-3 w-12">30</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                    <table className="text-center table-fixed border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            20
+                                          </td>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            25
+                                          </td>
+                                          <td className="px-3 w-12">30</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
+                                    <table className="text-center table-fixed border-separate border-spacing-1">
+                                      <tbody>
+                                        <tr>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            20
+                                          </td>
+                                          <td className="border-r border-emerald-900/30 px-3 w-12">
+                                            25
+                                          </td>
+                                          <td className="px-3 w-12">30</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </td>
+                              </tr>
                             </tbody>
                           </table>
+                          {/* Caroussel */}
+                          <Carousel
+                            autoPlay={false}
+                            animation="slide"
+                            cycleNavigation={false}
+                            navButtonsAlwaysVisible={true}
+                            indicators={false}
+                            className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-14 w-full "
+                            sx={{
+                              button: {
+                                "&:hover": {
+                                  opacity: "1 !important",
+                                },
+                              },
+                              buttonWrapper: {
+                                "&:hover": {
+                                  "& $button": {
+                                    backgroundColor: "black",
+                                    filter: "brightness(120%)",
+                                    opacity: "1",
+                                  },
+                                },
+                              },
+                            }}
+                          >
+                            <div className="flex flex-col  px-7 py-2 h-14 w-full ">
+                              <span>Route 1</span>
+                              <span>Route 2</span>
+                              <span>Route 3</span>
+                              <span>Route 4</span>
+                            </div>
+
                             <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-14 w-full ">
                               <span>Car</span>
                               <span>Personal Bike</span>
                               <span>Bixi</span>
                               <span>Walk</span>
-                          </div>
+                            </div>
+                          </Carousel>
                         </div>
                       </div>
                     </div>
