@@ -77,6 +77,21 @@ function CarouselItem(props) {
   )
 }
 
+async function updateUserPreferences(data) {
+  const currentDate = Date.now();
+
+  data._id = mongoose.Types.ObjectId(user_id);
+  data.lastPrefChangeTime = currentDate;
+
+  console.log(data);
+
+  return await axios
+    .post("http://localhost:5000/modifyUserByID", data)
+    .catch((error) => {
+      console.log(error.message);
+    });
+}
+
 export default function EditScoringFactors(props) {
   const [factorWeights, setFactorWeights] = useState([
     defaultUserFactorWeights.frequencyWeight,
@@ -137,11 +152,10 @@ export default function EditScoringFactors(props) {
         const defaults = i[3];
 
         const fetched = convert(userData[weightName]);
-        if (checkIfWeightsAddTo100(fetched)) {
+        if (userData.hasOwnProperty(weightName) && checkIfWeightsAddTo100(fetched)) {
           setState(fetched);
         } else {
-          // TODO: Reset user weights
-          //  Don't forget to update the user pref time when resetting
+          await updateUserPreferences({[weightName]: defaults});
           setState(convert(defaults));
         }
       }
@@ -245,27 +259,21 @@ export default function EditScoringFactors(props) {
   const submitHandler = async (event) => {
     event.preventDefault();
 
-    const currentDate = Date.now();
-
     if(user_id === null) {
       let preferences = JSON.parse(sessionStorage.getItem("preferences"));
 
+      // TODO: Save ALL data
       preferences.factorWeights = factorWeights;
 
       sessionStorage.setItem("preferences", JSON.stringify(preferences));
     } else {
-      await axios
-        .post("http://localhost:5000/modifyUserByID", {
-          _id: mongoose.Types.ObjectId(user_id),
-          factorWeights: {
-            frequencyWeight: factorWeights[0],
-            durationWeight: factorWeights[1]
-          },
-          lastPrefChangeTime: currentDate
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
+      const data = {
+        factorWeights: {
+          frequencyWeight: factorWeights[0],
+          durationWeight: factorWeights[1]
+        }
+      };
+      await updateUserPreferences(data);
     }
     window.location.reload(false);
   };
