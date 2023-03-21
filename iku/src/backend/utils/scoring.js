@@ -78,7 +78,8 @@ export async function loadScores(origin, destinations, userID) {
   const loggedIn = (userID != null);
 
   let savedScores;
-  let lastPrefChangeTime;
+  let lastScoringPrefChangeTime;
+  let lastRoutingPrefChangeTime;
   let lastAlgoUpdateTime;
 
   if (loggedIn) {
@@ -88,20 +89,22 @@ export async function loadScores(origin, destinations, userID) {
 
     // Grab the last time the user updated their preferences
     const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-    lastPrefChangeTime = user.data[0].lastPrefChangeTime;
+    lastScoringPrefChangeTime = user.data[0].lastScoringPrefChangeTime;
+    lastRoutingPrefChangeTime = user.data[0].lastRoutingPrefChangeTime;
 
     // Get the latest scores for the origin only
     savedScores = await thisModule.fetchScores(origin, null);
   } else {
     // For non-logged-in users, set both times to 1970 to force re-generation
     const aLongTimeAgo = new Date(0);
-    lastPrefChangeTime = aLongTimeAgo;
-    lastAlgoUpdateTime = aLongTimeAgo
+    lastScoringPrefChangeTime = aLongTimeAgo;
+    lastRoutingPrefChangeTime = aLongTimeAgo;
+    lastAlgoUpdateTime = aLongTimeAgo;
   }
 
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
-  if (!savedScores || savedScores.generatedTime < lastPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
+  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
     savedScores = await thisModule.generateNewScores(origin, destinations, userID);
   }
   // Get the latest scores for each origin/destination pair
@@ -118,7 +121,7 @@ export async function loadScores(origin, destinations, userID) {
       // This is so that the weighted average score gets regenerated as well.
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
-      if (!score || score.generatedTime < lastPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
+      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
         savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn);
         break;
       }
@@ -166,6 +169,8 @@ export async function generateNewScores(origin, destinations, userID) {
 
   const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
   const userData = user.data[0];
+
+  const lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
 
   // TODO: Either update user document in db to the default preferences or show an alert in frontend
   if (userData.hasOwnProperty('factorWeights')
@@ -250,7 +255,7 @@ export async function generateNewScores(origin, destinations, userID) {
   const date = Date.now();
 
   for (const destination of destinations) {
-    const individualNewScore = await generateNewScoresForOnePair(origin, destination, userPreferences, loggedIn);
+    const individualNewScore = await generateNewScoresForOnePair(origin, destination, userPreferences, lastRoutingPrefChangeTime, loggedIn);
     newScores.push(individualNewScore);
   }
 
@@ -307,10 +312,11 @@ export async function generateNewScores(origin, destinations, userID) {
  * @param origin
  * @param destination
  * @param userPreferences
+ * @param lastRoutingPrefChangeTime
  * @param loggedIn
  * @returns {Promise<{overnight: number, generatedTime: number, rushHour: number, origin, weekend: number, destination, overall: number, offPeak: number, priority}>}
  */
-export async function generateNewScoresForOnePair(origin, destination, userPreferences, loggedIn=false) {
+export async function generateNewScoresForOnePair(origin, destination, userPreferences, lastRoutingPrefChangeTime, loggedIn=false) {
   const frequencyWeight = userPreferences.factorWeights.frequencyWeight / 100;
   const durationWeight = userPreferences.factorWeights.durationWeight / 100;
 
@@ -351,7 +357,7 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
     worstAcceptableWalk: userPreferences.scoringPreferences.worstAcceptableWalk
   }
 
-  const metrics = await getRoutingData(origin, destination, startDates, userPreferences.routingPreferences, loggedIn);
+  const metrics = await getRoutingData(origin, destination, startDates, userPreferences.routingPreferences, lastRoutingPrefChangeTime, loggedIn);
 
   const rushHourScores = generateRushHourScores(metrics.rushHourMetrics, scoringParams);
   const rushHour = computeWeightedScore(rushHourScores, frequencyWeight, durationWeight);

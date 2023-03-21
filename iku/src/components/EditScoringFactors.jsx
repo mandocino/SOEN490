@@ -24,9 +24,12 @@ import {
   defaultUserFactorWeights,
   defaultUserNightDayWeights,
   defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
+import SteppedSlider from "./custom/SteppedSlider";
 
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
@@ -77,13 +80,15 @@ function CarouselItem(props) {
   )
 }
 
-async function updateUserPreferences(data) {
+async function updateUserPreferences(data, scoring) {
   const currentDate = Date.now();
 
   data._id = mongoose.Types.ObjectId(user_id);
-  data.lastPrefChangeTime = currentDate;
-
-  console.log(data);
+  if (scoring) {
+    data.lastScoringPrefChangeTime = currentDate;
+  } else {
+    data.lastRoutingPrefChangeTime = currentDate;
+  }
 
   return await axios
     .post("http://localhost:5000/modifyUserByID", data)
@@ -93,29 +98,16 @@ async function updateUserPreferences(data) {
 }
 
 export default function EditScoringFactors(props) {
-  const [factorWeights, setFactorWeights] = useState([
-    defaultUserFactorWeights.frequencyWeight,
-    defaultUserFactorWeights.durationWeight
-  ]);
-  const [nightDayWeights, setNightDayWeights] = useState([
-    defaultUserNightDayWeights.weeknightWeight,
-    defaultUserNightDayWeights.fridayNightWeight,
-    defaultUserNightDayWeights.saturdayNightWeight
-  ]);
-  const [nightDirectionWeights, setNightDirectionWeights] = useState([
-    defaultUserNightDirectionWeights.toDestWeight,
-    defaultUserNightDirectionWeights.fromDestWeight
-  ]);
-  const [weekendWeights, setWeekendWeights] = useState([
-    defaultUserWeekendWeights.saturdayWeight,
-    defaultUserWeekendWeights.sundayWeight
-  ]);
-  const [timeSliceWeights, setTimeSliceWeights] = useState([
-    defaultUserTimeSliceWeights.rushHourWeight,
-    defaultUserTimeSliceWeights.offPeakWeight,
-    defaultUserTimeSliceWeights.nightWeight,
-    defaultUserTimeSliceWeights.weekendWeight
-  ]);
+  const [factorWeights, setFactorWeights] = useState([]);
+  const [nightDayWeights, setNightDayWeights] = useState([]);
+  const [nightDirectionWeights, setNightDirectionWeights] = useState([]);
+  const [weekendWeights, setWeekendWeights] = useState([]);
+  const [timeSliceWeights, setTimeSliceWeights] = useState([]);
+  const [consistencyImportance, setConsistencyImportance] = useState([]);
+  const [worstAcceptableFrequency, setWorstAcceptableFrequency] = useState([]);
+  const [worstAcceptableDuration, setWorstAcceptableDuration] = useState([]);
+  const [walkReluctance, setWalkReluctance] = useState([]);
+  const [isWheelChair, setIsWheelChair] = useState([]);
 
   // Fetch user's preferred scoring priorities
   const fetchUserPreferences = async () => {
@@ -136,8 +128,8 @@ export default function EditScoringFactors(props) {
       const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
       const userData = response.data[0];
 
-      const toFetch = [
-        // [converter function, weight name, state setter function, default weights]
+      const weightsToFetch = [
+        // [converterFunction, weightName, stateSetterFunction, defaultWeights]
         [convertUserFactorWeightsToArr, "factorWeights", setFactorWeights, defaultUserFactorWeights],
         [convertUserNightDayWeightsToArr, "nightDayWeights", setNightDayWeights, defaultUserNightDayWeights],
         [convertUserNightDirectionWeightsToArr, "nightDirectionWeights", setNightDirectionWeights, defaultUserNightDirectionWeights],
@@ -145,18 +137,51 @@ export default function EditScoringFactors(props) {
         [convertUserTimeSliceWeightsToArr, "timeSliceWeights", setTimeSliceWeights, defaultUserTimeSliceWeights],
       ]
 
-      for (let i of toFetch) {
+      for (let i of weightsToFetch) {
         const convert = i[0];
         const weightName = i[1];
         const setState = i[2];
         const defaults = i[3];
 
-        const fetched = convert(userData[weightName]);
-        if (userData.hasOwnProperty(weightName) && checkIfWeightsAddTo100(fetched)) {
+        let resetWeights = true
+
+        if (userData.hasOwnProperty(weightName)) {
+          const fetched = convert(userData[weightName]);
+
+          if (checkIfWeightsAddTo100(fetched)) {
+            setState(fetched);
+            resetWeights = false;
+          }
+        }
+
+        if (resetWeights) {
+          await updateUserPreferences({[weightName]: defaults}, true);
+          setState(convert(defaults));
+        }
+      }
+
+      const scoringAndRoutingPreferencesToFetch = [
+        // [weightName, stateSetterFunction, isScoringPreference]
+        ["consistencyImportance", setConsistencyImportance, true],
+        ["worstAcceptableFrequency", setWorstAcceptableFrequency, true],
+        ["worstAcceptableDuration", setWorstAcceptableDuration, true],
+        ["walkReluctance", setWalkReluctance, false],
+        ["isWheelChair", setIsWheelChair, false],
+      ]
+
+      for (let i of scoringAndRoutingPreferencesToFetch) {
+        const weightName = i[0];
+        const setState = i[1];
+        const isScoringPreference = i[2]
+
+        const defaults = isScoringPreference ? defaultUserScoringPreferences : defaultUserRoutingPreferences;
+
+        if (userData.hasOwnProperty(weightName)) {
+          const fetched = userData[weightName];
           setState(fetched);
         } else {
-          await updateUserPreferences({[weightName]: defaults});
-          setState(convert(defaults));
+          await updateUserPreferences({[weightName]: defaults[weightName]}, isScoringPreference);
+          setState(defaults[weightName]);
         }
       }
     }
@@ -189,20 +214,26 @@ export default function EditScoringFactors(props) {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // For these weighted values, we need slider values since
+  //  the slider stores "cumulative" values, but we need non-cumulative ones
   const [factorSliderVal, setFactorSliderVal] = useState([]);
-  const [oldFactorWeights, setOldFactorWeights] = useState([]);
-
   const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
-  const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
-
   const [nightDirectionSliderVal, setNightDirectionSliderVal] = useState([]);
-  const [oldNightDirectionWeights, setOldNightDirectionWeights] = useState([]);
-
   const [weekendSliderVal, setWeekendSliderVal] = useState([]);
-  const [oldWeekendWeights, setOldWeekendWeights] = useState([]);
-
   const [timeSliceSliderVal, setTimeSliceSliderVal] = useState([]);
+
+  // Store the old values, so we can reset the modal when we close it
+  const [oldFactorWeights, setOldFactorWeights] = useState([]);
+  const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
+  const [oldNightDirectionWeights, setOldNightDirectionWeights] = useState([]);
+  const [oldWeekendWeights, setOldWeekendWeights] = useState([]);
   const [oldTimeSliceWeights, setOldTimeSliceWeights] = useState([]);
+
+  const [oldConsistencyImportance, setOldConsistencyImportance] = useState([]);
+  const [oldWorstAcceptableFrequency, setOldWorstAcceptableFrequency] = useState([]);
+  const [oldWorstAcceptableDuration, setOldWorstAcceptableDuration] = useState([]);
+  const [oldWalkReluctance, setOldWalkReluctance] = useState([]);
+  const [oldIsWheelChair, setOldIsWheelChair] = useState([]);
 
   function createCumulativeArray(val) {
     let newArr = [val[0]];
@@ -216,18 +247,22 @@ export default function EditScoringFactors(props) {
     // Save old values in case user clicks cancel
     // TODO: there's probably a better way to do this.
     setOldFactorWeights(factorWeights);
-    setFactorSliderVal(createCumulativeArray(factorWeights));
-
     setOldNightDayWeights(nightDayWeights);
-    setNightDaySliderVal(createCumulativeArray(nightDayWeights));
-
     setOldNightDirectionWeights(nightDirectionWeights);
-    setNightDirectionSliderVal(createCumulativeArray(nightDirectionWeights));
-
     setOldWeekendWeights(weekendWeights);
-    setWeekendSliderVal(createCumulativeArray(weekendWeights));
-
     setOldTimeSliceWeights(timeSliceWeights);
+
+    setOldConsistencyImportance(consistencyImportance);
+    setOldWorstAcceptableFrequency(worstAcceptableFrequency);
+    setOldWorstAcceptableDuration(worstAcceptableDuration);
+    setOldWalkReluctance(walkReluctance);
+    setOldIsWheelChair(isWheelChair);
+
+    // Save the slider values too, for the ones that represent weights
+    setFactorSliderVal(createCumulativeArray(factorWeights));
+    setNightDaySliderVal(createCumulativeArray(nightDayWeights));
+    setNightDirectionSliderVal(createCumulativeArray(nightDirectionWeights));
+    setWeekendSliderVal(createCumulativeArray(weekendWeights));
     setTimeSliceSliderVal(createCumulativeArray(timeSliceWeights));
 
     setIsOpen(true);
@@ -237,18 +272,22 @@ export default function EditScoringFactors(props) {
   function closeModal() {
     // Reset to old values
     setFactorWeights(oldFactorWeights);
-    setFactorSliderVal(createCumulativeArray(oldFactorWeights));
-
     setNightDayWeights(oldNightDayWeights);
-    setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
-
     setNightDirectionWeights(oldNightDirectionWeights);
-    setNightDirectionSliderVal(createCumulativeArray(oldNightDirectionWeights));
-
     setWeekendWeights(oldWeekendWeights);
-    setWeekendSliderVal(createCumulativeArray(oldWeekendWeights));
-
     setTimeSliceWeights(oldTimeSliceWeights);
+
+    setConsistencyImportance(oldConsistencyImportance);
+    setWorstAcceptableFrequency(oldWorstAcceptableFrequency);
+    setWorstAcceptableDuration(oldWorstAcceptableDuration);
+    setWalkReluctance(oldWalkReluctance);
+    setIsWheelChair(oldIsWheelChair);
+
+    // Reset slider values for the ones that represent weights
+    setFactorSliderVal(createCumulativeArray(oldFactorWeights));
+    setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
+    setNightDirectionSliderVal(createCumulativeArray(oldNightDirectionWeights));
+    setWeekendSliderVal(createCumulativeArray(oldWeekendWeights));
     setTimeSliceSliderVal(createCumulativeArray(oldTimeSliceWeights));
 
     // Close modal without saving changes
@@ -394,6 +433,42 @@ export default function EditScoringFactors(props) {
                   </Carousel>
 
                   <div className="flex flex-col gap-8">
+                    <div>
+                      <SteppedSlider
+                        state={[consistencyImportance, setConsistencyImportance]}
+                        step={1}
+                        min={1}
+                        max={3}
+                      />
+                    </div>
+
+                    <div>
+                      <SteppedSlider
+                        state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
+                        step={15}
+                        min={15}
+                        max={180}
+                        />
+                    </div>
+
+                    <div>
+                      <SteppedSlider
+                        state={[worstAcceptableDuration, setWorstAcceptableDuration]}
+                        step={15}
+                        min={15}
+                        max={180}
+                        />
+                    </div>
+
+                    <div>
+                      <SteppedSlider
+                        state={[walkReluctance, setWalkReluctance]}
+                        step={1}
+                        min={1}
+                        max={9}
+                        />
+                    </div>
+
                     <div>
                       <ProportionalSlider
                         sliderState={[factorSliderVal, setFactorSliderVal]}

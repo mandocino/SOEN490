@@ -4,6 +4,7 @@ import {
   defaultUserNightDayWeights,
   defaultUserNightDirectionWeights,
   defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
 } from "./defaultUserPreferences.js";
@@ -33,8 +34,10 @@ const userSchema = new Schema(
     nightDirectionWeights: { type: Object, default: defaultUserNightDirectionWeights },
     weekendWeights: { type: Object, default: defaultUserWeekendWeights },
     timeSliceWeights: { type: Object, default: defaultUserTimeSliceWeights },
+    scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
-    lastPrefChangeTime: { type: Schema.Types.Date, required: true }
+    lastScoringPrefChangeTime: { type: Schema.Types.Date, required: true },
+    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true }
   },
   { collection: "Users" }
 );
