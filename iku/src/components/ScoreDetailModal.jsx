@@ -233,7 +233,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                 <div className="w-full bg-emerald-400 rounded-3xl p-4 flex flex-col mt-2">
                   <div className="w-full grow flex flex-col items-center p-3">
                     <div className="w-full flex flex-col justify-center">
-                      <div className="flex gap-1">
+                      <div className="flex gap-3">
                         {/* First column: Times */}
                         <div className="flex flex-col gap-2 items-center">
                           <div className="invisible bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-3 py-7 h-28 flex flex-col gap-2 justify-between items-center">
@@ -315,6 +315,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
                         {/* Third column: Table and caroussel */}
                         <div className="flex flex-col gap-2 items-center">
                           <table className="border-separate border-spacing-3">
+                            <thead>
                             <tr>
                               <th>
                                 <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
@@ -389,6 +390,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
                                 </div>
                               </th>
                             </tr>
+                            </thead>
+                            <tbody>
                             <tr>
                               <td>
                                 <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
@@ -459,7 +462,14 @@ function ScoreDetailModal({ originLocation, destinations }) {
                                 </div>
                               </td>
                             </tr>
+                            </tbody>
                           </table>
+                            <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-14 w-full ">
+                              <span>Car</span>
+                              <span>Personal Bike</span>
+                              <span>Bixi</span>
+                              <span>Walk</span>
+                          </div>
                         </div>
                       </div>
                     </div>
