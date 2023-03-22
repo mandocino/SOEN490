@@ -28,69 +28,66 @@ function ScoreDetailModal({ originLocation, destinations }) {
     overnight: 0,
   };
 
-  const [activeScoreTime, setActiveScoreTime] = useState('Overall');
+  const [activeScoreTime, setActiveScoreTime] = useState("Overall");
 
   const handleActiveScoreTime = (event) => {
     setActiveScoreTime(event.currentTarget.id);
     event.stopPropagation();
-  }
-
+  };
 
   const addColorsToScores = (allScores) => {
+    // Convert a hue value (in degrees) to a hex RGB representation
+    // Hue in this case refers to the H of an HSV value where S and V are set to 100%
+    function hueToHex(hue) {
+      let quotient = (hue / 60) >> 0;
+      let remainder = (hue % 60) / 60;
+      let r, g, b;
 
-      // Convert a hue value (in degrees) to a hex RGB representation
-  // Hue in this case refers to the H of an HSV value where S and V are set to 100%
-  function hueToHex(hue) {
-    let quotient = (hue / 60) >> 0;
-    let remainder = (hue % 60) / 60;
-    let r, g, b;
+      switch (quotient) {
+        case 0: // 0-59deg
+          r = 255;
+          g = Math.round(255 * remainder);
+          b = 0;
+          break;
+        case 1: // 60-119deg
+          r = Math.round(255 - 255 * remainder);
+          g = 255;
+          b = 0;
+          break;
+        case 2: // 120-179deg
+          r = 0;
+          g = 255;
+          b = Math.round(255 * remainder);
+          break;
+        case 3: // 180-239deg
+          r = 0;
+          g = Math.round(255 - 255 * remainder);
+          b = 255;
+          break;
+        case 4: // 240-299deg
+          r = Math.round(255 * remainder);
+          g = 0;
+          b = 255;
+          break;
+        case 5: // 300-359deg
+          r = 255;
+          g = 0;
+          b = Math.round(255 - 255 * remainder);
+          break;
+      }
 
-    switch (quotient) {
-      case 0: // 0-59deg
-        r = 255;
-        g = Math.round(255 * remainder);
-        b = 0;
-        break;
-      case 1: // 60-119deg
-        r = Math.round(255 - 255 * remainder);
-        g = 255;
-        b = 0;
-        break;
-      case 2: // 120-179deg
-        r = 0;
-        g = 255;
-        b = Math.round(255 * remainder);
-        break;
-      case 3: // 180-239deg
-        r = 0;
-        g = Math.round(255 - 255 * remainder);
-        b = 255;
-        break;
-      case 4: // 240-299deg
-        r = Math.round(255 * remainder);
-        g = 0;
-        b = 255;
-        break;
-      case 5: // 300-359deg
-        r = 255;
-        g = 0;
-        b = Math.round(255 - 255 * remainder);
-        break;
+      // Convert the RGB set into its hex representation
+      const hex =
+        "#" +
+        [r, g, b]
+          .map((x) => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? "0" + hex : hex;
+          })
+          .join("");
+
+      return hex;
     }
-
-    // Convert the RGB set into its hex representation
-    const hex =
-      "#" +
-      [r, g, b]
-        .map((x) => {
-          const hex = x.toString(16);
-          return hex.length === 1 ? "0" + hex : hex;
-        })
-        .join("");
-
-    return hex;
-  }
-
 
     const hueLowerBound = 310;
     const hueUpperBound = 160;
@@ -110,7 +107,7 @@ function ScoreDetailModal({ originLocation, destinations }) {
     // Append the corresponding colors to each score value (overall, rushHour, etc)
     for (let score in scores) {
       const i = scores[score];
-      let hue = (hueScale * i + hueLowerBound) % 360
+      let hue = (hueScale * i + hueLowerBound) % 360;
       if (hue < 0) {
         hue += 360;
       }
@@ -229,64 +226,66 @@ function ScoreDetailModal({ originLocation, destinations }) {
                   as="h3"
                   className="text-3xl py-2.5 font-medium leading-6 text-emerald-500 pl-5 "
                 >
-                  <div className="inline">Details</div>
+                  <div className="flex">
+                    <div className="inline flex flex-row">Details</div>
 
-                  <Tooltip
-                    title={
-                      <table className="table-auto border-separate">
-                        <thead>
-                          <tr>
-                            <th>Transit Score Description</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>90-100</td>
-                            <td>Rider's Paradise</td>
-                          </tr>
-                          <tr>
-                            <td>70-89</td>
-                            <td>Excellent Transit</td>
-                          </tr>
-                          <tr>
-                            <td>50-69</td>
-                            <td>Good Transit</td>
-                          </tr>
-                          <tr>
-                            <td>25-49</td>
-                            <td>Some Transit</td>
-                          </tr>
-                          <tr>
-                            <td>0-24</td>
-                            <td>Minimal Transit</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    }
-                    placement="right"
-                    className="pl-3"
-                  >
-                    <button
-                      type="button"
-                      className="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"
-                      on={1}
+                    <Tooltip
+                      title={
+                        <table className="table-auto border-separate">
+                          <thead>
+                            <tr>
+                              <th>Transit Score Description</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>90-100</td>
+                              <td>Rider's Paradise</td>
+                            </tr>
+                            <tr>
+                              <td>70-89</td>
+                              <td>Excellent Transit</td>
+                            </tr>
+                            <tr>
+                              <td>50-69</td>
+                              <td>Good Transit</td>
+                            </tr>
+                            <tr>
+                              <td>25-49</td>
+                              <td>Some Transit</td>
+                            </tr>
+                            <tr>
+                              <td>0-24</td>
+                              <td>Minimal Transit</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      }
+                      placement="right"
+                      className="pl-3"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                        stroke="currentColor"
-                        className="w-6 h-6 inline"
+                      <button
+                        type="button"
+                        className="w-8 h-8 items-center justify-center transition ease-in-out font-semibold rounded-lg text-md  text-emerald-600 dark:text-emerald-800 hover:bg-white"
+                        on={1}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-                        />
-                      </svg>
-                    </button>
-                  </Tooltip>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          className="w-6 h-6 inline"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                          />
+                        </svg>
+                      </button>
+                    </Tooltip>
+                  </div>
 
                   <div className="float-right absolute right-4 top-4 ">
                     <button type="button" onClick={closeModal}>
@@ -334,19 +333,64 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <div className="invisible bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-3 py-7 h-28 flex flex-col gap-2 justify-between items-center">
                             <span>Placeholder</span>
                           </div>
-                          <button type="button" id="Overall" onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Overall' ? 'bg-emerald-600' : ''}`}>
+                          <button
+                            type="button"
+                            id="Overall"
+                            onClick={handleActiveScoreTime}
+                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
+                              activeScoreTime === "Overall"
+                                ? "bg-emerald-600"
+                                : ""
+                            }`}
+                          >
                             <span>Overall</span>
                           </button>
-                          <button type="button" id="Rush-Hour" onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Rush-Hour' ? 'bg-emerald-600' : ''}`}>
+                          <button
+                            type="button"
+                            id="Rush-Hour"
+                            onClick={handleActiveScoreTime}
+                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
+                              activeScoreTime === "Rush-Hour"
+                                ? "bg-emerald-600"
+                                : ""
+                            }`}
+                          >
                             <span>Rush-Hour</span>
                           </button>
-                          <button type="button" id="Off-Peak"  onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Off-Peak' ? 'bg-emerald-600' : ''}`}>
+                          <button
+                            type="button"
+                            id="Off-Peak"
+                            onClick={handleActiveScoreTime}
+                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
+                              activeScoreTime === "Off-Peak"
+                                ? "bg-emerald-600"
+                                : ""
+                            }`}
+                          >
                             <span>Off-Peak</span>
                           </button>
-                          <button type="button" id="Weekend"  onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Weekend' ? 'bg-emerald-600' : ''}`}>
+                          <button
+                            type="button"
+                            id="Weekend"
+                            onClick={handleActiveScoreTime}
+                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
+                              activeScoreTime === "Weekend"
+                                ? "bg-emerald-600"
+                                : ""
+                            }`}
+                          >
                             <span>Weekend</span>
                           </button>
-                          <button type="button" id="Overnight"  onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Overnight' ? 'bg-emerald-600' : ''}`}>
+                          <button
+                            type="button"
+                            id="Overnight"
+                            onClick={handleActiveScoreTime}
+                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
+                              activeScoreTime === "Overnight"
+                                ? "bg-emerald-600"
+                                : ""
+                            }`}
+                          >
                             <span>Overnight</span>
                           </button>
                         </div>
@@ -365,7 +409,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            borderColor={savedScores.overallColor} textColor={savedScores.overallColor}
+                            borderColor={savedScores.overallColor}
+                            textColor={savedScores.overallColor}
                           >
                             {savedScores.overall}
                           </CircleWithText>
@@ -373,7 +418,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            borderColor={savedScores.rushHourColor} textColor={savedScores.rushHourColor}
+                            borderColor={savedScores.rushHourColor}
+                            textColor={savedScores.rushHourColor}
                           >
                             {savedScores.rushHour}
                           </CircleWithText>
@@ -381,7 +427,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            borderColor={savedScores.offPeakColor} textColor={savedScores.offPeakColor}
+                            borderColor={savedScores.offPeakColor}
+                            textColor={savedScores.offPeakColor}
                           >
                             {savedScores.offPeak}
                           </CircleWithText>
@@ -389,7 +436,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            borderColor={savedScores.weekendColor} textColor={savedScores.weekendColor}
+                            borderColor={savedScores.weekendColor}
+                            textColor={savedScores.weekendColor}
                           >
                             {savedScores.weekend}
                           </CircleWithText>
@@ -397,7 +445,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
                             className="pl-3"
                             size="w-14 h-14"
                             textClass="text-lg font-bold"
-                            borderColor={savedScores.overnightColor} textColor={savedScores.overnightColor}
+                            borderColor={savedScores.overnightColor}
+                            textColor={savedScores.overnightColor}
                           >
                             {savedScores.overnight}
                           </CircleWithText>
