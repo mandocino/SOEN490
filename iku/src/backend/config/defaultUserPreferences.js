@@ -27,7 +27,7 @@ export const defaultUserTimeSliceWeights = {
 }
 
 export const defaultUserScoringPreferences = {
-  consistencyImportance: 2,
+  consistencyImportance: 'balanced',
   worstAcceptableFrequency: 75,
   worstAcceptableDuration: 120
 }

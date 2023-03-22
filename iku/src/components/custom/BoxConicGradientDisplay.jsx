@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function BoxConicGradientDisplay({values, colors, names, icons, max=100}) {
+export default function BoxConicGradientDisplay({values, colors, names, icons, max=100, twoCols=false}) {
   const numValues = values.length;
 
   let gradientLines = `${colors[0]} 90deg, `;
@@ -11,6 +11,9 @@ export default function BoxConicGradientDisplay({values, colors, names, icons, m
   }
   gradientLines += `${colors[numValues-1]} 270deg`;
   const boxConicGradient = `conic-gradient(from 180deg at 50% 100%, ${gradientLines})`;
+
+  const gridCols = twoCols ? 'grid-cols-2' : 'grid-cols-1';
+  const textSize = twoCols ? 'text-xl' : 'text-xl';
 
   // ALTERNATIVE BOX CONIC
   // NOTE: If using this update to dynamically match values
@@ -27,7 +30,7 @@ export default function BoxConicGradientDisplay({values, colors, names, icons, m
   let lines = [];
   for (let i=0; i<numValues; i++) {
     lines.push(
-      <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center" key={i}>
+      <div className={`font-semibold ${textSize} rounded-2xl px-4 py-2 flex gap-2 justify-start items-center`} key={i}>
         {icons[i]}
         <span>{names[i]}: {values[i]}%</span>
       </div>
@@ -36,7 +39,7 @@ export default function BoxConicGradientDisplay({values, colors, names, icons, m
 
   return (
     <>
-      <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"
+      <div className={` text-white w-full rounded-3xl p-4 grid ${gridCols}`}
            style={{background: boxConicGradient}}>
         {lines}
       </div>

@@ -336,15 +336,15 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
   const cvParamIndex = userPreferences.scoringPreferences.consistencyImportance;
 
   switch (cvParamIndex) {
-    case 1:
+    case 'moreConsistent':
       cvParams.offset = 2.4;
       cvParams.ratio = 0.125;
       break;
-    case 2:
+    case 'balanced':
       cvParams.offset = 1.4;
       cvParams.ratio = 0.5;
       break;
-    case 3:
+    case 'betterAverages':
       cvParams.offset = 0.8;
       cvParams.ratio = 8;
       break;

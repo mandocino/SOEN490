@@ -30,6 +30,7 @@ import {
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
 import SteppedSlider from "./custom/SteppedSlider";
+import {ToggleButton, ToggleButtonGroup} from "@mui/material";
 
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
@@ -317,6 +318,12 @@ export default function EditScoringFactors(props) {
     window.location.reload(false);
   };
 
+  const handleConsistencyImportance = (event, newValue) => {
+    if (newValue !== null) {
+      setConsistencyImportance(newValue);
+    }
+  };
+
   return (
     <>
       <div>
@@ -433,13 +440,42 @@ export default function EditScoringFactors(props) {
                   </Carousel>
 
                   <div className="flex flex-col gap-8">
-                    <div>
-                      <SteppedSlider
-                        state={[consistencyImportance, setConsistencyImportance]}
-                        step={1}
-                        min={1}
-                        max={3}
-                      />
+                    <div className="rounded-xl bg-emerald-darkest flex items-center justify-center">
+                      <ToggleButtonGroup
+                        value={consistencyImportance}
+                        exclusive
+                        onChange={handleConsistencyImportance}
+                        aria-label="consistency importance"
+                        sx={{
+                          '& .MuiToggleButtonGroup-grouped': {
+                            height: '2.5rem',
+                            margin: "0.25rem 0.25rem",
+                            backgroundColor: "#aaa",
+                            '&:focus, &:hover, &.Mui-active': {
+                              backgroundColor: "#fff"
+                            },
+                            '&:not(:first-of-type)': {
+                              borderRadius: "0.5rem",
+                            },
+                            '&:first-of-type': {
+                              borderRadius: "0.5rem",
+                            },
+                          },
+                          '& .Mui-selected': {
+                            backgroundColor: "#eee",
+                          }
+                        }}
+                      >
+                        <ToggleButton value="moreConsistent" aria-label="left aligned">
+                          <span>Consistent</span>
+                        </ToggleButton>
+                        <ToggleButton value="balanced" aria-label="centered">
+                          <span>Balanced</span>
+                        </ToggleButton>
+                        <ToggleButton value="betterAverages" aria-label="right aligned">
+                          <span>Max Average</span>
+                        </ToggleButton>
+                      </ToggleButtonGroup>
                     </div>
 
                     <div>
@@ -536,6 +572,7 @@ export default function EditScoringFactors(props) {
                         colors={timeSliceHexColors}
                         names={timeSliceNames}
                         icons={timeSliceIcons}
+                        twoCols={true}
                       />
                     </div>
                   </div>
