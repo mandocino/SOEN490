@@ -28,6 +28,12 @@ function ScoreDetailModal({ originLocation, destinations }) {
     overnight: 0,
   };
 
+  const [activeScoreTime, setActiveScoreTime] = useState('Overall');
+
+  const handleActiveScoreTime = (event) => {
+    setActiveScoreTime(event.currentTarget.id);
+    event.stopPropagation();
+  }
 
 
   const addColorsToScores = (allScores) => {
@@ -328,21 +334,21 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <div className="invisible bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-3 py-7 h-28 flex flex-col gap-2 justify-between items-center">
                             <span>Placeholder</span>
                           </div>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                          <button type="button" id="Overall" onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Overall' ? 'bg-emerald-600' : ''}`}>
                             <span>Overall</span>
-                          </div>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                          </button>
+                          <button type="button" id="Rush-Hour" onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Rush-Hour' ? 'bg-emerald-600' : ''}`}>
                             <span>Rush-Hour</span>
-                          </div>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex gap-2 justify-between items-center">
+                          </button>
+                          <button type="button" id="Off-Peak"  onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Off-Peak' ? 'bg-emerald-600' : ''}`}>
                             <span>Off-Peak</span>
-                          </div>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                          </button>
+                          <button type="button" id="Weekend"  onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Weekend' ? 'bg-emerald-600' : ''}`}>
                             <span>Weekend</span>
-                          </div>
-                          <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 h-14 flex flex-col gap-2 justify-between items-center">
+                          </button>
+                          <button type="button" id="Overnight"  onClick={handleActiveScoreTime} className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${activeScoreTime === 'Overnight' ? 'bg-emerald-600' : ''}`}>
                             <span>Overnight</span>
-                          </div>
+                          </button>
                         </div>
                         {/* Second column: Score */}
                         <div className="flex flex-col gap-2 items-center">
