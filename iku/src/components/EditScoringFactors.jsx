@@ -154,7 +154,10 @@ export default function EditScoringFactors(props) {
     if(user_id === null) {
       let preferences = JSON.parse(sessionStorage.getItem("preferences"));
 
-      preferences.factorWeights = factorWeights;
+      preferences.factorWeights = {
+            frequencyWeight: factorWeights[0]/100,
+            durationWeight: factorWeights[1]/100
+          };
 
       sessionStorage.setItem("preferences", JSON.stringify(preferences));
     } else {
