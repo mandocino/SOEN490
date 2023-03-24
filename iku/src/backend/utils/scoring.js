@@ -122,7 +122,7 @@ export async function loadScores(origin, destinations, userID) {
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
       if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
-        savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn);
+        savedScores = await thisModule.generateNewScores(origin, destinations, userID);
         break;
       }
       scores.push(score);
