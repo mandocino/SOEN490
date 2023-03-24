@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from "react";
 import Carousel from 'react-material-ui-carousel';
 import ProportionalSlider from "./custom/ProportionalSlider";
 import axios from "axios";
-import {Dialog, Transition} from '@headlessui/react';
+// import {Dialog, Transition} from '@headlessui/react';
 import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
 import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
@@ -30,7 +30,8 @@ import {
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
 import SteppedSlider from "./custom/SteppedSlider";
-import {ToggleButton, ToggleButtonGroup} from "@mui/material";
+import {Dialog, DialogTitle, ToggleButton, ToggleButtonGroup} from "@mui/material";
+import {styled} from "@mui/material/styles";
 
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
@@ -334,6 +335,23 @@ export default function EditScoringFactors(props) {
     }
   };
 
+  const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+    '& .MuiToggleButtonGroup-grouped': {
+      margin: theme.spacing(0.5),
+      border: 0,
+      '&.Mui-disabled': {
+        border: 0,
+      },
+      '&:not(:first-of-type)': {
+        borderRadius: theme.shape.borderRadius,
+      },
+      '&:first-of-type': {
+        borderRadius: theme.shape.borderRadius,
+      },
+    },
+  }));
+
+
   return (
     <>
       <div>
@@ -352,297 +370,276 @@ export default function EditScoringFactors(props) {
         </button>
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-75"/>
-          </Transition.Child>
+      <Dialog open={isOpen} onClose={closeModal}
+              sx={{
+                '& .MuiBackdrop-root': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                  backdropFilter: 'blur(8px)'
+                }
+              }}
+      >
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div
+              className="w-full max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
+              style={factorInfo ? {
+                transform: 'translate(calc(-50% - 0.5rem))'
+              } : {
+                transform: 'translate(0)'
+              }}
+            >
+              <div className="flex justify-between gap-2 pb-1">
+                <DialogTitle
+                  as="h3"
+                  className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center"
+                  sx={{ p: 0 }}
+                >
+                  Edit scoring factors
+                </DialogTitle>
+              </div>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-
-
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel>
-
-                  <div
-                    className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-                    style={factorInfo ? {
-                      transform: 'translate(calc(50% + 0.5rem))'
-                    } : {
-                      transform: 'translate(0)'
+              <hr className="mb-8 dark:border-emerald-700"></hr>
+              <div className="flex flex-col gap-8">
+                <div className="rounded-xl bg-emerald-darkest flex items-center justify-center">
+                  <ToggleButtonGroup
+                    value={consistencyImportance}
+                    exclusive
+                    onChange={handleConsistencyImportance}
+                    aria-label="consistency importance"
+                    sx={{
+                      '& .MuiToggleButtonGroup-root': {
+                        width: '100%',
+                      },
+                      '& .MuiToggleButtonGroup-grouped': {
+                        height: '2.5rem',
+                        margin: "0.125rem 0.125rem",
+                        color: "black",
+                        backgroundColor: "#999",
+                        '&.Mui-selected': {
+                          backgroundColor: "#eee",
+                          '&:hover, & .Mui-active': {
+                            backgroundColor: "#fff"
+                          },
+                        },
+                        '&:hover, & .Mui-active': {
+                          backgroundColor: "#fff"
+                        },
+                        '& .MuiTouchRipple-child': {
+                          backgroundColor: '#10b981'
+                        },
+                      },
                     }}
                   >
-                    <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white"
-                              sx={{
-                                button: {
-                                  '&:hover': {
-                                    opacity: '1 !important'
-                                  }
-                                },
-                                buttonWrapper: {
-                                  '&:hover': {
-                                    '& $button': {
-                                      backgroundColor: "black",
-                                      filter: "brightness(120%)",
-                                      opacity: "1"
-                                    }
-                                  }
-                                },
-                              }}>
-                      <CarouselItem>
-                        <div className="mb-4">
-                          The three adjustable scoring factors are the <b className={color1.text}>frequency</b> and
-                          the <b className={color2.text}>duration</b>. Use the slider below to adjust the
-                          proportional impact of these factors.
-                        </div>
+                    <ToggleButton value="moreConsistent" aria-label="left aligned">
+                      <span>Consistent</span>
+                    </ToggleButton>
+                    <ToggleButton value="balanced" aria-label="centered">
+                      <span>Balanced</span>
+                    </ToggleButton>
+                    <ToggleButton value="betterAverages" aria-label="right aligned">
+                      <span>Max Average</span>
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </div>
 
-                        <div className="mb-4">
-                          If you need explanations on what these factors mean, or guidance on how to set these scoring
-                          factors, click the arrows on the sides (or swipe left) to view details.
-                        </div>
-                      </CarouselItem>
+                <div>
+                  <SteppedSlider
+                    state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
+                    step={15}
+                    min={15}
+                    max={180}
+                  />
+                </div>
 
-                      <CarouselItem>
-                        <div className="mb-4">
-                          The <b className={color1.text}>frequency</b> refers to the gap between departures: if the
-                          departures are spaced on average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM,
-                          etc.), then the frequency is 15. The frequency is by far regarded to be the most important
-                          aspect of any transit service.
-                        </div>
+                <div>
+                  <SteppedSlider
+                    state={[worstAcceptableDuration, setWorstAcceptableDuration]}
+                    step={15}
+                    min={15}
+                    max={180}
+                  />
+                </div>
 
-                        <div className="mb-4">
-                          By default, the frequency represents 70% of the grade. Because of its importance, it is
-                          recommended that the frequency remains a huge proportion of the grade.
-                        </div>
-                      </CarouselItem>
+                <div>
+                  <SteppedSlider
+                    state={[walkReluctance, setWalkReluctance]}
+                    step={1}
+                    min={1}
+                    max={9}
+                  />
+                </div>
 
-                      <CarouselItem>
-                        <div className="mb-4">
-                          The <b className={color2.text}>duration</b> refers to the the total trip time, including
-                          any transfer wait times: if you board your first bus at 9am and you arrive at your destination
-                          at 9.45am, then the duration is 45 minutes.
-                        </div>
+                <div>
+                  <ProportionalSlider
+                    sliderState={[factorSliderVal, setFactorSliderVal]}
+                    valueState={[factorWeights, setFactorWeights]}
+                    sliderColors={factorHexColors}
+                  />
+                  <BoxConicGradientDisplay
+                    values={factorWeights}
+                    colors={factorHexColors}
+                    names={factorNames}
+                    icons={factorIcons}
+                  />
+                  <button onClick={() => {setFactorInfo(!factorInfo)}}>Show help</button>
+                </div>
 
-                        <div className="mb-4">
-                          By default, the duration represents 20% of the grade. It is tempting to set the duration to a
-                          large proportion, but consider that long durations do not necessarily indicate bad transit;
-                          longer distances naturally involve longer commutes, whether by transit or by driving.
-                        </div>
-                      </CarouselItem>
-                    </Carousel>
-                  </div>
-                  <div
-                    className="w-full max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-                    style={factorInfo ? {
-                    transform: 'translate(calc(-50% - 0.5rem))'
-                    } : {
-                    transform: 'translate(0)'
-                    }}
-                  >
-                    <div className="flex justify-between gap-2 pb-1">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center"
-                      >
-                        Edit scoring factors
-                      </Dialog.Title>
-                    </div>
+                <div>
+                  <ProportionalSlider
+                    sliderState={[nightDaySliderVal, setNightDaySliderVal]}
+                    valueState={[nightDayWeights, setNightDayWeights]}
+                    sliderColors={nightDayHexColors}
+                  />
+                  <BoxConicGradientDisplay
+                    values={nightDayWeights}
+                    colors={nightDayHexColors}
+                    names={nightDayNames}
+                    icons={nightDayIcons}
+                  />
+                </div>
 
-                    <hr className="mb-8 dark:border-emerald-700"></hr>
-                    <div className="flex flex-col gap-8">
-                      <div className="rounded-xl bg-emerald-darkest flex items-center justify-center">
-                        <ToggleButtonGroup
-                          value={consistencyImportance}
-                          exclusive
-                          onChange={handleConsistencyImportance}
-                          aria-label="consistency importance"
-                          sx={{
-                            '& .MuiToggleButtonGroup-grouped': {
-                              height: '2.5rem',
-                              margin: "0.25rem 0.25rem",
-                              color: "black",
-                              backgroundColor: "#999",
-                              '&:hover, & .Mui-active': {
-                                backgroundColor: "#fff"
-                              },
-                              '&:not(:first-of-type)': {
-                                borderRadius: "0.5rem",
-                              },
-                              '&:first-of-type': {
-                                borderRadius: "0.5rem",
-                              },
-                            },
-                            '& .Mui-selected': {
-                              backgroundColor: "#eee",
-                            },
-                            '.MuiTouchRipple-child': {
-                              backgroundColor: '#10b981'
-                            }
-                          }}
-                        >
-                          <ToggleButton value="moreConsistent" aria-label="left aligned">
-                            <span>Consistent</span>
-                          </ToggleButton>
-                          <ToggleButton value="balanced" aria-label="centered">
-                            <span>Balanced</span>
-                          </ToggleButton>
-                          <ToggleButton value="betterAverages" aria-label="right aligned">
-                            <span>Max Average</span>
-                          </ToggleButton>
-                        </ToggleButtonGroup>
-                      </div>
+                <div>
+                  <ProportionalSlider
+                    sliderState={[nightDirectionSliderVal, setNightDirectionSliderVal]}
+                    valueState={[nightDirectionWeights, setNightDirectionWeights]}
+                    sliderColors={nightDirectionHexColors}
+                  />
+                  <BoxConicGradientDisplay
+                    values={nightDirectionWeights}
+                    colors={nightDirectionHexColors}
+                    names={nightDirectionNames}
+                    icons={nightDirectionIcons}
+                  />
+                </div>
 
-                      <div>
-                        <SteppedSlider
-                          state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
-                          step={15}
-                          min={15}
-                          max={180}
-                        />
-                      </div>
+                <div>
+                  <ProportionalSlider
+                    sliderState={[weekendSliderVal, setWeekendSliderVal]}
+                    valueState={[weekendWeights, setWeekendWeights]}
+                    sliderColors={weekendHexColors}
+                  />
+                  <BoxConicGradientDisplay
+                    values={weekendWeights}
+                    colors={weekendHexColors}
+                    names={weekendNames}
+                    icons={weekendIcons}
+                  />
+                </div>
 
-                      <div>
-                        <SteppedSlider
-                          state={[worstAcceptableDuration, setWorstAcceptableDuration]}
-                          step={15}
-                          min={15}
-                          max={180}
-                        />
-                      </div>
-
-                      <div>
-                        <SteppedSlider
-                          state={[walkReluctance, setWalkReluctance]}
-                          step={1}
-                          min={1}
-                          max={9}
-                        />
-                      </div>
-
-                      <div>
-                        <ProportionalSlider
-                          sliderState={[factorSliderVal, setFactorSliderVal]}
-                          valueState={[factorWeights, setFactorWeights]}
-                          sliderColors={factorHexColors}
-                        />
-                        <BoxConicGradientDisplay
-                          values={factorWeights}
-                          colors={factorHexColors}
-                          names={factorNames}
-                          icons={factorIcons}
-                        />
-                        <button onClick={() => {setFactorInfo(!factorInfo)}}>Show help</button>
-                      </div>
-
-                      <div>
-                        <ProportionalSlider
-                          sliderState={[nightDaySliderVal, setNightDaySliderVal]}
-                          valueState={[nightDayWeights, setNightDayWeights]}
-                          sliderColors={nightDayHexColors}
-                        />
-                        <BoxConicGradientDisplay
-                          values={nightDayWeights}
-                          colors={nightDayHexColors}
-                          names={nightDayNames}
-                          icons={nightDayIcons}
-                        />
-                      </div>
-
-                      <div>
-                        <ProportionalSlider
-                          sliderState={[nightDirectionSliderVal, setNightDirectionSliderVal]}
-                          valueState={[nightDirectionWeights, setNightDirectionWeights]}
-                          sliderColors={nightDirectionHexColors}
-                        />
-                        <BoxConicGradientDisplay
-                          values={nightDirectionWeights}
-                          colors={nightDirectionHexColors}
-                          names={nightDirectionNames}
-                          icons={nightDirectionIcons}
-                        />
-                      </div>
-
-                      <div>
-                        <ProportionalSlider
-                          sliderState={[weekendSliderVal, setWeekendSliderVal]}
-                          valueState={[weekendWeights, setWeekendWeights]}
-                          sliderColors={weekendHexColors}
-                        />
-                        <BoxConicGradientDisplay
-                          values={weekendWeights}
-                          colors={weekendHexColors}
-                          names={weekendNames}
-                          icons={weekendIcons}
-                        />
-                      </div>
-
-                      <div>
-                        <ProportionalSlider
-                          sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
-                          valueState={[timeSliceWeights, setTimeSliceWeights]}
-                          sliderColors={timeSliceHexColors}
-                        />
-                        <BoxConicGradientDisplay
-                          values={timeSliceWeights}
-                          colors={timeSliceHexColors}
-                          names={timeSliceNames}
-                          icons={timeSliceIcons}
-                          twoCols={true}
-                        />
-                      </div>
-                    </div>
+                <div>
+                  <ProportionalSlider
+                    sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
+                    valueState={[timeSliceWeights, setTimeSliceWeights]}
+                    sliderColors={timeSliceHexColors}
+                  />
+                  <BoxConicGradientDisplay
+                    values={timeSliceWeights}
+                    colors={timeSliceHexColors}
+                    names={timeSliceNames}
+                    icons={timeSliceIcons}
+                    twoCols={true}
+                  />
+                </div>
+              </div>
 
 
-                    <div className="mt-4 flex gap-2">
-                      <button
-                        type="button"
-                        onClick={submitHandler}
-                        className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                             stroke="currentColor" className="w-6 h-6">
-                          <path strokeLinecap="round" strokeLinejoin="round"
-                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        onClick={closeModal}
-                        className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                             stroke="currentColor" className="w-6 h-6">
-                          <path strokeLinecap="round" strokeLinejoin="round"
-                                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
+              <div className="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onClick={submitHandler}
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                       stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                       stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Cancel
+                </button>
+              </div>
             </div>
+            <div
+              className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
+              style={factorInfo ? {
+                transform: 'translate(calc(50% + 0.5rem))'
+              } : {
+                transform: 'translate(0)'
+              }}
+            >
+              <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white"
+                        sx={{
+                          button: {
+                            '&:hover': {
+                              opacity: '1 !important'
+                            }
+                          },
+                          buttonWrapper: {
+                            '&:hover': {
+                              '& $button': {
+                                backgroundColor: "black",
+                                filter: "brightness(120%)",
+                                opacity: "1"
+                              }
+                            }
+                          },
+                        }}>
+                <CarouselItem>
+                  <div className="mb-4">
+                    The three adjustable scoring factors are the <b className={color1.text}>frequency</b> and
+                    the <b className={color2.text}>duration</b>. Use the slider below to adjust the
+                    proportional impact of these factors.
+                  </div>
+
+                  <div className="mb-4">
+                    If you need explanations on what these factors mean, or guidance on how to set these scoring
+                    factors, click the arrows on the sides (or swipe left) to view details.
+                  </div>
+                </CarouselItem>
+
+                <CarouselItem>
+                  <div className="mb-4">
+                    The <b className={color1.text}>frequency</b> refers to the gap between departures: if the
+                    departures are spaced on average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM,
+                    etc.), then the frequency is 15. The frequency is by far regarded to be the most important
+                    aspect of any transit service.
+                  </div>
+
+                  <div className="mb-4">
+                    By default, the frequency represents 70% of the grade. Because of its importance, it is
+                    recommended that the frequency remains a huge proportion of the grade.
+                  </div>
+                </CarouselItem>
+
+                <CarouselItem>
+                  <div className="mb-4">
+                    The <b className={color2.text}>duration</b> refers to the the total trip time, including
+                    any transfer wait times: if you board your first bus at 9am and you arrive at your destination
+                    at 9.45am, then the duration is 45 minutes.
+                  </div>
+
+                  <div className="mb-4">
+                    By default, the duration represents 20% of the grade. It is tempting to set the duration to a
+                    large proportion, but consider that long durations do not necessarily indicate bad transit;
+                    longer distances naturally involve longer commutes, whether by transit or by driving.
+                  </div>
+                </CarouselItem>
+              </Carousel>
+        </div>
           </div>
-        </Dialog>
-      </Transition>
+        </div>
+      </Dialog>
     </>
   )
 }
