@@ -45,7 +45,10 @@ export async function handleGetRoutingData(
 ){
   // Attempt to fetch the routes data from the db
   let routingData;
-  const fetchedData = await thisModule.fetchRoutingData(origin, destination);
+  let fetchedData;
+  if(typeof origin._id != "number" && typeof destination._id != "number" ) {
+    fetchedData = await thisModule.fetchRoutingData(origin, destination);
+  }
 
   // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
   const timeValues = await axios.get('http://localhost:5000/global/');

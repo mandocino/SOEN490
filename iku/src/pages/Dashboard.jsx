@@ -148,7 +148,6 @@ export default function Dashboard() {
     originsWithScores = await Promise.all(rawOrigins.map(async o => ({
       ...o, scores: await loadScores(o, destinations, user_id)
     })));
-
     if(rawCurrentHome) {
       setCurrentHome({
         ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id)

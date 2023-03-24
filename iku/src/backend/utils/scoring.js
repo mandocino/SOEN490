@@ -159,40 +159,42 @@ export async function generateNewScores(origin, destinations, userID) {
   let weekend = 0;
   let overnight = 0;
 
-  const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-  const userData = user.data[0];
-
+  let user;
+  let userData;
+  if(userID != null) {
+    user = await axios.get(`http://localhost:5000/userByID/${userID}`);
+    userData = user.data[0];
+  }
   // TODO: Either update user document in db to the default preferences or show an alert in frontend
-  if (userData.hasOwnProperty('factorWeights')) {
+  if (userData && userData.hasOwnProperty('factorWeights')) {
     factorWeights = userData.factorWeights;
   } else {
     factorWeights = defaultUserFactorWeights;
   }
 
-  if (userData.hasOwnProperty('nightWeights')) {
+  if (userData && userData.hasOwnProperty('nightWeights')) {
     nightWeights = userData.nightWeights;
   } else {
     nightWeights = defaultUserNightWeights;
   }
 
-  if (userData.hasOwnProperty('weekendWeights')) {
+  if (userData && userData.hasOwnProperty('weekendWeights')) {
     weekendWeights = userData.weekendWeights;
   } else {
     weekendWeights = defaultUserWeekendWeights;
   }
 
-  if (userData.hasOwnProperty('scoringWeights')) {
+  if (userData && userData.hasOwnProperty('scoringWeights')) {
     scoringWeights = userData.scoringWeights;
   } else {
     scoringWeights = defaultUserScoringWeights;
   }
 
-  if (userData.hasOwnProperty('routingPreferences')) {
+  if (userData && userData.hasOwnProperty('routingPreferences')) {
     routingPreferences = userData.routingPreferences;
   } else {
     routingPreferences = defaultUserRoutingPreferences;
   }
-
   userPreferences = {
     factorWeights: factorWeights,
     nightWeights: nightWeights,
