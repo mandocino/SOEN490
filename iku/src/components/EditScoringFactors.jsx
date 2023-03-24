@@ -112,14 +112,8 @@ export default function EditScoringFactors(props) {
   const [isWheelChair, setIsWheelChair] = useState([]);
 
 
-  const [factorInfo, setFactorInfo] = useState(false);
-  const [nightDayInfo, setNightDayInfo] = useState(false);
-  const [nightDirectionInfo, setNightDirectionInfo] = useState(false);
-  const [weekendInfo, setWeekendInfo] = useState(false);
-  const [timeSliceInfo, setTimeSliceInfo] = useState(false);
-  const [worstAcceptableInfo, setWorstAcceptableInfo] = useState(false);
-  const [walkReluctanceInfo, setWalkReluctanceInfo] = useState(false);
-  const [isWheelChairInfo, setIsWheelChairInfo] = useState(false);
+  const [infoPopover, setInfoPopover] = useState(false);
+  const [infoPopoverContent, setInfoPopoverContent] = useState(false);
 
   // Fetch user's preferred scoring priorities
   const fetchUserPreferences = async () => {
@@ -335,21 +329,15 @@ export default function EditScoringFactors(props) {
     }
   };
 
-  const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-    '& .MuiToggleButtonGroup-grouped': {
-      margin: theme.spacing(0.5),
-      border: 0,
-      '&.Mui-disabled': {
-        border: 0,
-      },
-      '&:not(:first-of-type)': {
-        borderRadius: theme.shape.borderRadius,
-      },
-      '&:first-of-type': {
-        borderRadius: theme.shape.borderRadius,
-      },
-    },
-  }));
+  const handleOpenInfoPopover = (newSetting) => {
+    if (newSetting === infoPopoverContent) {
+      setInfoPopover(false);
+      setInfoPopoverContent(null);
+    } else {
+      setInfoPopover(true);
+      setInfoPopoverContent(newSetting);
+    }
+  }
 
 
   return (
@@ -382,7 +370,7 @@ export default function EditScoringFactors(props) {
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <div
               className="w-full max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-              style={factorInfo ? {
+              style={infoPopover ? {
                 transform: 'translate(calc(-50% - 0.5rem))'
               } : {
                 transform: 'translate(0)'
@@ -481,7 +469,7 @@ export default function EditScoringFactors(props) {
                     names={factorNames}
                     icons={factorIcons}
                   />
-                  <button onClick={() => {setFactorInfo(!factorInfo)}}>Show help</button>
+                  <button onClick={() => {handleOpenInfoPopover("factorInfo")}}>Show help</button>
                 </div>
 
                 <div>
@@ -572,7 +560,7 @@ export default function EditScoringFactors(props) {
             </div>
             <div
               className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-              style={factorInfo ? {
+              style={infoPopover ? {
                 transform: 'translate(calc(50% + 0.5rem))'
               } : {
                 transform: 'translate(0)'
