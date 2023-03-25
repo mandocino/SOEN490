@@ -95,6 +95,16 @@ export async function loadScores(origin, destinations, userID) {
     const aLongTimeAgo = new Date(0);
     lastPrefChangeTime = aLongTimeAgo;
     lastAlgoUpdateTime = aLongTimeAgo
+
+    // Get the scores for current origin from session storage (if exists)
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+        savedScores = location.scores;
+      }
+    }   
   }
 
   // Generate the scores if there are no saved scores.
@@ -110,15 +120,14 @@ export async function loadScores(origin, destinations, userID) {
       if (userID != null) {
         // Fetch scores for a single origin/destination pair
         score = await thisModule.fetchScores(origin, destination);
-      } else {
+      } else if(origin.detailedScores) {
         //If user is not logged in, check in the detailedScores array of the origin 
         //(as stored in session storage) to check if a score was already generated 
         // for the origin/destination pair.
 
-        for(const savedScore of origin.scores) {
+        for(const savedScore of origin.detailedScores) {
           if(savedScore.destination_id === destination._id) {
             score = savedScore;
-            console.log(score)
           }
         }
       } 
@@ -128,7 +137,7 @@ export async function loadScores(origin, destinations, userID) {
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
       if (!score || score.generatedTime < lastPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
-        savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn);
+        savedScores = await thisModule.generateNewScores(origin, destinations, userID);
         break;
       }
       scores.push(score);
@@ -353,7 +362,6 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
           location.detailedScores = [];
         }
 
-        console.log(location)
         location.detailedScores.push({
           destination_id: destination._id,
           score: scores
