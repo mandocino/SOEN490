@@ -116,6 +116,7 @@ export default function Dashboard() {
         // Give unique ID to each location (for locations saved by non-logged in users)
         for(let i = 0; i < locationArray.length; i++) {
           locationArray[i]._id = i;
+          // locationArray[i].scores = [];
         }
         sessionStorage.setItem('location', JSON.stringify(locationArray));
         getLocations(locationArray);

@@ -46,7 +46,7 @@ export async function saveScores(origin, destination, scores, date) {
  * @returns {Promise<AxiosResponse<any>|void>}
  */
 export async function fetchScores(origin, destination) {
-  // If a destination is specified, load scores for the specific origin/destination pair, else load for irigin only
+  // If a destination is specified, load scores for the specific origin/destination pair, else load for origin only
   const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
   return await axios.get(url, {
     params:
@@ -89,6 +89,7 @@ export async function loadScores(origin, destinations, userID) {
 
     // Get the latest scores for the origin only
     savedScores = await thisModule.fetchScores(origin, null);
+    console.log(savedScores);
   } else {
     // For non-logged-in users, set both times to 1970 to force re-generation
     const aLongTimeAgo = new Date(0);
@@ -109,7 +110,18 @@ export async function loadScores(origin, destinations, userID) {
       if (userID != null) {
         // Fetch scores for a single origin/destination pair
         score = await thisModule.fetchScores(origin, destination);
-      }
+      } else {
+        //If user is not logged in, check in the detailedScores array of the origin 
+        //(as stored in session storage) to check if a score was already generated 
+        // for the origin/destination pair.
+
+        for(const savedScore of origin.scores) {
+          if(savedScore.destination_id === destination._id) {
+            score = savedScore;
+            console.log(score)
+          }
+        }
+      } 
 
       // If scores for any origin/destination pair are outdated, regenerate everything.
       // This is so that the weighted average score gets regenerated as well.
@@ -245,6 +257,19 @@ export async function generateNewScores(origin, destinations, userID) {
 
   if (loggedIn) {
     await thisModule.saveScores(origin, null, scores, date);
+  } else {
+    // If user is not logged in, save scores in the origin object stored in the location
+    // array in session storage. 
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+        location.scores = scores
+      }
+    }
+
+    sessionStorage.setItem("location",  JSON.stringify(locationArray));
   }
 
   return {
@@ -312,6 +337,32 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
 
   if (loggedIn) {
     await thisModule.saveScores(origin, destination, scores, date);
+  } else {
+    // For non-logged-in users, scores are saved in session storage as an 
+    // array of detailedScore objects. These objects contain two members, a key 
+    //(ID of the destination) and the corresponding scores
+
+    // Modify the origin as stored in session storage in location array to hold the new score.
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+
+        if(!location.detailedScores) {
+          location.detailedScores = [];
+        }
+
+        console.log(location)
+        location.detailedScores.push({
+          destination_id: destination._id,
+          score: scores
+        })
+      }
+    }
+
+    sessionStorage.setItem("location",  JSON.stringify(locationArray));
+
   }
 
   return {
