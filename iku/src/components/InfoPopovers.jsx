@@ -168,6 +168,86 @@ export function ConsistencyImportanceInfo() {
 }
 
 
+export function WalkReluctanceInfo() {
+  return (
+    <CustomizedCarousel>
+      <CarouselItem>
+        <div>
+          The walk reluctance simply refers to how bad walking is, compared to being in transit for the same amount of
+          time. Higher walk reluctance causes the routing algorithm to prioritize routes with less walking and ignore
+          routes with too much walking.
+        </div>
+        <br/>
+
+        <div>
+          If you need explanations on what this means, or guidance on how to set this scoring
+          factors, click the arrows on the sides to view details.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          The walk reluctance does not directly impact the scoring; it instead determines what routes will be suggested
+          by the routing algorithm:
+        </div>
+        <br/>
+
+        <ul className="ml-4 list-disc">
+          <li>
+            Lower values for the walk reluctance means the routing algorithm will prefer routes with shorter durations.
+          </li>
+          <br/>
+          <li>
+            Higher values for the walk reluctance means the routing algorithm will prefer (longer) routes that involve
+            less walking.
+          </li>
+        </ul>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          By default, the walk reluctance is set to 2. This corresponds well with the idea of not wanting to walk too
+          much, but being comfortable with walking to save significant amounts of time (vs. taking a longer
+          route).
+        </div>
+        <br/>
+
+        <div>
+          Setting the walk reluctance to 1 makes the routing algorithm always chase the shortest duration possible, even
+          if it involves a lot of walking.
+        </div>
+        <br/>
+
+        <div>
+          On the other hand, users such as the elderly or those with reduced mobility may prefer to set the walk
+          reluctance to higher amounts; values of 5-9 tend to eliminate most walking from routes wherever possible.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          To be more technical on what the walk reluctance is: it is a multiplier that affects route generation.
+          For example, suppose Route 1 involves a 10 minute bus ride, and then a 15 minute walk, while Route 2 involves
+          a 25 minute bus ride and then a 5 minute walk. Intuitively, Route 1 should be suggested since it's shorter by
+          5 minutes.
+        </div>
+        <br/>
+
+        <div>
+          Now let's also suppose we use a walk reluctance of 2. The routing algorithm will multiply the walk components
+          by 2 then compare the durations. Route 1 would thus be 10 + 2*15 = 40 minutes, while Route 2 would be 25 + 2*5
+          = 35 minutes, so the algorithm will recommend Route 2.
+        </div>
+        <br/>
+      </CarouselItem>
+    </CustomizedCarousel>
+  )
+}
+
+
 export function FactorWeightsInfo({colors}) {
  return (
    <CustomizedCarousel>

@@ -34,7 +34,7 @@ import {
   FactorWeightsInfo,
   NightDayWeightsInfo,
   NightDirectionWeightsInfo,
-  TimeSliceWeightsInfo,
+  TimeSliceWeightsInfo, WalkReluctanceInfo,
   WeekendWeightsInfo
 } from "./InfoPopovers";
 
@@ -337,6 +337,9 @@ export default function EditScoringFactors(props) {
       case "consistencyImportanceInfo":
         setInfoPopoverContent(<ConsistencyImportanceInfo />);
         break;
+      case "walkReluctanceInfo":
+        setInfoPopoverContent(<WalkReluctanceInfo />);
+        break;
       case "factorInfo":
         setInfoPopoverContent(<FactorWeightsInfo colors={[color1, color2]} />);
         break;
@@ -485,6 +488,7 @@ export default function EditScoringFactors(props) {
                     min={1}
                     max={9}
                   />
+                  <button onClick={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>Show help</button>
                 </div>
 
                 <div>
