@@ -121,8 +121,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
     axios
       .get(`http://localhost:5000/savedScores/${originLocation._id}`)
       .then((response) => {
-        if (response.data[0]) {
-          let processedScores = addColorsToScores(response.data[0]);
+        if (response.data) {
+          let processedScores = addColorsToScores(response.data);
           setSavedScores(processedScores);
         } else {
           // Assign 0 to all scores and statistics if values have not been calculated yet
@@ -138,17 +138,22 @@ function ScoreDetailModal({ originLocation, destinations }) {
   const onChangeDestinationDropdown = (event) => {
     selectedDestination = event.target.value;
 
+    // Reset the selected score time to Overall
+    setActiveScoreTime("Overall");
+
     // Case where selected item in dropdown is All destinations
     if (selectedDestination === "default") {
       fetchOverallSavedScore();
     } else {
+      
+      // Fetch the saved scores for a specific destination
       axios
         .get(
           `http://localhost:5000/savedScores/${originLocation._id}/${selectedDestination}`
         )
         .then((response) => {
-          if (response.data[0]) {
-            let processedScores = addColorsToScores(response.data[0]);
+          if (response.data) {
+            let processedScores = addColorsToScores(response.data);
             setSavedScores(processedScores);
           } else {
             // Assign 0 to all scores and statistics if values have not been calculated yet
@@ -157,6 +162,8 @@ function ScoreDetailModal({ originLocation, destinations }) {
           }
         })
         .catch((err) => console.error(err));
+
+      
     }
   };
 
@@ -511,45 +518,10 @@ function ScoreDetailModal({ originLocation, destinations }) {
                                     </table>
                                   </div>
                                 </th>
-                                <th>
-                                  <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                                    <table className="text-center border-separate border-spacing-1">
-                                      <tbody>
-                                        <tr>
-                                          <td colSpan={3} className="border-b">
-                                            Transfers
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td className="border-r px-2">Min</td>
-                                          <td className="border-r px-2">Avg</td>
-                                          <td className="px-2">Max</td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                <td>
-                                  <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                                    <table className="text-center table-fixed border-separate border-spacing-1">
-                                      <tbody>
-                                        <tr>
-                                          <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            20
-                                          </td>
-                                          <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            25
-                                          </td>
-                                          <td className="px-3 w-12">30</td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </td>
                                 <td>
                                   <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
                                     <table className="text-center table-fixed border-separate border-spacing-1">
