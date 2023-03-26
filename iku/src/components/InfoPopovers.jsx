@@ -1,5 +1,6 @@
 import Carousel from "react-material-ui-carousel";
 import React, {useEffect, useState} from "react";
+import {List, ListItem} from "@mui/material";
 
 
 const lightThemeNavButtonColor = "#000";
@@ -61,13 +62,119 @@ function CustomizedCarousel({children}) {
 }
 
 
+export function ConsistencyImportanceInfo() {
+  return (
+    <CustomizedCarousel>
+      <CarouselItem>
+        <div>
+          These three buttons impact how important the <b>consistency</b> of the transit service offered is.
+        </div>
+        <br/>
+
+        <ul className="ml-4 list-disc">
+          <li>
+            <b>Max consistency</b> will prioritize transit services that provide a more consistent (predictable)
+            service
+          </li>
+          <li>
+            <b>Max average</b> will ignore the consistency outright and give the edge to wherever gets the best
+            service on average
+          </li>
+          <li>
+            <b>Balanced</b> sits between the two.
+          </li>
+        </ul>
+        <br/>
+
+        <div>
+          If you need explanations on why the consistency in service, or guidance on how to set these scoring
+          factors, click the arrows on the sides to view details.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          In general, higher consistency means less variance in the measured metric/factor. For example, if
+          Route 1 comes every 20 minutes, while Route 2 comes every 10-30 minutes, then both routes have
+          the same average frequency (20 minutes) but Route 2 is much less consistent.
+        </div>
+        <br/>
+
+        <div>
+          The precise definition of consistency for this application depends on whether we're grading the frequency or
+          the duration:
+        </div>
+        <br/>
+
+        <ul className="ml-4 list-disc">
+          <li>
+            For frequency, a higher consistency means more even spacing between departures
+          </li>
+          <li>
+            For duration, a higher consistency means less variance in trip length.
+          </li>
+        </ul>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          Scoring for <b>max consistency</b> scoring will attempt to correspond to the idea of preferring consistent and
+          predictable service no matter what. The main limitation of this approach is that conventionally bad transit
+          may receive higher scores than it should.
+        </div>
+        <br/>
+
+        <div>
+          The most obvious manifestation of this limitation is that if a consistent service has an enhanced but separate
+          alternative option, this will unfairly negatively impact the score. For example, suppose we supplement a bus
+          every 15 minutes with an express bus every 20 minutes, this enhancement will create uneven gaps and thus
+          <b>lower</b> the score, despite the presence of that bus being a net positive for the service.
+        </div>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          Scoring for <b>max average</b> scoring will attempt to correspond to the idea of preferring service that
+          performs better on average no matter what. This can create some odd situations where one place that has
+          conventionally better transit than another can receive the same or worse score simply because it's a bit worse
+          on average than the other.
+        </div>
+        <br/>
+
+        <div>
+          An example of this limitation is that if two transit services perform the same on average, but one is
+          predictable while the other is unreliable, then they will receive the same grade despite the predictable
+          (consistent) service being strictly better than the other.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          <b>Balanced</b> scoring will attempt to correspond to the idea of wanting consistent service in general, but
+          preferring one service over another if it has a noticeably better average performance.
+        </div>
+        <br/>
+
+        <div>
+          This is the default setting.
+        </div>
+        <br/>
+      </CarouselItem>
+    </CustomizedCarousel>
+  )
+}
+
+
 export function FactorWeightsInfo({colors}) {
  return (
    <CustomizedCarousel>
      <CarouselItem>
        <div>
          The two core scoring factor weights are the <b className={colors[0].text}>frequency</b> and
-         the <b className={colors[1].text}>duration</b>. Use the slider below to adjust the
+         the <b className={colors[1].text}>duration</b>. Use the provided slider to adjust the
          proportional impact of these factors.
        </div>
        <br/>
@@ -123,7 +230,7 @@ export function NightDayWeightsInfo({colors}) {
           The night score is the weighted average between the <b className={colors[0].text}>Weeknight</b> score,
           the <b className={colors[1].text}>Friday night</b> <span className={colors[1].text}>(Saturday AM)</span> score,
           and the <b className={colors[2].text}> Saturday night</b> <span className={colors[2].text}>(Sunday AM)</span> score.
-          Use the slider below to adjust the proportional impact of these three days on the night score.
+          Use the provided slider to adjust the proportional impact of these three days on the night score.
         </div>
         <br/>
 
@@ -161,8 +268,8 @@ export function NightDirectionWeightsInfo({colors}) {
         <div>
           The night transit service varies depending on whether or not you are travelling from home towards some
           destination (nominally the city center) or vice versa. Thus the transit service <b className={colors[0].text}>
-          towards the destination</b> and <b className={colors[1].text}>from the destination</b> are grades separately.
-          Use the slider below to adjust the proportional impact of these two directions on the night score.
+          towards the destination</b> and <b className={colors[1].text}>from the destination</b> are graded separately.
+          Use the provided slider to adjust the proportional impact of these two directions on the night score.
         </div>
         <br/>
 
@@ -198,7 +305,7 @@ export function WeekendWeightsInfo({colors}) {
       <CarouselItem>
         <div>
           The weekend score is the average between the <b className={colors[0].text}>Saturday</b> score and
-          the <b className={colors[1].text}>Sunday</b> score. Use the slider below to adjust the
+          the <b className={colors[1].text}>Sunday</b> score. Use the provided slider to adjust the
           proportional impact of these two days on the weekend score.
         </div>
         <br/>
@@ -235,7 +342,7 @@ export function TimeSliceWeightsInfo({colors}) {
         <div>
           The four adjustable time periods are the <b className={colors[0].text}>rush hour</b>,
           the <b className={colors[1].text}>off-peak</b>, the <b className={colors[2].text}>overnight</b>, and
-          the <b className={colors[3].text}>weekend</b> time periods. Use the slider below to adjust the
+          the <b className={colors[3].text}>weekend</b> time periods. Use the provided slider to adjust the
           proportional impact of these factors.
         </div>
         <br/>

@@ -30,6 +30,7 @@ import {
 import SteppedSlider from "./custom/SteppedSlider";
 import {Dialog, DialogTitle, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {
+  ConsistencyImportanceInfo,
   FactorWeightsInfo,
   NightDayWeightsInfo,
   NightDirectionWeightsInfo,
@@ -333,6 +334,9 @@ export default function EditScoringFactors(props) {
     let markToCollapse = false;
 
     switch(newSetting) {
+      case "consistencyImportanceInfo":
+        setInfoPopoverContent(<ConsistencyImportanceInfo />);
+        break;
       case "factorInfo":
         setInfoPopoverContent(<FactorWeightsInfo colors={[color1, color2]} />);
         break;
@@ -444,7 +448,7 @@ export default function EditScoringFactors(props) {
                     }}
                   >
                     <ToggleButton value="moreConsistent" aria-label="left aligned">
-                      <span>Consistent</span>
+                      <span>Max Consistency</span>
                     </ToggleButton>
                     <ToggleButton value="balanced" aria-label="centered">
                       <span>Balanced</span>
@@ -454,6 +458,7 @@ export default function EditScoringFactors(props) {
                     </ToggleButton>
                   </ToggleButtonGroup>
                 </div>
+                <button onClick={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>Show help</button>
 
                 <div>
                   <SteppedSlider
