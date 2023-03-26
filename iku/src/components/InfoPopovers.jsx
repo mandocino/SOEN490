@@ -168,6 +168,79 @@ export function ConsistencyImportanceInfo() {
 }
 
 
+export function WorstAcceptableCasesInfo() {
+  return (
+    <CustomizedCarousel>
+      <CarouselItem>
+        <div>
+          The worst acceptable frequency or duration refers to the level of service that would result in a score of 0
+          for the respective scoring components (every score is the average of a frequency and a duration component).
+        </div>
+        <br/>
+
+        <div>
+          If you need explanations on what this means, or guidance on how to set this scoring
+          factor, click the arrows on the sides to view details.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          The worst acceptable frequency indicates what average gap between departures would give a frequency component
+          score of 0. For example, if the worst acceptable frequency is 60 minutes, then a bus that come hourly would
+          receive a score of 0, as would buses that every 2 hours, etc.
+        </div>
+        <br/>
+
+        <div>
+          The worst acceptable duration indicates what average trip length would give a duration component
+          score of 0. For example, if the worst acceptable duration is 120 minutes, then a route that takes two hours to
+          reach the destination would receive a score of 0, as would any longer routes.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          Low settings for either component provide higher levels of granularity (i.e. the impact each minute has on the
+          score is more noticeable). However, origins too far away (such as suburbs) will all receive scores of 0 making
+          it impossible to compare them.
+        </div>
+        <br/>
+
+        <div>
+          On the other hand, high settings for either component accommodate origins that are far away, but the
+          difference in service level becomes less pronounced: the difference between a 15min commute and a 30min
+          commute may only be a couple of points, for example.
+        </div>
+        <br/>
+      </CarouselItem>
+
+      <CarouselItem>
+        <div>
+          If you are looking to grade transit for origins close to your main destinations, you should set these values
+          lower: for example, to 30 minutes for frequency and 45 minutes for duration.
+        </div>
+        <br/>
+
+        <div>
+          On the other hand, if you are looking to grade transit for origins further away (such as suburbs) then you may
+          want to maintain the default values, and increase both if you start seeing scores of 0.
+        </div>
+        <br/>
+
+        <div>
+          By default, the worst acceptable frequency is 75 minutes, and the worst acceptable duration is 120 minutes.
+          This includes most suburbs while maintaining a reasonable level of granularity in the scores.
+        </div>
+        <br/>
+      </CarouselItem>
+    </CustomizedCarousel>
+  )
+}
+
+
 export function WalkReluctanceInfo() {
   return (
     <CustomizedCarousel>
@@ -181,7 +254,7 @@ export function WalkReluctanceInfo() {
 
         <div>
           If you need explanations on what this means, or guidance on how to set this scoring
-          factors, click the arrows on the sides to view details.
+          factor, click the arrows on the sides to view details.
         </div>
         <br/>
       </CarouselItem>
@@ -392,7 +465,7 @@ export function WeekendWeightsInfo({colors}) {
 
         <div>
           If you need explanations on why the separate grading matters, or guidance on how to set this scoring
-          factors, click the arrows on the sides to view details.
+          factor, click the arrows on the sides to view details.
         </div>
         <br/>
       </CarouselItem>
