@@ -1,8 +1,6 @@
-import React, {Fragment, useEffect, useState} from "react";
-import Carousel from 'react-material-ui-carousel';
+import React, {useEffect, useState} from "react";
 import ProportionalSlider from "./custom/ProportionalSlider";
 import axios from "axios";
-// import {Dialog, Transition} from '@headlessui/react';
 import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
 import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
 import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
@@ -31,8 +29,13 @@ import {
 } from "../backend/config/defaultUserPreferences";
 import SteppedSlider from "./custom/SteppedSlider";
 import {Dialog, DialogTitle, ToggleButton, ToggleButtonGroup} from "@mui/material";
-import {styled} from "@mui/material/styles";
-import FactorWeightsInfo from "./infoPopovers";
+import {
+  FactorWeightsInfo,
+  NightDayWeightsInfo,
+  NightDirectionWeightsInfo,
+  TimeSliceWeightsInfo,
+  WeekendWeightsInfo
+} from "./InfoPopovers";
 
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
@@ -107,7 +110,7 @@ export default function EditScoringFactors(props) {
   const [isWheelChair, setIsWheelChair] = useState([]);
 
 
-  const [infoPopover, setInfoPopover] = useState(false);
+  const [infoPopoverActive, setInfoPopoverActive] = useState(false);
   const [infoPopoverName, setInfoPopoverName] = useState(null);
   const [infoPopoverContent, setInfoPopoverContent] = useState(null);
 
@@ -327,20 +330,36 @@ export default function EditScoringFactors(props) {
 
   const handleOpenInfoPopover = (newSetting) => {
 
+    let markToCollapse = false;
+
     switch(newSetting) {
       case "factorInfo":
         setInfoPopoverContent(<FactorWeightsInfo colors={[color1, color2]} />);
         break;
+      case "nightDayInfo":
+        setInfoPopoverContent(<NightDayWeightsInfo colors={[color1, color2, color3]} />);
+        break;
+      case "nightDirectionInfo":
+        setInfoPopoverContent(<NightDirectionWeightsInfo colors={[color1, color2]} />);
+        break;
+      case "weekendInfo":
+        setInfoPopoverContent(<WeekendWeightsInfo colors={[color1, color2]} />);
+        break;
+      case "timeSliceInfo":
+        setInfoPopoverContent(<TimeSliceWeightsInfo colors={[color1, color2, color3, color4]} />);
+        break;
       default:
         setInfoPopoverContent(null);
+        setInfoPopoverName('');
+        markToCollapse = true;
         break;
     }
 
-    if (newSetting === infoPopoverName) {
-      setInfoPopover(false);
+    if (markToCollapse || newSetting === infoPopoverName) {
+      setInfoPopoverActive(false);
       setInfoPopoverName('')
     } else {
-      setInfoPopover(true);
+      setInfoPopoverActive(true);
       setInfoPopoverName(newSetting);
     }
   }
@@ -376,7 +395,7 @@ export default function EditScoringFactors(props) {
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <div
               className="w-full max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-              style={infoPopover ? {
+              style={infoPopoverActive ? {
                 transform: 'translate(calc(-50% - 0.5rem))'
               } : {
                 transform: 'translate(0)'
@@ -490,6 +509,7 @@ export default function EditScoringFactors(props) {
                     names={nightDayNames}
                     icons={nightDayIcons}
                   />
+                  <button onClick={() => {handleOpenInfoPopover("nightDayInfo")}}>Show help</button>
                 </div>
 
                 <div>
@@ -504,6 +524,7 @@ export default function EditScoringFactors(props) {
                     names={nightDirectionNames}
                     icons={nightDirectionIcons}
                   />
+                  <button onClick={() => {handleOpenInfoPopover("nightDirectionInfo")}}>Show help</button>
                 </div>
 
                 <div>
@@ -518,6 +539,7 @@ export default function EditScoringFactors(props) {
                     names={weekendNames}
                     icons={weekendIcons}
                   />
+                  <button onClick={() => {handleOpenInfoPopover("weekendInfo")}}>Show help</button>
                 </div>
 
                 <div>
@@ -533,6 +555,7 @@ export default function EditScoringFactors(props) {
                     icons={timeSliceIcons}
                     twoCols={true}
                   />
+                  <button onClick={() => {handleOpenInfoPopover("timeSliceInfo")}}>Show help</button>
                 </div>
               </div>
 
@@ -566,7 +589,7 @@ export default function EditScoringFactors(props) {
             </div>
             <div
               className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-              style={infoPopover ? {
+              style={infoPopoverActive ? {
                 transform: 'translate(calc(50% + 0.5rem))'
               } : {
                 transform: 'translate(0)'
