@@ -345,7 +345,7 @@ export default function EditScoringFactors(props) {
     let markToCollapse = false;
 
     switch(newSetting) {
-      case "walkReluctanceInfo":
+      case "accessibilitySettingsInfo":
         setInfoPopoverContent(<AccessibilitySettingsInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "consistencyImportanceInfo":
@@ -433,13 +433,13 @@ export default function EditScoringFactors(props) {
               <hr className="mb-8 dark:border-emerald-700"></hr>
 
               <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("accessibilitySettingsInfo")}}>
                   <span>Accessibility Settings</span>
                 </AccordionSummary>
                 <AccordionDetails>
                   <div className="flex flex-col gap-4">
                     <div>
-                      <span>Walk Reluctance:</span>
+                      <span>Walk Reluctance: {walkReluctance}</span>
                       <div className="flex flex-col gap-4">
                         <SteppedSlider
                           state={[walkReluctance, setWalkReluctance]}
@@ -512,23 +512,28 @@ export default function EditScoringFactors(props) {
                   <span>Worst Acceptable Cases</span>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <div>
-                    <SteppedSlider
-                      state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
-                      step={15}
-                      min={15}
-                      max={180}
-                    />
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <span>Worst Acceptable Frequency: {worstAcceptableFrequency}</span>
+                      <SteppedSlider
+                        state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
+                        step={15}
+                        min={15}
+                        max={180}
+                      />
+                    </div>
+
+                    <div>
+                      <span>Worst Acceptable Duration: {worstAcceptableDuration}</span>
+                      <SteppedSlider
+                        state={[worstAcceptableDuration, setWorstAcceptableDuration]}
+                        step={15}
+                        min={15}
+                        max={180}
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <SteppedSlider
-                      state={[worstAcceptableDuration, setWorstAcceptableDuration]}
-                      step={15}
-                      min={15}
-                      max={180}
-                    />
-                  </div>
                 </AccordionDetails>
               </Accordion>
 
