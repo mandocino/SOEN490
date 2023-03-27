@@ -254,7 +254,7 @@ export function WorstAcceptableCasesInfo({handleClose}) {
 }
 
 
-export function WalkReluctanceInfo({handleClose}) {
+export function AccessibilitySettingsInfo({handleClose}) {
   return (
     <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
@@ -265,9 +265,16 @@ export function WalkReluctanceInfo({handleClose}) {
         </div>
         <br/>
 
+
         <div>
-          If you need explanations on what this means, or guidance on how to set this scoring
-          factor, click the arrows on the sides to view details.
+          Selecting "Wheelchair Accessible Routes" simply tells the route planner to limit itself to only routes that
+          are wheelchair accessible.
+        </div>
+        <br/>
+
+        <div>
+          If you need explanations on what the walk reluctance means, or guidance on how to set the walk reluctance
+          scoring factor, click the arrows on the sides to view details.
         </div>
         <br/>
       </CarouselItem>

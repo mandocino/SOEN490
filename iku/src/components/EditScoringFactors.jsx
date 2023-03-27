@@ -29,26 +29,21 @@ import {
 } from "../backend/config/defaultUserPreferences";
 import SteppedSlider from "./custom/SteppedSlider";
 import {
-  Accordion,
   Dialog,
   DialogTitle,
   ToggleButton,
   ToggleButtonGroup
 } from "@mui/material";
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import {
   ConsistencyImportanceInfo,
   FactorWeightsInfo,
   NightDayWeightsInfo,
   NightDirectionWeightsInfo,
-  TimeSliceWeightsInfo, WalkReluctanceInfo,
+  TimeSliceWeightsInfo, AccessibilitySettingsInfo,
   WeekendWeightsInfo, WorstAcceptableCasesInfo
-} from "./InfoPopovers";
+} from "./ScoringFactorInfoPopovers";
 
-import MuiAccordion from '@mui/material/Accordion';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import {styled} from "@mui/material/styles";
+import {Accordion, AccordionSummary, AccordionDetails, IsWheelChair} from "./ScoringFactorFormElements";
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
 const color2 = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
@@ -91,7 +86,6 @@ const user_id = localStorage.getItem("user_id");
 
 
 
-
 async function updateUserPreferences(data, scoring) {
   const currentDate = Date.now();
 
@@ -119,15 +113,12 @@ export default function EditScoringFactors(props) {
   const [worstAcceptableFrequency, setWorstAcceptableFrequency] = useState([]);
   const [worstAcceptableDuration, setWorstAcceptableDuration] = useState([]);
   const [walkReluctance, setWalkReluctance] = useState([]);
-  const [isWheelChair, setIsWheelChair] = useState([]);
+  const [isWheelChair, setIsWheelChair] = useState(false);
 
 
   const [infoPopoverActive, setInfoPopoverActive] = useState(false);
   const [infoPopoverName, setInfoPopoverName] = useState(null);
   const [infoPopoverContent, setInfoPopoverContent] = useState(null);
-
-
-  const [isDark, setIsDark] = useState(true);
 
   // Fetch user's preferred scoring priorities
   const fetchUserPreferences = async () => {
@@ -208,74 +199,8 @@ export default function EditScoringFactors(props) {
   }
 
   useEffect(() => {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
-    setIsDark(prefersDark);
-  }, []);
-
-  useEffect(() => {
     fetchUserPreferences();
   }, []);
-
-
-  const accordionSx = {
-    color:
-      isDark
-        ? '#ffffff'
-        : '#000000',
-    backgroundColor:
-      isDark
-        ? '#111111'
-        : '#aaaaaa',
-    border:
-      isDark
-        ? '1px solid #222'
-        : '1px solid #999',
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&:before': {
-      display: 'none',
-    },
-  };
-  const AccordionSummary = styled((props) => (
-    <MuiAccordionSummary
-      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', color: '#fff' }} />}
-      {...props}
-      >
-      <div className="flex w-full ml-4 justify-between items-center">
-        {props.children}
-        <button
-          type="button"
-          onClick={(e) => {e.stopPropagation(); props.showHelp(); }}
-          className="z-10 z-10 w-8 h-8 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-200 focus:ring-4 focus:ring-emerald-300 text-emerald-800 hover:bg-white font-semibold rounded-lg"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-               className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round"
-                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
-          </svg>
-
-        </button>
-      </div>
-
-    </MuiAccordionSummary>
-  ))(({ theme }) => ({
-    backgroundColor:
-      isDark
-        ? 'rgba(255, 255, 255, .05)'
-        : 'rgba(0, 0, 0, .03)',
-    flexDirection: 'row-reverse',
-    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-      transform: 'rotate(90deg)',
-    },
-  }));
-  const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-    padding: '1rem',
-    borderTop: '1px solid rgba(0, 0, 0, .125)',
-  }));
 
   // Create card with the scoring factors
   const factorCardsArray = [{
@@ -402,6 +327,8 @@ export default function EditScoringFactors(props) {
     window.location.reload(false);
   };
 
+  const [checked, setChecked] = useState(false);
+
   const handleConsistencyImportance = (event, newValue) => {
     if (newValue !== null) {
       setConsistencyImportance(newValue);
@@ -419,7 +346,7 @@ export default function EditScoringFactors(props) {
 
     switch(newSetting) {
       case "walkReluctanceInfo":
-        setInfoPopoverContent(<WalkReluctanceInfo handleClose={handleCloseInfoPopover} />);
+        setInfoPopoverContent(<AccessibilitySettingsInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "consistencyImportanceInfo":
         setInfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseInfoPopover} />);
@@ -505,23 +432,31 @@ export default function EditScoringFactors(props) {
 
               <hr className="mb-8 dark:border-emerald-700"></hr>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>
                   <span>Accessibility Settings</span>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <div>
-                    <SteppedSlider
-                      state={[walkReluctance, setWalkReluctance]}
-                      step={1}
-                      min={1}
-                      max={9}
-                    />
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <span>Walk Reluctance:</span>
+                      <div className="flex flex-col gap-4">
+                        <SteppedSlider
+                          state={[walkReluctance, setWalkReluctance]}
+                          step={1}
+                          min={1}
+                          max={9}
+                        />
+                        <IsWheelChair state={[isWheelChair, setIsWheelChair]}></IsWheelChair>
+                      </div>
+                    </div>
+
                   </div>
+
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>
                   <span>Consistency Importance</span>
                 </AccordionSummary>
@@ -572,7 +507,7 @@ export default function EditScoringFactors(props) {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>
                   <span>Worst Acceptable Cases</span>
                 </AccordionSummary>
@@ -597,7 +532,7 @@ export default function EditScoringFactors(props) {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("factorInfo")}}>
                   <span>Core Scoring Factor Weights</span>
                 </AccordionSummary>
@@ -618,7 +553,7 @@ export default function EditScoringFactors(props) {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDayInfo")}}>
                   <span>Night Day Weights</span>
                 </AccordionSummary>
@@ -639,7 +574,7 @@ export default function EditScoringFactors(props) {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDirectionInfo")}}>
                   <span>Night Direction Weights</span>
                 </AccordionSummary>
@@ -660,7 +595,7 @@ export default function EditScoringFactors(props) {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("weekendInfo")}}>
                   <span>Weekend Day Weights</span>
                 </AccordionSummary>
@@ -681,7 +616,7 @@ export default function EditScoringFactors(props) {
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion sx={accordionSx}>
+              <Accordion>
                 <AccordionSummary showHelp={() => {handleOpenInfoPopover("timeSliceInfo")}}>
                   <span>Time Period Weights</span>
                 </AccordionSummary>
