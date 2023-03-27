@@ -6,7 +6,7 @@ import axios from "axios";
 import Tooltip from "@mui/material/Tooltip";
 import Carousel from "react-material-ui-carousel";
 
-function ScoreDetailModal({ originLocation, destinations }) {
+function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -26,13 +26,6 @@ function ScoreDetailModal({ originLocation, destinations }) {
     offPeak: 0,
     weekend: 0,
     overnight: 0,
-  };
-
-  const [activeScoreTime, setActiveScoreTime] = useState("Overall");
-
-  const handleActiveScoreTime = (event) => {
-    setActiveScoreTime(event.currentTarget.id);
-    event.stopPropagation();
   };
 
   const addColorsToScores = (allScores) => {
@@ -133,19 +126,24 @@ function ScoreDetailModal({ originLocation, destinations }) {
       .catch((err) => console.error(err));
   };
 
-  let selectedDestination = "default";
+  const [selectedDestination, setSelectedDestination] = useState("default");
+
+  const [allRouteMetrics, setAllRouteMetrics] = useState({});
 
   const onChangeDestinationDropdown = (event) => {
-    selectedDestination = event.target.value;
+    setSelectedDestination(event.currentTarget.value);
 
     // Reset the selected score time to Overall
-    setActiveScoreTime("Overall");
+    setSelectedScoreTime("Overall");    
+
+    // Reset the current route metrics
+    setCurrentRouteMetrics(defaultRouteMetrics);
+
 
     // Case where selected item in dropdown is All destinations
     if (selectedDestination === "default") {
       fetchOverallSavedScore();
     } else {
-      
       // Fetch the saved scores for a specific destination
       axios
         .get(
@@ -163,8 +161,119 @@ function ScoreDetailModal({ originLocation, destinations }) {
         })
         .catch((err) => console.error(err));
 
-      
+      // Fetch the routes metrics
+      axios
+        .get(
+          `http://localhost:5000/savedRoutingDataAverages/${originLocation._id}/${selectedDestination}/${factorWeights[0]}/${factorWeights[1]}`
+        )
+        .then((response) => {
+          if (response.data) {
+            setAllRouteMetrics(response.data);
+          } else {
+          }
+        })
+        .catch((err) => console.error(err));
     }
+  };
+
+  const defaultRouteMetrics = {
+    frequencyMin: "-",
+    frequencyMax: "-",
+    frequencyAvg: "-",
+    durationMin: "-",
+    durationMax: "-",
+    durationAvg: "-",
+    walkMin: "-",
+    walkMax: "-",
+    walkAvg: "-",
+  };
+  const [currentRouteMetrics, setCurrentRouteMetrics] = useState(defaultRouteMetrics);
+
+  const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
+
+  const handleSelectedScoreTime = (event) => {
+    setSelectedScoreTime(event.currentTarget.id);
+    event.stopPropagation();
+
+    if(selectedDestination !== "default"){
+
+      if (event.currentTarget.id === "Overall") {
+        let currentMetrics = {
+          frequencyMin: allRouteMetrics['overallMetrics']['frequencyMetrics']['min'],
+          frequencyMax: allRouteMetrics['overallMetrics']['frequencyMetrics']['max'],
+          frequencyAvg: allRouteMetrics['overallMetrics']['frequencyMetrics']['average'],
+          durationMin: allRouteMetrics['overallMetrics']['durationMetrics']['min'],
+          durationMax: allRouteMetrics['overallMetrics']['durationMetrics']['max'],
+          durationAvg: allRouteMetrics['overallMetrics']['durationMetrics']['average'],
+          walkMin: allRouteMetrics['overallMetrics']['walkMetrics']['min'],
+          walkMax: allRouteMetrics['overallMetrics']['walkMetrics']['max'],
+          walkAvg: allRouteMetrics['overallMetrics']['walkMetrics']['average'],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      } 
+      else if (event.currentTarget.id === "Rush-Hour") {
+        let currentMetrics = {
+          frequencyMin: allRouteMetrics['rushHourMetrics']['frequencyMetrics']['min'],
+          frequencyMax: allRouteMetrics['rushHourMetrics']['frequencyMetrics']['max'],
+          frequencyAvg: allRouteMetrics['rushHourMetrics']['frequencyMetrics']['average'],
+          durationMin: allRouteMetrics['rushHourMetrics']['durationMetrics']['min'],
+          durationMax: allRouteMetrics['rushHourMetrics']['durationMetrics']['max'],
+          durationAvg: allRouteMetrics['rushHourMetrics']['durationMetrics']['average'],
+          walkMin: allRouteMetrics['rushHourMetrics']['walkMetrics']['min'],
+          walkMax: allRouteMetrics['rushHourMetrics']['walkMetrics']['max'],
+          walkAvg: allRouteMetrics['rushHourMetrics']['walkMetrics']['average'],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      }
+      else if (event.currentTarget.id === "Off-Peak") {
+        let currentMetrics = {
+          frequencyMin: allRouteMetrics['offPeakMetrics']['frequencyMetrics']['min'],
+          frequencyMax: allRouteMetrics['offPeakMetrics']['frequencyMetrics']['max'],
+          frequencyAvg: allRouteMetrics['offPeakMetrics']['frequencyMetrics']['average'],
+          durationMin: allRouteMetrics['offPeakMetrics']['durationMetrics']['min'],
+          durationMax: allRouteMetrics['offPeakMetrics']['durationMetrics']['max'],
+          durationAvg: allRouteMetrics['offPeakMetrics']['durationMetrics']['average'],
+          walkMin: allRouteMetrics['offPeakMetrics']['walkMetrics']['min'],
+          walkMax: allRouteMetrics['offPeakMetrics']['walkMetrics']['max'],
+          walkAvg: allRouteMetrics['offPeakMetrics']['walkMetrics']['average'],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      }
+
+      else if (event.currentTarget.id === "Weekend") {
+        let currentMetrics = {
+          frequencyMin: allRouteMetrics['weekendMetrics']['frequencyMetrics']['min'],
+          frequencyMax: allRouteMetrics['weekendMetrics']['frequencyMetrics']['max'],
+          frequencyAvg: allRouteMetrics['weekendMetrics']['frequencyMetrics']['average'],
+          durationMin: allRouteMetrics['weekendMetrics']['durationMetrics']['min'],
+          durationMax: allRouteMetrics['weekendMetrics']['durationMetrics']['max'],
+          durationAvg: allRouteMetrics['weekendMetrics']['durationMetrics']['average'],
+          walkMin: allRouteMetrics['weekendMetrics']['walkMetrics']['min'],
+          walkMax: allRouteMetrics['weekendMetrics']['walkMetrics']['max'],
+          walkAvg: allRouteMetrics['weekendMetrics']['walkMetrics']['average'],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      }
+
+      else if (event.currentTarget.id === "Overnight") {
+        let currentMetrics = {
+          frequencyMin: allRouteMetrics['overnightMetrics']['frequencyMetrics']['min'],
+          frequencyMax: allRouteMetrics['overnightMetrics']['frequencyMetrics']['max'],
+          frequencyAvg: allRouteMetrics['overnightMetrics']['frequencyMetrics']['average'],
+          durationMin: allRouteMetrics['overnightMetrics']['durationMetrics']['min'],
+          durationMax: allRouteMetrics['overnightMetrics']['durationMetrics']['max'],
+          durationAvg: allRouteMetrics['overnightMetrics']['durationMetrics']['average'],
+          walkMin: allRouteMetrics['overnightMetrics']['walkMetrics']['min'],
+          walkMax: allRouteMetrics['overnightMetrics']['walkMetrics']['max'],
+          walkAvg: allRouteMetrics['overnightMetrics']['walkMetrics']['average'],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      }
+
+
+    }
+
+    
   };
 
   return (
@@ -343,9 +452,9 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <button
                             type="button"
                             id="Overall"
-                            onClick={handleActiveScoreTime}
+                            onClick={handleSelectedScoreTime}
                             className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              activeScoreTime === "Overall"
+                              selectedScoreTime === "Overall"
                                 ? "bg-emerald-600"
                                 : ""
                             }`}
@@ -355,9 +464,9 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <button
                             type="button"
                             id="Rush-Hour"
-                            onClick={handleActiveScoreTime}
+                            onClick={handleSelectedScoreTime}
                             className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              activeScoreTime === "Rush-Hour"
+                              selectedScoreTime === "Rush-Hour"
                                 ? "bg-emerald-600"
                                 : ""
                             }`}
@@ -367,9 +476,9 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <button
                             type="button"
                             id="Off-Peak"
-                            onClick={handleActiveScoreTime}
+                            onClick={handleSelectedScoreTime}
                             className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              activeScoreTime === "Off-Peak"
+                              selectedScoreTime === "Off-Peak"
                                 ? "bg-emerald-600"
                                 : ""
                             }`}
@@ -379,9 +488,9 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <button
                             type="button"
                             id="Weekend"
-                            onClick={handleActiveScoreTime}
+                            onClick={handleSelectedScoreTime}
                             className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              activeScoreTime === "Weekend"
+                              selectedScoreTime === "Weekend"
                                 ? "bg-emerald-600"
                                 : ""
                             }`}
@@ -391,9 +500,9 @@ function ScoreDetailModal({ originLocation, destinations }) {
                           <button
                             type="button"
                             id="Overnight"
-                            onClick={handleActiveScoreTime}
+                            onClick={handleSelectedScoreTime}
                             className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              activeScoreTime === "Overnight"
+                              selectedScoreTime === "Overnight"
                                 ? "bg-emerald-600"
                                 : ""
                             }`}
@@ -528,12 +637,14 @@ function ScoreDetailModal({ originLocation, destinations }) {
                                       <tbody>
                                         <tr>
                                           <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            20
+                                            {currentRouteMetrics.frequencyMin}
                                           </td>
                                           <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            25
+                                            {currentRouteMetrics.frequencyAvg}
                                           </td>
-                                          <td className="px-3 w-12">30</td>
+                                          <td className="px-3 w-12">
+                                            {currentRouteMetrics.frequencyMax}
+                                          </td>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -545,12 +656,14 @@ function ScoreDetailModal({ originLocation, destinations }) {
                                       <tbody>
                                         <tr>
                                           <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            20
+                                            {currentRouteMetrics.durationMin}
                                           </td>
                                           <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            25
+                                            {currentRouteMetrics.durationAvg}
                                           </td>
-                                          <td className="px-3 w-12">30</td>
+                                          <td className="px-3 w-12">
+                                            {currentRouteMetrics.durationMax}
+                                          </td>
                                         </tr>
                                       </tbody>
                                     </table>
@@ -562,12 +675,14 @@ function ScoreDetailModal({ originLocation, destinations }) {
                                       <tbody>
                                         <tr>
                                           <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            20
+                                            {currentRouteMetrics.walkMin}
                                           </td>
                                           <td className="border-r border-emerald-900/30 px-3 w-12">
-                                            25
+                                            {currentRouteMetrics.walkAvg}
                                           </td>
-                                          <td className="px-3 w-12">30</td>
+                                          <td className="px-3 w-12">
+                                            {currentRouteMetrics.walkMax}
+                                          </td>
                                         </tr>
                                       </tbody>
                                     </table>
