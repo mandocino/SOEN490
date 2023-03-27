@@ -329,34 +329,39 @@ export default function EditScoringFactors(props) {
     }
   };
 
+  const handleCloseInfoPopover = () => {
+    setInfoPopoverActive(false);
+    setInfoPopoverName('')
+  }
+
   const handleOpenInfoPopover = (newSetting) => {
 
     let markToCollapse = false;
 
     switch(newSetting) {
       case "consistencyImportanceInfo":
-        setInfoPopoverContent(<ConsistencyImportanceInfo />);
+        setInfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "walkReluctanceInfo":
-        setInfoPopoverContent(<WalkReluctanceInfo />);
+        setInfoPopoverContent(<WalkReluctanceInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "worstAcceptableCasesInfo":
-        setInfoPopoverContent(<WorstAcceptableCasesInfo />);
+        setInfoPopoverContent(<WorstAcceptableCasesInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "factorInfo":
-        setInfoPopoverContent(<FactorWeightsInfo colors={[color1, color2]} />);
+        setInfoPopoverContent(<FactorWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2]} />);
         break;
       case "nightDayInfo":
-        setInfoPopoverContent(<NightDayWeightsInfo colors={[color1, color2, color3]} />);
+        setInfoPopoverContent(<NightDayWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2, color3]} />);
         break;
       case "nightDirectionInfo":
-        setInfoPopoverContent(<NightDirectionWeightsInfo colors={[color1, color2]} />);
+        setInfoPopoverContent(<NightDirectionWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2]} />);
         break;
       case "weekendInfo":
-        setInfoPopoverContent(<WeekendWeightsInfo colors={[color1, color2]} />);
+        setInfoPopoverContent(<WeekendWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2]} />);
         break;
       case "timeSliceInfo":
-        setInfoPopoverContent(<TimeSliceWeightsInfo colors={[color1, color2, color3, color4]} />);
+        setInfoPopoverContent(<TimeSliceWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2, color3, color4]} />);
         break;
       default:
         setInfoPopoverContent(null);
@@ -366,8 +371,7 @@ export default function EditScoringFactors(props) {
     }
 
     if (markToCollapse || newSetting === infoPopoverName) {
-      setInfoPopoverActive(false);
-      setInfoPopoverName('')
+      handleCloseInfoPopover();
     } else {
       setInfoPopoverActive(true);
       setInfoPopoverName(newSetting);

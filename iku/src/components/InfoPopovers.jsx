@@ -14,7 +14,7 @@ function CarouselItem({children}) {
   )
 }
 
-function CustomizedCarousel({children}) {
+function CustomizedCarousel({children, handleClose=null}) {
   const [navButtonBackgroundColor, setNavButtonBackgroundColor] = useState('#000');
 
   useEffect(() => {
@@ -30,41 +30,54 @@ function CustomizedCarousel({children}) {
   }, []);
 
   return (
-    <Carousel
-      autoPlay={false}
-      cycleNavigation={false}
-      duration={350}
-      swipe={false}
-      height={'24rem'}
-      className="text-emerald-darker dark:text-white"
-      navButtonsProps={{
-        style: {
-          backgroundColor: navButtonBackgroundColor,
-        }
-      }}
-      sx={{
-        button: {
-          '&:hover': {
-            opacity: '1 !important'
-          },
-        }, buttonWrapper: {
-          '&:hover': {
-            '& $button': {
-              backgroundColor: "black", filter: "brightness(120%)", opacity: "1"
-            }
+    <>
+      <button
+        type="button"
+        onClick={handleClose}
+        className="absolute right-0 top-0 m-2.5 z-10 w-8 h-8 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+             stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round"
+                d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </button>
+      <Carousel
+        autoPlay={false}
+        cycleNavigation={false}
+        duration={350}
+        swipe={false}
+        height={'24rem'}
+        className="text-emerald-darker dark:text-white"
+        navButtonsProps={{
+          style: {
+            backgroundColor: navButtonBackgroundColor,
           }
-        },
-      }}
-    >
-      {children}
-    </Carousel>
+        }}
+        sx={{
+          button: {
+            '&:hover': {
+              opacity: '1 !important'
+            },
+          }, buttonWrapper: {
+            '&:hover': {
+              '& $button': {
+                backgroundColor: "black", filter: "brightness(120%)", opacity: "1"
+              }
+            }
+          },
+        }}
+      >
+        {children}
+      </Carousel>
+    </>
   )
 }
 
 
-export function ConsistencyImportanceInfo() {
+export function ConsistencyImportanceInfo({handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           These three buttons impact how important the <b>consistency</b> of the transit service offered is.
@@ -168,9 +181,9 @@ export function ConsistencyImportanceInfo() {
 }
 
 
-export function WorstAcceptableCasesInfo() {
+export function WorstAcceptableCasesInfo({handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           The worst acceptable frequency or duration refers to the level of service that would result in a score of 0
@@ -241,9 +254,9 @@ export function WorstAcceptableCasesInfo() {
 }
 
 
-export function WalkReluctanceInfo() {
+export function WalkReluctanceInfo({handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           The walk reluctance simply refers to how bad walking is, compared to being in transit for the same amount of
@@ -321,9 +334,9 @@ export function WalkReluctanceInfo() {
 }
 
 
-export function FactorWeightsInfo({colors}) {
+export function FactorWeightsInfo({colors, handleClose}) {
  return (
-   <CustomizedCarousel>
+   <CustomizedCarousel handleClose={handleClose}>
      <CarouselItem>
        <div>
          The two core scoring factor weights are the <b className={colors[0].text}>frequency</b> and
@@ -375,9 +388,9 @@ export function FactorWeightsInfo({colors}) {
 }
 
 
-export function NightDayWeightsInfo({colors}) {
+export function NightDayWeightsInfo({colors, handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           The night score is the weighted average between the <b className={colors[0].text}>Weeknight</b> score,
@@ -414,9 +427,9 @@ export function NightDayWeightsInfo({colors}) {
 }
 
 
-export function NightDirectionWeightsInfo({colors}) {
+export function NightDirectionWeightsInfo({colors, handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           The night transit service varies depending on whether or not you are travelling from home towards some
@@ -452,9 +465,9 @@ export function NightDirectionWeightsInfo({colors}) {
 }
 
 
-export function WeekendWeightsInfo({colors}) {
+export function WeekendWeightsInfo({colors, handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           The weekend score is the average between the <b className={colors[0].text}>Saturday</b> score and
@@ -488,9 +501,9 @@ export function WeekendWeightsInfo({colors}) {
 }
 
 
-export function TimeSliceWeightsInfo({colors}) {
+export function TimeSliceWeightsInfo({colors, handleClose}) {
   return (
-    <CustomizedCarousel>
+    <CustomizedCarousel handleClose={handleClose}>
       <CarouselItem>
         <div>
           The four adjustable time periods are the <b className={colors[0].text}>rush hour</b>,
