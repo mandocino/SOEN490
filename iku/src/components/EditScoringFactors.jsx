@@ -28,7 +28,14 @@ import {
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
 import SteppedSlider from "./custom/SteppedSlider";
-import {Dialog, DialogTitle, ToggleButton, ToggleButtonGroup} from "@mui/material";
+import {
+  Accordion, AccordionDetails, AccordionSummary,
+  Dialog,
+  DialogTitle,
+  ToggleButton,
+  ToggleButtonGroup
+} from "@mui/material";
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import {
   ConsistencyImportanceInfo,
   FactorWeightsInfo,
@@ -38,11 +45,18 @@ import {
   WeekendWeightsInfo, WorstAcceptableCasesInfo
 } from "./InfoPopovers";
 
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import {styled} from "@mui/material/styles";
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
 const color2 = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
 const color3 = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
 const color4 = {bgGradient: 'bg-gradient-to-br from-rose-500 to-rose-400', text: 'text-rose-400', hex: '#f43f5e'}
+
+
+
 
 const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
 const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
@@ -114,6 +128,9 @@ export default function EditScoringFactors(props) {
   const [infoPopoverActive, setInfoPopoverActive] = useState(false);
   const [infoPopoverName, setInfoPopoverName] = useState(null);
   const [infoPopoverContent, setInfoPopoverContent] = useState(null);
+
+
+  const [isDark, setIsDark] = useState(true);
 
   // Fetch user's preferred scoring priorities
   const fetchUserPreferences = async () => {
@@ -192,6 +209,14 @@ export default function EditScoringFactors(props) {
       }
     }
   }
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    setIsDark(prefersDark);
+  }, []);
 
   useEffect(() => {
     fetchUserPreferences();
@@ -408,13 +433,12 @@ export default function EditScoringFactors(props) {
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <div
-              className="w-full max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
+              className="w-full absolute top-4 max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
               style={infoPopoverActive ? {
                 transform: 'translate(calc(-50% - 0.5rem))'
               } : {
                 transform: 'translate(0)'
-              }}
-            >
+              }}>
               <div className="flex justify-between gap-2 pb-1">
                 <DialogTitle
                   as="h3"
@@ -426,155 +450,234 @@ export default function EditScoringFactors(props) {
               </div>
 
               <hr className="mb-8 dark:border-emerald-700"></hr>
-              <div className="flex flex-col gap-8">
-                <div className="rounded-xl bg-emerald-darkest flex items-center justify-center">
-                  <ToggleButtonGroup
-                    value={consistencyImportance}
-                    exclusive
-                    onChange={handleConsistencyImportance}
-                    aria-label="consistency importance"
-                    sx={{
-                      '& .MuiToggleButtonGroup-root': {
-                        width: '100%',
-                      },
-                      '& .MuiToggleButtonGroup-grouped': {
-                        height: '2.5rem',
-                        margin: "0.125rem 0.125rem",
-                        color: "black",
-                        backgroundColor: "#999",
-                        '&.Mui-selected': {
-                          backgroundColor: "#eee",
+
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Accessibility Settings</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <SteppedSlider
+                      state={[walkReluctance, setWalkReluctance]}
+                      step={1}
+                      min={1}
+                      max={9}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Consistency Importance</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div className="rounded-xl bg-emerald-darkest flex items-center justify-center">
+                    <ToggleButtonGroup
+                      value={consistencyImportance}
+                      exclusive
+                      onChange={handleConsistencyImportance}
+                      aria-label="consistency importance"
+                      sx={{
+                        '& .MuiToggleButtonGroup-root': {
+                          width: '100%',
+                        },
+                        '& .MuiToggleButtonGroup-grouped': {
+                          height: '2.5rem',
+                          margin: "0.125rem 0.125rem",
+                          color: "black",
+                          backgroundColor: "#999",
+                          '&.Mui-selected': {
+                            backgroundColor: "#eee",
+                            '&:hover, & .Mui-active': {
+                              backgroundColor: "#fff"
+                            },
+                          },
                           '&:hover, & .Mui-active': {
                             backgroundColor: "#fff"
                           },
+                          '& .MuiTouchRipple-child': {
+                            backgroundColor: '#10b981'
+                          },
                         },
-                        '&:hover, & .Mui-active': {
-                          backgroundColor: "#fff"
-                        },
-                        '& .MuiTouchRipple-child': {
-                          backgroundColor: '#10b981'
-                        },
-                      },
-                    }}
-                  >
-                    <ToggleButton value="moreConsistent" aria-label="left aligned">
-                      <span>Max Consistency</span>
-                    </ToggleButton>
-                    <ToggleButton value="balanced" aria-label="centered">
-                      <span>Balanced</span>
-                    </ToggleButton>
-                    <ToggleButton value="betterAverages" aria-label="right aligned">
-                      <span>Max Average</span>
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </div>
-                <button onClick={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>Show help</button>
+                      }}
+                    >
+                      <ToggleButton value="moreConsistent" aria-label="left aligned">
+                        <span>Max Consistency</span>
+                      </ToggleButton>
+                      <ToggleButton value="balanced" aria-label="centered">
+                        <span>Balanced</span>
+                      </ToggleButton>
+                      <ToggleButton value="betterAverages" aria-label="right aligned">
+                        <span>Max Average</span>
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </div>
+                  <button onClick={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>Show help</button>
+                </AccordionDetails>
+              </Accordion>
 
-                <div>
-                  <SteppedSlider
-                    state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
-                    step={15}
-                    min={15}
-                    max={180}
-                  />
-                </div>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Worst Acceptable Cases</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <SteppedSlider
+                      state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
+                      step={15}
+                      min={15}
+                      max={180}
+                    />
+                  </div>
 
-                <div>
-                  <SteppedSlider
-                    state={[worstAcceptableDuration, setWorstAcceptableDuration]}
-                    step={15}
-                    min={15}
-                    max={180}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>Show help</button>
-                </div>
+                  <div>
+                    <SteppedSlider
+                      state={[worstAcceptableDuration, setWorstAcceptableDuration]}
+                      step={15}
+                      min={15}
+                      max={180}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
 
-                <div>
-                  <SteppedSlider
-                    state={[walkReluctance, setWalkReluctance]}
-                    step={1}
-                    min={1}
-                    max={9}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>Show help</button>
-                </div>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Core Scoring Factor Weights</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <ProportionalSlider
+                      sliderState={[factorSliderVal, setFactorSliderVal]}
+                      valueState={[factorWeights, setFactorWeights]}
+                      sliderColors={factorHexColors}
+                    />
+                    <BoxConicGradientDisplay
+                      values={factorWeights}
+                      colors={factorHexColors}
+                      names={factorNames}
+                      icons={factorIcons}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("factorInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
 
-                <div>
-                  <ProportionalSlider
-                    sliderState={[factorSliderVal, setFactorSliderVal]}
-                    valueState={[factorWeights, setFactorWeights]}
-                    sliderColors={factorHexColors}
-                  />
-                  <BoxConicGradientDisplay
-                    values={factorWeights}
-                    colors={factorHexColors}
-                    names={factorNames}
-                    icons={factorIcons}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("factorInfo")}}>Show help</button>
-                </div>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Night Day Weights</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <ProportionalSlider
+                      sliderState={[nightDaySliderVal, setNightDaySliderVal]}
+                      valueState={[nightDayWeights, setNightDayWeights]}
+                      sliderColors={nightDayHexColors}
+                    />
+                    <BoxConicGradientDisplay
+                      values={nightDayWeights}
+                      colors={nightDayHexColors}
+                      names={nightDayNames}
+                      icons={nightDayIcons}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("nightDayInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
 
-                <div>
-                  <ProportionalSlider
-                    sliderState={[nightDaySliderVal, setNightDaySliderVal]}
-                    valueState={[nightDayWeights, setNightDayWeights]}
-                    sliderColors={nightDayHexColors}
-                  />
-                  <BoxConicGradientDisplay
-                    values={nightDayWeights}
-                    colors={nightDayHexColors}
-                    names={nightDayNames}
-                    icons={nightDayIcons}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("nightDayInfo")}}>Show help</button>
-                </div>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Night Direction Weights</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <ProportionalSlider
+                      sliderState={[nightDirectionSliderVal, setNightDirectionSliderVal]}
+                      valueState={[nightDirectionWeights, setNightDirectionWeights]}
+                      sliderColors={nightDirectionHexColors}
+                    />
+                    <BoxConicGradientDisplay
+                      values={nightDirectionWeights}
+                      colors={nightDirectionHexColors}
+                      names={nightDirectionNames}
+                      icons={nightDirectionIcons}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("nightDirectionInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
 
-                <div>
-                  <ProportionalSlider
-                    sliderState={[nightDirectionSliderVal, setNightDirectionSliderVal]}
-                    valueState={[nightDirectionWeights, setNightDirectionWeights]}
-                    sliderColors={nightDirectionHexColors}
-                  />
-                  <BoxConicGradientDisplay
-                    values={nightDirectionWeights}
-                    colors={nightDirectionHexColors}
-                    names={nightDirectionNames}
-                    icons={nightDirectionIcons}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("nightDirectionInfo")}}>Show help</button>
-                </div>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Weekend Day Weights</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <ProportionalSlider
+                      sliderState={[weekendSliderVal, setWeekendSliderVal]}
+                      valueState={[weekendWeights, setWeekendWeights]}
+                      sliderColors={weekendHexColors}
+                    />
+                    <BoxConicGradientDisplay
+                      values={weekendWeights}
+                      colors={weekendHexColors}
+                      names={weekendNames}
+                      icons={weekendIcons}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("weekendInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
 
-                <div>
-                  <ProportionalSlider
-                    sliderState={[weekendSliderVal, setWeekendSliderVal]}
-                    valueState={[weekendWeights, setWeekendWeights]}
-                    sliderColors={weekendHexColors}
-                  />
-                  <BoxConicGradientDisplay
-                    values={weekendWeights}
-                    colors={weekendHexColors}
-                    names={weekendNames}
-                    icons={weekendIcons}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("weekendInfo")}}>Show help</button>
-                </div>
-
-                <div>
-                  <ProportionalSlider
-                    sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
-                    valueState={[timeSliceWeights, setTimeSliceWeights]}
-                    sliderColors={timeSliceHexColors}
-                  />
-                  <BoxConicGradientDisplay
-                    values={timeSliceWeights}
-                    colors={timeSliceHexColors}
-                    names={timeSliceNames}
-                    icons={timeSliceIcons}
-                    twoCols={true}
-                  />
-                  <button onClick={() => {handleOpenInfoPopover("timeSliceInfo")}}>Show help</button>
-                </div>
-              </div>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <span>Time Period Weights</span>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div>
+                    <ProportionalSlider
+                      sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
+                      valueState={[timeSliceWeights, setTimeSliceWeights]}
+                      sliderColors={timeSliceHexColors}
+                    />
+                    <BoxConicGradientDisplay
+                      values={timeSliceWeights}
+                      colors={timeSliceHexColors}
+                      names={timeSliceNames}
+                      icons={timeSliceIcons}
+                      twoCols={true}
+                    />
+                    <button onClick={() => {handleOpenInfoPopover("timeSliceInfo")}}>Show help</button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
 
 
               <div className="mt-4 flex gap-2">
