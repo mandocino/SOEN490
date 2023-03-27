@@ -29,7 +29,7 @@ import {
 } from "../backend/config/defaultUserPreferences";
 import SteppedSlider from "./custom/SteppedSlider";
 import {
-  Accordion, AccordionDetails, AccordionSummary,
+  Accordion,
   Dialog,
   DialogTitle,
   ToggleButton,
@@ -54,9 +54,6 @@ const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: '
 const color2 = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
 const color3 = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
 const color4 = {bgGradient: 'bg-gradient-to-br from-rose-500 to-rose-400', text: 'text-rose-400', hex: '#f43f5e'}
-
-
-
 
 const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
 const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
@@ -223,6 +220,63 @@ export default function EditScoringFactors(props) {
   }, []);
 
 
+  const accordionSx = {
+    color:
+      isDark
+        ? '#ffffff'
+        : '#000000',
+    backgroundColor:
+      isDark
+        ? '#111111'
+        : '#aaaaaa',
+    border:
+      isDark
+        ? '1px solid #222'
+        : '1px solid #999',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+  };
+  const AccordionSummary = styled((props) => (
+    <MuiAccordionSummary
+      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', color: '#fff' }} />}
+      {...props}
+      >
+      <div className="flex w-full ml-4 justify-between items-center">
+        {props.children}
+        <button
+          type="button"
+          onClick={(e) => {e.stopPropagation(); props.showHelp(); }}
+          className="z-10 z-10 w-8 h-8 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-200 focus:ring-4 focus:ring-emerald-300 text-emerald-800 hover:bg-white font-semibold rounded-lg"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
+               className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round"
+                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+          </svg>
+
+        </button>
+      </div>
+
+    </MuiAccordionSummary>
+  ))(({ theme }) => ({
+    backgroundColor:
+      isDark
+        ? 'rgba(255, 255, 255, .05)'
+        : 'rgba(0, 0, 0, .03)',
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+      transform: 'rotate(90deg)',
+    },
+  }));
+  const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: '1rem',
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+  }));
+
   // Create card with the scoring factors
   const factorCardsArray = [{
     name: "Frequency", bg: color1.bgGradient, value: factorWeights[0]
@@ -364,11 +418,11 @@ export default function EditScoringFactors(props) {
     let markToCollapse = false;
 
     switch(newSetting) {
-      case "consistencyImportanceInfo":
-        setInfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseInfoPopover} />);
-        break;
       case "walkReluctanceInfo":
         setInfoPopoverContent(<WalkReluctanceInfo handleClose={handleCloseInfoPopover} />);
+        break;
+      case "consistencyImportanceInfo":
+        setInfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "worstAcceptableCasesInfo":
         setInfoPopoverContent(<WorstAcceptableCasesInfo handleClose={handleCloseInfoPopover} />);
@@ -451,11 +505,8 @@ export default function EditScoringFactors(props) {
 
               <hr className="mb-8 dark:border-emerald-700"></hr>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>
                   <span>Accessibility Settings</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -466,20 +517,16 @@ export default function EditScoringFactors(props) {
                       min={1}
                       max={9}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("walkReluctanceInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>
                   <span>Consistency Importance</span>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <div className="rounded-xl bg-emerald-darkest flex items-center justify-center">
+                  <div>
                     <ToggleButtonGroup
                       value={consistencyImportance}
                       exclusive
@@ -493,6 +540,7 @@ export default function EditScoringFactors(props) {
                           height: '2.5rem',
                           margin: "0.125rem 0.125rem",
                           color: "black",
+                          lineHeight: 1.15,
                           backgroundColor: "#999",
                           '&.Mui-selected': {
                             backgroundColor: "#eee",
@@ -519,16 +567,13 @@ export default function EditScoringFactors(props) {
                         <span>Max Average</span>
                       </ToggleButton>
                     </ToggleButtonGroup>
+
                   </div>
-                  <button onClick={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>Show help</button>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>
                   <span>Worst Acceptable Cases</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -548,16 +593,12 @@ export default function EditScoringFactors(props) {
                       min={15}
                       max={180}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("factorInfo")}}>
                   <span>Core Scoring Factor Weights</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -573,16 +614,12 @@ export default function EditScoringFactors(props) {
                       names={factorNames}
                       icons={factorIcons}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("factorInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDayInfo")}}>
                   <span>Night Day Weights</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -598,16 +635,12 @@ export default function EditScoringFactors(props) {
                       names={nightDayNames}
                       icons={nightDayIcons}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("nightDayInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDirectionInfo")}}>
                   <span>Night Direction Weights</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -623,16 +656,12 @@ export default function EditScoringFactors(props) {
                       names={nightDirectionNames}
                       icons={nightDirectionIcons}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("nightDirectionInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("weekendInfo")}}>
                   <span>Weekend Day Weights</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -648,16 +677,12 @@ export default function EditScoringFactors(props) {
                       names={weekendNames}
                       icons={weekendIcons}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("weekendInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
 
-              <Accordion>
-                <AccordionSummary
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
+              <Accordion sx={accordionSx}>
+                <AccordionSummary showHelp={() => {handleOpenInfoPopover("timeSliceInfo")}}>
                   <span>Time Period Weights</span>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -674,7 +699,6 @@ export default function EditScoringFactors(props) {
                       icons={timeSliceIcons}
                       twoCols={true}
                     />
-                    <button onClick={() => {handleOpenInfoPopover("timeSliceInfo")}}>Show help</button>
                   </div>
                 </AccordionDetails>
               </Accordion>
