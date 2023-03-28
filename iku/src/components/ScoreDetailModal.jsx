@@ -5,6 +5,10 @@ import CircleWithText from "./custom/CircleWithText";
 import axios from "axios";
 import Tooltip from "@mui/material/Tooltip";
 import Carousel from "react-material-ui-carousel";
+import {ReactComponent as BicycleIcon} from "./../assets/bike.svg";
+import {ReactComponent as WalkIcon} from "./../assets/walk.svg";
+import {ReactComponent as ElevationIcon} from "./../assets/elevation.svg";
+
 
 function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +19,8 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
   };
 
   const closeModal = () => {
+    setSelectedDestination("default");
+    setCurrentRouteMetrics(defaultRouteMetrics);
     setIsOpen(false);
   };
 
@@ -128,17 +134,40 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
 
   const [selectedDestination, setSelectedDestination] = useState("default");
 
-  const [allRouteMetrics, setAllRouteMetrics] = useState({});
+
+  const defaultAllRouteMetrics = {
+    walkBikeRoutes: {
+      bicycleTripGoing: {
+        duration:0,
+        elevationGained:0,
+        elevationLost: 0        
+      },
+      bicycleTripComing: {
+        duration:0,
+        elevationGained:0,
+        elevationLost: 0
+      },
+      walkTripGoing: {
+        duration:0
+      },
+      walkTripComing: {
+        duration:0
+      }
+    }
+
+
+  }
+
+  const [allRouteMetrics, setAllRouteMetrics] = useState(defaultAllRouteMetrics);
 
   const onChangeDestinationDropdown = (event) => {
     setSelectedDestination(event.currentTarget.value);
 
     // Reset the selected score time to Overall
-    setSelectedScoreTime("Overall");    
+    setSelectedScoreTime("Overall");
 
     // Reset the current route metrics
     setCurrentRouteMetrics(defaultRouteMetrics);
-
 
     // Case where selected item in dropdown is All destinations
     if (selectedDestination === "default") {
@@ -169,7 +198,6 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
         .then((response) => {
           if (response.data) {
             setAllRouteMetrics(response.data);
-          } else {
           }
         })
         .catch((err) => console.error(err));
@@ -187,7 +215,8 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
     walkMax: "-",
     walkAvg: "-",
   };
-  const [currentRouteMetrics, setCurrentRouteMetrics] = useState(defaultRouteMetrics);
+  const [currentRouteMetrics, setCurrentRouteMetrics] =
+    useState(defaultRouteMetrics);
 
   const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
@@ -195,86 +224,116 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
     setSelectedScoreTime(event.currentTarget.id);
     event.stopPropagation();
 
-    if(selectedDestination !== "default"){
-
+    if (selectedDestination !== "default") {
       if (event.currentTarget.id === "Overall") {
         let currentMetrics = {
-          frequencyMin: allRouteMetrics['overallMetrics']['frequencyMetrics']['min'],
-          frequencyMax: allRouteMetrics['overallMetrics']['frequencyMetrics']['max'],
-          frequencyAvg: allRouteMetrics['overallMetrics']['frequencyMetrics']['average'],
-          durationMin: allRouteMetrics['overallMetrics']['durationMetrics']['min'],
-          durationMax: allRouteMetrics['overallMetrics']['durationMetrics']['max'],
-          durationAvg: allRouteMetrics['overallMetrics']['durationMetrics']['average'],
-          walkMin: allRouteMetrics['overallMetrics']['walkMetrics']['min'],
-          walkMax: allRouteMetrics['overallMetrics']['walkMetrics']['max'],
-          walkAvg: allRouteMetrics['overallMetrics']['walkMetrics']['average'],
+          frequencyMin:
+            allRouteMetrics["overallMetrics"]["frequencyMetrics"]["min"],
+          frequencyMax:
+            allRouteMetrics["overallMetrics"]["frequencyMetrics"]["max"],
+          frequencyAvg:
+            allRouteMetrics["overallMetrics"]["frequencyMetrics"]["average"],
+          durationMin:
+            allRouteMetrics["overallMetrics"]["durationMetrics"]["min"],
+          durationMax:
+            allRouteMetrics["overallMetrics"]["durationMetrics"]["max"],
+          durationAvg:
+            allRouteMetrics["overallMetrics"]["durationMetrics"]["average"],
+          walkMin: allRouteMetrics["overallMetrics"]["walkMetrics"]["min"],
+          walkMax: allRouteMetrics["overallMetrics"]["walkMetrics"]["max"],
+          walkAvg: allRouteMetrics["overallMetrics"]["walkMetrics"]["average"],
         };
         setCurrentRouteMetrics(currentMetrics);
-      } 
-      else if (event.currentTarget.id === "Rush-Hour") {
+      } else if (event.currentTarget.id === "Rush-Hour") {
         let currentMetrics = {
-          frequencyMin: allRouteMetrics['rushHourMetrics']['frequencyMetrics']['min'],
-          frequencyMax: allRouteMetrics['rushHourMetrics']['frequencyMetrics']['max'],
-          frequencyAvg: allRouteMetrics['rushHourMetrics']['frequencyMetrics']['average'],
-          durationMin: allRouteMetrics['rushHourMetrics']['durationMetrics']['min'],
-          durationMax: allRouteMetrics['rushHourMetrics']['durationMetrics']['max'],
-          durationAvg: allRouteMetrics['rushHourMetrics']['durationMetrics']['average'],
-          walkMin: allRouteMetrics['rushHourMetrics']['walkMetrics']['min'],
-          walkMax: allRouteMetrics['rushHourMetrics']['walkMetrics']['max'],
-          walkAvg: allRouteMetrics['rushHourMetrics']['walkMetrics']['average'],
+          frequencyMin:
+            allRouteMetrics["rushHourMetrics"]["frequencyMetrics"]["min"],
+          frequencyMax:
+            allRouteMetrics["rushHourMetrics"]["frequencyMetrics"]["max"],
+          frequencyAvg:
+            allRouteMetrics["rushHourMetrics"]["frequencyMetrics"]["average"],
+          durationMin:
+            allRouteMetrics["rushHourMetrics"]["durationMetrics"]["min"],
+          durationMax:
+            allRouteMetrics["rushHourMetrics"]["durationMetrics"]["max"],
+          durationAvg:
+            allRouteMetrics["rushHourMetrics"]["durationMetrics"]["average"],
+          walkMin: allRouteMetrics["rushHourMetrics"]["walkMetrics"]["min"],
+          walkMax: allRouteMetrics["rushHourMetrics"]["walkMetrics"]["max"],
+          walkAvg: allRouteMetrics["rushHourMetrics"]["walkMetrics"]["average"],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      } else if (event.currentTarget.id === "Off-Peak") {
+        let currentMetrics = {
+          frequencyMin:
+            allRouteMetrics["offPeakMetrics"]["frequencyMetrics"]["min"],
+          frequencyMax:
+            allRouteMetrics["offPeakMetrics"]["frequencyMetrics"]["max"],
+          frequencyAvg:
+            allRouteMetrics["offPeakMetrics"]["frequencyMetrics"]["average"],
+          durationMin:
+            allRouteMetrics["offPeakMetrics"]["durationMetrics"]["min"],
+          durationMax:
+            allRouteMetrics["offPeakMetrics"]["durationMetrics"]["max"],
+          durationAvg:
+            allRouteMetrics["offPeakMetrics"]["durationMetrics"]["average"],
+          walkMin: allRouteMetrics["offPeakMetrics"]["walkMetrics"]["min"],
+          walkMax: allRouteMetrics["offPeakMetrics"]["walkMetrics"]["max"],
+          walkAvg: allRouteMetrics["offPeakMetrics"]["walkMetrics"]["average"],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      } else if (event.currentTarget.id === "Weekend") {
+        let currentMetrics = {
+          frequencyMin:
+            allRouteMetrics["weekendMetrics"]["frequencyMetrics"]["min"],
+          frequencyMax:
+            allRouteMetrics["weekendMetrics"]["frequencyMetrics"]["max"],
+          frequencyAvg:
+            allRouteMetrics["weekendMetrics"]["frequencyMetrics"]["average"],
+          durationMin:
+            allRouteMetrics["weekendMetrics"]["durationMetrics"]["min"],
+          durationMax:
+            allRouteMetrics["weekendMetrics"]["durationMetrics"]["max"],
+          durationAvg:
+            allRouteMetrics["weekendMetrics"]["durationMetrics"]["average"],
+          walkMin: allRouteMetrics["weekendMetrics"]["walkMetrics"]["min"],
+          walkMax: allRouteMetrics["weekendMetrics"]["walkMetrics"]["max"],
+          walkAvg: allRouteMetrics["weekendMetrics"]["walkMetrics"]["average"],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      } else if (event.currentTarget.id === "Overnight") {
+        let currentMetrics = {
+          frequencyMin:
+            allRouteMetrics["overnightMetrics"]["frequencyMetrics"]["min"],
+          frequencyMax:
+            allRouteMetrics["overnightMetrics"]["frequencyMetrics"]["max"],
+          frequencyAvg:
+            allRouteMetrics["overnightMetrics"]["frequencyMetrics"]["average"],
+          durationMin:
+            allRouteMetrics["overnightMetrics"]["durationMetrics"]["min"],
+          durationMax:
+            allRouteMetrics["overnightMetrics"]["durationMetrics"]["max"],
+          durationAvg:
+            allRouteMetrics["overnightMetrics"]["durationMetrics"]["average"],
+          walkMin: allRouteMetrics["overnightMetrics"]["walkMetrics"]["min"],
+          walkMax: allRouteMetrics["overnightMetrics"]["walkMetrics"]["max"],
+          walkAvg:
+            allRouteMetrics["overnightMetrics"]["walkMetrics"]["average"],
         };
         setCurrentRouteMetrics(currentMetrics);
       }
-      else if (event.currentTarget.id === "Off-Peak") {
-        let currentMetrics = {
-          frequencyMin: allRouteMetrics['offPeakMetrics']['frequencyMetrics']['min'],
-          frequencyMax: allRouteMetrics['offPeakMetrics']['frequencyMetrics']['max'],
-          frequencyAvg: allRouteMetrics['offPeakMetrics']['frequencyMetrics']['average'],
-          durationMin: allRouteMetrics['offPeakMetrics']['durationMetrics']['min'],
-          durationMax: allRouteMetrics['offPeakMetrics']['durationMetrics']['max'],
-          durationAvg: allRouteMetrics['offPeakMetrics']['durationMetrics']['average'],
-          walkMin: allRouteMetrics['offPeakMetrics']['walkMetrics']['min'],
-          walkMax: allRouteMetrics['offPeakMetrics']['walkMetrics']['max'],
-          walkAvg: allRouteMetrics['offPeakMetrics']['walkMetrics']['average'],
-        };
-        setCurrentRouteMetrics(currentMetrics);
-      }
-
-      else if (event.currentTarget.id === "Weekend") {
-        let currentMetrics = {
-          frequencyMin: allRouteMetrics['weekendMetrics']['frequencyMetrics']['min'],
-          frequencyMax: allRouteMetrics['weekendMetrics']['frequencyMetrics']['max'],
-          frequencyAvg: allRouteMetrics['weekendMetrics']['frequencyMetrics']['average'],
-          durationMin: allRouteMetrics['weekendMetrics']['durationMetrics']['min'],
-          durationMax: allRouteMetrics['weekendMetrics']['durationMetrics']['max'],
-          durationAvg: allRouteMetrics['weekendMetrics']['durationMetrics']['average'],
-          walkMin: allRouteMetrics['weekendMetrics']['walkMetrics']['min'],
-          walkMax: allRouteMetrics['weekendMetrics']['walkMetrics']['max'],
-          walkAvg: allRouteMetrics['weekendMetrics']['walkMetrics']['average'],
-        };
-        setCurrentRouteMetrics(currentMetrics);
-      }
-
-      else if (event.currentTarget.id === "Overnight") {
-        let currentMetrics = {
-          frequencyMin: allRouteMetrics['overnightMetrics']['frequencyMetrics']['min'],
-          frequencyMax: allRouteMetrics['overnightMetrics']['frequencyMetrics']['max'],
-          frequencyAvg: allRouteMetrics['overnightMetrics']['frequencyMetrics']['average'],
-          durationMin: allRouteMetrics['overnightMetrics']['durationMetrics']['min'],
-          durationMax: allRouteMetrics['overnightMetrics']['durationMetrics']['max'],
-          durationAvg: allRouteMetrics['overnightMetrics']['durationMetrics']['average'],
-          walkMin: allRouteMetrics['overnightMetrics']['walkMetrics']['min'],
-          walkMax: allRouteMetrics['overnightMetrics']['walkMetrics']['max'],
-          walkAvg: allRouteMetrics['overnightMetrics']['walkMetrics']['average'],
-        };
-        setCurrentRouteMetrics(currentMetrics);
-      }
-
-
     }
-
-    
   };
+
+  const secondsToMinutes = (seconds) => {
+    seconds = Number(seconds);
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor(seconds % 3600 / 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? " hour " : " hours ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? " minute " : " minutes ") : "";
+    return hDisplay + mDisplay; 
+  }
 
   return (
     <>
@@ -723,11 +782,69 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                               <span>Route 4</span>
                             </div>
 
-                            <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-14 w-full ">
-                              <span>Car</span>
-                              <span>Personal Bike</span>
-                              <span>Bixi</span>
-                              <span>Walk</span>
+                            <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-8 py-2 h-14 w-full ">
+                              <div className="text-lg font-semibold pb-2">
+                                Alternative modes of transport
+                              </div>
+                              {/* Don't display alternative modes of transport if destination is not selected */}
+                              <div className={selectedDestination === "default" ? "" : "hidden" }>
+                                Please select a destination to view the alternative modes of transport route information
+                              </div>
+                              {/* Display alternative modes of transport if destination is selected */}
+                              <div className= {`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "default"? "": "hidden"}`}>
+                                <div className="flex flex-row gap-2">
+                                  <div className="px-2"> 
+                                    <BicycleIcon></BicycleIcon>
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                    <div className="flex flex-row gap-5">
+                                    <div>
+                                  To destination: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['bicycleTripGoing']['duration'])}
+                                  </div>
+                                  <div className="flex flex-row">
+                                    <div>
+                                    <ElevationIcon></ElevationIcon>
+                                    </div>
+                                    <div className="pr-2">
+                                    +{allRouteMetrics['walkBikeRoutes']['bicycleTripGoing']['elevationGained']}m
+                                    </div>
+                                    <div>
+                                    -{allRouteMetrics['walkBikeRoutes']['bicycleTripGoing']['elevationLost']}m
+                                    </div>
+                                  </div>
+                                  </div>
+                                  <div className="flex flex-row gap-5">
+                                  <div>
+                                  To origin: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['bicycleTripComing']['duration'])}
+                                  </div>
+                                  <div className="flex flex-row">
+                                    <div>
+                                    <ElevationIcon></ElevationIcon>
+                                    </div>
+                                    <div className="pr-2">
+                                    +{allRouteMetrics['walkBikeRoutes']['bicycleTripComing']['elevationGained']}m
+                                    </div>
+                                    <div>
+                                    -{allRouteMetrics['walkBikeRoutes']['bicycleTripComing']['elevationLost']}m
+                                    </div>
+                                  </div>
+                                  </div>
+                                  </div>
+                                </div>
+                                <div className="flex flex-row gap-2 pt-3">
+                                  <div className="px-2">
+                                    <WalkIcon></WalkIcon>
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                <div>
+                                  To destination: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['walkTripGoing']['duration'])}
+                                </div>
+                                <div>
+                                  To origin: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['walkTripComing']['duration'])}
+                                </div>
+                                </div>
+                                </div>
+                              </div>
                             </div>
                           </Carousel>
                         </div>
