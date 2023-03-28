@@ -8,9 +8,10 @@ import Carousel from "react-material-ui-carousel";
 import {ReactComponent as BicycleIcon} from "./../assets/bike.svg";
 import {ReactComponent as WalkIcon} from "./../assets/walk.svg";
 import {ReactComponent as ElevationIcon} from "./../assets/elevation.svg";
+import {ReactComponent as CarIcon} from "./../assets/car.svg";
 
 
-function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
+function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weekendWeights }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -156,6 +157,16 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
         duration:0,
         elevationGained:0,
         elevationLost: 0
+      },
+      carTripGoing: {
+        duration:0,
+        elevationGained:0,
+        elevationLost: 0
+      },
+      carTripComing: {
+        duration:0,
+        elevationGained:0,
+        elevationLost: 0
       }
     }
 
@@ -197,7 +208,7 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
       // Fetch the routes metrics
       axios
         .get(
-          `http://localhost:5000/savedRoutingDataAverages/${originLocation._id}/${selectedDestination}/${factorWeights[0]}/${factorWeights[1]}`
+          `http://localhost:5000/savedRoutingDataAverages/${originLocation._id}/${selectedDestination}/${nightDayWeights['weeknightWeight']}/${nightDayWeights['fridayNightWeight']}/${nightDayWeights['saturdayNightWeight']}/${weekendWeights['saturdayWeight']}/${weekendWeights['sundayWeight']}`
         )
         .then((response) => {
           if (response.data) {
@@ -761,7 +772,7 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                             cycleNavigation={false}
                             navButtonsAlwaysVisible={true}
                             indicators={false}
-                            className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-14 w-full "
+                            className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-full w-full "
                             sx={{
                               button: {
                                 "&:hover": {
@@ -779,15 +790,15 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                               },
                             }}
                           >
-                            <div className="flex flex-col  px-7 py-2 h-14 w-full ">
+                            <div className="flex flex-col  px-7 py-2 h-full w-full ">
                               <span>Route 1</span>
                               <span>Route 2</span>
                               <span>Route 3</span>
                               <span>Route 4</span>
                             </div>
 
-                            <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-8 py-2 h-14 w-full ">
-                              <div className="text-lg font-semibold pb-2">
+                            <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-8 py-2 h-full w-full ">
+                              <div className="text-lg font-semibold ">
                                 Alternative modes of transport
                               </div>
                               {/* Don't display alternative modes of transport if destination is not selected */}
@@ -796,7 +807,48 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                               </div>
                               {/* Display alternative modes of transport if destination is selected */}
                               <div className= {`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "default"? "": "hidden"}`}>
-                                <div className="flex flex-row gap-2">
+                                {/* CAR */}
+                              <div className="flex flex-row gap-2">
+                                  <div className="px-2"> 
+                                    <CarIcon></CarIcon>
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                    <div className="flex flex-row gap-5">
+                                    <div>
+                                  To destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['carTripGoing']['duration'])}
+                                  </div>
+                                  <div className="flex flex-row">
+                                    <div>
+                                    <ElevationIcon></ElevationIcon>
+                                    </div>
+                                    <div className="pr-2">
+                                    +{allRouteMetrics['alternativeModeRoutes']['carTripGoing']['elevationGained']}m
+                                    </div>
+                                    <div>
+                                    -{allRouteMetrics['alternativeModeRoutes']['carTripGoing']['elevationLost']}m
+                                    </div>
+                                  </div>
+                                  </div>
+                                  <div className="flex flex-row gap-5">
+                                  <div>
+                                  To origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['carTripComing']['duration'])}
+                                  </div>
+                                  <div className="flex flex-row">
+                                    <div>
+                                    <ElevationIcon></ElevationIcon>
+                                    </div>
+                                    <div className="pr-2">
+                                    +{allRouteMetrics['alternativeModeRoutes']['carTripComing']['elevationGained']}m
+                                    </div>
+                                    <div>
+                                    -{allRouteMetrics['alternativeModeRoutes']['carTripComing']['elevationLost']}m
+                                    </div>
+                                  </div>
+                                  </div>
+                                  </div>
+                                </div>
+                                {/* BICYCLE */}
+                                <div className="flex flex-row gap-2 pt-3">
                                   <div className="px-2"> 
                                     <BicycleIcon></BicycleIcon>
                                   </div>
@@ -835,6 +887,7 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                                   </div>
                                   </div>
                                 </div>
+                                {/* WALK */}
                                 <div className="flex flex-row gap-2 pt-3">
                                   <div className="px-2">
                                     <WalkIcon></WalkIcon>

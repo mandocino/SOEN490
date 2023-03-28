@@ -141,7 +141,8 @@ export default function Dashboard() {
           destinations={destinations}
           key={loc._id}
           count={count}
-          factorWeights={userData.factorWeights}
+          nightDayWeights={userData.nightDayWeights}
+          weekendWeights={userData.weekendWeights}
           compare={compare}
           addCardToCompare={addCardToCompare}
         >
