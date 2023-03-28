@@ -52,7 +52,8 @@ describe("User tests", () => {
             first_name: "TestFirstName",
             last_name: "TestLastName",
             password: "TestPassword",
-            lastPrefChangeTime: 0
+            lastScoringPrefChangeTime: 0,
+            lastRoutingPrefChangeTime: 0
         });
         expect(resSignup.data).toHaveProperty('_id');
         testUserID = resSignup.data._id;

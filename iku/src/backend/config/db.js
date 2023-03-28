@@ -1,38 +1,16 @@
-import { Schema, model, connect } from "mongoose";
+import {connect, model, Schema} from "mongoose";
+import {
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
+} from "./defaultUserPreferences.js";
 
 const connectionString =
   "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
-
-
-///////////// DEFAULTS
-
-export const defaultUserFactorWeights = {
-  frequencyWeight: 0.7,
-  durationWeight: 0.3,
-};
-
-export const defaultUserNightWeights = {
-  weeknightWeight: 0.3,
-  fridayNightWeight: 0.35,
-  saturdayNightWeight: 0.35
-};
-
-export const defaultUserWeekendWeights = {
-  saturdayWeight: 0.6,
-  sundayWeight: 0.4
-};
-
-export const defaultUserScoringWeights = {
-  rushHourWeight: 0.4,
-  offPeakWeight: 0.3,
-  nightWeight: 0.1,
-  weekendWeight: 0.2
-}
-
-export const defaultUserRoutingPreferences = {
-  walkReluctance: 2,
-  isWheelChair: false
-}
 
 ///////////// SCHEMAS
 
@@ -52,11 +30,14 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     current_location: { type: String, default: "" },
     factorWeights: { type: Object, default: defaultUserFactorWeights },
-    nightWeights: { type: Object, default: defaultUserNightWeights },
+    nightDayWeights: { type: Object, default: defaultUserNightDayWeights },
+    nightDirectionWeights: { type: Object, default: defaultUserNightDirectionWeights },
     weekendWeights: { type: Object, default: defaultUserWeekendWeights },
-    scoringWeights: { type: Object, default: defaultUserScoringWeights },
+    timeSliceWeights: { type: Object, default: defaultUserTimeSliceWeights },
+    scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
-    lastPrefChangeTime: { type: Schema.Types.Date, required: true },
+    lastScoringPrefChangeTime: { type: Schema.Types.Date, required: true },
+    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true }
   },
   { collection: "Users" }
 );

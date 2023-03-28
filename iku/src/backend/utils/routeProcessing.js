@@ -20,6 +20,7 @@ export async function getRoutingData(
     destination,
     startDates,
     routingPreferences,
+    lastRoutingPrefChangeTime,
     loggedIn = false,
     searchStartTime = defaultStartTime,
     searchTimeWindow = defaultTimeWindow
@@ -31,7 +32,7 @@ export async function getRoutingData(
     walkReluctance: routingPreferences.walkReluctance
   };
 
-  return await thisModule.handleGetRoutingData(origin, destination, startDates, searchStartTime, loggedIn, optionalParams, routingPreferences.isWheelChair);
+  return await thisModule.handleGetRoutingData(origin, destination, startDates, searchStartTime, lastRoutingPrefChangeTime, loggedIn, optionalParams, routingPreferences.isWheelChair);
 }
 
 export async function handleGetRoutingData(
@@ -39,6 +40,7 @@ export async function handleGetRoutingData(
     destination,
     startDates,
     time,
+    lastRoutingPrefChangeTime,
     loggedIn=false,
     optionalParams=null,
     isWheelchair=false
@@ -56,7 +58,7 @@ export async function handleGetRoutingData(
 
   // Compute metrics for scoring if there are none saved.
   // Or, re-compute them if the routing algorithm was updated.
-  if (!fetchedData || fetchedData.generatedTime < lastRoutingUpdateTime) {
+  if (!fetchedData || fetchedData.generatedTime < lastRoutingUpdateTime || fetchedData.generatedTime < lastRoutingPrefChangeTime) {
     const generatedTime = Date.now();
     routingData = await generateMetricsSubroutine(origin, destination, startDates, time, loggedIn, optionalParams, isWheelchair);
 

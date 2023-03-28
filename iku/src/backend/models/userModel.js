@@ -37,7 +37,7 @@ export const getUserByEmail = (email, result) => {
     if (err) {
       console.log(err);
     } 
-    if (!user) {
+    if (!data) {
       // Handle case where user is not found
       const error = new Error('User not found');
       error.status = 404;
@@ -69,7 +69,7 @@ export const login = (data, result) => {
           // If matches, get rest of user data and return it
           userDBModel.find(
               { email: data.email },
-              "_id first_name duration_priority email frequency_priority last_name walk_priority lastPrefChangeTime",
+              "_id first_name duration_priority email frequency_priority last_name walk_priority lastScoringPrefChangeTime",
               (err, data) => {
                 if (err) {
                   console.log(err);
