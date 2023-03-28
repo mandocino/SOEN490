@@ -6,8 +6,8 @@ import PlusIcon from "../assets/plus.png";
 
 export default function DashboardCard(props) {
 
-  const hueLowerBound = 310;
-  const hueUpperBound = 160;
+  const hueLowerBound = 340;
+  const hueUpperBound = 140;
   const hueDirection = 1 // 1 = CW; -1 = CCW
   let hueScale;
 
