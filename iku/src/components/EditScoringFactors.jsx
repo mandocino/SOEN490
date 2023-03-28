@@ -1,17 +1,6 @@
 import React, {useEffect, useState} from "react";
-import ProportionalSlider from "./custom/ProportionalSlider";
 import axios from "axios";
-import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
-import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
-import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
-import {ReactComponent as WeekIcon} from "./../assets/calendar-week-solid.svg";
-import {ReactComponent as FridayIcon} from "./../assets/calendar-fri-solid.svg";
-import {ReactComponent as SaturdayIcon} from "./../assets/calendar-sat-solid.svg";
-import {ReactComponent as SundayIcon} from "./../assets/calendar-sun-solid.svg";
-import {ReactComponent as ToDestIcon} from "./../assets/arrow-right-to-city-solid.svg";
-import {ReactComponent as FromDestIcon} from "./../assets/arrow-left-from-city-solid.svg";
 import mongoose from "mongoose";
-import BoxConicGradientDisplay from "./custom/BoxConicGradientDisplay";
 import {
   checkIfWeightsAddTo100,
   convertUserFactorWeightsToArr,
@@ -27,64 +16,41 @@ import {
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
-import SteppedSlider from "./custom/SteppedSlider";
 import {
-  Dialog,
-  DialogTitle,
-  ToggleButton,
-  ToggleButtonGroup
+  Dialog, DialogTitle
 } from "@mui/material";
 import {
   ConsistencyImportanceInfo,
   FactorWeightsInfo,
   NightDayWeightsInfo,
   NightDirectionWeightsInfo,
-  TimeSliceWeightsInfo, AccessibilitySettingsInfo,
-  WeekendWeightsInfo, WorstAcceptableCasesInfo
+  TimeSliceWeightsInfo,
+  AccessibilitySettingsInfo,
+  WeekendWeightsInfo,
+  WorstAcceptableCasesInfo
 } from "./ScoringFactorInfoPopovers";
 
-import {Accordion, AccordionSummary, AccordionDetails, IsWheelChair} from "./ScoringFactorFormElements";
-
-const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
-const color2 = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
-const color3 = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
-const color4 = {bgGradient: 'bg-gradient-to-br from-rose-500 to-rose-400', text: 'text-rose-400', hex: '#f43f5e'}
-
-const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
-const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
-const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>;
-
-const weekIcon = <WeekIcon className="fill-white w-6 h-6"/>;
-const friIcon = <FridayIcon className="fill-white w-6 h-6"/>;
-const satIcon = <SaturdayIcon className="fill-white w-6 h-6"/>;
-const sunIcon = <SundayIcon className="fill-white w-6 h-6"/>;
-
-const toDestIcon = <ToDestIcon className="fill-white w-6 h-6"/>;
-const fromDestIcon = <FromDestIcon className="fill-white w-6 h-6"/>;
-
-const factorHexColors = [color1.hex, color2.hex];
-const factorNames = ["Frequency", "Duration"];
-const factorIcons = [frequencyIcon, durationIcon];
-
-const nightDayHexColors = [color1.hex, color2.hex, color3.hex];
-const nightDayNames = ["Weeknight", "Fri. Night", "Sat. Night"];
-const nightDayIcons = [weekIcon, friIcon, satIcon]
-
-const nightDirectionHexColors = [color1.hex, color2.hex];
-const nightDirectionNames = ["Towards Dest", "From Dest"];
-const nightDirectionIcons = [toDestIcon, fromDestIcon];
-
-const weekendHexColors = [color1.hex, color2.hex];
-const weekendNames = ["Saturday", "Sunday"];
-const weekendIcons = [satIcon, sunIcon];
-
-const timeSliceHexColors = [color1.hex, color2.hex, color3.hex, color4.hex];
-const timeSliceNames = ["Rush Hour", "Off-Peak", "Overnight", "Weekend"];
-const timeSliceIcons = []
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  IsWheelChair,
+  WalkReluctance,
+  ConsistencyImportance,
+  WorstAcceptableCases,
+  CoreFactorWeights,
+  NightDayWeights,
+  NightDirectionWeights,
+  WeekendWeights,
+  TimeSliceWeights,
+  factorHexColors,
+  nightDayHexColors,
+  nightDirectionHexColors,
+  weekendHexColors,
+  timeSliceHexColors
+} from "./ScoringFactorFormElements";
 
 const user_id = localStorage.getItem("user_id");
-
-
 
 async function updateUserPreferences(data, scoring) {
   const currentDate = Date.now();
@@ -202,26 +168,6 @@ export default function EditScoringFactors(props) {
     fetchUserPreferences();
   }, []);
 
-  // Create card with the scoring factors
-  const factorCardsArray = [{
-    name: "Frequency", bg: color1.bgGradient, value: factorWeights[0]
-  }, {
-    name: "Duration", bg: color2.bgGradient, value: factorWeights[1]
-  }];
-
-  // Create an array with the three scoring factors
-  // Sort it (mutate in-place)
-  // Create divs with the position (1, 2, 3), name, value, and icon
-  const factorCards = [].concat(factorCardsArray)
-    .sort((a, b) => a.value < b.value ? 1 : -1)
-    .map((item, i) =>
-      <div key={i} className={`${item.bg} font-semibold text-2xl text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center`}>
-        <span>{i + 1}.</span>
-        {item.name === "Frequency" ? frequencyIcon : item.name === "Duration" ? durationIcon : walkIcon}
-        <span>{item.name}: {item.value}%</span>
-      </div>);
-
-
   const [isOpen, setIsOpen] = useState(false);
 
   // For these weighted values, we need slider values since
@@ -327,14 +273,6 @@ export default function EditScoringFactors(props) {
     window.location.reload(false);
   };
 
-  const [checked, setChecked] = useState(false);
-
-  const handleConsistencyImportance = (event, newValue) => {
-    if (newValue !== null) {
-      setConsistencyImportance(newValue);
-    }
-  };
-
   const handleCloseInfoPopover = () => {
     setInfoPopoverActive(false);
     setInfoPopoverName('')
@@ -355,19 +293,19 @@ export default function EditScoringFactors(props) {
         setInfoPopoverContent(<WorstAcceptableCasesInfo handleClose={handleCloseInfoPopover} />);
         break;
       case "factorInfo":
-        setInfoPopoverContent(<FactorWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2]} />);
+        setInfoPopoverContent(<FactorWeightsInfo handleClose={handleCloseInfoPopover} colors={factorHexColors} />);
         break;
       case "nightDayInfo":
-        setInfoPopoverContent(<NightDayWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2, color3]} />);
+        setInfoPopoverContent(<NightDayWeightsInfo handleClose={handleCloseInfoPopover} colors={nightDayHexColors} />);
         break;
       case "nightDirectionInfo":
-        setInfoPopoverContent(<NightDirectionWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2]} />);
+        setInfoPopoverContent(<NightDirectionWeightsInfo handleClose={handleCloseInfoPopover} colors={nightDirectionHexColors} />);
         break;
       case "weekendInfo":
-        setInfoPopoverContent(<WeekendWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2]} />);
+        setInfoPopoverContent(<WeekendWeightsInfo handleClose={handleCloseInfoPopover} colors={weekendHexColors} />);
         break;
       case "timeSliceInfo":
-        setInfoPopoverContent(<TimeSliceWeightsInfo handleClose={handleCloseInfoPopover} colors={[color1, color2, color3, color4]} />);
+        setInfoPopoverContent(<TimeSliceWeightsInfo handleClose={handleCloseInfoPopover} colors={timeSliceHexColors} />);
         break;
       default:
         setInfoPopoverContent(null);
@@ -388,11 +326,6 @@ export default function EditScoringFactors(props) {
   return (
     <>
       <div>
-        <div
-          className={`${props.dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
-          {factorCards}
-        </div>
-
         <button onClick={openModal} type="button" className={props.buttonClass}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                stroke="currentColor" className="w-6 h-6">
@@ -432,216 +365,100 @@ export default function EditScoringFactors(props) {
 
               <hr className="mb-8 dark:border-emerald-700"></hr>
 
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("accessibilitySettingsInfo")}}>
-                  <span>Accessibility Settings</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <span>Walk Reluctance: {walkReluctance}</span>
-                      <div className="flex flex-col gap-4">
-                        <SteppedSlider
-                          state={[walkReluctance, setWalkReluctance]}
-                          step={1}
-                          min={1}
-                          max={9}
-                        />
-                        <IsWheelChair state={[isWheelChair, setIsWheelChair]}></IsWheelChair>
-                      </div>
+              <div>
+                <Accordion className="rounded-t-xl">
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("accessibilitySettingsInfo")}}>
+                    <span>Accessibility Settings</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div className="flex flex-col gap-4">
+                      <WalkReluctance state={[walkReluctance, setWalkReluctance]}/>
+                      <IsWheelChair state={[isWheelChair, setIsWheelChair]}/>
                     </div>
+                  </AccordionDetails>
+                </Accordion>
 
-                  </div>
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>
+                    <span>Consistency Importance</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <ConsistencyImportance state={[consistencyImportance, setConsistencyImportance]}/>
+                  </AccordionDetails>
+                </Accordion>
 
-                </AccordionDetails>
-              </Accordion>
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>
+                    <span>Worst Acceptable Cases</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <WorstAcceptableCases
+                      freqState={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
+                      durState={[worstAcceptableDuration, setWorstAcceptableDuration]}
+                    />
+                  </AccordionDetails>
+                </Accordion>
 
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>
-                  <span>Consistency Importance</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div>
-                    <ToggleButtonGroup
-                      value={consistencyImportance}
-                      exclusive
-                      onChange={handleConsistencyImportance}
-                      aria-label="consistency importance"
-                      sx={{
-                        '& .MuiToggleButtonGroup-root': {
-                          width: '100%',
-                        },
-                        '& .MuiToggleButtonGroup-grouped': {
-                          height: '2.5rem',
-                          margin: "0.125rem 0.125rem",
-                          color: "black",
-                          lineHeight: 1.15,
-                          backgroundColor: "#999",
-                          '&.Mui-selected': {
-                            backgroundColor: "#eee",
-                            '&:hover, & .Mui-active': {
-                              backgroundColor: "#fff"
-                            },
-                          },
-                          '&:hover, & .Mui-active': {
-                            backgroundColor: "#fff"
-                          },
-                          '& .MuiTouchRipple-child': {
-                            backgroundColor: '#10b981'
-                          },
-                        },
-                      }}
-                    >
-                      <ToggleButton value="moreConsistent" aria-label="left aligned">
-                        <span>Max Consistency</span>
-                      </ToggleButton>
-                      <ToggleButton value="balanced" aria-label="centered">
-                        <span>Balanced</span>
-                      </ToggleButton>
-                      <ToggleButton value="betterAverages" aria-label="right aligned">
-                        <span>Max Average</span>
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-
-                  </div>
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>
-                  <span>Worst Acceptable Cases</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <span>Worst Acceptable Frequency: {worstAcceptableFrequency}</span>
-                      <SteppedSlider
-                        state={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
-                        step={15}
-                        min={15}
-                        max={180}
-                      />
-                    </div>
-
-                    <div>
-                      <span>Worst Acceptable Duration: {worstAcceptableDuration}</span>
-                      <SteppedSlider
-                        state={[worstAcceptableDuration, setWorstAcceptableDuration]}
-                        step={15}
-                        min={15}
-                        max={180}
-                      />
-                    </div>
-                  </div>
-
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("factorInfo")}}>
-                  <span>Core Scoring Factor Weights</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[factorSliderVal, setFactorSliderVal]}
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("factorInfo")}}>
+                    <span>Core Scoring Factor Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <CoreFactorWeights
                       valueState={[factorWeights, setFactorWeights]}
-                      sliderColors={factorHexColors}
+                      sliderState={[factorSliderVal, setFactorSliderVal]}
                     />
-                    <BoxConicGradientDisplay
-                      values={factorWeights}
-                      colors={factorHexColors}
-                      names={factorNames}
-                      icons={factorIcons}
-                    />
-                  </div>
-                </AccordionDetails>
-              </Accordion>
+                  </AccordionDetails>
+                </Accordion>
 
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDayInfo")}}>
-                  <span>Night Day Weights</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[nightDaySliderVal, setNightDaySliderVal]}
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDayInfo")}}>
+                    <span>Night Day Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <NightDayWeights
                       valueState={[nightDayWeights, setNightDayWeights]}
-                      sliderColors={nightDayHexColors}
+                      sliderState={[nightDaySliderVal, setNightDaySliderVal]}
                     />
-                    <BoxConicGradientDisplay
-                      values={nightDayWeights}
-                      colors={nightDayHexColors}
-                      names={nightDayNames}
-                      icons={nightDayIcons}
-                    />
-                  </div>
-                </AccordionDetails>
-              </Accordion>
+                  </AccordionDetails>
+                </Accordion>
 
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDirectionInfo")}}>
-                  <span>Night Direction Weights</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[nightDirectionSliderVal, setNightDirectionSliderVal]}
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDirectionInfo")}}>
+                    <span>Night Direction Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <NightDirectionWeights
                       valueState={[nightDirectionWeights, setNightDirectionWeights]}
-                      sliderColors={nightDirectionHexColors}
+                      sliderState={[nightDaySliderVal, setNightDirectionSliderVal]}
                     />
-                    <BoxConicGradientDisplay
-                      values={nightDirectionWeights}
-                      colors={nightDirectionHexColors}
-                      names={nightDirectionNames}
-                      icons={nightDirectionIcons}
-                    />
-                  </div>
-                </AccordionDetails>
-              </Accordion>
+                  </AccordionDetails>
+                </Accordion>
 
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("weekendInfo")}}>
-                  <span>Weekend Day Weights</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[weekendSliderVal, setWeekendSliderVal]}
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("weekendInfo")}}>
+                    <span>Weekend Day Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <WeekendWeights
                       valueState={[weekendWeights, setWeekendWeights]}
-                      sliderColors={weekendHexColors}
+                      sliderState={[weekendSliderVal, setWeekendSliderVal]}
                     />
-                    <BoxConicGradientDisplay
-                      values={weekendWeights}
-                      colors={weekendHexColors}
-                      names={weekendNames}
-                      icons={weekendIcons}
-                    />
-                  </div>
-                </AccordionDetails>
-              </Accordion>
+                  </AccordionDetails>
+                </Accordion>
 
-              <Accordion>
-                <AccordionSummary showHelp={() => {handleOpenInfoPopover("timeSliceInfo")}}>
-                  <span>Time Period Weights</span>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div>
-                    <ProportionalSlider
-                      sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
+                <Accordion>
+                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("timeSliceInfo")}}>
+                    <span>Time Period Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <TimeSliceWeights
                       valueState={[timeSliceWeights, setTimeSliceWeights]}
-                      sliderColors={timeSliceHexColors}
+                      sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
                     />
-                    <BoxConicGradientDisplay
-                      values={timeSliceWeights}
-                      colors={timeSliceHexColors}
-                      names={timeSliceNames}
-                      icons={timeSliceIcons}
-                      twoCols={true}
-                    />
-                  </div>
-                </AccordionDetails>
-              </Accordion>
+                  </AccordionDetails>
+                </Accordion>
+              </div>
 
 
               <div className="mt-4 flex gap-2">
