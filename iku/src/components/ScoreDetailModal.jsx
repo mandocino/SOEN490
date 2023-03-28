@@ -148,10 +148,14 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
         elevationLost: 0
       },
       walkTripGoing: {
-        duration:0
+        duration:0,
+        elevationGained:0,
+        elevationLost: 0
       },
       walkTripComing: {
-        duration:0
+        duration:0,
+        elevationGained:0,
+        elevationLost: 0
       }
     }
 
@@ -836,11 +840,37 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                                     <WalkIcon></WalkIcon>
                                   </div>
                                   <div className="flex flex-col gap-2">
+                                  <div className="flex flex-row gap-5">
                                 <div>
                                   To destination: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['walkTripGoing']['duration'])}
                                 </div>
+                                <div className="flex flex-row">
+                                    <div>
+                                    <ElevationIcon></ElevationIcon>
+                                    </div>
+                                    <div className="pr-2">
+                                    +{allRouteMetrics['walkBikeRoutes']['walkTripGoing']['elevationGained']}m
+                                    </div>
+                                    <div>
+                                    -{allRouteMetrics['walkBikeRoutes']['walkTripGoing']['elevationLost']}m
+                                    </div>
+                                  </div>
+                                  </div>
+                                  <div className="flex flex-row gap-5">
                                 <div>
                                   To origin: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['walkTripComing']['duration'])}
+                                </div>
+                                <div className="flex flex-row">
+                                    <div>
+                                    <ElevationIcon></ElevationIcon>
+                                    </div>
+                                    <div className="pr-2">
+                                    +{allRouteMetrics['walkBikeRoutes']['walkTripComing']['elevationGained']}m
+                                    </div>
+                                    <div>
+                                    -{allRouteMetrics['walkBikeRoutes']['walkTripComing']['elevationLost']}m
+                                    </div>
+                                  </div>
                                 </div>
                                 </div>
                                 </div>
