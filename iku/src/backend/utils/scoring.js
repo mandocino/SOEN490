@@ -68,9 +68,10 @@ export async function fetchScores(origin, destination) {
  * @param origin
  * @param destinations
  * @param userID
+ * @param userData
  * @returns {Promise<AxiosResponse<*>|{overnight: number, generatedTime: number, rushHour: number, origin: *, weekend: number, overall: number, detailedScores: [], offPeak: number}|null>}
  */
-export async function loadScores(origin, destinations, userID) {
+export async function loadScores(origin, destinations, userID, userData) {
   if (origin && origin.length === 0) {
     return null;
   }
@@ -88,9 +89,8 @@ export async function loadScores(origin, destinations, userID) {
     lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
 
     // Grab the last time the user updated their preferences
-    const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-    lastScoringPrefChangeTime = user.data[0].lastScoringPrefChangeTime;
-    lastRoutingPrefChangeTime = user.data[0].lastRoutingPrefChangeTime;
+    lastScoringPrefChangeTime = userData.lastScoringPrefChangeTime;
+    lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
 
     // Get the latest scores for the origin only
     savedScores = await thisModule.fetchScores(origin, null);
@@ -105,14 +105,15 @@ export async function loadScores(origin, destinations, userID) {
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
   if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
-    savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+    savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
   }
   // Get the latest scores for each origin/destination pair
   else {
     let scores = []
     for (const destination of destinations) {
       let score;
-      if (userID != null) {
+      const loggedIn = userID != null;
+      if (loggedIn) {
         // Fetch scores for a single origin/destination pair
         score = await thisModule.fetchScores(origin, destination);
       }
@@ -122,7 +123,7 @@ export async function loadScores(origin, destinations, userID) {
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
       if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
-        savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+        savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
         break;
       }
       scores.push(score);
@@ -139,11 +140,10 @@ export async function loadScores(origin, destinations, userID) {
  * `generateNewScoresForOnePair` function. Also computes the weighted average of all scores for this specific origin.
  * @param origin
  * @param destinations
- * @param userID
+ * @param userData
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
-export async function generateNewScores(origin, destinations, userID) {
-  const loggedIn = (userID != null);
+export async function generateNewScores(origin, destinations, loggedIn, userData) {
 
   // User's scoring and routing preferences
   let userPreferences;
@@ -166,9 +166,6 @@ export async function generateNewScores(origin, destinations, userID) {
   let offPeak = 0;
   let weekend = 0;
   let overnight = 0;
-
-  const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-  const userData = user.data[0];
 
   const lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
 

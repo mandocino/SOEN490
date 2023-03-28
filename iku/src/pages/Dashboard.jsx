@@ -18,10 +18,11 @@ export default function Dashboard() {
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
   const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
-  const [cards, setCards] = useState([])
+  const [cards, setCards] = useState([]);
   const [cardToCompare, setCardToCompare] = useState([]);
-  const [compare, setCompare] = useState(false)
-  const [compareModal, setCompareModal] = useState(false)
+  const [compare, setCompare] = useState(false);
+  const [compareModal, setCompareModal] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const addCardToCompare = (count) => {
     cardToCompare.push(count)
@@ -43,6 +44,11 @@ export default function Dashboard() {
 
   let originCards;
   let destinationCards;
+
+  const fetchUserData = async () => {
+    const user = await axios.get(`http://localhost:5000/userByID/${user_id}`);
+    setUserData(user.data[0]);
+  }
 
   // Fetch all locations from the DB
   const fetchLocations = () => {
@@ -86,18 +92,22 @@ export default function Dashboard() {
     let originsWithScores;
     // Map all scores and set `origins` to it
     originsWithScores = await Promise.all(rawOrigins.map(async o => ({
-      ...o, scores: await loadScores(o, destinations, user_id)
+      ...o, scores: await loadScores(o, destinations, user_id, userData)
     })));
 
     if(rawCurrentHome) {
       setCurrentHome({
-        ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id)
+        ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id, userData)
       });
     }
 
     // Set origins to include the scores
     setOrigins(originsWithScores);
   }
+
+  useEffect(() => {
+    fetchUserData();
+  })
 
   // Fetch the locations from the DB
   useEffect(() => {
@@ -124,12 +134,37 @@ export default function Dashboard() {
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
       count += 1
-      cards[count] = <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id} count={count} factorWeights={factorWeights} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
+      cards[count] =
+        <DashboardCard
+          className={dashboardInnerElementGradientClass}
+          loc={loc}
+          destinations={destinations}
+          key={loc._id}
+          count={count}
+          factorWeights={userData.factorWeights}
+          compare={compare}
+          addCardToCompare={addCardToCompare}
+        >
+          {loc.name}
+        </DashboardCard>;
       return cards[count]
     })
     if (currentHome) {
       count += 1
-      currentHomeObj = <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} factorWeights={factorWeights} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+      currentHomeObj =
+        <DashboardCard
+          className={dashboardInnerElementGradientClass}
+          loc={currentHome}
+          destinations={destinations}
+          invert
+          compare={compare}
+          key={count}
+          count={count}
+          factorWeights={userData.factorWeights}
+          addCardToCompare={addCardToCompare}
+        >
+          {currentHome.name}
+        </DashboardCard>
       cards[count] = currentHomeObj;
     }
   } else {
