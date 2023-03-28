@@ -318,9 +318,9 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
   const durationWeight = userPreferences.factorWeights.durationWeight / 100;
 
   const startDates = {
-    weekdayStartDate: "2023-02-20",
-    saturdayStartDate: "2023-02-25",
-    sundayStartDate: "2023-02-26"
+    weekdayStartDate: "2023-03-27",
+    saturdayStartDate: "2023-04-01",
+    sundayStartDate: "2023-04-02"
   };
 
   const cvRatioBase = 8

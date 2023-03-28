@@ -8,9 +8,9 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
   const originCoords = `${origin.latitude},${origin.longitude}`;
   const destinationCoords = `${destination.latitude},${destination.longitude}`;
   const startDates = {
-    weekdayStartDate: "2023-02-20",
-    saturdayStartDate: "2023-02-25",
-    sundayStartDate: "2023-02-26"
+    weekdayStartDate: "2023-03-27",
+    saturdayStartDate: "2023-04-01",
+    sundayStartDate: "2023-04-02"
   }
 
   const itineraries = await getItinerariesFromOTP(origin, destination, startDates);
@@ -58,59 +58,59 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
     // eslint-disable-next-line
     switch(i) {
       case 0: // rush hour
-        toDestStartDate = new Date("2023-02-20T06:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-20T10:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-20T15:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-20T19:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-03-27T06:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-03-27T10:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-03-27T15:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-03-27T19:15:00.000-05:00").getTime();
         sliceName = "rushHour";
         break;
       case 1: // off-peak 1
-        toDestStartDate = new Date("2023-02-20T10:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-20T06:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-20T15:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-03-27T10:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-03-28T01:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-03-27T06:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-03-27T15:15:00.000-05:00").getTime();
         sliceName = "offPeak1";
         break;
       case 2: // off-peak 2
         toDestStartDate = null
         toDestEndDate = null
-        fromDestStartDate = new Date("2023-02-20T19:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-03-27T19:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-03-28T01:15:00.000-05:00").getTime();
         sliceName = "offPeak2";
         break;
       case 3: // weeknight
-        toDestStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-03-27T01:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-03-27T05:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-03-27T01:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-03-27T05:15:00.000-05:00").getTime();
         sliceName = "night1";
         break;
       case 4: // friday night
-        toDestStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-04-01T01:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-04-01T05:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-04-01T01:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-04-01T05:15:00.000-05:00").getTime();
         sliceName = "night2";
         break;
       case 5: // saturday
-        toDestStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-04-01T05:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-04-02T01:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-04-01T05:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-04-02T01:15:00.000-05:00").getTime();
         sliceName = "weekend1";
         break;
       case 6: // saturday night
-        toDestStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-04-02T01:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-04-02T05:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-04-02T01:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-04-02T05:15:00.000-05:00").getTime();
         sliceName = "night3";
         break;
       case 7: // sunday
-        toDestStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
-        toDestEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
-        fromDestStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
-        fromDestEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
+        toDestStartDate = new Date("2023-04-02T05:00:00.000-05:00").getTime();
+        toDestEndDate = new Date("2023-04-03T01:15:00.000-05:00").getTime();
+        fromDestStartDate = new Date("2023-04-02T05:00:00.000-05:00").getTime();
+        fromDestEndDate = new Date("2023-04-03T01:15:00.000-05:00").getTime();
         sliceName = "weekend2";
         break;
     }
