@@ -52,15 +52,14 @@ import {
 
 const user_id = localStorage.getItem("user_id");
 
-async function updateUserPreferences(data, scoring) {
+async function updateUserPreferences(data, routing) {
   const currentDate = Date.now();
 
   data._id = mongoose.Types.ObjectId(user_id);
-  if (scoring) {
-    data.lastScoringPrefChangeTime = currentDate;
-  } else {
+  if (routing) {
     data.lastRoutingPrefChangeTime = currentDate;
   }
+  data.lastScoringPrefChangeTime = currentDate;
 
   return await axios
     .post("http://localhost:5000/modifyUserByID", data)
@@ -75,9 +74,9 @@ export default function EditScoringFactors(props) {
   const [nightDirectionWeights, setNightDirectionWeights] = useState([]);
   const [weekendWeights, setWeekendWeights] = useState([]);
   const [timeSliceWeights, setTimeSliceWeights] = useState([]);
-  const [consistencyImportance, setConsistencyImportance] = useState([]);
-  const [worstAcceptableFrequency, setWorstAcceptableFrequency] = useState([]);
-  const [worstAcceptableDuration, setWorstAcceptableDuration] = useState([]);
+  const [consistencyImportance, setConsistencyImportance] = useState('');
+  const [worstAcceptableFrequency, setWorstAcceptableFrequency] = useState(0);
+  const [worstAcceptableDuration, setWorstAcceptableDuration] = useState(0);
   const [walkReluctance, setWalkReluctance] = useState([]);
   const [isWheelChair, setIsWheelChair] = useState(false);
 
@@ -85,6 +84,19 @@ export default function EditScoringFactors(props) {
   const [infoPopoverActive, setInfoPopoverActive] = useState(false);
   const [infoPopoverName, setInfoPopoverName] = useState(null);
   const [infoPopoverContent, setInfoPopoverContent] = useState(null);
+
+  const resetScoringPreferences = async () => {
+    setConsistencyImportance(defaultUserScoringPreferences.consistencyImportance);
+    setWorstAcceptableFrequency(defaultUserScoringPreferences.worstAcceptableFrequency);
+    setWorstAcceptableDuration(defaultUserScoringPreferences.worstAcceptableDuration);
+    await updateUserPreferences({scoringPreferences: defaultUserScoringPreferences}, false);
+  }
+
+  const resetRoutingPreferences = async () => {
+    setIsWheelChair(defaultUserRoutingPreferences.isWheelChair);
+    setWalkReluctance(defaultUserRoutingPreferences.walkReluctance);
+    await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, false);
+  }
 
   // Fetch user's preferred scoring priorities
   const fetchUserPreferences = async () => {
@@ -112,7 +124,7 @@ export default function EditScoringFactors(props) {
         [convertUserNightDirectionWeightsToArr, "nightDirectionWeights", setNightDirectionWeights, defaultUserNightDirectionWeights],
         [convertUserWeekendWeightsToArr, "weekendWeights", setWeekendWeights, defaultUserWeekendWeights],
         [convertUserTimeSliceWeightsToArr, "timeSliceWeights", setTimeSliceWeights, defaultUserTimeSliceWeights],
-      ]
+      ];
 
       for (let i of weightsToFetch) {
         const convert = i[0];
@@ -132,34 +144,56 @@ export default function EditScoringFactors(props) {
         }
 
         if (resetWeights) {
-          await updateUserPreferences({[weightName]: defaults}, true);
+          await updateUserPreferences({[weightName]: defaults}, false);
           setState(convert(defaults));
         }
       }
 
-      const scoringAndRoutingPreferencesToFetch = [
-        // [weightName, stateSetterFunction, isScoringPreference]
-        ["consistencyImportance", setConsistencyImportance, true],
-        ["worstAcceptableFrequency", setWorstAcceptableFrequency, true],
-        ["worstAcceptableDuration", setWorstAcceptableDuration, true],
-        ["walkReluctance", setWalkReluctance, false],
-        ["isWheelChair", setIsWheelChair, false],
-      ]
+      if (userData.hasOwnProperty("scoringPreferences")) {
+        const scoringPreferencesToFetch = [
+          // [weightName, stateSetterFunction, isScoringPreference]
+          ["consistencyImportance", setConsistencyImportance],
+          ["worstAcceptableFrequency", setWorstAcceptableFrequency],
+          ["worstAcceptableDuration", setWorstAcceptableDuration],
+        ];
 
-      for (let i of scoringAndRoutingPreferencesToFetch) {
-        const weightName = i[0];
-        const setState = i[1];
-        const isScoringPreference = i[2]
+        for (let i of scoringPreferencesToFetch) {
+          const weightName = i[0];
+          const setState = i[1];
 
-        const defaults = isScoringPreference ? defaultUserScoringPreferences : defaultUserRoutingPreferences;
-
-        if (userData.hasOwnProperty(weightName)) {
-          const fetched = userData[weightName];
-          setState(fetched);
-        } else {
-          await updateUserPreferences({[weightName]: defaults[weightName]}, isScoringPreference);
-          setState(defaults[weightName]);
+          if (userData.scoringPreferences.hasOwnProperty(weightName)) {
+            const fetched = userData.scoringPreferences[weightName];
+            setState(fetched);
+          } else {
+            await resetScoringPreferences();
+            break;
+          }
         }
+      } else {
+        await resetScoringPreferences();
+      }
+
+      if (userData.hasOwnProperty("routingPreferences")) {
+        const routingPreferencesToFetch = [
+          // [weightName, stateSetterFunction, isScoringPreference]
+          ["walkReluctance", setWalkReluctance],
+          ["isWheelChair", setIsWheelChair],
+        ];
+
+        for (let i of routingPreferencesToFetch) {
+          const weightName = i[0];
+          const setState = i[1];
+
+          if (userData.routingPreferences.hasOwnProperty(weightName)) {
+            const fetched = userData.routingPreferences[weightName];
+            setState(fetched);
+          } else {
+            await resetRoutingPreferences();
+            break;
+          }
+        }
+      } else {
+        await resetRoutingPreferences();
       }
     }
   }
@@ -185,11 +219,11 @@ export default function EditScoringFactors(props) {
   const [oldWeekendWeights, setOldWeekendWeights] = useState([]);
   const [oldTimeSliceWeights, setOldTimeSliceWeights] = useState([]);
 
-  const [oldConsistencyImportance, setOldConsistencyImportance] = useState([]);
-  const [oldWorstAcceptableFrequency, setOldWorstAcceptableFrequency] = useState([]);
-  const [oldWorstAcceptableDuration, setOldWorstAcceptableDuration] = useState([]);
+  const [oldConsistencyImportance, setOldConsistencyImportance] = useState('');
+  const [oldWorstAcceptableFrequency, setOldWorstAcceptableFrequency] = useState(0);
+  const [oldWorstAcceptableDuration, setOldWorstAcceptableDuration] = useState(0);
   const [oldWalkReluctance, setOldWalkReluctance] = useState([]);
-  const [oldIsWheelChair, setOldIsWheelChair] = useState([]);
+  const [oldIsWheelChair, setOldIsWheelChair] = useState(false);
 
   function createCumulativeArray(val) {
     let newArr = [val[0]];
@@ -262,13 +296,45 @@ export default function EditScoringFactors(props) {
 
       sessionStorage.setItem("preferences", JSON.stringify(preferences));
     } else {
+      const walkReluctanceChanged = walkReluctance !== oldWalkReluctance;
+      const isWheelChairChanged = isWheelChair !== oldIsWheelChair;
+      const routingChanged = walkReluctanceChanged || isWheelChairChanged;
+
       const data = {
         factorWeights: {
           frequencyWeight: factorWeights[0],
           durationWeight: factorWeights[1]
+        },
+        nightDayWeights: {
+          weeknightWeight: nightDayWeights[0],
+          fridayNightWeight: nightDayWeights[1],
+          saturdayNightWeight: nightDayWeights[2]
+        },
+        nightDirectionWeights: {
+          toDestWeight: nightDirectionWeights[0],
+          fromDestWeight: nightDirectionWeights[1]
+        },
+        weekendWeights: {
+          saturdayWeight: weekendWeights[0],
+          sundayWeight: weekendWeights[1]
+        },
+        timeSliceWeights: {
+          rushHourWeight: timeSliceWeights[0],
+          offPeakWeight: timeSliceWeights[1],
+          nightWeight: timeSliceWeights[2],
+          weekendWeight: timeSliceWeights[3]
+        },
+        scoringPreferences: {
+          consistencyImportance: consistencyImportance,
+          worstAcceptableFrequency: worstAcceptableFrequency,
+          worstAcceptableDuration: worstAcceptableDuration
+        },
+        routingPreferences: {
+          walkReluctance: walkReluctance,
+          isWheelChair: isWheelChair
         }
       };
-      await updateUserPreferences(data);
+      await updateUserPreferences(data, routingChanged);
     }
     window.location.reload(false);
   };
