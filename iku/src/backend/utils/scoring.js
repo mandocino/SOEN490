@@ -81,6 +81,7 @@ export async function loadScores(origin, destinations, userID) {
   let lastScoringPrefChangeTime;
   let lastRoutingPrefChangeTime;
   let lastAlgoUpdateTime;
+  let preferencesUpdated;
 
   if (loggedIn) {
     // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
@@ -101,6 +102,7 @@ export async function loadScores(origin, destinations, userID) {
     lastScoringPrefChangeTime = aLongTimeAgo;
     lastRoutingPrefChangeTime = aLongTimeAgo
     lastAlgoUpdateTime = aLongTimeAgo
+    preferencesUpdated = JSON.parse(sessionStorage.getItem('preferences')).preferencesUpdated;
 
     // Get the scores for current origin from session storage (if exists)
     let locationStringArray = sessionStorage.getItem('location');
@@ -116,8 +118,9 @@ export async function loadScores(origin, destinations, userID) {
 
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
-  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
+  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
     savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+    preferencesUpdated =  false;
   }
   // Get the latest scores for each origin/destination pair
   else {
@@ -144,8 +147,10 @@ export async function loadScores(origin, destinations, userID) {
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
 
-      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
+      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
+        console.log('test')
         savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+        preferencesUpdated = false;
         break;
       }
       scores.push(score);
@@ -153,6 +158,12 @@ export async function loadScores(origin, destinations, userID) {
     savedScores.detailedScores = scores;
   }
 
+  if(!loggedIn) {
+    let preferences = JSON.parse(sessionStorage.getItem('preferences'))
+    preferences.preferencesUpdated = preferencesUpdated;
+
+    sessionStorage.setItem('preferences', JSON.stringify(preferences));
+  }
   return savedScores;
 }
 
@@ -193,10 +204,12 @@ export async function generateNewScores(origin, destinations, userID) {
   let user;
   let userData;
   let lastRoutingPrefChangeTime;
-  if(userID != null) {
+  if(loggedIn) {
     user = await axios.get(`http://localhost:5000/userByID/${userID}`);
     userData = user.data[0];
     lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
+  } else {
+    userData = JSON.parse(sessionStorage.getItem('preferences')).factorWeights;
   }
 
   // TODO: Either update user document in db to the default preferences or show an alert in frontend

@@ -56,14 +56,11 @@ const user_id = localStorage.getItem("user_id");
 async function updateUserPreferences(data, routing) {
 
   if(user_id === null) {
-    let factorWeights = JSON.parse(sessionStorage.getItem("factorWeights"));
+    let preferences = JSON.parse(sessionStorage.getItem("preferences"));
     const weightName = Object.keys(data)[0];
-    factorWeights[weightName] = data[weightName];
+    preferences.factorWeights[weightName] = data[weightName];
 
-    console.log(weightName)
-    console.log(data)
-
-    sessionStorage.setItem("factorWeights", JSON.stringify(factorWeights));
+    sessionStorage.setItem("preferences", JSON.stringify(preferences));
 
   } else {
     const currentDate = Date.now();
@@ -147,7 +144,7 @@ export default function EditScoringFactors(props) {
     let userData;
 
     if(user_id === null) {
-      if(sessionStorage.getItem("factorWeights") === null) {
+      if(sessionStorage.getItem("preferences") === null) {
         const defaultFactors = {
             factorWeights: defaultUserFactorWeights,
             nightDayWeights: defaultUserNightDayWeights,
@@ -155,13 +152,17 @@ export default function EditScoringFactors(props) {
             weekendWeights: defaultUserWeekendWeights,
             timeSliceWeights: defaultUserTimeSliceWeights,
             scoringPreferences: defaultUserScoringPreferences,
-            routingPreferences: defaultUserRoutingPreferences
+            routingPreferences: defaultUserRoutingPreferences,
           };
- 
-        sessionStorage.setItem("factorWeights", JSON.stringify(defaultFactors));
+        let preferences = {
+          factorWeights: defaultFactors,
+          preferencesUpdated: false
+        }
+
+        sessionStorage.setItem("preferences", JSON.stringify(preferences));
         userData = defaultFactors;
       } else {
-        userData = JSON.parse(sessionStorage.getItem("factorWeights"));
+        userData = JSON.parse(sessionStorage.getItem("preferences")).factorWeights;
       }
     }
 
@@ -382,11 +383,12 @@ export default function EditScoringFactors(props) {
     };
 
     if(user_id === null) {
-      let factorWeights = JSON.parse(sessionStorage.getItem("factorWeights"));
+      let preferences = JSON.parse(sessionStorage.getItem("preferences"));
 
-      factorWeights = data;
+      preferences.factorWeights = data;
+      preferences.preferencesUpdated = true;
 
-      sessionStorage.setItem("factorWeights", JSON.stringify(factorWeights));
+      sessionStorage.setItem("preferences", JSON.stringify(preferences));
     } else {
       await updateUserPreferences(data, routingChanged);
     }
