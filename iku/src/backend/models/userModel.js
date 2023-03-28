@@ -37,7 +37,7 @@ export const getUserByEmail = (email, result) => {
     if (err) {
       console.log(err);
     } 
-    if (!user) {
+    if (!data) {
       // Handle case where user is not found
       const error = new Error('User not found');
       error.status = 404;
