@@ -94,12 +94,12 @@ export async function loadScores(origin, destinations, userID) {
 
     // Get the latest scores for the origin only
     savedScores = await thisModule.fetchScores(origin, null);
-    console.log(savedScores);
   } else {
     // For non-logged-in users, set both times to 1970 to force re-generation
     const aLongTimeAgo = new Date(0);
 
-    lastPrefChangeTime = aLongTimeAgo;
+    lastScoringPrefChangeTime = aLongTimeAgo;
+    lastRoutingPrefChangeTime = aLongTimeAgo
     lastAlgoUpdateTime = aLongTimeAgo
 
     // Get the scores for current origin from session storage (if exists)
