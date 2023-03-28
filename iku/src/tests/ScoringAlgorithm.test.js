@@ -135,7 +135,7 @@ describe("loadScores", () => {
 
         const mockUserData = {
             data: [
-                { lastPrefChangeTime: new Date(2020, 1, 1) },
+                { lastScoringPrefChangeTime: new Date(2020, 1, 1) },
                 null
             ]
         };
@@ -180,7 +180,7 @@ describe("loadScores", () => {
 
         const mockUserData = {
             data: [
-                { lastPrefChangeTime: new Date(2020, 1, 1) },
+                { lastScoringPrefChangeTime: new Date(2020, 1, 1) },
                 null
             ]
         };
@@ -198,7 +198,7 @@ describe("loadScores", () => {
         expect(result).toStrictEqual(mockScores);
     });
 
-    it("should regenerate and re-fetch the scores if the user lastPrefChangeTime is newer than the scores", async () => {
+    it("should regenerate and re-fetch the scores if the user lastScoringPrefChangeTime is newer than the scores", async () => {
 
         // Arrange
         const mockAlgoUpdatedTime = {
@@ -207,7 +207,7 @@ describe("loadScores", () => {
 
         const mockUserData = {
             data: [
-                { lastPrefChangeTime: new Date(2022, 1, 1) },
+                { lastScoringPrefChangeTime: new Date(2022, 1, 1) },
                 null
             ]
         };
@@ -235,7 +235,7 @@ describe("loadScores", () => {
         }
         const mockUserData = {
             data: [
-                { lastPrefChangeTime: new Date(2020, 1, 1) },
+                { lastScoringPrefChangeTime: new Date(2020, 1, 1) },
                 null
             ]
         }
@@ -255,7 +255,7 @@ describe("loadScores", () => {
         expect(module.generateNewScores).toHaveBeenCalledTimes(1);
     });
 
-    it("should not regenerate and re-fetch the scores if they're newer than lastPrefChangeTime and lastAlgoUpdateTime", async () => {
+    it("should not regenerate and re-fetch the scores if they're newer than lastScoringPrefChangeTime and lastAlgoUpdateTime", async () => {
 
         // Arrange
         const mockAlgoUpdatedTime = {
@@ -266,7 +266,7 @@ describe("loadScores", () => {
         }
         const mockUserData = {
             data: [
-                { lastPrefChangeTime: new Date(2020, 1, 1) },
+                { lastScoringPrefChangeTime: new Date(2020, 1, 1) },
                 null
             ]
         }

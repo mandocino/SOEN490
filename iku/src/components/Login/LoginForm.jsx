@@ -73,7 +73,7 @@ const LoginForm = ({ inputs, type }) => {
             first_name: inputValue[1].value,
             last_name: inputValue[2].value,
             password: inputValue[3].value,
-            lastPrefChangeTime: 0
+            lastScoringPrefChangeTime: 0
           })
           .catch((e) => e.message);
         document.getElementById("registerMsg").innerHTML = "Account Successfully Registered!";
