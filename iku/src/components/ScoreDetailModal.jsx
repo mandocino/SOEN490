@@ -10,7 +10,7 @@ import {ReactComponent as WalkIcon} from "./../assets/walk.svg";
 import {ReactComponent as ElevationIcon} from "./../assets/elevation.svg";
 
 
-function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
+function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weekendWeights }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -197,7 +197,7 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
       // Fetch the routes metrics
       axios
         .get(
-          `http://localhost:5000/savedRoutingDataAverages/${originLocation._id}/${selectedDestination}/${factorWeights[0]}/${factorWeights[1]}`
+          `http://localhost:5000/savedRoutingDataAverages/${originLocation._id}/${selectedDestination}/${nightDayWeights['weeknightWeight']}/${nightDayWeights['fridayNightWeight']}/${nightDayWeights['saturdayNightWeight']}/${weekendWeights['saturdayWeight']}/${weekendWeights['sundayWeight']}`
         )
         .then((response) => {
           if (response.data) {

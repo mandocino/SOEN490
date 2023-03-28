@@ -168,7 +168,7 @@ router.post('/newRoutingData/', addSavedRoutingData);
 router.get('/savedRoutingData/:origin/:destination', showSavedRoutingDataByLocations);
 
 // Get all routing data AVERAGES from an origin to a destination
-router.get('/savedRoutingDataAverages/:origin/:destination/:frequency/:duration', showSavedRoutingDataAveragesByLocations);
+router.get('/savedRoutingDataAverages/:origin/:destination/:weeknightWeight/:fridayNightWeight/:saturdayNightWeight/:saturdayWeight/:sundayWeight', showSavedRoutingDataAveragesByLocations);
 
 // Delete a set of routes by object id
 router.post('/deleteRoutingData/', deleteSavedRoutingData);
