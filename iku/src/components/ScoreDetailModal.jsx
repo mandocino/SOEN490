@@ -136,7 +136,7 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
 
 
   const defaultAllRouteMetrics = {
-    walkBikeRoutes: {
+    alternativeModeRoutes: {
       bicycleTripGoing: {
         duration:0,
         elevationGained:0,
@@ -803,33 +803,33 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                                   <div className="flex flex-col gap-2">
                                     <div className="flex flex-row gap-5">
                                     <div>
-                                  To destination: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['bicycleTripGoing']['duration'])}
+                                  To destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['bicycleTripGoing']['duration'])}
                                   </div>
                                   <div className="flex flex-row">
                                     <div>
                                     <ElevationIcon></ElevationIcon>
                                     </div>
                                     <div className="pr-2">
-                                    +{allRouteMetrics['walkBikeRoutes']['bicycleTripGoing']['elevationGained']}m
+                                    +{allRouteMetrics['alternativeModeRoutes']['bicycleTripGoing']['elevationGained']}m
                                     </div>
                                     <div>
-                                    -{allRouteMetrics['walkBikeRoutes']['bicycleTripGoing']['elevationLost']}m
+                                    -{allRouteMetrics['alternativeModeRoutes']['bicycleTripGoing']['elevationLost']}m
                                     </div>
                                   </div>
                                   </div>
                                   <div className="flex flex-row gap-5">
                                   <div>
-                                  To origin: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['bicycleTripComing']['duration'])}
+                                  To origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['duration'])}
                                   </div>
                                   <div className="flex flex-row">
                                     <div>
                                     <ElevationIcon></ElevationIcon>
                                     </div>
                                     <div className="pr-2">
-                                    +{allRouteMetrics['walkBikeRoutes']['bicycleTripComing']['elevationGained']}m
+                                    +{allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['elevationGained']}m
                                     </div>
                                     <div>
-                                    -{allRouteMetrics['walkBikeRoutes']['bicycleTripComing']['elevationLost']}m
+                                    -{allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['elevationLost']}m
                                     </div>
                                   </div>
                                   </div>
@@ -842,33 +842,33 @@ function ScoreDetailModal({ originLocation, destinations, factorWeights }) {
                                   <div className="flex flex-col gap-2">
                                   <div className="flex flex-row gap-5">
                                 <div>
-                                  To destination: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['walkTripGoing']['duration'])}
+                                  To destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['duration'])}
                                 </div>
                                 <div className="flex flex-row">
                                     <div>
                                     <ElevationIcon></ElevationIcon>
                                     </div>
                                     <div className="pr-2">
-                                    +{allRouteMetrics['walkBikeRoutes']['walkTripGoing']['elevationGained']}m
+                                    +{allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['elevationGained']}m
                                     </div>
                                     <div>
-                                    -{allRouteMetrics['walkBikeRoutes']['walkTripGoing']['elevationLost']}m
+                                    -{allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['elevationLost']}m
                                     </div>
                                   </div>
                                   </div>
                                   <div className="flex flex-row gap-5">
                                 <div>
-                                  To origin: {secondsToMinutes(allRouteMetrics['walkBikeRoutes']['walkTripComing']['duration'])}
+                                  To origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['walkTripComing']['duration'])}
                                 </div>
                                 <div className="flex flex-row">
                                     <div>
                                     <ElevationIcon></ElevationIcon>
                                     </div>
                                     <div className="pr-2">
-                                    +{allRouteMetrics['walkBikeRoutes']['walkTripComing']['elevationGained']}m
+                                    +{allRouteMetrics['alternativeModeRoutes']['walkTripComing']['elevationGained']}m
                                     </div>
                                     <div>
-                                    -{allRouteMetrics['walkBikeRoutes']['walkTripComing']['elevationLost']}m
+                                    -{allRouteMetrics['alternativeModeRoutes']['walkTripComing']['elevationLost']}m
                                     </div>
                                   </div>
                                 </div>

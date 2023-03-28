@@ -105,8 +105,8 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
 
             savedRoutesMetricsAverage['overallMetrics'] = overallMetrics;
 
-            // Add the walk and bike routes data
-            savedRoutesMetricsAverage['walkBikeRoutes'] = results['walkBikeRoutes'];
+            // Add the walk, bike, and car routes data
+            savedRoutesMetricsAverage['alternativeModeRoutes'] = results['alternativeModeRoutes'];
 
             res.json(savedRoutesMetricsAverage);
         }

@@ -140,13 +140,17 @@ async function generateMetricsSubroutine(
   const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "WALK");
   const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "BICYCLE");
   const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "BICYCLE");
+  const carTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "CAR");
+  const carTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "CAR");
 
-  const walkBikeRoutes = {
-    name: `${origin.name}-${destination.name}-walkBikeRoutes`,
+  const alternativeModeRoutes = {
+    name: `${origin.name}-${destination.name}-alternativeModeRoutes`,
     walkTripGoing: walkTripGoing[0],
     walkTripComing: walkTripComing[0],
     bicycleTripGoing: bicycleTripGoing[0],
-    bicycleTripComing: bicycleTripComing[0]
+    bicycleTripComing: bicycleTripComing[0],
+    carTripGoing: carTripGoing[0],
+    carTripComing: carTripComing[0]
   }
 
 
@@ -178,7 +182,7 @@ async function generateMetricsSubroutine(
     offPeakMetrics: offPeakMetrics,
     overnightMetrics: overnightMetrics,
     weekendMetrics: weekendMetrics,
-    walkBikeRoutes: walkBikeRoutes
+    alternativeModeRoutes: alternativeModeRoutes
   }
 }
 

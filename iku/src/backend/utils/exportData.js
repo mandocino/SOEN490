@@ -33,7 +33,7 @@ export async function generateJsonData(origin, destination, exportDownloadableFi
 
   let jsonArr = [];
 
-  jsonArr.push(itineraries.walkBikeRoutes);
+  jsonArr.push(itineraries.alternativeModeRoutes);
 
 
   /**
