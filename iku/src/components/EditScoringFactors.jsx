@@ -49,6 +49,7 @@ import {
   weekendHexColors,
   timeSliceHexColors
 } from "./ScoringFactorFormElements";
+import {ConfirmDialog} from "./custom/ConfirmDialog";
 
 const user_id = localStorage.getItem("user_id");
 
@@ -81,9 +82,9 @@ export default function EditScoringFactors(props) {
   const [isWheelChair, setIsWheelChair] = useState(false);
 
 
-  const [infoPopoverActive, setInfoPopoverActive] = useState(false);
-  const [infoPopoverName, setInfoPopoverName] = useState(null);
-  const [infoPopoverContent, setInfoPopoverContent] = useState(null);
+  const [infoPopoverActive, setinfoPopoverActive] = useState(false);
+  const [infoPopoverName, setinfoPopoverName] = useState(null);
+  const [infoPopoverContent, setinfoPopoverContent] = useState(null);
 
   const resetScoringPreferences = async () => {
     setConsistencyImportance(defaultUserScoringPreferences.consistencyImportance);
@@ -96,6 +97,36 @@ export default function EditScoringFactors(props) {
     setIsWheelChair(defaultUserRoutingPreferences.isWheelChair);
     setWalkReluctance(defaultUserRoutingPreferences.walkReluctance);
     await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, false);
+  }
+
+  const [resetDialogOpen, setResetDialogOpen] = useState(false)
+  const handleResetAllFactors = async () => {
+    const weightsToReset = [
+      // [converterFunction, weightName, stateSetterFunction, defaultWeights]
+      [convertUserFactorWeightsToArr, "factorWeights", setFactorWeights, defaultUserFactorWeights],
+      [convertUserNightDayWeightsToArr, "nightDayWeights", setNightDayWeights, defaultUserNightDayWeights],
+      [convertUserNightDirectionWeightsToArr, "nightDirectionWeights", setNightDirectionWeights, defaultUserNightDirectionWeights],
+      [convertUserWeekendWeightsToArr, "weekendWeights", setWeekendWeights, defaultUserWeekendWeights],
+      [convertUserTimeSliceWeightsToArr, "timeSliceWeights", setTimeSliceWeights, defaultUserTimeSliceWeights],
+    ];
+
+    for (let i of weightsToReset) {
+      const convert = i[0];
+      const weightName = i[1];
+      const setState = i[2];
+      const defaults = i[3];
+
+      await updateUserPreferences({[weightName]: defaults}, false);
+      setState(convert(defaults));
+    }
+
+    await resetScoringPreferences();
+    await resetRoutingPreferences();
+    window.location.reload();
+  }
+
+  const resetAllFactors = () => {
+    setResetDialogOpen(true);
   }
 
   // Fetch user's preferred scoring priorities
@@ -339,52 +370,52 @@ export default function EditScoringFactors(props) {
     window.location.reload(false);
   };
 
-  const handleCloseInfoPopover = () => {
-    setInfoPopoverActive(false);
-    setInfoPopoverName('')
+  const handleCloseinfoPopover = () => {
+    setinfoPopoverActive(false);
+    setinfoPopoverName('')
   }
 
-  const handleOpenInfoPopover = (newSetting) => {
+  const handleOpeninfoPopover = (newSetting) => {
 
     let markToCollapse = false;
 
     switch(newSetting) {
       case "accessibilitySettingsInfo":
-        setInfoPopoverContent(<AccessibilitySettingsInfo handleClose={handleCloseInfoPopover} />);
+        setinfoPopoverContent(<AccessibilitySettingsInfo handleClose={handleCloseinfoPopover} />);
         break;
       case "consistencyImportanceInfo":
-        setInfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseInfoPopover} />);
+        setinfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseinfoPopover} />);
         break;
       case "worstAcceptableCasesInfo":
-        setInfoPopoverContent(<WorstAcceptableCasesInfo handleClose={handleCloseInfoPopover} />);
+        setinfoPopoverContent(<WorstAcceptableCasesInfo handleClose={handleCloseinfoPopover} />);
         break;
       case "factorInfo":
-        setInfoPopoverContent(<FactorWeightsInfo handleClose={handleCloseInfoPopover} colors={factorHexColors} />);
+        setinfoPopoverContent(<FactorWeightsInfo handleClose={handleCloseinfoPopover} colors={factorHexColors} />);
         break;
       case "nightDayInfo":
-        setInfoPopoverContent(<NightDayWeightsInfo handleClose={handleCloseInfoPopover} colors={nightDayHexColors} />);
+        setinfoPopoverContent(<NightDayWeightsInfo handleClose={handleCloseinfoPopover} colors={nightDayHexColors} />);
         break;
       case "nightDirectionInfo":
-        setInfoPopoverContent(<NightDirectionWeightsInfo handleClose={handleCloseInfoPopover} colors={nightDirectionHexColors} />);
+        setinfoPopoverContent(<NightDirectionWeightsInfo handleClose={handleCloseinfoPopover} colors={nightDirectionHexColors} />);
         break;
       case "weekendInfo":
-        setInfoPopoverContent(<WeekendWeightsInfo handleClose={handleCloseInfoPopover} colors={weekendHexColors} />);
+        setinfoPopoverContent(<WeekendWeightsInfo handleClose={handleCloseinfoPopover} colors={weekendHexColors} />);
         break;
       case "timeSliceInfo":
-        setInfoPopoverContent(<TimeSliceWeightsInfo handleClose={handleCloseInfoPopover} colors={timeSliceHexColors} />);
+        setinfoPopoverContent(<TimeSliceWeightsInfo handleClose={handleCloseinfoPopover} colors={timeSliceHexColors} />);
         break;
       default:
-        setInfoPopoverContent(null);
-        setInfoPopoverName('');
+        setinfoPopoverContent(null);
+        setinfoPopoverName('');
         markToCollapse = true;
         break;
     }
 
     if (markToCollapse || newSetting === infoPopoverName) {
-      handleCloseInfoPopover();
+      handleCloseinfoPopover();
     } else {
-      setInfoPopoverActive(true);
-      setInfoPopoverName(newSetting);
+      setinfoPopoverActive(true);
+      setinfoPopoverName(newSetting);
     }
   }
 
@@ -402,13 +433,15 @@ export default function EditScoringFactors(props) {
         </button>
       </div>
 
-      <Dialog open={isOpen} onClose={closeModal}
-              sx={{
-                '& .MuiBackdrop-root': {
-                  backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                  backdropFilter: 'blur(8px)'
-                }
-              }}
+      <Dialog
+        open={isOpen}
+        onClose={closeModal}
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backdropFilter: 'blur(8px)'
+          }
+        }}
       >
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
@@ -433,7 +466,7 @@ export default function EditScoringFactors(props) {
 
               <div>
                 <Accordion className="rounded-t-xl">
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("accessibilitySettingsInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("accessibilitySettingsInfo")}}>
                     <span>Accessibility Settings</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -445,7 +478,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("consistencyImportanceInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("consistencyImportanceInfo")}}>
                     <span>Consistency Importance</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -454,7 +487,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("worstAcceptableCasesInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("worstAcceptableCasesInfo")}}>
                     <span>Worst Acceptable Cases</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -466,7 +499,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("factorInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("factorInfo")}}>
                     <span>Core Scoring Factor Weights</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -478,7 +511,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDayInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("nightDayInfo")}}>
                     <span>Night Day Weights</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -490,7 +523,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("nightDirectionInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("nightDirectionInfo")}}>
                     <span>Night Direction Weights</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -502,7 +535,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("weekendInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("weekendInfo")}}>
                     <span>Weekend Day Weights</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -514,7 +547,7 @@ export default function EditScoringFactors(props) {
                 </Accordion>
 
                 <Accordion>
-                  <AccordionSummary showHelp={() => {handleOpenInfoPopover("timeSliceInfo")}}>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("timeSliceInfo")}}>
                     <span>Time Period Weights</span>
                   </AccordionSummary>
                   <AccordionDetails>
@@ -552,6 +585,26 @@ export default function EditScoringFactors(props) {
                   </svg>
                   Cancel
                 </button>
+                <button
+                  type="button"
+                  onClick={resetAllFactors}
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                       stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                  </svg>
+                  Reset All
+                </button>
+                <ConfirmDialog
+                  open={resetDialogOpen}
+                  setOpen={setResetDialogOpen}
+                  onConfirm={handleResetAllFactors}
+                  >
+                  Reset all scoring factor settings to defaults?
+                </ConfirmDialog>
+
               </div>
             </div>
             <div

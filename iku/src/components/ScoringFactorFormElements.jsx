@@ -84,7 +84,7 @@ export const Accordion = styled((props) => (
   '&:before': {
     display: 'none',
   },
-  '&:first-child': {
+  '&:first-of-type': {
     borderTopLeftRadius: '0.75rem',
     borderTopRightRadius: '0.75rem',
     '& .MuiAccordionSummary-root': {
@@ -103,16 +103,22 @@ export const Accordion = styled((props) => (
 }));
 
 
-export const AccordionSummary = styled((props) => (
+export const AccordionSummary = styled((props) => {
+  const { infoPopover, ...rest } = props;
+  function showInfoPopover(event) {
+    event.stopPropagation();
+    infoPopover();
+  }
+  return (
   <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem', color: '#fff' }} />}
-    {...props}
+    expandIcon={<ArrowForwardIosSharpIcon sx={{fontSize: '0.9rem', color: '#fff'}}/>}
+    {...rest}
   >
     <div className="flex w-full ml-4 justify-between items-center">
       {props.children}
       <button
         type="button"
-        onClick={(e) => {e.stopPropagation(); props.showHelp(); }}
+        onClick={showInfoPopover}
         className="z-10 z-10 w-8 h-8 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-200 focus:ring-4 focus:ring-emerald-300 text-emerald-800 hover:bg-white font-semibold rounded-lg"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
@@ -125,7 +131,8 @@ export const AccordionSummary = styled((props) => (
     </div>
 
   </MuiAccordionSummary>
-))(({ theme }) => ({
+)
+})(({ theme }) => ({
   backgroundColor:
     isDark
       ? 'rgba(255, 255, 255, .05)'
