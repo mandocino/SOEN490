@@ -124,12 +124,12 @@ export default function Dashboard() {
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
       count += 1
-      cards[count] = <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id} count={count} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
+      cards[count] = <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id} count={count} factorWeights={factorWeights} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
       return cards[count]
     })
     if (currentHome) {
       count += 1
-      currentHomeObj = <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+      currentHomeObj = <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} factorWeights={factorWeights} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
       cards[count] = currentHomeObj;
     }
   } else {

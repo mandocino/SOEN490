@@ -103,7 +103,7 @@ export default function DashboardCard(props) {
             {props.children}
           </span>
           <div className="flex flex-col gap-2">
-            <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} />
+            <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} factorWeights={props.factorWeights} />
             <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
           </div>
 
