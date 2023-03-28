@@ -52,7 +52,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                         leaveTo="opacity-0 scale-95"
                     >
                         {/* Contents of the modal */}
-                        <Dialog.Panel className="inline-block w-full max-w-fit  p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-emerald-50 shadow-xl rounded-2xl">
+                        <Dialog.Panel className="inline-block w-full max-w-fit  p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-emerald-50 shadow-xl rounded-2xl" style={{width: "100%", maxWidth: "500px"}}>
                             { firstLocation && setVariables(firstLocation, secondLocation) }
                             {
                                 firstLocation &&
@@ -64,7 +64,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                     </div>
                                     <div className="bg-emerald-900" style={{height: '2px', width: '100%', marginBottom: '15px'}}></div>
                                     <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overall</h3>
-                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '100%'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
                                                 className="pl-3"
@@ -91,7 +91,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                     </div>
                                     <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Rush Hour</h3>
-                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '100%'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
                                                 className="pl-3"
@@ -118,7 +118,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                     </div>
                                     <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Off Peak</h3>
-                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '100%'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
                                                 className="pl-3"
@@ -145,7 +145,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                     </div>
                                     <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Weekend</h3>
-                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '100%'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
                                                 className="pl-3"
@@ -172,7 +172,7 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                                         </div>
                                     </div>
                                     <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overnight</h3>
-                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '500px'}}>
+                                    <div className="flex min-w-30 mb-2" style={{height: '56px', width: '100%'}}>
                                         <div className="-mr-7 z-0">
                                             <CircleWithText
                                                 className="pl-3"
