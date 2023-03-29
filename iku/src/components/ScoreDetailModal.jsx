@@ -9,6 +9,7 @@ import {ReactComponent as BicycleIcon} from "./../assets/bike.svg";
 import {ReactComponent as WalkIcon} from "./../assets/walk.svg";
 import {ReactComponent as ElevationIcon} from "./../assets/elevation.svg";
 import {ReactComponent as CarIcon} from "./../assets/car.svg";
+import {calculateColorForEachScore, hueToHex} from "./DashboardCard";
 
 
 function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weekendWeights }) {
@@ -36,85 +37,12 @@ function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weeke
   };
 
   const addColorsToScores = (allScores) => {
-    // Convert a hue value (in degrees) to a hex RGB representation
-    // Hue in this case refers to the H of an HSV value where S and V are set to 100%
-    function hueToHex(hue) {
-      let quotient = (hue / 60) >> 0;
-      let remainder = (hue % 60) / 60;
-      let r, g, b;
-
-      switch (quotient) {
-        case 0: // 0-59deg
-          r = 255;
-          g = Math.round(255 * remainder);
-          b = 0;
-          break;
-        case 1: // 60-119deg
-          r = Math.round(255 - 255 * remainder);
-          g = 255;
-          b = 0;
-          break;
-        case 2: // 120-179deg
-          r = 0;
-          g = 255;
-          b = Math.round(255 * remainder);
-          break;
-        case 3: // 180-239deg
-          r = 0;
-          g = Math.round(255 - 255 * remainder);
-          b = 255;
-          break;
-        case 4: // 240-299deg
-          r = Math.round(255 * remainder);
-          g = 0;
-          b = 255;
-          break;
-        case 5: // 300-359deg
-          r = 255;
-          g = 0;
-          b = Math.round(255 - 255 * remainder);
-          break;
-      }
-
-      // Convert the RGB set into its hex representation
-      const hex =
-        "#" +
-        [r, g, b]
-          .map((x) => {
-            const hex = x.toString(16);
-            return hex.length === 1 ? "0" + hex : hex;
-          })
-          .join("");
-
-      return hex;
-    }
-
-    const hueLowerBound = 310;
-    const hueUpperBound = 160;
-    const hueDirection = 1; // 1 = CW; -1 = CCW
-    let hueScale;
-
-    // (x*i+y): x*100+y = upper bound and y = lower bound
-    if (hueDirection === 1) {
-      hueScale = ((hueUpperBound + 360 - hueLowerBound) % 360) / 100;
-    } else {
-      hueScale = ((hueLowerBound + 360 - hueUpperBound) % 360) / -100;
-    }
 
     let scores;
     // Deep copy of the scores from the location object
     scores = JSON.parse(JSON.stringify(allScores));
-    // Append the corresponding colors to each score value (overall, rushHour, etc)
-    for (let score in scores) {
-      const i = scores[score];
-      let hue = (hueScale * i + hueLowerBound) % 360;
-      if (hue < 0) {
-        hue += 360;
-      }
-      scores[`${score}Color`] = hueToHex(hue);
-    }
 
-    return scores;
+    return calculateColorForEachScore(scores);
   };
 
   const fetchOverallSavedScore = () => {
