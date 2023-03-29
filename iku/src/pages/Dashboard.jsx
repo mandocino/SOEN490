@@ -62,6 +62,7 @@ export default function Dashboard() {
         // Give unique ID to each location (for locations saved by non-logged in users)
         for(let i = 0; i < locationArray.length; i++) {
           locationArray[i]._id = i;
+          // locationArray[i].scores = [];
         }
         sessionStorage.setItem('location', JSON.stringify(locationArray));
         getLocations(locationArray);
@@ -94,7 +95,6 @@ export default function Dashboard() {
     originsWithScores = await Promise.all(rawOrigins.map(async o => ({
       ...o, scores: await loadScores(o, destinations, user_id, userData)
     })));
-
     if(rawCurrentHome) {
       setCurrentHome({
         ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id, userData)
@@ -130,6 +130,7 @@ export default function Dashboard() {
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
       count += 1
+
       cards[count] =
         <DashboardCard
           className={dashboardInnerElementGradientClass}
@@ -143,10 +144,12 @@ export default function Dashboard() {
         >
           {loc.name}
         </DashboardCard>;
+
       return cards[count]
     })
     if (currentHome) {
       count += 1
+
       currentHomeObj =
         <DashboardCard
           className={dashboardInnerElementGradientClass}
@@ -161,6 +164,7 @@ export default function Dashboard() {
         >
           {currentHome.name}
         </DashboardCard>
+
       cards[count] = currentHomeObj;
     }
   } else {
@@ -211,7 +215,7 @@ export default function Dashboard() {
       <BaseLayout className="flex flex-col" ignore={['dashboard']}>
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
-            <div className="flex gap-8">
+            <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start">
               <div className="w-96 flex flex-col gap-8 items-center">
                 <div
                   className={`w-full flex flex-col items-center gap-4 ${dashboardElementClass}`}>
