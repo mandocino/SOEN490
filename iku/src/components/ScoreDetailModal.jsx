@@ -10,9 +10,10 @@ import {ReactComponent as WalkIcon} from "./../assets/walk.svg";
 import {ReactComponent as ElevationIcon} from "./../assets/elevation.svg";
 import {ReactComponent as CarIcon} from "./../assets/car.svg";
 import {calculateColorForEachScore} from "./DashboardCard";
+import {computeRouteMetricsAverages} from "../backend/utils/routingAverages";
 
 
-function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weekendWeights }) {
+function ScoreDetailModal({ originLocation, destinations, userData }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -51,7 +52,7 @@ function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weeke
       .catch((err) => console.error(err));
   };
 
-  const onChangeDestinationDropdown = (event) => {
+  const onChangeDestinationDropdown = async (event) => {
     setSelectedDestination(event.currentTarget.value);
 
     // Reset the selected score time to Overall
@@ -84,11 +85,12 @@ function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weeke
       // Fetch the routes metrics
       axios
         .get(
-          `http://localhost:5000/savedRoutingDataAverages/${originLocation._id}/${selectedDestination}/${nightDayWeights['weeknightWeight']}/${nightDayWeights['fridayNightWeight']}/${nightDayWeights['saturdayNightWeight']}/${weekendWeights['saturdayWeight']}/${weekendWeights['sundayWeight']}`
+          `http://localhost:5000/savedRoutingData/${originLocation._id}/${selectedDestination}/`
         )
         .then((response) => {
           if (response.data) {
-            setAllRouteMetrics(response.data);
+            const computedMetrics = computeRouteMetricsAverages(response.data.routingData, userData);
+            setAllRouteMetrics(computedMetrics);
           }
         })
         .catch((err) => console.error(err));
@@ -99,7 +101,7 @@ function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weeke
     setSelectedScoreTime(event.currentTarget.id);
     event.stopPropagation();
 
-    if (selectedDestination !== "default" && allRouteMetrics !== null) {
+    if (selectedDestination !== "default" && allRouteMetrics) {
       const selectedTimeSlice = event.currentTarget.id;
       let currentMetrics = {
         frequencyMin:
@@ -616,7 +618,7 @@ function ScoreDetailModal({ originLocation, destinations, nightDayWeights, weeke
                               </div>
                               {/* Display alternative modes of transport if destination is selected */}
                               {
-                                allRouteMetrics !== null ?
+                                allRouteMetrics ?
                                   <>
                                     <div
                                       className={`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "default" ? "" : "hidden"}`}>

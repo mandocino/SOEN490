@@ -137,8 +137,7 @@ export default function Dashboard() {
           destinations={destinations}
           key={loc._id}
           count={count}
-          nightDayWeights={userData.nightDayWeights}
-          weekendWeights={userData.weekendWeights}
+          userData={userData}
           compare={compare}
           addCardToCompare={addCardToCompare}
         >
@@ -157,7 +156,7 @@ export default function Dashboard() {
           compare={compare}
           key={count}
           count={count}
-          factorWeights={userData.factorWeights}
+          userData={userData}
           addCardToCompare={addCardToCompare}
         >
           {currentHome.name}
