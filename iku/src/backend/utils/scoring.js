@@ -200,16 +200,11 @@ export async function generateNewScores(origin, destinations, loggedIn, userData
   let weekend = 0;
   let overnight = 0;
 
-  let user;
-  let userData;
   let lastRoutingPrefChangeTime;
-  if(loggedIn) {
-    user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-    userData = user.data[0];
-    lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
-  } else {
+  if(!loggedIn) {
     userData = JSON.parse(sessionStorage.getItem('preferences')).factorWeights;
   }
+  lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
 
   // TODO: Either update user document in db to the default preferences or show an alert in frontend
   if (userData && userData.hasOwnProperty('factorWeights')
