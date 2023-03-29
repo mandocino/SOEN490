@@ -1,4 +1,3 @@
-# .github/workflows/app.yaml
 name: PyTest
 on: push
 
@@ -10,6 +9,28 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
+
+      # Setup Node.js (for the web application)
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      # Install npm dependencies and build the application
+      - name: Install npm dependencies
+        run: |
+          npm ci
+          npm run build
+
+      # Start the web application in the background
+      - name: Start web application
+        run: |
+          nohup npm start &
+
+      # Wait for the web application to start
+      - name: Wait for the web application to start
+        run: |
+          sleep 10
 
       # Setup Python (faster than using Python container)
       - name: Setup Python
