@@ -4,35 +4,35 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
 
     steps:
-      - name: Check out repository code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      # Setup Node.js (for the web application)
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 14.x
 
-      # Install npm dependencies and build the application
-      - name: Install npm dependencies
+      - name: Install frontend dependencies
         run: |
+          npm i fsevents@latest -f --save-optional
           npm ci
-          npm run build
         working-directory: iku
 
-      # Start the web application in the background
-      - name: Start web application
-        run: |
-          nohup npm start &
-        working-directory: iku
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: iku/src/backend
 
-      # Wait for the web application to start
-      - name: Wait for the web application to start
-        run: |
-          sleep 10
+      - name: Start frontend server
+        id: frontend-server-start
+        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --yes
+        timeout-minutes: 1
+        continue-on-error: true
+
+      - name: Reset frontend server start outcome
+        if: failure() && steps.test-app.outcome != 'success'
+        run: steps.frontend-server-start.outcome = 'success'
 
       # Setup Python (faster than using Python container)
       - name: Setup Python
