@@ -111,7 +111,7 @@ export default function HomeHeader({ ignore }) {
               </svg>
             </button>
             { isMenu &&
-              <div className="flex md:hidden flex flex-col fixed mt-48 -ml-14 bg-emerald-500 dark:bg-emerald-700 p-2 w-32">
+              <div className="flex rounded-bl-lg pl-4 md:hidden flex flex-col fixed mt-48 -ml-14 bg-emerald-500 dark:bg-emerald-700 p-2 w-32">
                 <Link to="/" className="text-white font-bold text-xl mb-2">Home</Link>
                 {localStorage.getItem("authenticated") !== "true" ? (
                   <>
