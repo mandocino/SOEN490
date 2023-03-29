@@ -10,36 +10,32 @@ import SimpleSearchBar from './SimpleSearchBar';
 
 export default function HomeHeader({ ignore }) {
 
+  const [isMenu, setIsMenu] = useState(false)
+
   if (ignore === undefined) ignore = [] ;
   const location = useLocation();
 
   return (
     <header>
-      <nav className="bg-emerald-500 dark:bg-emerald-700 px-4 lg:px-6 py-2.5 ">
-        <div className="flex flex-wrap justify-between items-center mx-auto">
-          <Link to="/" className="flex items-center">
-            <Logo className="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition" />
-          </Link>
-          <div
-            className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
-            id="mobile-menu-2"
-          >
-            <ul className="flex flex-col mt-4 font-medium lg:flex-row space-x-4 lg:mt-0">
-              <li className="flex items-center" style={{visibility: ignore.includes('dashboard') ? 'hidden' : 'visible'}}>
-                <LinkButton to="/dashboard">Dashboard</LinkButton>
-              </li>
-              {location.pathname !== "/" ? (
-                <li className="w-96">
-                  <SimpleSearchBar />
-                </li>
-              ) : null}
-              <li className="flex items-center">
-                <LinkButton to="/">Help</LinkButton>
-              </li>
-            </ul>
+      <nav className="bg-emerald-500 dark:bg-emerald-700 px-4 py-2.5 ">
+        <div className="flex justify-between items-center">
+          <div className="hidden md:flex">
+            <Link to="/" className="items-center">
+              <Logo className="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition"/>
+            </Link>
           </div>
-          <div className="flex items-center lg:order-2">
-            <ul className="flex flex-col mt-4 font-medium lg:flex-row space-x-4 space-y-1 lg:space-y-0 lg:mt-0">
+          <ul className="flex font-medium">
+            <li className="flex items-center" style={ignore.includes('dashboard') ? {display: "none"} : {visibility: 'visible'}}>
+              <LinkButton to="/dashboard">Dashboard</LinkButton>
+            </li>
+            {location.pathname === "/dashboard" ? (
+              <li className="w-96">
+                <SimpleSearchBar />
+              </li>
+            ) : null}
+          </ul>
+          <div className="flex items-center">
+            <ul className="hidden md:flex mt-4 font-medium space-x-2 space-y-1 space-y-0 mt-0">
               {localStorage.getItem("authenticated") !== "true" ? (
                 <>
                   <li className="flex items-center justify-end">
@@ -83,14 +79,15 @@ export default function HomeHeader({ ignore }) {
             <button
               data-collapse-toggle="mobile-menu-2"
               type="button"
-              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+              className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
               aria-controls="mobile-menu-2"
               aria-expanded="false"
+              onClick={() => setIsMenu(!isMenu)}
             >
               <span className="sr-only">Open main menu</span>
               <svg
-                className="w-6 h-6"
-                fill="currentColor"
+                className="w-9 h-9"
+                fill="white"
                 viewBox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -113,6 +110,30 @@ export default function HomeHeader({ ignore }) {
                 ></path>
               </svg>
             </button>
+            { isMenu &&
+              <div className="flex rounded-bl-lg pl-4 md:hidden flex flex-col fixed mt-48 -ml-14 bg-emerald-500 dark:bg-emerald-700 p-2 w-32">
+                <Link to="/" className="text-white font-bold text-xl mb-2">Home</Link>
+                {localStorage.getItem("authenticated") !== "true" ? (
+                  <>
+                    <Link to="/login" className="text-white font-bold text-xl mb-2">Log In</Link>
+                    <Link to="/register" className="text-white font-bold text-xl mb-2">Register</Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/accountpage" className="text-white font-bold text-xl mb-2">{localStorage.getItem("first_name")}</Link>
+                    <Link to="/" className="text-white font-bold text-xl mb-2" onClick={() => {
+                        localStorage.removeItem("authenticated");
+                        localStorage.removeItem("first_name");
+                        localStorage.removeItem("user_id");
+                        window.location.reload();
+                      }}
+                    >
+                      Sign out
+                    </Link>
+                  </>
+                )}
+              </div>
+            }
           </div>
         </div>
       </nav>
