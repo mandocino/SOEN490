@@ -21,11 +21,13 @@ jobs:
         run: |
           npm ci
           npm run build
+        working-directory: iku
 
       # Start the web application in the background
       - name: Start web application
         run: |
           nohup npm start &
+        working-directory: iku
 
       # Wait for the web application to start
       - name: Wait for the web application to start
