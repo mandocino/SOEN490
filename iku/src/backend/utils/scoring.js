@@ -624,11 +624,27 @@ function computeWeightedScore(scores, frequencyWeight, durationWeight, walkWeigh
  * Function to set the global `lastAlgoUpdateTime` to the current time
  * @returns {Promise<{lastAlgoUpdateTime: number}>}
  */
-export async function updateAlgorithmTime() {
+export async function updateScoringAlgorithmTime() {
   // Update the record for when the system was updated to match the current time
   let params =
     {
       lastAlgoUpdateTime: Date.now()
+    };
+
+  await axios.post('http://localhost:5000/modifyGlobal/', params);
+  return params;
+}
+
+
+/**
+ * Function to set the global `lastRoutingUpdateTime` to the current time
+ * @returns {Promise<{lastRoutingUpdateTime: number}>}
+ */
+export async function updateRoutingAlgorithmTime() {
+  // Update the record for when the system was updated to match the current time
+  let params =
+    {
+      lastRoutingUpdateTime: Date.now()
     };
 
   await axios.post('http://localhost:5000/modifyGlobal/', params);
