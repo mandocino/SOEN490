@@ -56,6 +56,7 @@ export default function Dashboard() {
         // Give unique ID to each location (for locations saved by non-logged in users)
         for(let i = 0; i < locationArray.length; i++) {
           locationArray[i]._id = i;
+          // locationArray[i].scores = [];
         }
         sessionStorage.setItem('location', JSON.stringify(locationArray));
         getLocations(locationArray);
@@ -88,7 +89,6 @@ export default function Dashboard() {
     originsWithScores = await Promise.all(rawOrigins.map(async o => ({
       ...o, scores: await loadScores(o, destinations, user_id)
     })));
-
     if(rawCurrentHome) {
       setCurrentHome({
         ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id)

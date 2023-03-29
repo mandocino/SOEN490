@@ -49,7 +49,7 @@ export async function saveScores(origin, destination, scores, date) {
  * @returns {Promise<AxiosResponse<any>|void>}
  */
 export async function fetchScores(origin, destination) {
-  // If a destination is specified, load scores for the specific origin/destination pair, else load for irigin only
+  // If a destination is specified, load scores for the specific origin/destination pair, else load for origin only
   const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
   return await axios.get(url, {
     params:
@@ -81,6 +81,7 @@ export async function loadScores(origin, destinations, userID) {
   let lastScoringPrefChangeTime;
   let lastRoutingPrefChangeTime;
   let lastAlgoUpdateTime;
+  let preferencesUpdated;
 
   if (loggedIn) {
     // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
@@ -97,15 +98,29 @@ export async function loadScores(origin, destinations, userID) {
   } else {
     // For non-logged-in users, set both times to 1970 to force re-generation
     const aLongTimeAgo = new Date(0);
+
     lastScoringPrefChangeTime = aLongTimeAgo;
-    lastRoutingPrefChangeTime = aLongTimeAgo;
-    lastAlgoUpdateTime = aLongTimeAgo;
+    lastRoutingPrefChangeTime = aLongTimeAgo
+    lastAlgoUpdateTime = aLongTimeAgo
+    preferencesUpdated = JSON.parse(sessionStorage.getItem('preferences')).preferencesUpdated;
+
+    // Get the scores for current origin from session storage (if exists)
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+        savedScores = location.scores;
+      }
+    }   
+
   }
 
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
-  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
+  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
     savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+    preferencesUpdated =  false;
   }
   // Get the latest scores for each origin/destination pair
   else {
@@ -115,14 +130,27 @@ export async function loadScores(origin, destinations, userID) {
       if (userID != null) {
         // Fetch scores for a single origin/destination pair
         score = await thisModule.fetchScores(origin, destination);
-      }
+      } else if(origin.detailedScores) {
+        //If user is not logged in, check in the detailedScores array of the origin 
+        //(as stored in session storage) to check if a score was already generated 
+        // for the origin/destination pair.
+
+        for(const savedScore of origin.detailedScores) {
+          if(savedScore.destination_id === destination._id) {
+            score = savedScore;
+          }
+        }
+      } 
 
       // If scores for any origin/destination pair are outdated, regenerate everything.
       // This is so that the weighted average score gets regenerated as well.
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
-      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
+
+      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
+        console.log('test')
         savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+        preferencesUpdated = false;
         break;
       }
       scores.push(score);
@@ -130,6 +158,12 @@ export async function loadScores(origin, destinations, userID) {
     savedScores.detailedScores = scores;
   }
 
+  if(!loggedIn) {
+    let preferences = JSON.parse(sessionStorage.getItem('preferences'))
+    preferences.preferencesUpdated = preferencesUpdated;
+
+    sessionStorage.setItem('preferences', JSON.stringify(preferences));
+  }
   return savedScores;
 }
 
@@ -167,22 +201,29 @@ export async function generateNewScores(origin, destinations, userID) {
   let weekend = 0;
   let overnight = 0;
 
-  const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-  const userData = user.data[0];
-
-  const lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
+  let user;
+  let userData;
+  let lastRoutingPrefChangeTime;
+  if(loggedIn) {
+    user = await axios.get(`http://localhost:5000/userByID/${userID}`);
+    userData = user.data[0];
+    lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
+  } else {
+    userData = JSON.parse(sessionStorage.getItem('preferences')).factorWeights;
+  }
 
   // TODO: Either update user document in db to the default preferences or show an alert in frontend
-  if (userData.hasOwnProperty('factorWeights')
+  if (userData && userData.hasOwnProperty('factorWeights')
     && userData.factorWeights.hasOwnProperty('frequencyWeight')
     && userData.factorWeights.hasOwnProperty('durationWeight')
   ) {
+
     factorWeights = userData.factorWeights;
   } else {
     factorWeights = defaultUserFactorWeights;
   }
 
-  if (userData.hasOwnProperty('nightDayWeights')
+  if (userData && userData.hasOwnProperty('nightDayWeights')
     && userData.nightDayWeights.hasOwnProperty('weeknightWeight')
     && userData.nightDayWeights.hasOwnProperty('fridayNightWeight')
     && userData.nightDayWeights.hasOwnProperty('saturdayNightWeight')
@@ -192,7 +233,8 @@ export async function generateNewScores(origin, destinations, userID) {
     nightDayWeights = defaultUserNightDayWeights;
   }
 
-  if (userData.hasOwnProperty('nightDirectionWeights')
+
+  if (userData && userData.hasOwnProperty('nightDirectionWeights')
     && userData.nightDirectionWeights.hasOwnProperty('toDestWeight')
     && userData.nightDirectionWeights.hasOwnProperty('fromDestWeight')
   ) {
@@ -201,7 +243,7 @@ export async function generateNewScores(origin, destinations, userID) {
     nightDirectionWeights = defaultUserNightDirectionWeights;
   }
 
-  if (userData.hasOwnProperty('weekendWeights')
+  if (userData && userData.hasOwnProperty('weekendWeights')
     && userData.weekendWeights.hasOwnProperty('saturdayWeight')
     && userData.weekendWeights.hasOwnProperty('sundayWeight')
   ) {
@@ -210,7 +252,7 @@ export async function generateNewScores(origin, destinations, userID) {
     weekendWeights = defaultUserWeekendWeights;
   }
 
-  if (userData.hasOwnProperty('timeSliceWeights')
+  if (userData && userData.hasOwnProperty('timeSliceWeights')
     && userData.timeSliceWeights.hasOwnProperty('rushHourWeight')
     && userData.timeSliceWeights.hasOwnProperty('offPeakWeight')
     && userData.timeSliceWeights.hasOwnProperty('nightWeight')
@@ -221,7 +263,7 @@ export async function generateNewScores(origin, destinations, userID) {
     timeSliceWeights = defaultUserTimeSliceWeights;
   }
 
-  if (userData.hasOwnProperty('scoringPreferences')
+  if (userData && userData.hasOwnProperty('scoringPreferences')
     && userData.scoringPreferences.hasOwnProperty('consistencyImportance')
     && userData.scoringPreferences.hasOwnProperty('worstAcceptableFrequency')
     && userData.scoringPreferences.hasOwnProperty('worstAcceptableDuration')
@@ -232,7 +274,7 @@ export async function generateNewScores(origin, destinations, userID) {
     scoringPreferences = defaultUserScoringPreferences;
   }
 
-  if (userData.hasOwnProperty('routingPreferences')
+  if (userData && userData.hasOwnProperty('routingPreferences')
     && userData.routingPreferences.hasOwnProperty('walkReluctance')
     && userData.routingPreferences.hasOwnProperty('isWheelChair')
   ) {
@@ -240,7 +282,6 @@ export async function generateNewScores(origin, destinations, userID) {
   } else {
     routingPreferences = defaultUserRoutingPreferences;
   }
-
   userPreferences = {
     factorWeights: factorWeights,
     nightDayWeights: nightDayWeights,
@@ -293,6 +334,19 @@ export async function generateNewScores(origin, destinations, userID) {
 
   if (loggedIn) {
     await thisModule.saveScores(origin, null, scores, date);
+  } else {
+    // If user is not logged in, save scores in the origin object stored in the location
+    // array in session storage. 
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+        location.scores = scores
+      }
+    }
+
+    sessionStorage.setItem("location",  JSON.stringify(locationArray));
   }
 
   return {
@@ -392,6 +446,31 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
 
   if (loggedIn) {
     await thisModule.saveScores(origin, destination, scores, date);
+  } else {
+    // For non-logged-in users, scores are saved in session storage as an 
+    // array of detailedScore objects. These objects contain two members, a key 
+    //(ID of the destination) and the corresponding scores
+
+    // Modify the origin as stored in session storage in location array to hold the new score.
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+
+        if(!location.detailedScores) {
+          location.detailedScores = [];
+        }
+
+        location.detailedScores.push({
+          destination_id: destination._id,
+          score: scores
+        })
+      }
+    }
+
+    sessionStorage.setItem("location",  JSON.stringify(locationArray));
+
   }
 
   return {
