@@ -107,12 +107,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchUserData();
-  })
-
-  // Fetch the locations from the DB
-  useEffect(() => {
     fetchLocations();
-  }, []);
+  }, [])
 
   // Split the fetched locations
   useEffect(() => {
