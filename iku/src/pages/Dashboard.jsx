@@ -180,7 +180,7 @@ export default function Dashboard() {
       <BaseLayout className="flex flex-col" ignore={['dashboard']}>
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
-            <div className="flex gap-8">
+            <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start">
               <div className="w-96 flex flex-col gap-8 items-center">
                 <div
                   className={`w-full flex flex-col items-center gap-4 ${dashboardElementClass}`}>
