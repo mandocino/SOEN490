@@ -9,13 +9,16 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.service import Service
+
 
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 class TestHomePageElementsPresent():
   def setup_method(self, method):
-    self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    service = Service('./chromedriver/chromedriver')
+    self.driver = webdriver.Chrome(service=service)
     self.vars = {}
   
   def teardown_method(self, method):

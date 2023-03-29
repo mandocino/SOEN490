@@ -4,18 +4,13 @@ import DashboardCard from "../components/DashboardCard";
 import EditLocation from "../components/EditLocation";
 import axios from "axios";
 import {Link} from "react-router-dom";
-import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
-import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
-import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
 import {loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
-import mongoose from "mongoose";
 import ScoreCompareModal from '../components/ScoreCompareModal';
 import CompareIcon from '../assets/compare.png';
 
 
 export default function Dashboard() {
-
   const user_id = localStorage.getItem("user_id");
   const [locations, getLocations] = useState([]);
   const [rawOrigins, setRawOrigins] = useState([]);
@@ -38,16 +33,8 @@ export default function Dashboard() {
     setCardToCompare([])
   }
 
-  const [frequency, setFrequency] = useState(80);
-  const [duration, setDuration] = useState(15);
-  const [walkTime, setWalkTime] = useState(5);
-
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
-
-  const frequencyColor = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
-  const durationColor = {bgGradient: 'bg-gradient-to-br from-purple-500 to-purple-400', text: 'text-purple-400', hex: '#c084fc'};
-  const walkTimeColor = {bgGradient: 'bg-gradient-to-br from-pink-500 to-pink-400', text: 'text-pink-400', hex: '#f472b6'};
 
   const dashboardElementClass = "rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-500 dark:from-emerald-900 dark:to-emerald-dark p-4";
   const dashboardElementButtonClass = "w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white px-4 py-2";
@@ -56,42 +43,6 @@ export default function Dashboard() {
 
   let originCards;
   let destinationCards;
-
-  // Fetch user's preferred scoring priorities
-  const fetchScoringFactors = async () => {
-
-    // Get the weighted average scores
-    const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
-    const userData = response.data[0];
-
-    let userFrequency = userData.frequency_priority;
-    let userDuration = userData.duration_priority;
-    let userWalkTime = userData.walk_priority;
-
-    if (userFrequency + userDuration + userWalkTime !== 100) {
-      const currentDate = Date.now();
-
-      await axios
-        .post("http://localhost:5000/modifyUserByID", {
-          _id: mongoose.Types.ObjectId(user_id),
-          duration_priority: 20,
-          frequency_priority: 70,
-          walk_priority: 10,
-          lastPrefChangeTime: currentDate
-        })
-        .catch((error) => {
-          console.log(error.message);
-        });
-
-      setFrequency(70);
-      setDuration(20);
-      setWalkTime(10);
-    } else {
-      setFrequency(userFrequency);
-      setDuration(userDuration);
-      setWalkTime(userWalkTime);
-    }
-  }
 
   // Fetch all locations from the DB
   const fetchLocations = () => {
@@ -167,34 +118,6 @@ export default function Dashboard() {
     }
   }, [rawOrigins, rawCurrentHome, destinations]);
 
-  useEffect(() => {
-    fetchScoringFactors();
-  }, []);
-
-  // Create card with the scoring factors
-  const frequencyIcon = <FrequencyIcon className="fill-white w-6 h-6"/>;
-  const durationIcon = <DurationIcon className="fill-white w-6 h-6"/>;
-  const walkIcon = <WalkIcon className="fill-white w-6 h-6"/>
-  const factorCardsArray = [{
-    name: "Frequency", bg: frequencyColor.bgGradient, value: frequency
-  }, {
-    name: "Duration", bg: durationColor.bgGradient, value: duration
-  }, {
-    name: "Walk Time", bg: walkTimeColor.bgGradient, value: walkTime
-  }];
-
-  // Create an array with the three scoring factors
-  // Sort it (mutate in-place)
-  // Create divs with the position (1, 2, 3), name, value, and icon
-  const factorCards = [].concat(factorCardsArray)
-    .sort((a, b) => a.value < b.value ? 1 : -1)
-    .map((item, i) =>
-      <div key={i} className={`${item.bg} font-semibold text-2xl text-white rounded-2xl px-4 py-2 flex gap-2 justify-start items-center`}>
-        <span>{i + 1}.</span>
-        {item.name === "Frequency" ? frequencyIcon : item.name === "Duration" ? durationIcon : walkIcon}
-        <span>{item.name}: {item.value}%</span>
-      </div>);
-
   // Create origins' scorecards
   let count = -1
   let currentHomeObj = null
@@ -255,7 +178,6 @@ export default function Dashboard() {
   return (
     <>
       <BaseLayout className="flex flex-col" ignore={['dashboard']}>
-        {/*<div className="w-full grow flex flex-col items-center p-8 bg-cover bg-center bg-fixed bg-[url('/src/assets/dashboard_bg.jpg')]">*/}
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
             <div className="flex gap-8">
@@ -291,15 +213,7 @@ export default function Dashboard() {
                     </span>
                   </span>
 
-                  <div
-                    className={`${dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
-                    {factorCards}
-                  </div>
-
-                  <EditScoringFactors frequency={frequency} setFrequency={setFrequency} frequencyColor={frequencyColor}
-                                      duration={duration} setDuration={setDuration} durationColor={durationColor}
-                                      walkTime={walkTime} setWalkTime={setWalkTime} walkTimeColor={walkTimeColor}
-                                      buttonClass={dashboardElementButtonClass}/>
+                  <EditScoringFactors dashboardInnerElementGradientClass={dashboardInnerElementGradientClass} buttonClass={dashboardElementButtonClass}/>
                 </div>
 
               </div>
@@ -343,5 +257,6 @@ export default function Dashboard() {
           </div>
         </div>
       </BaseLayout>
-    </>);
+    </>
+  );
 }

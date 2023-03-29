@@ -1,82 +1,290 @@
-import React, {Fragment, useState} from "react";
-import {Dialog, Transition} from '@headlessui/react';
-import {Slider} from '@mui/material';
-import Carousel from 'react-material-ui-carousel';
-
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import mongoose from "mongoose";
+import {
+  checkIfWeightsAddTo100,
+  convertUserFactorWeightsToArr,
+  convertUserNightDayWeightsToArr,
+  convertUserNightDirectionWeightsToArr,
+  convertUserTimeSliceWeightsToArr,
+  convertUserWeekendWeightsToArr,
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
+} from "../backend/config/defaultUserPreferences";
+import {
+  Dialog, DialogTitle
+} from "@mui/material";
+import {
+  ConsistencyImportanceInfo,
+  FactorWeightsInfo,
+  NightDayWeightsInfo,
+  NightDirectionWeightsInfo,
+  TimeSliceWeightsInfo,
+  AccessibilitySettingsInfo,
+  WeekendWeightsInfo,
+  WorstAcceptableCasesInfo
+} from "./ScoringFactorInfoPopovers";
 
-import {ReactComponent as DurationIcon} from "./../assets/clock-regular.svg";
-import {ReactComponent as FrequencyIcon} from "./../assets/table-solid.svg";
-import {ReactComponent as WalkIcon} from "./../assets/person-walking-solid.svg";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  IsWheelChair,
+  WalkReluctance,
+  ConsistencyImportance,
+  WorstAcceptableCases,
+  CoreFactorWeights,
+  NightDayWeights,
+  NightDirectionWeights,
+  WeekendWeights,
+  TimeSliceWeights,
+  factorHexColors,
+  nightDayHexColors,
+  nightDirectionHexColors,
+  weekendHexColors,
+  timeSliceHexColors
+} from "./ScoringFactorFormElements";
+import {ConfirmDialog} from "./custom/ConfirmDialog";
 
+const user_id = localStorage.getItem("user_id");
 
-function CarouselItem(props) {
-  return (
-    <div className="h-72 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-emerald-darker dark:to-black rounded-xl p-2 overflow-y-auto">
-      {props.children}
-    </div>
-  )
+async function updateUserPreferences(data, routing) {
+  const currentDate = Date.now();
+
+  data._id = mongoose.Types.ObjectId(user_id);
+  if (routing) {
+    data.lastRoutingPrefChangeTime = currentDate;
+  }
+  data.lastScoringPrefChangeTime = currentDate;
+
+  return await axios
+    .post("http://localhost:5000/modifyUserByID", data)
+    .catch((error) => {
+      console.log(error.message);
+    });
 }
 
 export default function EditScoringFactors(props) {
-  let frequency = props.frequency;
-  let setFrequency = props.setFrequency;
-  let duration = props.duration;
-  let setDuration = props.setDuration;
-  let walkTime = props.walkTime;
-  let setWalkTime = props.setWalkTime;
+  const [factorWeights, setFactorWeights] = useState([]);
+  const [nightDayWeights, setNightDayWeights] = useState([]);
+  const [nightDirectionWeights, setNightDirectionWeights] = useState([]);
+  const [weekendWeights, setWeekendWeights] = useState([]);
+  const [timeSliceWeights, setTimeSliceWeights] = useState([]);
+  const [consistencyImportance, setConsistencyImportance] = useState('');
+  const [worstAcceptableFrequency, setWorstAcceptableFrequency] = useState(0);
+  const [worstAcceptableDuration, setWorstAcceptableDuration] = useState(0);
+  const [walkReluctance, setWalkReluctance] = useState([]);
+  const [isWheelChair, setIsWheelChair] = useState(false);
+
+
+  const [infoPopoverActive, setinfoPopoverActive] = useState(false);
+  const [infoPopoverName, setinfoPopoverName] = useState(null);
+  const [infoPopoverContent, setinfoPopoverContent] = useState(null);
+
+  const resetScoringPreferences = async () => {
+    setConsistencyImportance(defaultUserScoringPreferences.consistencyImportance);
+    setWorstAcceptableFrequency(defaultUserScoringPreferences.worstAcceptableFrequency);
+    setWorstAcceptableDuration(defaultUserScoringPreferences.worstAcceptableDuration);
+    await updateUserPreferences({scoringPreferences: defaultUserScoringPreferences}, false);
+  }
+
+  const resetRoutingPreferences = async () => {
+    setIsWheelChair(defaultUserRoutingPreferences.isWheelChair);
+    setWalkReluctance(defaultUserRoutingPreferences.walkReluctance);
+    await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, false);
+  }
+
+  const [resetDialogOpen, setResetDialogOpen] = useState(false)
+  const handleResetAllFactors = async () => {
+    const weightsToReset = [
+      // [converterFunction, weightName, stateSetterFunction, defaultWeights]
+      [convertUserFactorWeightsToArr, "factorWeights", setFactorWeights, defaultUserFactorWeights],
+      [convertUserNightDayWeightsToArr, "nightDayWeights", setNightDayWeights, defaultUserNightDayWeights],
+      [convertUserNightDirectionWeightsToArr, "nightDirectionWeights", setNightDirectionWeights, defaultUserNightDirectionWeights],
+      [convertUserWeekendWeightsToArr, "weekendWeights", setWeekendWeights, defaultUserWeekendWeights],
+      [convertUserTimeSliceWeightsToArr, "timeSliceWeights", setTimeSliceWeights, defaultUserTimeSliceWeights],
+    ];
+
+    for (let i of weightsToReset) {
+      const convert = i[0];
+      const weightName = i[1];
+      const setState = i[2];
+      const defaults = i[3];
+
+      await updateUserPreferences({[weightName]: defaults}, false);
+      setState(convert(defaults));
+    }
+
+    await resetScoringPreferences();
+    await resetRoutingPreferences();
+    window.location.reload();
+  }
+
+  const resetAllFactors = () => {
+    setResetDialogOpen(true);
+  }
+
+  // Fetch user's preferred scoring priorities
+  const fetchUserPreferences = async () => {
+    if(user_id === null) {
+
+      if(sessionStorage.getItem("factorWeights") === null) {
+        sessionStorage.setItem("factorWeights", JSON.stringify(defaultUserFactorWeights))
+      } else {
+        let preferences = JSON.parse(sessionStorage.getItem("factorWeights"));
+        let userFactorWeights = preferences.factorWeights;
+
+        setFactorWeights([userFactorWeights.frequencyWeight, userFactorWeights.durationWeight]);
+      }
+    }
+
+    else {
+      // Get the weighted average scores
+      const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
+      const userData = response.data[0];
+
+      const weightsToFetch = [
+        // [converterFunction, weightName, stateSetterFunction, defaultWeights]
+        [convertUserFactorWeightsToArr, "factorWeights", setFactorWeights, defaultUserFactorWeights],
+        [convertUserNightDayWeightsToArr, "nightDayWeights", setNightDayWeights, defaultUserNightDayWeights],
+        [convertUserNightDirectionWeightsToArr, "nightDirectionWeights", setNightDirectionWeights, defaultUserNightDirectionWeights],
+        [convertUserWeekendWeightsToArr, "weekendWeights", setWeekendWeights, defaultUserWeekendWeights],
+        [convertUserTimeSliceWeightsToArr, "timeSliceWeights", setTimeSliceWeights, defaultUserTimeSliceWeights],
+      ];
+
+      for (let i of weightsToFetch) {
+        const convert = i[0];
+        const weightName = i[1];
+        const setState = i[2];
+        const defaults = i[3];
+
+        let resetWeights = true
+
+        if (userData.hasOwnProperty(weightName)) {
+          const fetched = convert(userData[weightName]);
+
+          if (checkIfWeightsAddTo100(fetched)) {
+            setState(fetched);
+            resetWeights = false;
+          }
+        }
+
+        if (resetWeights) {
+          await updateUserPreferences({[weightName]: defaults}, false);
+          setState(convert(defaults));
+        }
+      }
+
+      if (userData.hasOwnProperty("scoringPreferences")) {
+        const scoringPreferencesToFetch = [
+          // [weightName, stateSetterFunction, isScoringPreference]
+          ["consistencyImportance", setConsistencyImportance],
+          ["worstAcceptableFrequency", setWorstAcceptableFrequency],
+          ["worstAcceptableDuration", setWorstAcceptableDuration],
+        ];
+
+        for (let i of scoringPreferencesToFetch) {
+          const weightName = i[0];
+          const setState = i[1];
+
+          if (userData.scoringPreferences.hasOwnProperty(weightName)) {
+            const fetched = userData.scoringPreferences[weightName];
+            setState(fetched);
+          } else {
+            await resetScoringPreferences();
+            break;
+          }
+        }
+      } else {
+        await resetScoringPreferences();
+      }
+
+      if (userData.hasOwnProperty("routingPreferences")) {
+        const routingPreferencesToFetch = [
+          // [weightName, stateSetterFunction, isScoringPreference]
+          ["walkReluctance", setWalkReluctance],
+          ["isWheelChair", setIsWheelChair],
+        ];
+
+        for (let i of routingPreferencesToFetch) {
+          const weightName = i[0];
+          const setState = i[1];
+
+          if (userData.routingPreferences.hasOwnProperty(weightName)) {
+            const fetched = userData.routingPreferences[weightName];
+            setState(fetched);
+          } else {
+            await resetRoutingPreferences();
+            break;
+          }
+        }
+      } else {
+        await resetRoutingPreferences();
+      }
+    }
+  }
+
+  useEffect(() => {
+    fetchUserPreferences();
+  }, []);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [sliderVal, setSliderVal] = useState([0,0]);
 
-  const [oldFreq, setOldFreq] = useState(0);
-  const [oldDur, setOldDur] = useState(0);
-  const [oldWalk, setOldWalk] = useState(0);
+  // For these weighted values, we need slider values since
+  //  the slider stores "cumulative" values, but we need non-cumulative ones
+  const [factorSliderVal, setFactorSliderVal] = useState([]);
+  const [nightDaySliderVal, setNightDaySliderVal] = useState([]);
+  const [nightDirectionSliderVal, setNightDirectionSliderVal] = useState([]);
+  const [weekendSliderVal, setWeekendSliderVal] = useState([]);
+  const [timeSliceSliderVal, setTimeSliceSliderVal] = useState([]);
 
-  const user_id = localStorage.getItem("user_id");
+  // Store the old values, so we can reset the modal when we close it
+  const [oldFactorWeights, setOldFactorWeights] = useState([]);
+  const [oldNightDayWeights, setOldNightDayWeights] = useState([]);
+  const [oldNightDirectionWeights, setOldNightDirectionWeights] = useState([]);
+  const [oldWeekendWeights, setOldWeekendWeights] = useState([]);
+  const [oldTimeSliceWeights, setOldTimeSliceWeights] = useState([]);
 
-  const minDistance = 5;
-  const minValue = minDistance;
-  const maxValue = 100 - minDistance;
+  const [oldConsistencyImportance, setOldConsistencyImportance] = useState('');
+  const [oldWorstAcceptableFrequency, setOldWorstAcceptableFrequency] = useState(0);
+  const [oldWorstAcceptableDuration, setOldWorstAcceptableDuration] = useState(0);
+  const [oldWalkReluctance, setOldWalkReluctance] = useState([]);
+  const [oldIsWheelChair, setOldIsWheelChair] = useState(false);
 
-  const frequencyColor = props.frequencyColor.hex;
-  const frequencyTextColor = props.frequencyColor.text
-  const durationColor = props.durationColor.hex;
-  const durationTextColor = props.durationColor.text;
-  const walkTimeColor = props.walkTimeColor.hex;
-  const walkTimeTextColor = props.walkTimeColor.text;
-
-  const sliderThumbColor = '#fff'
-  const sliderThumbShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
-  const sliderThumbActiveShadow = '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)';
-
-  // boxConicGradient1 has the center of the gradient at the bottom of the box.
-  // boxConicGradient2 has the center of the gradient below the bottom of the box, giving a quasi-linear appearance.
-  const boxConicGradient1 = `conic-gradient(
-    from 180deg at 50% 100%, 
-    ${frequencyColor} 90deg, 
-    ${frequencyColor} ${90 + 1.8 * (frequency/2)}deg,
-    ${durationColor} ${90 + 1.8 * (frequency)}deg, 
-    ${durationColor} ${90 + 1.8 * (frequency + duration)}deg, 
-    ${walkTimeColor} ${90 + 1.8 * (frequency + duration + walkTime/2)}deg,
-    ${walkTimeColor} 270deg
-    )`;
-  const boxConicGradient2 = `conic-gradient(
-    from 180deg at 50% 200%, 
-    ${frequencyColor} 140deg, 
-    ${durationColor} ${140 + 0.8 * (frequency)}deg, 
-    ${durationColor} ${140 + 0.8 * (frequency + duration)}deg, 
-    ${walkTimeColor} 220deg
-    )`;
+  function createCumulativeArray(val) {
+    let newArr = [val[0]];
+    for (let i=1; i<val.length-1; i++) {
+      newArr.push(val[i]+newArr[i-1]);
+    }
+    return newArr;
+  }
 
   function openModal() {
     // Save old values in case user clicks cancel
     // TODO: there's probably a better way to do this.
-    setOldFreq(frequency);
-    setOldDur(duration);
-    setOldWalk(walkTime);
-    setSliderVal([frequency, frequency + duration]);
+    setOldFactorWeights(factorWeights);
+    setOldNightDayWeights(nightDayWeights);
+    setOldNightDirectionWeights(nightDirectionWeights);
+    setOldWeekendWeights(weekendWeights);
+    setOldTimeSliceWeights(timeSliceWeights);
+
+    setOldConsistencyImportance(consistencyImportance);
+    setOldWorstAcceptableFrequency(worstAcceptableFrequency);
+    setOldWorstAcceptableDuration(worstAcceptableDuration);
+    setOldWalkReluctance(walkReluctance);
+    setOldIsWheelChair(isWheelChair);
+
+    // Save the slider values too, for the ones that represent weights
+    setFactorSliderVal(createCumulativeArray(factorWeights));
+    setNightDaySliderVal(createCumulativeArray(nightDayWeights));
+    setNightDirectionSliderVal(createCumulativeArray(nightDirectionWeights));
+    setWeekendSliderVal(createCumulativeArray(weekendWeights));
+    setTimeSliceSliderVal(createCumulativeArray(timeSliceWeights));
 
     setIsOpen(true);
   }
@@ -84,98 +292,133 @@ export default function EditScoringFactors(props) {
 
   function closeModal() {
     // Reset to old values
-    setFrequency(oldFreq);
-    setDuration(oldDur);
-    setWalkTime(oldWalk);
-    setSliderVal([oldFreq, oldFreq + oldDur]);
+    setFactorWeights(oldFactorWeights);
+    setNightDayWeights(oldNightDayWeights);
+    setNightDirectionWeights(oldNightDirectionWeights);
+    setWeekendWeights(oldWeekendWeights);
+    setTimeSliceWeights(oldTimeSliceWeights);
+
+    setConsistencyImportance(oldConsistencyImportance);
+    setWorstAcceptableFrequency(oldWorstAcceptableFrequency);
+    setWorstAcceptableDuration(oldWorstAcceptableDuration);
+    setWalkReluctance(oldWalkReluctance);
+    setIsWheelChair(oldIsWheelChair);
+
+    // Reset slider values for the ones that represent weights
+    setFactorSliderVal(createCumulativeArray(oldFactorWeights));
+    setNightDaySliderVal(createCumulativeArray(oldNightDayWeights));
+    setNightDirectionSliderVal(createCumulativeArray(oldNightDirectionWeights));
+    setWeekendSliderVal(createCumulativeArray(oldWeekendWeights));
+    setTimeSliceSliderVal(createCumulativeArray(oldTimeSliceWeights));
 
     // Close modal without saving changes
     setIsOpen(false);
   }
-  function sliderValueText(value, index) {
-    switch (index){
-      case 0:
-        return `Frequency ${value}%`;
-      case 1:
-        return `Walk time ${100-value}%`;
-    }
-  }
-
-  const handleChange = (event, newValue, activeThumb) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-
-    // If the user tries to set the middle value below the minimum distance
-    if (newValue[1] - newValue[0] < minDistance) {
-      // If the user was adjusting the left thumb (button)
-      if (activeThumb === 0) {
-        const clamped = Math.min(newValue[0], 100 - minDistance);
-        // If the right value is valid (user is not trying to set the right value above maximum)
-        if (clamped + minDistance <= maxValue) {
-          setSliderVal([clamped, clamped + minDistance]);
-        } else {
-          setSliderVal([maxValue - minDistance, maxValue])
-        }
-      }
-
-      // If the user was adjusting the right thumb (button)
-      else {
-        const clamped = Math.max(newValue[1], minDistance);
-        // If the left value is valid (user is not trying to set the left value below minimum)
-        if (clamped - minDistance >= minValue) {
-          setSliderVal([clamped - minDistance, clamped]);
-        } else {
-          setSliderVal([minValue, minValue + minDistance])
-        }
-      }
-    }
-
-    // Middle value is good
-    else {
-      // If the user was adjusting the left thumb (button)
-      if (activeThumb === 0) {
-        // If the left value is valid (user is not trying to set the left value below minimum)
-        if (newValue[0] >= minValue) {
-          setSliderVal(newValue);
-        } else {
-          setSliderVal([minValue, newValue[1]]);
-        }
-      } else {
-        // If the right value is valid (user is not trying to set the right value above maximum)
-        if (newValue[1] <= maxValue) {
-          setSliderVal(newValue);
-        } else {
-          setSliderVal([newValue[0], maxValue]);
-        }
-      }
-    }
-
-    // Set frequency to left value, duration to middle value, walkTime to right value
-    setFrequency(sliderVal[0]);
-    setDuration(sliderVal[1] - sliderVal[0]);
-    setWalkTime(100 - sliderVal[1]);
-  };
 
   // Submit user's scoring factor preferences
   const submitHandler = async (event) => {
     event.preventDefault();
 
-    const currentDate = Date.now();
+    if(user_id === null) {
+      let preferences = JSON.parse(sessionStorage.getItem("preferences"));
 
-    await axios
-      .post("http://localhost:5000/modifyUserByID", {
-        _id: mongoose.Types.ObjectId(user_id),
-        duration_priority: duration,
-        frequency_priority: frequency,
-        walk_priority: walkTime,
-        lastPrefChangeTime: currentDate
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+      // TODO: Save ALL data
+      preferences.factorWeights = factorWeights;
+
+      sessionStorage.setItem("preferences", JSON.stringify(preferences));
+    } else {
+      const walkReluctanceChanged = walkReluctance !== oldWalkReluctance;
+      const isWheelChairChanged = isWheelChair !== oldIsWheelChair;
+      const routingChanged = walkReluctanceChanged || isWheelChairChanged;
+
+      const data = {
+        factorWeights: {
+          frequencyWeight: factorWeights[0],
+          durationWeight: factorWeights[1]
+        },
+        nightDayWeights: {
+          weeknightWeight: nightDayWeights[0],
+          fridayNightWeight: nightDayWeights[1],
+          saturdayNightWeight: nightDayWeights[2]
+        },
+        nightDirectionWeights: {
+          toDestWeight: nightDirectionWeights[0],
+          fromDestWeight: nightDirectionWeights[1]
+        },
+        weekendWeights: {
+          saturdayWeight: weekendWeights[0],
+          sundayWeight: weekendWeights[1]
+        },
+        timeSliceWeights: {
+          rushHourWeight: timeSliceWeights[0],
+          offPeakWeight: timeSliceWeights[1],
+          nightWeight: timeSliceWeights[2],
+          weekendWeight: timeSliceWeights[3]
+        },
+        scoringPreferences: {
+          consistencyImportance: consistencyImportance,
+          worstAcceptableFrequency: worstAcceptableFrequency,
+          worstAcceptableDuration: worstAcceptableDuration
+        },
+        routingPreferences: {
+          walkReluctance: walkReluctance,
+          isWheelChair: isWheelChair
+        }
+      };
+      await updateUserPreferences(data, routingChanged);
+    }
     window.location.reload(false);
   };
+
+  const handleCloseinfoPopover = () => {
+    setinfoPopoverActive(false);
+    setinfoPopoverName('')
+  }
+
+  const handleOpeninfoPopover = (newSetting) => {
+
+    let markToCollapse = false;
+
+    switch(newSetting) {
+      case "accessibilitySettingsInfo":
+        setinfoPopoverContent(<AccessibilitySettingsInfo handleClose={handleCloseinfoPopover} />);
+        break;
+      case "consistencyImportanceInfo":
+        setinfoPopoverContent(<ConsistencyImportanceInfo handleClose={handleCloseinfoPopover} />);
+        break;
+      case "worstAcceptableCasesInfo":
+        setinfoPopoverContent(<WorstAcceptableCasesInfo handleClose={handleCloseinfoPopover} />);
+        break;
+      case "factorInfo":
+        setinfoPopoverContent(<FactorWeightsInfo handleClose={handleCloseinfoPopover} colors={factorHexColors} />);
+        break;
+      case "nightDayInfo":
+        setinfoPopoverContent(<NightDayWeightsInfo handleClose={handleCloseinfoPopover} colors={nightDayHexColors} />);
+        break;
+      case "nightDirectionInfo":
+        setinfoPopoverContent(<NightDirectionWeightsInfo handleClose={handleCloseinfoPopover} colors={nightDirectionHexColors} />);
+        break;
+      case "weekendInfo":
+        setinfoPopoverContent(<WeekendWeightsInfo handleClose={handleCloseinfoPopover} colors={weekendHexColors} />);
+        break;
+      case "timeSliceInfo":
+        setinfoPopoverContent(<TimeSliceWeightsInfo handleClose={handleCloseinfoPopover} colors={timeSliceHexColors} />);
+        break;
+      default:
+        setinfoPopoverContent(null);
+        setinfoPopoverName('');
+        markToCollapse = true;
+        break;
+    }
+
+    if (markToCollapse || newSetting === infoPopoverName) {
+      handleCloseinfoPopover();
+    } else {
+      setinfoPopoverActive(true);
+      setinfoPopoverName(newSetting);
+    }
+  }
+
 
   return (
     <>
@@ -190,200 +433,193 @@ export default function EditScoringFactors(props) {
         </button>
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black backdrop-blur-sm bg-opacity-75"/>
-          </Transition.Child>
+      <Dialog
+        open={isOpen}
+        onClose={closeModal}
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backdropFilter: 'blur(8px)'
+          }
+        }}
+      >
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <div
+              className="w-full absolute top-4 max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
+              style={infoPopoverActive ? {
+                transform: 'translate(calc(-50% - 0.5rem))'
+              } : {
+                transform: 'translate(0)'
+              }}>
+              <div className="flex justify-between gap-2 pb-1">
+                <DialogTitle
+                  as="h3"
+                  className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center"
+                  sx={{ p: 0 }}
+                >
+                  Edit scoring factors
+                </DialogTitle>
+              </div>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel
-                  className="w-full max-w-md transform overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl transition-all">
-                  <div className="flex justify-between gap-2 pb-1">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center"
-                    >
-                      Edit scoring factors
-                    </Dialog.Title>
-                  </div>
+              <hr className="mb-8 dark:border-emerald-700"></hr>
 
-                  <hr className="mb-8 dark:border-emerald-700"></hr>
+              <div>
+                <Accordion className="rounded-t-xl">
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("accessibilitySettingsInfo")}}>
+                    <span>Accessibility Settings</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <div className="flex flex-col gap-4">
+                      <WalkReluctance state={[walkReluctance, setWalkReluctance]}/>
+                      <IsWheelChair state={[isWheelChair, setIsWheelChair]}/>
+                    </div>
+                  </AccordionDetails>
+                </Accordion>
 
-                  <Carousel autoPlay={false} animation="slide" cycleNavigation={false} className="text-emerald-darker dark:text-white"
-                    sx={{
-                      button: {
-                        '&:hover': {
-                          opacity: '1 !important'
-                        }
-                      },
-                      buttonWrapper: {
-                        '&:hover': {
-                          '& $button': {
-                            backgroundColor: "black",
-                            filter: "brightness(120%)",
-                            opacity: "1"
-                          }
-                        }
-                      },
-                    }}>
-                    <CarouselItem>
-                      <div className="mb-4">
-                        The three adjustable scoring factors are the <b className={frequencyTextColor}>frequency</b>,
-                        the <b className={durationTextColor}>duration</b>, and the <b className={walkTimeTextColor}>walk
-                        time</b>. Use the slider below to adjust the proportional impact of these factors.
-                      </div>
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("consistencyImportanceInfo")}}>
+                    <span>Consistency Importance</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <ConsistencyImportance state={[consistencyImportance, setConsistencyImportance]}/>
+                  </AccordionDetails>
+                </Accordion>
 
-                      <div className="mb-4">
-                        If you need explanations on what these factors mean, or guidance on how to set these scoring
-                        factors, click the arrows on the sides (or swipe left) to view details.
-                      </div>
-                    </CarouselItem>
-
-                    <CarouselItem>
-                      <div className="mb-4">
-                        The <b className={frequencyTextColor}>frequency</b> refers to the gap between departures: if the
-                        departures are spaced on average 15 minutes apart (such that departures are at 9:00 AM, 9:15 AM,
-                        etc.), then the frequency is 15. The frequency is by far regarded to be the most important
-                        aspect of any transit service.
-                      </div>
-
-                      <div className="mb-4">
-                        By default, the frequency represents 70% of the grade. Because of its importance, it is
-                        recommended that the frequency remains a huge proportion of the grade.
-                      </div>
-                    </CarouselItem>
-
-                    <CarouselItem>
-                      <div className="mb-4">
-                        The <b className={durationTextColor}>duration</b> refers to the the total trip time, including
-                        any transfer wait times: if you board your first bus at 9am and you arrive at your destination
-                        at 9.45am, then the duration is 45 minutes.
-                      </div>
-
-                      <div className="mb-4">
-                        By default, the duration represents 20% of the grade. It is tempting to set the duration to a
-                        large proportion, but consider that long durations do not necessarily indicate bad transit;
-                        longer distances naturally involve longer commutes, whether by transit or by driving.
-                      </div>
-                    </CarouselItem>
-
-                    <CarouselItem>
-                      <div className="mb-4">
-                        The <b className={walkTimeTextColor}>walk time</b> refers to the total amount of walking involved
-                        in a route. If you have towalk 10 minutes to the train station, and then another 10 minutes from
-                        the train statin to your destination, then the total walk time is 20 minutes.
-                      </div>
-
-                      <div className="mb-4">
-                        By default, the walk time represents 10% of the grade. Most will not need to worry about routes'
-                        walk time; however it may be important for those with reduced or limited mobility to prioritize
-                        routes with shorter walk time.
-                      </div>
-
-                    </CarouselItem>
-                  </Carousel>
-
-                  <div>
-                    <Slider
-                      track={false}
-                      getAriaLabel={() => 'Scoring factor proportions'}
-                      value={sliderVal}
-                      onChange={handleChange}
-                      valueLabelDisplay="off"
-                      getAriaValueText={sliderValueText}
-                      disableSwap
-                      sx={{
-                        '& .MuiSlider-rail': {
-                          background: `linear-gradient(to right, ${frequencyColor} ${frequency}%,
-                        ${durationColor} ${frequency}%, ${durationColor} ${frequency + duration}%,
-                        ${walkTimeColor} ${frequency + duration}%);`,
-                          opacity: 1
-                        },
-                        '& .MuiSlider-thumb': {
-                          backgroundColor: sliderThumbColor,
-                          boxShadow: sliderThumbShadow,
-                          '&:focus, &:hover, &.Mui-active': {
-                            boxShadow: sliderThumbActiveShadow,
-                            // Reset on touch devices, it doesn't add specificity
-                            '@media (hover: none)': {
-                              boxShadow: sliderThumbShadow,
-                            },
-                          },
-                        }
-                      }}
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("worstAcceptableCasesInfo")}}>
+                    <span>Worst Acceptable Cases</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <WorstAcceptableCases
+                      freqState={[worstAcceptableFrequency, setWorstAcceptableFrequency]}
+                      durState={[worstAcceptableDuration, setWorstAcceptableDuration]}
                     />
-                  </div>
+                  </AccordionDetails>
+                </Accordion>
 
-                  <div className=" text-white w-full rounded-3xl p-4 flex flex-col gap-2"
-                       style={{background: boxConicGradient1}}>
-                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <FrequencyIcon className="fill-white w-6 h-6"/>
-                      <span>Frequency: {frequency}%</span>
-                    </div>
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("factorInfo")}}>
+                    <span>Core Scoring Factor Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <CoreFactorWeights
+                      valueState={[factorWeights, setFactorWeights]}
+                      sliderState={[factorSliderVal, setFactorSliderVal]}
+                    />
+                  </AccordionDetails>
+                </Accordion>
 
-                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <DurationIcon className="fill-white w-6 h-6"/>
-                      <span>Duration: {duration}%</span>
-                    </div>
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("nightDayInfo")}}>
+                    <span>Night Day Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <NightDayWeights
+                      valueState={[nightDayWeights, setNightDayWeights]}
+                      sliderState={[nightDaySliderVal, setNightDaySliderVal]}
+                    />
+                  </AccordionDetails>
+                </Accordion>
 
-                    <div className="font-semibold text-2xl rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                      <WalkIcon className="fill-white w-6 h-6"/>
-                      <span>Walk Time: {walkTime}%</span>
-                    </div>
-                  </div>
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("nightDirectionInfo")}}>
+                    <span>Night Direction Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <NightDirectionWeights
+                      valueState={[nightDirectionWeights, setNightDirectionWeights]}
+                      sliderState={[nightDaySliderVal, setNightDirectionSliderVal]}
+                    />
+                  </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("weekendInfo")}}>
+                    <span>Weekend Day Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <WeekendWeights
+                      valueState={[weekendWeights, setWeekendWeights]}
+                      sliderState={[weekendSliderVal, setWeekendSliderVal]}
+                    />
+                  </AccordionDetails>
+                </Accordion>
+
+                <Accordion>
+                  <AccordionSummary infoPopover={() => {handleOpeninfoPopover("timeSliceInfo")}}>
+                    <span>Time Period Weights</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <TimeSliceWeights
+                      valueState={[timeSliceWeights, setTimeSliceWeights]}
+                      sliderState={[timeSliceSliderVal, setTimeSliceSliderVal]}
+                    />
+                  </AccordionDetails>
+                </Accordion>
+              </div>
 
 
-                  <div className="mt-4 flex gap-2">
-                    <button
-                      type="button"
-                      onClick={submitHandler}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                           stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round"
-                              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                      Save
-                    </button>
-                    <button
-                      type="button"
-                      onClick={closeModal}
-                      className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                           stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round"
-                              d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                      Cancel
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
+              <div className="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onClick={submitHandler}
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                       stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                       stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={resetAllFactors}
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                       stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                  </svg>
+                  Reset All
+                </button>
+                <ConfirmDialog
+                  open={resetDialogOpen}
+                  setOpen={setResetDialogOpen}
+                  onConfirm={handleResetAllFactors}
+                  >
+                  Reset all scoring factor settings to defaults?
+                </ConfirmDialog>
+
+              </div>
+            </div>
+            <div
+              className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
+              style={infoPopoverActive ? {
+                transform: 'translate(calc(50% + 0.5rem))'
+              } : {
+                transform: 'translate(0)'
+              }}
+            >
+              { infoPopoverContent }
             </div>
           </div>
-        </Dialog>
-      </Transition>
+        </div>
+      </Dialog>
     </>
   )
 }

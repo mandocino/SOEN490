@@ -1,11 +1,23 @@
-import { Schema, model, connect } from "mongoose";
+import {connect, model, Schema} from "mongoose";
+import {
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
+} from "./defaultUserPreferences.js";
 
 const connectionString =
   "mongodb+srv://SOEN490:SOEN490@cluster0.hqfslb0.mongodb.net/?retryWrites=true&w=majority";
 
+///////////// SCHEMAS
+
 const globalSchema = new Schema(
   {
     lastAlgoUpdateTime: { type: Schema.Types.Date, required: true },
+    lastRoutingUpdateTime: { type: Schema.Types.Date, required: true }
   },
   { collection: "Global" }
 );
@@ -17,10 +29,15 @@ const userSchema = new Schema(
     last_name: { type: String, required: true },
     password: { type: String, required: true },
     current_location: { type: String, default: "" },
-    duration_priority: { type: Number, default: 0 },
-    frequency_priority: { type: Number, default: 0 },
-    walk_priority: { type: Number, default: 0 },
-    lastPrefChangeTime: { type: Schema.Types.Date, required: true },
+    factorWeights: { type: Object, default: defaultUserFactorWeights },
+    nightDayWeights: { type: Object, default: defaultUserNightDayWeights },
+    nightDirectionWeights: { type: Object, default: defaultUserNightDirectionWeights },
+    weekendWeights: { type: Object, default: defaultUserWeekendWeights },
+    timeSliceWeights: { type: Object, default: defaultUserTimeSliceWeights },
+    scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
+    routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
+    lastScoringPrefChangeTime: { type: Schema.Types.Date, required: true },
+    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true },
     administrator: { type: Schema.Types.Boolean, default: false },
   },
   { collection: "Users" }
@@ -43,19 +60,26 @@ const locationSchema = new Schema(
 );
 
 const savedScoreSchema = new Schema({
-    origin: { type: Schema.Types.ObjectId, required: true},
-    destination: { type: Schema.Types.ObjectId },
-    generatedTime: { type: Schema.Types.Date, required: true},
-    overall: { type: Number, required: true},
-    rushHour: { type: Number, required: true},
-    offPeak: { type: Number, required: true},
-    weekend: { type: Number, required: true},
-    overnight: { type: Number, required: true}
+  origin: { type: Schema.Types.ObjectId, required: true },
+  destination: { type: Schema.Types.ObjectId },
+  generatedTime: { type: Schema.Types.Date, required: true },
+  overall: { type: Number, required: true },
+  rushHour: { type: Number, required: true },
+  offPeak: { type: Number, required: true },
+  weekend: { type: Number, required: true },
+  overnight: { type: Number, required: true }
 }, { collection : 'SavedScores' });
 
+const savedRoutingDataSchema = new Schema({
+  origin: { type: Schema.Types.ObjectId, required: true },
+  destination: { type: Schema.Types.ObjectId, required: true },
+  generatedTime: { type: Schema.Types.Date, required: true },
+  routingData: { type: Object, required: true }
+}, { collection : 'SavedRoutingData' });
+
 const emailConfirmationSchema = new Schema({
-    email: { type: String, required: true},
-    code: { type: String, required: true}
+  email: { type: String, required: true },
+  code: { type: String, required: true }
 }, { collection : 'EmailConfirmations' });
 
 const passwordResetRequestSchema = new Schema(
@@ -70,6 +94,7 @@ export const globalDBModel = model("Global", globalSchema);
 export const userDBModel = model("User", userSchema);
 export const locationDBModel = model("Location", locationSchema);
 export const savedScoreDBModel = model("SavedScore", savedScoreSchema);
+export const savedRoutesDBModel = model("SavedRoutingData", savedRoutingDataSchema);
 export const emailConfirmationDBModel = model("EmailConfirmation", emailConfirmationSchema);
 export const passwordResetRequestDBModel = model("PasswordResetRequest", passwordResetRequestSchema);
 

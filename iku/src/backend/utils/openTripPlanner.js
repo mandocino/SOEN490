@@ -60,9 +60,9 @@ export async function handleGetAllRoutesOTP(
     date,
     time,
     optionalParams=null,
+    isWheelchair=false,
     mode="TRANSIT,WALK",
-    isArriveBy=false,
-    isWheelchair=false
+    isArriveBy=false
 ){
 
   // Mandatory parameters for API call
@@ -132,7 +132,7 @@ export const sliceRoutesList = (routes, startTime, endTime, mode) =>{
       return list;
     case "START_MODE":
       for(let i=0; i<routes.length;i++){
-        if(isInRange(routes[i].startTime,startTime,endTime)){ //verificatiopn if start time is in specific range
+        if(isInRange(routes[i].startTime,startTime,endTime)){ //verification if start time is in specific range
           list.push(routes[i]);
         }
       }

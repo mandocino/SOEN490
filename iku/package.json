@@ -2,6 +2,9 @@
   "name": "iku",
   "version": "0.1.0",
   "private": true,
+  "resolutions": {
+    "fsevents": "2.3.2"
+  },
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -10,6 +13,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@googlemaps/google-maps-services-js": "^3.3.16",
     "@headlessui/react": "^1.7.4",
+    "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.6",
     "@next/env": "^13.0.6",
     "@tailwindcss/line-clamp": "^0.4.2",
@@ -20,6 +24,7 @@
     "axios": "^1.1.3",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
+    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -39,7 +44,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"react-scripts start\" \"cd src && cd backend && node index.js\"",
     "build": "react-scripts build",
     "test": "jest --forceExit --runInBand",
     "eject": "react-scripts eject"

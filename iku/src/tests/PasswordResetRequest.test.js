@@ -48,7 +48,8 @@ describe("Database tests", () => {
 
     test("Modify", async () => {
         const resGet = await axios.post(`http://localhost:5000/updatePasswordResetRequest/`, {
-            user_id: "6334936ea7e4368f95ec50c9"
+            user_id: "6334936ea7e4368f95ec50c9",
+            email: "iku.soen490@gmail.com"
         });
         expect(resGet.data.code).not.toBe(codeVal);
         codeVal = resGet.data.code;
