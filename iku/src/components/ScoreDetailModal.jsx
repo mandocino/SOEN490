@@ -53,7 +53,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   };
 
   const onChangeDestinationDropdown = async (event) => {
-    setSelectedDestination(event.currentTarget.value);
+    const newSelection = event.currentTarget.value
+    setSelectedDestination(newSelection);
 
     // Reset the selected score time to Overall
     setSelectedScoreTime("Overall");
@@ -62,13 +63,13 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     setCurrentRouteMetrics(defaultRouteMetrics);
 
     // Case where selected item in dropdown is All destinations
-    if (selectedDestination === "default") {
+    if (newSelection === "default") {
       fetchOverallSavedScore();
     } else {
       // Fetch the saved scores for a specific destination
       axios
         .get(
-          `http://localhost:5000/savedScores/${originLocation._id}/${selectedDestination}`
+          `http://localhost:5000/savedScores/${originLocation._id}/${newSelection}`
         )
         .then((response) => {
           if (response.data) {
@@ -81,16 +82,16 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
           }
         })
         .catch((err) => console.error(err));
-
       // Fetch the routes metrics
       axios
         .get(
-          `http://localhost:5000/savedRoutingData/${originLocation._id}/${selectedDestination}/`
+          `http://localhost:5000/savedRoutingData/${originLocation._id}/${newSelection}/`
         )
         .then((response) => {
           if (response.data) {
             const computedMetrics = computeRouteMetricsAverages(response.data.routingData, userData);
             setAllRouteMetrics(computedMetrics);
+            console.log(allRouteMetrics)
           }
         })
         .catch((err) => console.error(err));
@@ -98,10 +99,11 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   };
 
   const handleSelectedScoreTime = (event) => {
-    setSelectedScoreTime(event.currentTarget.id);
+    const newSelection = event.currentTarget.id
+    setSelectedScoreTime(newSelection);
     event.stopPropagation();
 
-    if (selectedDestination !== "default" && allRouteMetrics) {
+    if (newSelection !== "default" && allRouteMetrics) {
       const selectedTimeSlice = event.currentTarget.id;
       let currentMetrics = {
         frequencyMin:
