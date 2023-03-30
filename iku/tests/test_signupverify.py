@@ -11,10 +11,16 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 class TestSignupverify():
   def setup_method(self, method):
-    self.driver = webdriver.Chrome(ChromeDriverManager().install())
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     self.vars = {}
   
   def teardown_method(self, method):
