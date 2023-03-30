@@ -119,7 +119,7 @@ export async function loadScores(origin, destinations, userID, userData) {
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
   if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
-    savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+    savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
     preferencesUpdated =  false;
   }
   // Get the latest scores for each origin/destination pair
@@ -149,7 +149,7 @@ export async function loadScores(origin, destinations, userID, userData) {
       //  weighted average accordingly
 
       if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
-        savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+        savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
         preferencesUpdated = false;
         break;
       }
@@ -173,6 +173,7 @@ export async function loadScores(origin, destinations, userID, userData) {
  * `generateNewScoresForOnePair` function. Also computes the weighted average of all scores for this specific origin.
  * @param origin
  * @param destinations
+ * @param loggedIn
  * @param userData
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */

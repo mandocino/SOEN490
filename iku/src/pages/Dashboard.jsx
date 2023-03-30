@@ -8,6 +8,14 @@ import {loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
 import ScoreCompareModal from '../components/ScoreCompareModal';
 import CompareIcon from '../assets/compare.png';
+import {
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights, defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
+} from "../backend/config/defaultUserPreferences";
 
 
 export default function Dashboard() {
@@ -34,6 +42,7 @@ export default function Dashboard() {
     setCardToCompare([])
   }
 
+  const userDataLoaded = useRef(false);
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
 
@@ -46,8 +55,34 @@ export default function Dashboard() {
   let destinationCards;
 
   const fetchUserData = async () => {
-    const user = await axios.get(`http://localhost:5000/userByID/${user_id}`);
-    setUserData(user.data[0]);
+    if (user_id != null) {
+      const user = await axios.get(`http://localhost:5000/userByID/${user_id}`);
+      setUserData(user.data[0]);
+    } else {
+      if(user_id === null) {
+        if(sessionStorage.getItem("preferences") === null) {
+          const defaultFactors = {
+            factorWeights: defaultUserFactorWeights,
+            nightDayWeights: defaultUserNightDayWeights,
+            nightDirectionWeights: defaultUserNightDirectionWeights,
+            weekendWeights: defaultUserWeekendWeights,
+            timeSliceWeights: defaultUserTimeSliceWeights,
+            scoringPreferences: defaultUserScoringPreferences,
+            routingPreferences: defaultUserRoutingPreferences,
+          };
+          let preferences = {
+            factorWeights: defaultFactors,
+            preferencesUpdated: false
+          }
+
+          sessionStorage.setItem("preferences", JSON.stringify(preferences));
+          setUserData(defaultFactors);
+        } else {
+          setUserData(JSON.parse(sessionStorage.getItem("preferences")).factorWeights);
+        }
+      }
+    }
+    userDataLoaded.current = true;
   }
 
   // Fetch all locations from the DB
@@ -107,8 +142,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchUserData();
-    fetchLocations();
   }, [])
+
+  useEffect(() => {
+    if (userDataLoaded.current) {
+      fetchLocations();
+    }
+  }, [userData])
 
   // Split the fetched locations
   useEffect(() => {
@@ -248,7 +288,12 @@ export default function Dashboard() {
                     </span>
                   </span>
 
-                  <EditScoringFactors dashboardInnerElementGradientClass={dashboardInnerElementGradientClass} buttonClass={dashboardElementButtonClass}/>
+                  {
+                    userDataLoaded.current
+                      ? <EditScoringFactors userData={userData} buttonClass={dashboardElementButtonClass}/>
+                      : <></>
+                  }
+
                 </div>
 
               </div>
