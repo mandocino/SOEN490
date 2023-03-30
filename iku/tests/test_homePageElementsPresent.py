@@ -17,8 +17,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 class TestHomePageElementsPresent():
   def setup_method(self, method):
-    service = Service('./chromedriver/chromedriver')
-    self.driver = webdriver.Chrome(service=service)
+    self.driver = webdriver.Chrome(ChromeDriverManager().install())
     self.vars = {}
   
   def teardown_method(self, method):
