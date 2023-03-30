@@ -27,24 +27,18 @@ class TestDashboardElementsPresent():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_dashboardElementsPresent(self):
-    self.driver.get("http://localhost:3000/")
+  def test_dashboardElementsPresenet(self):
+    self.driver.get("http://localhost:3000/dashboard")
     self.driver.set_window_size(1294, 1392)
-    self.driver.find_element(By.CSS_SELECTOR, "#mobile-menu-2 .flex:nth-child(1) > .transition > .transition").click()
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".lg\\3Apx-6")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".gap-4:nth-child(1)")
     assert len(elements) > 0
     elements = self.driver.find_elements(By.ID, "footer")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".backdrop-blur:nth-child(1)")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".items-center > .grow")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".lg\\3Apx-6")
-    assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".gap-8 > .grow")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".rounded-3xl:nth-child(3)")
     assert len(elements) > 0
     elements = self.driver.find_elements(By.CSS_SELECTOR, ".w-96 > .w-96")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".lg\\3Apx-6")
-    assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".lg\\3Apx-6")
-    assert len(elements) > 0
+  
   

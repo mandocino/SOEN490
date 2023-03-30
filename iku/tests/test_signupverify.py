@@ -27,9 +27,8 @@ class TestSignupverify():
     self.driver.quit()
   
   def test_signupverify(self):
-    self.driver.get("http://localhost:3000/")
+    self.driver.get("http://localhost:3000/register")
     self.driver.set_window_size(1294, 1392)
-    self.driver.find_element(By.CSS_SELECTOR, ".flex > .flex > .flex:nth-child(2) > .transition > .transition").click()
     self.driver.find_element(By.ID, "login-button").click()
     elements = self.driver.find_elements(By.ID, "empty-email")
     assert len(elements) > 0

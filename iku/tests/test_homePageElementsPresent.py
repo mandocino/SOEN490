@@ -30,14 +30,15 @@ class TestHomePageElementsPresent():
   
   def test_homePageElementsPresent(self):
     self.driver.get("http://localhost:3000/")
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".lg\\3Apx-6")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".py-2\\.5")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, "#mobile-menu-2 .flex:nth-child(2) > .transition > .transition")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".xs\\3Ap-8")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".flex > .flex > .flex:nth-child(1) > .transition > .transition")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".p-6")
     assert len(elements) > 0
-    elements = self.driver.find_elements(By.CSS_SELECTOR, ".flex > .flex > .flex:nth-child(2) > .transition > .transition")
+    elements = self.driver.find_elements(By.CSS_SELECTOR, ".shadow-lg:nth-child(2)")
     assert len(elements) > 0
     elements = self.driver.find_elements(By.ID, "footer")
     assert len(elements) > 0
+  
   
