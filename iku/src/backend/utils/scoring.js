@@ -12,6 +12,15 @@ import {
 } from "../config/defaultUserPreferences.js";
 
 
+export const listOfScores = [
+  'offPeak',
+  'overall',
+  'overnight',
+  'rushHour',
+  'weekend'
+];
+
+
 /**
  * Saves the scores of a specific (origin, dstination) pair to the DB, or the weighted average scores of a specific
  * origin (in which case there is no destination).

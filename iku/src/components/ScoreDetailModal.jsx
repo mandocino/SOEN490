@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ReactComponent as RightArrowIcon } from "./../assets/arrow-right.svg";
 import CircleWithText from "./custom/CircleWithText";
@@ -11,10 +11,38 @@ import {ReactComponent as ElevationIcon} from "./../assets/elevation.svg";
 import {ReactComponent as CarIcon} from "./../assets/car.svg";
 import {calculateColorForEachScore} from "./DashboardCard";
 import {computeRouteMetricsAverages} from "../backend/utils/routingAverages";
+import {listOfScores} from "../backend/utils/scoring";
 
 
 function ScoreDetailModal({ originLocation, destinations, userData }) {
+
+  const defaultSavedScores = {
+    overall: 0,
+    rushHour: 0,
+    offPeak: 0,
+    weekend: 0,
+    overnight: 0,
+  };
+
+  const defaultRouteMetrics = {
+    frequencyMin: "-",
+    frequencyMax: "-",
+    frequencyAvg: "-",
+    durationMin: "-",
+    durationMax: "-",
+    durationAvg: "-",
+    walkMin: "-",
+    walkMax: "-",
+    walkAvg: "-",
+  };
+
   const [isOpen, setIsOpen] = useState(false);
+  const [savedScores, setSavedScores] = useState({});
+  const [selectedDestination, setSelectedDestination] = useState("default");
+  const [allRouteMetrics, setAllRouteMetrics] = useState(null);
+  const [currentRouteMetrics, setCurrentRouteMetrics] = useState(defaultRouteMetrics);
+  const [alternativeRoutes, setAlternativeRoutes] = useState(null);
+  const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
   const openModal = () => {
     setIsOpen(true);
@@ -27,26 +55,123 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     setIsOpen(false);
   };
 
-  const addColorsToScores = (allScores) => {
-
-    let scores;
+  const processScores = (allScores) => {
+    let scores = {};
     // Deep copy of the scores from the location object
-    scores = JSON.parse(JSON.stringify(allScores));
+    console.log(allScores)
+    for (let i of listOfScores) {
+      scores[i] = Math.round(allScores[i]);
+    }
+    scores = calculateColorForEachScore(scores);
+    setSavedScores(scores)
+  }
 
-    return calculateColorForEachScore(scores);
-  };
+  const Trip = ({trip}) => {
+    const isGoing = trip.includes('Going');
+    const isCar = trip.includes('car')
+
+    return (
+      <div className="flex flex-row gap-5">
+        <div>
+          {isGoing ? 'To destination: ' : 'To origin: '}
+          {secondsToMinutes(allRouteMetrics['alternativeModeRoutes'][trip]['duration'])}
+        </div>
+        {
+          isCar ? <> </> :
+            <div className="flex flex-row">
+              <div>
+                <ElevationIcon></ElevationIcon>
+              </div>
+              <div className="pr-2">
+                +{allRouteMetrics['alternativeModeRoutes'][trip]['elevationGained']}m
+              </div>
+              <div>
+                -{allRouteMetrics['alternativeModeRoutes'][trip]['elevationLost']}m
+              </div>
+            </div>
+        }
+      </div>
+    )
+  }
+
+  const processAlternativeRoutes = () => {
+    if (!allRouteMetrics) {
+      return;
+    }
+    const trips = {
+      'walkTrip': ['walkTripGoing', 'walkTripComing'],
+      'bicycleTrip': ['bicycleTripGoing', 'bicycleTripComing'],
+      'carTrip': ['carTripGoing', 'carTripComing']
+    }
+
+    const icons = {
+      'walkTrip': <WalkIcon />,
+      'bicycleTrip': <BicycleIcon/>,
+      'carTrip': <CarIcon/>
+    }
+
+    const routes = [];
+
+    for (let i of Object.entries(trips)) {
+      const mode = i[0]
+      const goingTrip = i[1][0];
+      let comingTrip = i[1][1];
+
+      let goingTripVisual = null
+      let comingTripVisual = null
+      console.log(allRouteMetrics)
+
+      if (allRouteMetrics['alternativeModeRoutes'][goingTrip]) {
+        goingTripVisual = (<Trip trip={goingTrip}></Trip>);
+      }
+
+      if (allRouteMetrics['alternativeModeRoutes'][comingTrip]) {
+        comingTripVisual = (<Trip trip={comingTrip}></Trip>);
+      }
+
+      if (!goingTripVisual && !comingTripVisual) {
+        routes.push(
+          <div key={mode} className="flex flex-row gap-2">
+            <div className="px-2">
+              {icons[mode]}
+            </div>
+            <div className="flex flex-col gap-2">
+              No trips found: The available trips may be too long to consider.
+            </div>
+          </div>
+        )
+      }
+
+      else {
+        routes.push(
+          <div key={mode} className="flex flex-row gap-2">
+            <div className="px-2">
+              {icons[mode]}
+            </div>
+            <div className="flex flex-col gap-2">
+              {goingTripVisual}
+              {comingTripVisual}
+            </div>
+          </div>
+        )
+      }
+    }
+    setAlternativeRoutes(routes)
+  }
+
+  useEffect(() => {
+    processAlternativeRoutes()
+  }, [allRouteMetrics]);
 
   const fetchOverallSavedScore = () => {
     axios
       .get(`http://localhost:5000/savedScores/${originLocation._id}`)
       .then((response) => {
         if (response.data) {
-          let processedScores = addColorsToScores(response.data);
-          setSavedScores(processedScores);
+          processScores(response.data);
         } else {
           // Assign 0 to all scores and statistics if values have not been calculated yet
-          let processedScores = addColorsToScores(defaultSavedScores);
-          setSavedScores(processedScores);
+          processScores(defaultSavedScores);
         }
       })
       .catch((err) => console.error(err));
@@ -73,12 +198,10 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         )
         .then((response) => {
           if (response.data) {
-            let processedScores = addColorsToScores(response.data);
-            setSavedScores(processedScores);
+            processScores(response.data);
           } else {
             // Assign 0 to all scores and statistics if values have not been calculated yet
-            let processedScores = addColorsToScores(defaultSavedScores);
-            setSavedScores(processedScores);
+            processScores(defaultSavedScores);
           }
         })
         .catch((err) => console.error(err));
@@ -129,39 +252,13 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
   const secondsToMinutes = (seconds) => {
     seconds = Number(seconds);
-    var h = Math.floor(seconds / 3600);
-    var m = Math.floor(seconds % 3600 / 60);
+    let h = Math.floor(seconds / 3600);
+    let m = Math.floor(seconds % 3600 / 60);
 
-    var hDisplay = h > 0 ? h + (h === 1 ? " hour " : " hours ") : "";
-    var mDisplay = m > 0 ? m + (m === 1 ? " minute " : " minutes ") : "";
+    let hDisplay = h > 0 ? h + (h === 1 ? " hour " : " hours ") : "";
+    let mDisplay = m > 0 ? m + (m === 1 ? " minute " : " minutes ") : "";
     return hDisplay + mDisplay;
   }
-
-  const defaultSavedScores = {
-    overall: 0,
-    rushHour: 0,
-    offPeak: 0,
-    weekend: 0,
-    overnight: 0,
-  };
-
-  const defaultRouteMetrics = {
-    frequencyMin: "-",
-    frequencyMax: "-",
-    frequencyAvg: "-",
-    durationMin: "-",
-    durationMax: "-",
-    durationAvg: "-",
-    walkMin: "-",
-    walkMax: "-",
-    walkAvg: "-",
-  };
-
-  const [savedScores, setSavedScores] = useState({});
-  const [selectedDestination, setSelectedDestination] = useState("default");
-  const [allRouteMetrics, setAllRouteMetrics] = useState(null);
-  const [currentRouteMetrics, setCurrentRouteMetrics] = useState(defaultRouteMetrics);
-  const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
   return (
     <>
@@ -624,132 +721,117 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                                   <>
                                     <div
                                       className={`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "default" ? "" : "hidden"}`}>
-                                      <div className="flex flex-row gap-2">
-                                        {/* CAR */}
-                                        <div className="px-2">
-                                          <CarIcon></CarIcon>
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                          <div className="flex flex-row gap-5">
-                                            <div>
-                                              To
-                                              destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['carTripGoing']['duration'])}
-                                            </div>
-                                            <div className="flex flex-row">
-                                              <div>
-                                                <ElevationIcon></ElevationIcon>
-                                              </div>
-                                              <div className="pr-2">
-                                                +{allRouteMetrics['alternativeModeRoutes']['carTripGoing']['elevationGained']}m
-                                              </div>
-                                              <div>
-                                                -{allRouteMetrics['alternativeModeRoutes']['carTripGoing']['elevationLost']}m
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex flex-row gap-5">
-                                            <div>
-                                              To
-                                              origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['carTripComing']['duration'])}
-                                            </div>
-                                            <div className="flex flex-row">
-                                              <div>
-                                                <ElevationIcon></ElevationIcon>
-                                              </div>
-                                              <div className="pr-2">
-                                                +{allRouteMetrics['alternativeModeRoutes']['carTripComing']['elevationGained']}m
-                                              </div>
-                                              <div>
-                                                -{allRouteMetrics['alternativeModeRoutes']['carTripComing']['elevationLost']}m
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      {/* BICYCLE */}
-                                      <div className="flex flex-row gap-2 pt-3">
-                                        <div className="px-2">
-                                          <BicycleIcon></BicycleIcon>
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                          <div className="flex flex-row gap-5">
-                                            <div>
-                                              To
-                                              destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['bicycleTripGoing']['duration'])}
-                                            </div>
-                                            <div className="flex flex-row">
-                                              <div>
-                                                <ElevationIcon></ElevationIcon>
-                                              </div>
-                                              <div className="pr-2">
-                                                +{allRouteMetrics['alternativeModeRoutes']['bicycleTripGoing']['elevationGained']}m
-                                              </div>
-                                              <div>
-                                                -{allRouteMetrics['alternativeModeRoutes']['bicycleTripGoing']['elevationLost']}m
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex flex-row gap-5">
-                                            <div>
-                                              To
-                                              origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['duration'])}
-                                            </div>
-                                            <div className="flex flex-row">
-                                              <div>
-                                                <ElevationIcon></ElevationIcon>
-                                              </div>
-                                              <div className="pr-2">
-                                                +{allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['elevationGained']}m
-                                              </div>
-                                              <div>
-                                                -{allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['elevationLost']}m
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      {/* WALK */}
-                                      <div className="flex flex-row gap-2 pt-3">
-                                        <div className="px-2">
-                                          <WalkIcon></WalkIcon>
-                                        </div>
-                                        <div className="flex flex-col gap-2">
-                                          <div className="flex flex-row gap-5">
-                                            <div>
-                                              To
-                                              destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['duration'])}
-                                            </div>
-                                            <div className="flex flex-row">
-                                              <div>
-                                                <ElevationIcon></ElevationIcon>
-                                              </div>
-                                              <div className="pr-2">
-                                                +{allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['elevationGained']}m
-                                              </div>
-                                              <div>
-                                                -{allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['elevationLost']}m
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex flex-row gap-5">
-                                            <div>
-                                              To
-                                              origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['walkTripComing']['duration'])}
-                                            </div>
-                                            <div className="flex flex-row">
-                                              <div>
-                                                <ElevationIcon></ElevationIcon>
-                                              </div>
-                                              <div className="pr-2">
-                                                +{allRouteMetrics['alternativeModeRoutes']['walkTripComing']['elevationGained']}m
-                                              </div>
-                                              <div>
-                                                -{allRouteMetrics['alternativeModeRoutes']['walkTripComing']['elevationLost']}m
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      {alternativeRoutes}
+                                      {/*<div className="flex flex-row gap-2">*/}
+                                      {/*  /!* CAR *!/*/}
+                                      {/*  <div className="px-2">*/}
+                                      {/*    <CarIcon></CarIcon>*/}
+                                      {/*  </div>*/}
+                                      {/*  <div className="flex flex-col gap-2">*/}
+                                      {/*    <div className="flex flex-row gap-5">*/}
+                                      {/*      <div>*/}
+                                      {/*        To*/}
+                                      {/*        destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['carTripGoing']['duration'])}*/}
+                                      {/*      </div>*/}
+                                      {/*      <div className="flex flex-row">*/}
+                                      {/*        <div>*/}
+                                      {/*          <ElevationIcon></ElevationIcon>*/}
+                                      {/*        </div>*/}
+                                      {/*        <div className="pr-2">*/}
+                                      {/*          +{allRouteMetrics['alternativeModeRoutes']['carTripGoing']['elevationGained']}m*/}
+                                      {/*        </div>*/}
+                                      {/*        <div>*/}
+                                      {/*          -{allRouteMetrics['alternativeModeRoutes']['carTripGoing']['elevationLost']}m*/}
+                                      {/*        </div>*/}
+                                      {/*      </div>*/}
+                                      {/*    </div>*/}
+                                      {/*    <div className="flex flex-row gap-5">*/}
+                                      {/*      <div>*/}
+                                      {/*        To*/}
+                                      {/*        origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['carTripComing']['duration'])}*/}
+                                      {/*      </div>*/}
+                                      {/*      <div className="flex flex-row">*/}
+                                      {/*        <div>*/}
+                                      {/*          <ElevationIcon></ElevationIcon>*/}
+                                      {/*        </div>*/}
+                                      {/*        <div className="pr-2">*/}
+                                      {/*          +{allRouteMetrics['alternativeModeRoutes']['carTripComing']['elevationGained']}m*/}
+                                      {/*        </div>*/}
+                                      {/*        <div>*/}
+                                      {/*          -{allRouteMetrics['alternativeModeRoutes']['carTripComing']['elevationLost']}m*/}
+                                      {/*        </div>*/}
+                                      {/*      </div>*/}
+                                      {/*    </div>*/}
+                                      {/*  </div>*/}
+                                      {/*</div>*/}
+                                      {/*/!* BICYCLE *!/*/}
+                                      {/*<div className="flex flex-row gap-2 pt-3">*/}
+                                      {/*  <div className="px-2">*/}
+                                      {/*    <BicycleIcon></BicycleIcon>*/}
+                                      {/*  </div>*/}
+                                      {/*  <div className="flex flex-col gap-2">*/}
+
+                                      {/*    <div className="flex flex-row gap-5">*/}
+                                      {/*      <div>*/}
+                                      {/*        To*/}
+                                      {/*        origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['duration'])}*/}
+                                      {/*      </div>*/}
+                                      {/*      <div className="flex flex-row">*/}
+                                      {/*        <div>*/}
+                                      {/*          <ElevationIcon></ElevationIcon>*/}
+                                      {/*        </div>*/}
+                                      {/*        <div className="pr-2">*/}
+                                      {/*          +{allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['elevationGained']}m*/}
+                                      {/*        </div>*/}
+                                      {/*        <div>*/}
+                                      {/*          -{allRouteMetrics['alternativeModeRoutes']['bicycleTripComing']['elevationLost']}m*/}
+                                      {/*        </div>*/}
+                                      {/*      </div>*/}
+                                      {/*    </div>*/}
+                                      {/*  </div>*/}
+                                      {/*</div>*/}
+                                      {/*/!* WALK *!/*/}
+                                      {/*<div className="flex flex-row gap-2 pt-3">*/}
+                                      {/*  <div className="px-2">*/}
+                                      {/*    <WalkIcon></WalkIcon>*/}
+                                      {/*  </div>*/}
+                                      {/*  <div className="flex flex-col gap-2">*/}
+                                      {/*    <div className="flex flex-row gap-5">*/}
+                                      {/*      <div>*/}
+                                      {/*        To*/}
+                                      {/*        destination: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['duration'])}*/}
+                                      {/*      </div>*/}
+                                      {/*      <div className="flex flex-row">*/}
+                                      {/*        <div>*/}
+                                      {/*          <ElevationIcon></ElevationIcon>*/}
+                                      {/*        </div>*/}
+                                      {/*        <div className="pr-2">*/}
+                                      {/*          +{allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['elevationGained']}m*/}
+                                      {/*        </div>*/}
+                                      {/*        <div>*/}
+                                      {/*          -{allRouteMetrics['alternativeModeRoutes']['walkTripGoing']['elevationLost']}m*/}
+                                      {/*        </div>*/}
+                                      {/*      </div>*/}
+                                      {/*    </div>*/}
+                                      {/*    <div className="flex flex-row gap-5">*/}
+                                      {/*      <div>*/}
+                                      {/*        To*/}
+                                      {/*        origin: {secondsToMinutes(allRouteMetrics['alternativeModeRoutes']['walkTripComing']['duration'])}*/}
+                                      {/*      </div>*/}
+                                      {/*      <div className="flex flex-row">*/}
+                                      {/*        <div>*/}
+                                      {/*          <ElevationIcon></ElevationIcon>*/}
+                                      {/*        </div>*/}
+                                      {/*        <div className="pr-2">*/}
+                                      {/*          +{allRouteMetrics['alternativeModeRoutes']['walkTripComing']['elevationGained']}m*/}
+                                      {/*        </div>*/}
+                                      {/*        <div>*/}
+                                      {/*          -{allRouteMetrics['alternativeModeRoutes']['walkTripComing']['elevationLost']}m*/}
+                                      {/*        </div>*/}
+                                      {/*      </div>*/}
+                                      {/*    </div>*/}
+                                      {/*  </div>*/}
+                                      {/*</div>*/}
                                     </div>
                                   </>
                                   :

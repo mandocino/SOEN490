@@ -3,6 +3,7 @@ import CircleWithText from "../components/custom/CircleWithText";
 import EditLocation from "../components/EditLocation";
 import ScoreDetailModal from "./ScoreDetailModal";
 import PlusIcon from "../assets/plus.png";
+import {listOfScores} from "../backend/utils/scoring";
 
 
 // Convert a hue value (in degrees) to a hex RGB representation
@@ -67,7 +68,7 @@ export function calculateColorForEachScore(scores) {
     hueScale = ((hueLowerBound + 360 - hueUpperBound) % 360) / -100;
   }
 
-  for (let score in scores) {
+  for (let score of listOfScores) {
     const i = scores[score];
     let hue = (hueScale * i + hueLowerBound) % 360
     if (hue < 0) {
