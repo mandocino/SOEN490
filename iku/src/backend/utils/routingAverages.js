@@ -1,5 +1,4 @@
 export function computeRouteMetricsAverages(routingData, userData) {
-  console.log(routingData);
   // PROCESSING OF SAVED ROUTES HERE
   let savedRoutesMetricsAverage = {};
 
@@ -10,6 +9,15 @@ export function computeRouteMetricsAverages(routingData, userData) {
   let metricTypes = ['durationMetrics', 'frequencyMetrics', 'walkMetrics'];
 
   let allMetrics = {}
+
+  const processUserWeights = (weights, times=1) => {
+    const baseWeights = weights.map((x) => {return x/100});
+    let repeatedWeights = []
+    for (let i=0; i<times; i++) {
+      repeatedWeights = repeatedWeights.concat(baseWeights);
+    }
+    return repeatedWeights;
+  }
 
   // Calculate average rush hour metrics
   const timeSlices = [
@@ -22,18 +30,17 @@ export function computeRouteMetricsAverages(routingData, userData) {
   const weights = {
     'rushHourMetrics': [0.5, 0.5],
     'offPeakMetrics': [0.5, 0.3, 0.2],
-    'overnightMetrics': Object.values(userData.nightDayWeights),
-    'weekendMetrics': Object.values(userData.weekendWeights),
-    'overallMetrics': Object.values(userData.timeSliceWeights)
+    'overnightMetrics': processUserWeights(Object.values(userData.nightDayWeights), 3),
+    'weekendMetrics': processUserWeights(Object.values(userData.weekendWeights), 2),
+    'overallMetrics': processUserWeights(Object.values(userData.timeSliceWeights))
   }
 
-  const computeMetrics = (data, overall=false) => {
-    const slices = overall ? ['overallMetrics'] : timeSlices;
-
-    slices.forEach(function (timeSlice){
+  const computeMetrics = (data) => {
+    timeSlices.forEach(function (timeSlice){
+      allMetrics[timeSlice] = {};
 
       metricTypes.forEach(function(metricType){
-        allMetrics[timeSlice] = {[metricType]: {}};
+        allMetrics[timeSlice][metricType] = {};
 
         if (data[timeSlice]) {
           const arrOfMins = data[timeSlice].map((x) => {
@@ -47,10 +54,12 @@ export function computeRouteMetricsAverages(routingData, userData) {
           let averageSum = 0;
           for (let i=0; i<data[timeSlice].length; i++) {
             averageSum += data[timeSlice][i][metricType]['average'] * weights[timeSlice][i];
+            console.log(data[timeSlice])
+            console.log(weights[timeSlice]);
           }
-          allMetrics[timeSlice][metricType] = {}
-          allMetrics[timeSlice][metricType]['max'] = Math.round(Math.max(arrOfMaxes));
-          allMetrics[timeSlice][metricType]['min'] = Math.round(Math.min(arrOfMins));
+
+          allMetrics[timeSlice][metricType]['max'] = Math.round(Math.max(...arrOfMaxes));
+          allMetrics[timeSlice][metricType]['min'] = Math.round(Math.min(...arrOfMins));
           allMetrics[timeSlice][metricType]['average'] = Math.round(averageSum);
         }
 
@@ -65,12 +74,9 @@ export function computeRouteMetricsAverages(routingData, userData) {
   }
 
   computeMetrics(routingData, false);
-  computeMetrics(savedRoutesMetricsAverage, true);
 
   // Add the walk, bike, and car routes data
   savedRoutesMetricsAverage['alternativeModeRoutes'] = routingData['alternativeModeRoutes'];
-
-  console.log(savedRoutesMetricsAverage)
 
   return savedRoutesMetricsAverage;
 }

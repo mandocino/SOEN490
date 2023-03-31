@@ -58,7 +58,6 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const processScores = (allScores) => {
     let scores = {};
     // Deep copy of the scores from the location object
-    console.log(allScores)
     for (let i of listOfScores) {
       scores[i] = Math.round(allScores[i]);
     }
@@ -119,7 +118,6 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
       let goingTripVisual = null
       let comingTripVisual = null
-      console.log(allRouteMetrics)
 
       if (allRouteMetrics['alternativeModeRoutes'][goingTrip]) {
         goingTripVisual = (<Trip trip={goingTrip}></Trip>);
@@ -214,7 +212,6 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
           if (response.data) {
             const computedMetrics = computeRouteMetricsAverages(response.data.routingData, userData);
             setAllRouteMetrics(computedMetrics);
-            console.log(allRouteMetrics)
           }
         })
         .catch((err) => console.error(err));
