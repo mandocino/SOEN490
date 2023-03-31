@@ -309,6 +309,7 @@ export function processItineraries(itineraries, startDate, endDate, considerGap 
   const slicedItineraries = sliceRoutesList(itineraries, startDate, endDate, "START_MODE");
   const cleanedItineraries = removeBadRoutes(slicedItineraries);
 
+  const trueFrequencyMetrics = getFrequencyMetrics(cleanedItineraries);
   let frequencyMetrics = getFrequencyMetrics(cleanedItineraries);
   const durationMetrics = getDurationMetrics(cleanedItineraries);
   const walkMetrics = getWalkTimeMetrics(cleanedItineraries);
@@ -346,6 +347,7 @@ export function processItineraries(itineraries, startDate, endDate, considerGap 
   return {
     startCutoff: startCutoff,
     endCutoff: endCutoff,
+    trueFrequencyMetrics: trueFrequencyMetrics,
     frequencyMetrics: frequencyMetrics,
     durationMetrics: durationMetrics,
     walkMetrics: walkMetrics,
@@ -359,6 +361,7 @@ function computeMetricsFromList(processedItineraries) {
 
   for (let i of processedItineraries) {
     let currentFrequencyMetrics;
+    let currentTrueFrequencyMetrics;
     let currentDurationMetrics;
     let currentWalkMetrics;
 
@@ -371,6 +374,18 @@ function computeMetricsFromList(processedItineraries) {
         min: i.frequencyMetrics.minGap/60000,
         average: i.frequencyMetrics.averageGap/60000,
         standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
+      };
+    }
+
+    if (i.trueFrequencyMetrics == null) {
+      currentTrueFrequencyMetrics = null;
+    } else {
+      // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
+      currentTrueFrequencyMetrics = {
+        max: i.trueFrequencyMetrics.maxGap/60000,
+        min: i.trueFrequencyMetrics.minGap/60000,
+        average: i.trueFrequencyMetrics.averageGap/60000,
+        standardDeviation: i.trueFrequencyMetrics.standardDeviationGap/60000
       };
     }
 
@@ -399,6 +414,7 @@ function computeMetricsFromList(processedItineraries) {
     }
     metrics.push({
       frequencyMetrics: currentFrequencyMetrics,
+      trueFrequencyMetrics: currentTrueFrequencyMetrics,
       durationMetrics: currentDurationMetrics,
       walkMetrics: currentWalkMetrics
     })

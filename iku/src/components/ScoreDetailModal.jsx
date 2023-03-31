@@ -227,11 +227,11 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       const selectedTimeSlice = event.currentTarget.id;
       let currentMetrics = {
         frequencyMin:
-          allRouteMetrics[selectedTimeSlice]["frequencyMetrics"]["min"],
+          allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["min"],
         frequencyMax:
-          allRouteMetrics[selectedTimeSlice]["frequencyMetrics"]["max"],
+          allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["max"],
         frequencyAvg:
-          allRouteMetrics[selectedTimeSlice]["frequencyMetrics"]["average"],
+          allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["average"],
         durationMin:
           allRouteMetrics[selectedTimeSlice]["durationMetrics"]["min"],
         durationMax:

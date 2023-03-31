@@ -6,12 +6,12 @@ export function computeRouteMetricsAverages(routingData, userData) {
   // let frequencyWeight = req.params.frequency;
   // let durationWeight = req.params.duration;
 
-  let metricTypes = ['durationMetrics', 'frequencyMetrics', 'walkMetrics'];
+  let metricTypes = ['durationMetrics', 'trueFrequencyMetrics', 'walkMetrics'];
 
   let allMetrics = {}
 
   const processUserWeights = (weights, times=1) => {
-    const baseWeights = weights.map((x) => {return x/100});
+    const baseWeights = weights.map((x) => {return x/100/times});
     let repeatedWeights = []
     for (let i=0; i<times; i++) {
       repeatedWeights = repeatedWeights.concat(baseWeights);
@@ -54,8 +54,6 @@ export function computeRouteMetricsAverages(routingData, userData) {
           let averageSum = 0;
           for (let i=0; i<data[timeSlice].length; i++) {
             averageSum += data[timeSlice][i][metricType]['average'] * weights[timeSlice][i];
-            console.log(data[timeSlice])
-            console.log(weights[timeSlice]);
           }
 
           allMetrics[timeSlice][metricType]['max'] = Math.round(Math.max(...arrOfMaxes));
