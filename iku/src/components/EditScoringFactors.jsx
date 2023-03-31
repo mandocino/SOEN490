@@ -104,9 +104,18 @@ export default function EditScoringFactors({userData, buttonClass}) {
   }
 
   const resetRoutingPreferences = async () => {
-    setIsWheelChair(defaultUserRoutingPreferences.isWheelChair);
-    setWalkReluctance(defaultUserRoutingPreferences.walkReluctance);
-    await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, false);
+    const defaultIsWheelChair = defaultUserRoutingPreferences.isWheelChair;
+    const defaultWalkReluctance = defaultUserRoutingPreferences.walkReluctance
+
+    setIsWheelChair(defaultIsWheelChair);
+    setWalkReluctance(defaultWalkReluctance);
+
+
+    const isWheelChairChanged = defaultIsWheelChair !== oldIsWheelChair;
+    const walkReluctanceChanged = defaultWalkReluctance !== oldWalkReluctance;
+    const routingChanged = walkReluctanceChanged || isWheelChairChanged;
+
+    await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, routingChanged);
   }
 
   const [resetDialogOpen, setResetDialogOpen] = useState(false)

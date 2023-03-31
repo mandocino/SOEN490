@@ -92,12 +92,14 @@ export async function loadScores(origin, destinations, userID, userData) {
   let lastScoringPrefChangeTime;
   let lastRoutingPrefChangeTime;
   let lastAlgoUpdateTime;
+  let lastRoutingUpdateTime;
   let preferencesUpdated;
 
   if (loggedIn) {
     // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
     const timeValues = await axios.get('http://localhost:5000/global/');
     lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
+    lastRoutingUpdateTime = timeValues.data.lastRoutingUpdateTime;
 
     // Grab the last time the user updated their preferences
     lastScoringPrefChangeTime = userData.lastScoringPrefChangeTime;
@@ -112,6 +114,7 @@ export async function loadScores(origin, destinations, userID, userData) {
     lastScoringPrefChangeTime = aLongTimeAgo;
     lastRoutingPrefChangeTime = aLongTimeAgo
     lastAlgoUpdateTime = aLongTimeAgo
+    lastRoutingUpdateTime = aLongTimeAgo
     preferencesUpdated = JSON.parse(sessionStorage.getItem('preferences')).preferencesUpdated;
 
     // Get the scores for current origin from session storage (if exists)
@@ -128,7 +131,13 @@ export async function loadScores(origin, destinations, userID, userData) {
 
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
-  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
+  if (!savedScores
+    || savedScores.generatedTime < lastScoringPrefChangeTime
+    || savedScores.generatedTime < lastRoutingPrefChangeTime
+    || savedScores.generatedTime < lastAlgoUpdateTime
+    || savedScores.generatedTime < lastRoutingUpdateTime
+    || preferencesUpdated
+  ) {
     savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
     preferencesUpdated =  false;
   }
@@ -158,7 +167,12 @@ export async function loadScores(origin, destinations, userID, userData) {
       // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
 
-      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
+      if (!score
+        || score.generatedTime < lastScoringPrefChangeTime
+        || score.generatedTime < lastRoutingPrefChangeTime
+        || score.generatedTime < lastAlgoUpdateTime
+        || score.generatedTime < lastRoutingUpdateTime
+        || preferencesUpdated) {
         savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
         preferencesUpdated = false;
         break;
