@@ -22,6 +22,7 @@ jobs:
           sudo apt-get install google-chrome-stable -y
 
       - name: Install frontend dependencies
+        working-directory: iku
         run: |
           npm i fsevents@latest -f --save-optional
           npm ci
@@ -33,9 +34,6 @@ jobs:
       - name: Start frontend server
         working-directory: iku
         run: npm start &
-
-      - name: Wait for frontend server to start
-        run: npx wait-on http://localhost:3000
 
       # Setup Python (faster than using Python container)
       - name: Setup Python
