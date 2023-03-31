@@ -25,13 +25,13 @@ jobs:
         run: |
           npm i fsevents@latest -f --save-optional
           npm ci
-        working-directory: iku
 
       - name: Install backend dependencies
-        run: npm ci
         working-directory: iku/src/backend
+        run: npm ci
 
       - name: Start frontend server
+        working-directory: iku
         run: npm start &
 
       - name: Wait for frontend server to start
