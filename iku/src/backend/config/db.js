@@ -37,7 +37,8 @@ const userSchema = new Schema(
     scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
     lastScoringPrefChangeTime: { type: Schema.Types.Date, required: true },
-    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true }
+    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true },
+    administrator: { type: Schema.Types.Boolean, default: false },
   },
   { collection: "Users" }
 );
