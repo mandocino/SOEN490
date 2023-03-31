@@ -193,10 +193,10 @@ function processRushHourItineraries(
     weekdayToDestItineraries,
     weekdayFromDestItineraries
 ) {
-  const toDestStartDate = new Date("2023-03-27T06:00:00.000-05:00").getTime();
-  const toDestEndDate = new Date("2023-03-27T10:15:00.000-05:00").getTime();
-  const fromDestStartDate = new Date("2023-03-27T15:00:00.000-05:00").getTime();
-  const fromDestEndDate = new Date("2023-03-27T19:15:00.000-05:00").getTime();
+  const toDestStartDate = new Date("2023-03-27T06:00:00.000-04:00").getTime();
+  const toDestEndDate = new Date("2023-03-27T10:15:00.000-04:00").getTime();
+  const fromDestStartDate = new Date("2023-03-27T15:00:00.000-04:00").getTime();
+  const fromDestEndDate = new Date("2023-03-27T19:15:00.000-04:00").getTime();
 
   const processedToDestItineraries = processItineraries(weekdayToDestItineraries, toDestStartDate, toDestEndDate);
   const processedFromDestItineraries = processItineraries(weekdayFromDestItineraries, fromDestStartDate, fromDestEndDate);
@@ -209,12 +209,12 @@ function processOffPeakItineraries(
     weekdayToDestItineraries,
     weekdayFromDestItineraries
 ) {
-  const toDestStartDate = new Date("2023-03-27T10:00:00.000-05:00").getTime();
-  const toDestEndDate = new Date("2023-03-28T01:15:00.000-05:00").getTime();
-  const fromDestStartDate1 = new Date("2023-03-27T06:00:00.000-05:00").getTime();
-  const fromDestEndDate1 = new Date("2023-03-27T15:15:00.000-05:00").getTime();
-  const fromDestStartDate2 = new Date("2023-03-27T19:00:00.000-05:00").getTime();
-  const fromDestEndDate2 = new Date("2023-03-28T01:15:00.000-05:00").getTime();
+  const toDestStartDate = new Date("2023-03-27T10:00:00.000-04:00").getTime();
+  const toDestEndDate = new Date("2023-03-28T01:15:00.000-04:00").getTime();
+  const fromDestStartDate1 = new Date("2023-03-27T06:00:00.000-04:00").getTime();
+  const fromDestEndDate1 = new Date("2023-03-27T15:15:00.000-04:00").getTime();
+  const fromDestStartDate2 = new Date("2023-03-27T19:00:00.000-04:00").getTime();
+  const fromDestEndDate2 = new Date("2023-03-28T01:15:00.000-04:00").getTime();
 
   const processedToDestItineraries = processItineraries(weekdayToDestItineraries, toDestStartDate, toDestEndDate);
   const processedFromDestItineraries1 = processItineraries(weekdayFromDestItineraries, fromDestStartDate1, fromDestEndDate1);
@@ -239,16 +239,16 @@ function processOvernightItineraries(
   const saturdayNightToDestItineraries = sundayToDestItineraries;
   const saturdayNightFromDestItineraries = sundayFromDestItineraries;
 
-  const weeknightStartDate = new Date("2023-03-27T01:00:00.000-05:00").getTime();
-  const weeknightEndDate = new Date("2023-03-27T05:15:00.000-05:00").getTime();
+  const weeknightStartDate = new Date("2023-03-27T01:00:00.000-04:00").getTime();
+  const weeknightEndDate = new Date("2023-03-27T05:15:00.000-04:00").getTime();
 
   // Recall: Friday night is saturday AM
-  const fridayStartDate = new Date("2023-04-01T01:00:00.000-05:00").getTime();
-  const fridayEndDate = new Date("2023-04-01T05:15:00.000-05:00").getTime();
+  const fridayStartDate = new Date("2023-04-01T01:00:00.000-04:00").getTime();
+  const fridayEndDate = new Date("2023-04-01T05:15:00.000-04:00").getTime();
 
   // Recall: Saturday night is sunday AM
-  const saturdayStartDate = new Date("2023-04-02T01:00:00.000-05:00").getTime();
-  const saturdayEndDate = new Date("2023-04-02T05:15:00.000-05:00").getTime();
+  const saturdayStartDate = new Date("2023-04-02T01:00:00.000-04:00").getTime();
+  const saturdayEndDate = new Date("2023-04-02T05:15:00.000-04:00").getTime();
 
   const processedToDestItineraries = processItineraries(weekdayToDestItineraries, weeknightStartDate, weeknightEndDate);
   const processedFromDestItineraries = processItineraries(weekdayFromDestItineraries, weeknightStartDate, weeknightEndDate);
@@ -275,10 +275,10 @@ function processWeekendItineraries(
     sundayToDestItineraries,
     sundayFromDestItineraries
 ) {
-  const saturdayStartDate = new Date("2023-04-01T05:00:00.000-05:00").getTime();
-  const saturdayEndDate = new Date("2023-04-02T01:15:00.000-05:00").getTime();
-  const sundayStartDate = new Date("2023-04-02T05:00:00.000-05:00").getTime();
-  const sundayEndDate = new Date("2023-04-03T01:15:00.000-05:00").getTime();
+  const saturdayStartDate = new Date("2023-04-01T05:00:00.000-04:00").getTime();
+  const saturdayEndDate = new Date("2023-04-02T01:15:00.000-04:00").getTime();
+  const sundayStartDate = new Date("2023-04-02T05:00:00.000-04:00").getTime();
+  const sundayEndDate = new Date("2023-04-03T01:15:00.000-04:00").getTime();
 
   const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
   const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
