@@ -8,6 +8,7 @@ import {loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
 import ScoreCompareModal from '../components/ScoreCompareModal';
 import CompareIcon from '../assets/compare.png';
+import AddDestinationModal from '../components/AddDestinationModal';
 
 
 export default function Dashboard() {
@@ -18,10 +19,11 @@ export default function Dashboard() {
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
   const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
-  const [cards, setCards] = useState([])
+  const [cards, setCards] = useState([]);
   const [cardToCompare, setCardToCompare] = useState([]);
-  const [compare, setCompare] = useState(false)
-  const [compareModal, setCompareModal] = useState(false)
+  const [compare, setCompare] = useState(false);
+  const [compareModal, setCompareModal] = useState(false);
+  const [destinationBar, setDestinationBar] = useState(false);
 
   const addCardToCompare = (count) => {
     cardToCompare.push(count)
@@ -204,7 +206,8 @@ export default function Dashboard() {
                 </div>
 
                 <ScoreCompareModal firstLocation={cards[cardToCompare[0]]} secondLocation={cards[cardToCompare[1]]} show={compareModal} onClose={closeCompareModal} ></ScoreCompareModal>
-                
+                <AddDestinationModal show={destinationBar} onClose={() => setDestinationBar(false)}/>
+
                 <div className={`w-96 h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
                   <span className="flex items-center gap-2">
                     <span
@@ -241,9 +244,8 @@ export default function Dashboard() {
                   {destinationCards}
                 </div>
 
-                <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
-                  <button type="button"
-                          className={dashboardElementButtonClass}>
+                <div className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
+                  <button type="button" className={dashboardElementButtonClass} onClick={() => setDestinationBar(true)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                          stroke="currentColor" className="w-6 h-6">
                       <path strokeLinecap="round" strokeLinejoin="round"
@@ -251,7 +253,7 @@ export default function Dashboard() {
                     </svg>
                     Add Destination
                   </button>
-                </Link>
+                </div>
               </div>
             </div>
           </div>

@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import LinkButton from "./custom/LinkButton";
 import Button from "./custom/Button";
 import Logo from "./custom/Logo";
-import mongoose from "mongoose";
-import axios from "axios";
 
 import SimpleSearchBar from './SimpleSearchBar';
 
@@ -30,7 +28,7 @@ export default function HomeHeader({ ignore }) {
             </li>
             {location.pathname === "/dashboard" ? (
               <li className="w-96">
-                <SimpleSearchBar />
+                <SimpleSearchBar buttonName='Add' />
               </li>
             ) : null}
           </ul>

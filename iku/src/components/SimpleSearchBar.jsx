@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import mongoose from "mongoose";
 import axios from "axios";
 
-const SimpleSearchBar = () => {
+const SimpleSearchBar = ({ buttonName='Search' }) => {
 
   const inputRef = useRef(null); // To autofill the textbox after fetching current location
 
@@ -96,7 +96,7 @@ const SimpleSearchBar = () => {
     <>
       <form className="rounded-lg drop-shadow-lg grow">
         <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">
-          Search
+          {buttonName}
         </label>
         <div className="relative">
           <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
@@ -144,7 +144,7 @@ const SimpleSearchBar = () => {
             onClick={handleSubmit}
             className="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
           >
-            Search
+            {buttonName}
           </button>
         </div>
       </form>
