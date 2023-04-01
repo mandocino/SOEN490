@@ -433,6 +433,10 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                     color: 'white'
                   }}
                 >
+
+                  <MenuItem key={0} value={""}>
+                    <em>None</em>
+                  </MenuItem>
                   {destinations.map(function (dest) {
                     return (
                       <MenuItem key={dest._id} value={dest._id}>
@@ -484,9 +488,12 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                             backgroundColor: '#fff'
                           },
                         },
+                        '& 	.Mui-disabled': {
+                          color: 'gray'
+                        }
                       }}
                     >
-                      <ToggleButton value="overallMetrics" aria-label="left aligned">
+                      <ToggleButton value="overallMetrics" aria-label="left aligned" disabled>
                         <div className="w-full flex justify-between items-center gap-4">
                           <span>Overall</span>
                           <CircleWithText
