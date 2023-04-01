@@ -449,7 +449,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
             </div>
 
           {/* Table contents */}
-          <div className="w-full bg-gradient-to-br from-black to-emerald-darkest rounded-3xl p-4 flex flex-col mt-2">
+          <div className="w-full border dark:border-none border-emerald-100 bg-white dark:bg-gradient-to-br from-black to-slate-950 rounded-3xl p-4 flex shadow-xl flex-col mt-2">
             <div className="w-full grow flex flex-col items-center p-3">
               <div className="w-full flex flex-col justify-center">
                 <div className="flex gap-3">
@@ -468,11 +468,11 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                         '& .MuiToggleButtonGroup-grouped': {
                           height: '4rem',
                           margin: "0.125rem 0.125rem",
-                          color: isDark
-                            ? 'white'
-                            : '#0a1e1d',
+                          color: 'white',
                           lineHeight: 1.15,
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          backgroundColor: isDark
+                            ? 'rgba(255, 255, 255, 0.1)'
+                            : 'rgba(2, 44, 34, 0.8)',
                           '&.Mui-selected': {
                             backgroundColor: isDark
                               ? '#059669'
@@ -488,8 +488,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                             backgroundColor: '#fff'
                           },
                         },
-                        '& 	.Mui-disabled': {
-                          color: 'gray'
+                        '& .Mui-disabled': {
+                          color: 'gray !important'
                         }
                       }}
                     >
