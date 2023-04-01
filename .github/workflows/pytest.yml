@@ -14,25 +14,26 @@ jobs:
         with:
           node-version: 14.x
 
+      - name: Install Google Chrome
+        run: |
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+          sudo apt-get update
+          sudo apt-get install google-chrome-stable -y
+
       - name: Install frontend dependencies
+        working-directory: iku
         run: |
           npm i fsevents@latest -f --save-optional
           npm ci
-        working-directory: iku
 
       - name: Install backend dependencies
-        run: npm ci
         working-directory: iku/src/backend
+        run: npm ci
 
       - name: Start frontend server
-        id: frontend-server-start
-        run: vercel dev --token ${{ secrets.VERCEL_TOKEN }} --yes
-        timeout-minutes: 1
-        continue-on-error: true
-
-      - name: Reset frontend server start outcome
-        if: failure() && steps.test-app.outcome != 'success'
-        run: steps.frontend-server-start.outcome = 'success'
+        working-directory: iku
+        run: npm start &
 
       # Setup Python (faster than using Python container)
       - name: Setup Python
@@ -43,6 +44,7 @@ jobs:
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pipenv wheel
+
       - id: cache-pipenv
         uses: actions/cache@v1
         with:
@@ -53,11 +55,13 @@ jobs:
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv install --deploy --dev
+
       - name: Test with pytest
         run: |
           pip install pytest
           pip install selenium
           pip install webdriver_manager
+
       - name: Run test suite
         run: |
           pipenv run pytest -v
