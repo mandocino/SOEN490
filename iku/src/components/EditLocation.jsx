@@ -7,6 +7,7 @@ export default function EditLocation(props) {
   let loc = props.loc
 
   const user_id = localStorage.getItem("user_id");
+  const oldPriority = loc.priority;
 
   let [isOpen, setIsOpen] = useState(false);
 
@@ -103,19 +104,34 @@ export default function EditLocation(props) {
       Notes !== "" ||
       Priority !== ""
     ) {
+      const newPriority = parseInt(Priority);
       await axios
         .post("http://localhost:5000/updateLocation", {
           _id: mongoose.Types.ObjectId(loc._id),
           name: Name,
           notes: Notes,
-          priority: parseInt(Priority),
+          priority: newPriority,
           current_home: isOrigin ? CurrentHome : false,
           origin: isOrigin
         })
         .catch((error) => {
           console.log(error.message);
         });
-      window.location.reload(false);
+      if (newPriority !== oldPriority) {
+        const currentDate = Date.now();
+
+        const data = {
+          _id: mongoose.Types.ObjectId(user_id),
+          lastScoringPrefChangeTime: currentDate
+        }
+
+        await axios
+          .post("http://localhost:5000/modifyUserByID", data)
+          .catch((error) => {
+            console.log(error.message);
+          });
+      }
+      window.location.reload();
     }
   }
 

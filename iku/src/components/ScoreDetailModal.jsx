@@ -15,6 +15,10 @@ import {listOfScores} from "../backend/utils/scoring";
 import {FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGroup} from "@mui/material";
 
 
+const isDark = window.matchMedia(
+  "(prefers-color-scheme: dark)"
+).matches;
+
 function ScoreDetailModal({ originLocation, destinations, userData }) {
 
   const defaultSavedScores = {
@@ -445,9 +449,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                                 margin: "0.125rem 0.125rem",
                                 color: "black",
                                 lineHeight: 1.15,
-                                backgroundColor: "#999",
+                                backgroundColor: 'rgba(255, 255, 255, 0.1)',
                                 '&.Mui-selected': {
-                                  backgroundColor: "#eee",
+                                  backgroundColor: "#10b981",
                                   '&:hover, & .Mui-active': {
                                     backgroundColor: "#fff"
                                   },
@@ -456,7 +460,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                                   backgroundColor: "#fff"
                                 },
                                 '& .MuiTouchRipple-child': {
-                                  backgroundColor: '#10b981'
+                                  backgroundColor: '#fff'
                                 },
                               },
                             }}
