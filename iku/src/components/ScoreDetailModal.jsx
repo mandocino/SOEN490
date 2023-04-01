@@ -17,15 +17,18 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select,
+  Select, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow,
   ToggleButton,
   ToggleButtonGroup
 } from "@mui/material";
+import {styled} from "@mui/material/styles";
 
 
 const isDark = window.matchMedia(
   "(prefers-color-scheme: dark)"
 ).matches;
+
+let navButtonBackgroundColor = isDark ? "#10b981" : "#000";
 
 function ScoreDetailModal({ originLocation, destinations, userData }) {
 
@@ -57,6 +60,29 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const [alternativeRoutes, setAlternativeRoutes] = useState(null);
   const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: isDark
+        ? "#0e3331"
+        : "#059669",
+      color: "white",
+    },
+  }))
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    height: '1/3',
+    '&:nth-of-type(odd)': {
+      backgroundColor: "white",
+    },
+    '&.MuiTableRow-head': {
+      backgroundColor: '#0000'
+    },
+    '&:nth-of-type(even)': {
+      backgroundColor: "lightgrey",
+    },
+  }));
+
+
   const openModal = () => {
     setIsOpen(true);
     fetchOverallSavedScore();
@@ -83,22 +109,24 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     const isCar = trip.includes('car')
 
     return (
-      <div className="flex flex-row gap-5">
-        <div>
+      <div className="flex flex-row items-center gap-5">
+        <div className="my-1">
           {isGoing ? 'To destination: ' : 'To origin: '}
           {secondsToMinutes(allRouteMetrics['alternativeModeRoutes'][trip]['duration'])}
         </div>
         {
           isCar ? <> </> :
-            <div className="flex flex-row">
+            <div className="flex flex-row gap-2 items-center">
               <div>
-                <ElevationIcon></ElevationIcon>
+                <ElevationIcon className="fill-emerald-dark dark:fill-white mt-1 h-6 w-6" ></ElevationIcon>
               </div>
-              <div className="pr-2">
-                +{allRouteMetrics['alternativeModeRoutes'][trip]['elevationGained']}m
-              </div>
-              <div>
-                -{allRouteMetrics['alternativeModeRoutes'][trip]['elevationLost']}m
+              <div className="flex flex-col text-xs">
+                <div className="pr-2">
+                  +{allRouteMetrics['alternativeModeRoutes'][trip]['elevationGained']}m
+                </div>
+                <div>
+                  -{allRouteMetrics['alternativeModeRoutes'][trip]['elevationLost']}m
+                </div>
               </div>
             </div>
         }
@@ -117,9 +145,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     }
 
     const icons = {
-      'walkTrip': <WalkIcon />,
-      'bicycleTrip': <BicycleIcon/>,
-      'carTrip': <CarIcon/>
+      'walkTrip': <WalkIcon className="fill-emerald-dark dark:fill-white" />,
+      'bicycleTrip': <BicycleIcon className="fill-emerald-dark dark:fill-white" />,
+      'carTrip': <CarIcon className="fill-emerald-dark dark:fill-white" />
     }
 
     const routes = [];
@@ -155,11 +183,11 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
       else {
         routes.push(
-          <div key={mode} className="flex flex-row gap-2">
+          <div key={mode} className="flex flex-row gap-2 items-center">
             <div className="px-2">
               {icons[mode]}
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col">
               {goingTripVisual}
               {comingTripVisual}
             </div>
@@ -201,6 +229,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     // Case where selected item in dropdown is All destinations
     if (newSelection === "") {
       fetchOverallSavedScore();
+      setAllRouteMetrics(null);
+      setSavedScores({});
     } else {
       // Fetch the saved scores for a specific destination
       axios
@@ -238,21 +268,23 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       if (selectedTimeSlice !== "" && allRouteMetrics) {
         let currentMetrics = {
           frequencyMin:
-            allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["min"],
+            `${allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["min"]} minutes`,
           frequencyMax:
-            allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["max"],
+            `${allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["max"]} minutes`,
           frequencyAvg:
-            allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["average"],
+            `${allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["average"]} minutes`,
           durationMin:
-            allRouteMetrics[selectedTimeSlice]["durationMetrics"]["min"],
+            `${allRouteMetrics[selectedTimeSlice]["durationMetrics"]["min"]} minutes`,
           durationMax:
-            allRouteMetrics[selectedTimeSlice]["durationMetrics"]["max"],
+            `${allRouteMetrics[selectedTimeSlice]["durationMetrics"]["max"]} minutes`,
           durationAvg:
-            allRouteMetrics[selectedTimeSlice]["durationMetrics"]["average"],
-          walkMin: allRouteMetrics[selectedTimeSlice]["walkMetrics"]["min"],
-          walkMax: allRouteMetrics[selectedTimeSlice]["walkMetrics"]["max"],
+            `${allRouteMetrics[selectedTimeSlice]["durationMetrics"]["average"]} minutes`,
+          walkMin:
+            `${allRouteMetrics[selectedTimeSlice]["walkMetrics"]["min"]} minutes`,
+          walkMax:
+            `${allRouteMetrics[selectedTimeSlice]["walkMetrics"]["max"]} minutes`,
           walkAvg:
-            allRouteMetrics[selectedTimeSlice]["walkMetrics"]["average"],
+            `${allRouteMetrics[selectedTimeSlice]["walkMetrics"]["average"]} minutes`,
         };
         setCurrentRouteMetrics(currentMetrics);
       }
@@ -297,6 +329,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         open={isOpen}
         onClose={closeModal}
         maxWidth='lg'
+        fullWidth
         sx={{
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.9)',
@@ -316,7 +349,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       >
         {/* Contents of the modal */}
         {/*  className="rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl" */}
-        <div>
+        <div className="w-full flex flex-col">
           <DialogTitle
             as="h3"
             className="text-3xl py-2.5 font-medium leading-6 text-emerald-500 pl-5 "
@@ -449,10 +482,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
             </div>
 
           {/* Table contents */}
-          <div className="w-full border dark:border-none border-emerald-100 bg-white dark:bg-gradient-to-br from-black to-slate-950 rounded-3xl p-4 flex shadow-xl flex-col mt-2">
-            <div className="w-full grow flex flex-col items-center p-3">
-              <div className="w-full flex flex-col justify-center">
-                <div className="flex gap-3">
+          <div className="w-full border dark:border-none border-emerald-100 bg-white dark:bg-black rounded-3xl p-4 flex shadow-xl flex-col mt-2">
+                <div className="w-full flex gap-3 p-3">
                   {/* First column: Times */}
                   <div className="flex flex-col gap-2 items-center">
                     <ToggleButtonGroup
@@ -564,155 +595,37 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                       </ToggleButton>
                     </ToggleButtonGroup>
                   </div>
-                  {/* Third column: Table and caroussel */}
-                  <div className="flex flex-col gap-2 items-center">
-                    {/* Score statistics */}
-                    <table className="border-separate border-spacing-3">
-                      <thead>
-                        <tr>
-                          <th>
-                            <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                              <table className="text-center border-separate border-spacing-1">
-                                <tbody>
-                                  <tr>
-                                    <td colSpan={3} className="border-b">
-                                      Frequency
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="border-r px-2">Min</td>
-                                    <td className="border-r px-2">Avg</td>
-                                    <td className="px-2">Max</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </th>
-                          <th>
-                            <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                              <table className="text-center border-separate border-spacing-1">
-                                <tbody>
-                                  <tr>
-                                    <td colSpan={3} className="border-b">
-                                      Duration
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="border-r px-2">Min</td>
-                                    <td className="border-r px-2">Avg</td>
-                                    <td className="px-2">Max</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </th>
-                          <th>
-                            <div className="bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-4 py-2 items-center">
-                              <table className="text-center border-separate border-spacing-1">
-                                <tbody>
-                                  <tr>
-                                    <td colSpan={3} className="border-b">
-                                      Walk
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="border-r px-2">Min</td>
-                                    <td className="border-r px-2">Avg</td>
-                                    <td className="px-2">Max</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                              <table className="text-center table-fixed border-separate border-spacing-1">
-                                <tbody>
-                                  <tr>
-                                    <td className="border-r border-emerald-900/30 px-3 w-12">
-                                      {currentRouteMetrics.frequencyMin}
-                                    </td>
-                                    <td className="border-r border-emerald-900/30 px-3 w-12">
-                                      {currentRouteMetrics.frequencyAvg}
-                                    </td>
-                                    <td className="px-3 w-12">
-                                      {currentRouteMetrics.frequencyMax}
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                              <table className="text-center table-fixed border-separate border-spacing-1">
-                                <tbody>
-                                  <tr>
-                                    <td className="border-r border-emerald-900/30 px-3 w-12">
-                                      {currentRouteMetrics.durationMin}
-                                    </td>
-                                    <td className="border-r border-emerald-900/30 px-3 w-12">
-                                      {currentRouteMetrics.durationAvg}
-                                    </td>
-                                    <td className="px-3 w-12">
-                                      {currentRouteMetrics.durationMax}
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="bg-white font-semibold text-lg text-emerald-500 rounded-2xl px-4 py-2 flex gap-2 justify-start items-center">
-                              <table className="text-center table-fixed border-separate border-spacing-1">
-                                <tbody>
-                                  <tr>
-                                    <td className="border-r border-emerald-900/30 px-3 w-12">
-                                      {currentRouteMetrics.walkMin}
-                                    </td>
-                                    <td className="border-r border-emerald-900/30 px-3 w-12">
-                                      {currentRouteMetrics.walkAvg}
-                                    </td>
-                                    <td className="px-3 w-12">
-                                      {currentRouteMetrics.walkMax}
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+
+                  <div className="w-full h-full grow">
                     {/* Caroussel */}
                     <Carousel
                       autoPlay={false}
-                      animation="slide"
                       cycleNavigation={false}
-                      navButtonsAlwaysVisible={true}
-                      indicators={false}
-                      className="grow rounded-3xl bg-emerald-50 flex flex-col  px-7 py-2 h-full w-full "
+                      duration={350}
+                      swipe={false}
+                      height={'18rem'}
+                      navButtonsAlwaysVisible
+                      className="text-emerald-darker dark:text-white drop-shadow-xl"
+                      navButtonsProps={{
+                        style: {
+                          backgroundColor: navButtonBackgroundColor,
+                        }
+                      }}
                       sx={{
                         button: {
-                          "&:hover": {
-                            opacity: "1 !important",
+                          '&:hover': {
+                            opacity: '1 !important'
                           },
-                        },
-                        buttonWrapper: {
-                          "&:hover": {
-                            "& $button": {
-                              backgroundColor: "black",
-                              filter: "brightness(120%)",
-                              opacity: "1",
-                            },
-                          },
+                        }, buttonWrapper: {
+                          '&:hover': {
+                            '& $button': {
+                              backgroundColor: "black", filter: "brightness(120%)", opacity: "1"
+                            }
+                          }
                         },
                       }}
                     >
+                      {/* Routes List */}
                       <div className="flex flex-col  px-7 py-2 h-full w-full ">
                         <span>Route 1</span>
                         <span>Route 2</span>
@@ -720,33 +633,89 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                         <span>Route 4</span>
                       </div>
 
-                      <div className="grow rounded-3xl bg-emerald-50 flex flex-col  px-8 py-2 h-full w-full ">
-                        <div className="text-lg font-semibold ">
-                          Alternative modes of transport
-                        </div>
-                        {/* Don't display alternative modes of transport if destination is not selected */}
-                        <div className={selectedDestination === "" ? "" : "hidden"}>
-                          Please select a destination to view the alternative modes of transport route information
-                        </div>
-                        {/* Display alternative modes of transport if destination is selected */}
-                        {
-                          allRouteMetrics ?
-                            <>
+                      {/* Alternative Modes */}
+                      <div className="grow rounded-3xl text-emerald-dark dark:border dark:border-emerald-darkest dark:text-white bg-gradient-to-br from-white to-emerald-100 dark:from-emerald-darkest dark:to-black flex items-center justify-center p-2">
+                        <div className="flex flex-col">
+                          <div className="text-lg font-semibold ">
+                            Alternative modes of transport
+                          </div>
+                          {
+                            selectedDestination === "" ?
+                              /* Don't display alternative modes of transport if destination is not selected */
+                              <div className={selectedDestination === "" ? "" : "hidden"}>
+                                Please select a destination to view the alternative modes of transport route information
+                              </div>
+                              :
+                              /* Display alternative modes of transport if destination is selected */
                               <div
                                 className={`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
                                 {alternativeRoutes}
                               </div>
-                            </>
-                            :
-                            <>
-                            </>
-                        }
+                          }
+                        </div>
+
+
+                      </div>
+
+                      {/* Stats (min, max, avg...) */}
+                      <div className="w-full h-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
+                        <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
+                          <Table aria-label="metrics table"
+                          sx={{
+                            height: '100%',
+                            maxHeight: '100%',
+                          }}>
+                            <TableHead sx={{
+                              height: '25%'
+                            }}>
+                              <StyledTableRow>
+                                <StyledTableCell align="center">Metric</StyledTableCell>
+                                <StyledTableCell align="center">Minimum</StyledTableCell>
+                                <StyledTableCell align="center">Average</StyledTableCell>
+                                <StyledTableCell align="center">Maximum</StyledTableCell>
+                              </StyledTableRow>
+                            </TableHead>
+                            <TableBody sx={{height: '75%'}}>
+                                <StyledTableRow
+                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                  <StyledTableCell align="center" component="th" scope="row">
+                                    Frequency
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.frequencyMin}</StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.frequencyAvg}</StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.frequencyMax}</StyledTableCell>
+                                </StyledTableRow>
+
+                                <StyledTableRow
+                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                  <StyledTableCell align="center" component="th" scope="row">
+                                    Duration
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.durationMin}</StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.durationAvg}</StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.durationMax}</StyledTableCell>
+                                </StyledTableRow>
+
+                                <StyledTableRow
+                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                  <StyledTableCell align="center" component="th" scope="row">
+                                    Walk Time
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.walkMin}</StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.walkAvg}</StyledTableCell>
+                                  <StyledTableCell align="center">{currentRouteMetrics.walkMax}</StyledTableCell>
+                                </StyledTableRow>
+
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
                       </div>
                     </Carousel>
                   </div>
                 </div>
-              </div>
-            </div>
           </div>
         </div>
       </Dialog>
