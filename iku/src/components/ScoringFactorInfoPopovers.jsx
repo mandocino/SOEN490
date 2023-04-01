@@ -1,6 +1,5 @@
 import Carousel from "react-material-ui-carousel";
 import React, {useEffect, useState} from "react";
-import {List, ListItem} from "@mui/material";
 
 
 const lightThemeNavButtonColor = "#000";

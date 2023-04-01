@@ -145,7 +145,7 @@ export async function loadScores(origin, destinations, userID) {
 
       // If scores for any origin/destination pair are outdated, regenerate everything.
       // This is so that the weighted average score gets regenerated as well.
-      // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
+      // We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
 
       if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime || preferencesUpdated) {
@@ -213,7 +213,7 @@ export async function generateNewScores(origin, destinations, userID) {
     userData = JSON.parse(sessionStorage.getItem('preferences')).factorWeights;
   }
 
-  // TODO: Either update user document in db to the default preferences or show an alert in frontend
+  // Either update user document in db to the default preferences or show an alert in frontend
   if (userData && userData.hasOwnProperty('factorWeights')
     && userData.factorWeights.hasOwnProperty('frequencyWeight')
     && userData.factorWeights.hasOwnProperty('durationWeight')
@@ -586,7 +586,6 @@ function generateWeekendScores(metrics, scoringParams, scoringWeights) {
 function calculateScoresFromMetrics(metrics, scoringParams) {
   const worstFreq = scoringParams.worstAcceptableFrequency;
   const worstDur = scoringParams.worstAcceptableDuration;
-  const worstWalk = scoringParams.worstAcceptableWalk;
   const cvParams = scoringParams.cvParams;
 
   let frequencyScores = []
