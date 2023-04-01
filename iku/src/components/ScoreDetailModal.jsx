@@ -12,6 +12,7 @@ import {ReactComponent as CarIcon} from "./../assets/car.svg";
 import {calculateColorForEachScore} from "./DashboardCard";
 import {computeRouteMetricsAverages} from "../backend/utils/routingAverages";
 import {listOfScores} from "../backend/utils/scoring";
+import {FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGroup} from "@mui/material";
 
 
 function ScoreDetailModal({ originLocation, destinations, userData }) {
@@ -176,7 +177,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   };
 
   const onChangeDestinationDropdown = async (event) => {
-    const newSelection = event.currentTarget.value
+    const newSelection = event.target.value
     setSelectedDestination(newSelection);
 
     // Reset the selected score time to Overall
@@ -218,34 +219,33 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     }
   };
 
-  const handleSelectedScoreTime = (event) => {
-    const newSelection = event.currentTarget.id
-    setSelectedScoreTime(newSelection);
-    event.stopPropagation();
+  const handleSelectedScoreTime = (event, selectedTimeSlice) => {
+    if (selectedTimeSlice !== null) {
+      setSelectedScoreTime(selectedTimeSlice);
 
-    if (newSelection !== "default" && allRouteMetrics) {
-      const selectedTimeSlice = event.currentTarget.id;
-      let currentMetrics = {
-        frequencyMin:
-          allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["min"],
-        frequencyMax:
-          allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["max"],
-        frequencyAvg:
-          allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["average"],
-        durationMin:
-          allRouteMetrics[selectedTimeSlice]["durationMetrics"]["min"],
-        durationMax:
-          allRouteMetrics[selectedTimeSlice]["durationMetrics"]["max"],
-        durationAvg:
-          allRouteMetrics[selectedTimeSlice]["durationMetrics"]["average"],
-        walkMin: allRouteMetrics[selectedTimeSlice]["walkMetrics"]["min"],
-        walkMax: allRouteMetrics[selectedTimeSlice]["walkMetrics"]["max"],
-        walkAvg:
-          allRouteMetrics[selectedTimeSlice]["walkMetrics"]["average"],
-      };
-      setCurrentRouteMetrics(currentMetrics);
+      if (selectedTimeSlice !== "default" && allRouteMetrics) {
+        let currentMetrics = {
+          frequencyMin:
+            allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["min"],
+          frequencyMax:
+            allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["max"],
+          frequencyAvg:
+            allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["average"],
+          durationMin:
+            allRouteMetrics[selectedTimeSlice]["durationMetrics"]["min"],
+          durationMax:
+            allRouteMetrics[selectedTimeSlice]["durationMetrics"]["max"],
+          durationAvg:
+            allRouteMetrics[selectedTimeSlice]["durationMetrics"]["average"],
+          walkMin: allRouteMetrics[selectedTimeSlice]["walkMetrics"]["min"],
+          walkMax: allRouteMetrics[selectedTimeSlice]["walkMetrics"]["max"],
+          walkAvg:
+            allRouteMetrics[selectedTimeSlice]["walkMetrics"]["average"],
+        };
+        setCurrentRouteMetrics(currentMetrics);
+      }
     }
-  };
+  }
 
   const secondsToMinutes = (seconds) => {
     seconds = Number(seconds);
@@ -399,24 +399,27 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                       </svg>
                     </button>
                   </div>
-                  <div className="text-2xl pt-7 font-normal">
-                    <div className="pr-3 inline">{originLocation.name}</div>
+                  <div className="flex w-full items-center gap-2">
+                    <div className="text-2xl inline">{originLocation.name}</div>
                     <RightArrowIcon className="inline"></RightArrowIcon>
-                    <select
-                      className="form-control"
-                      onChange={onChangeDestinationDropdown}
-                    >
-                      <option key="default" value="default" defaultValue>
-                        -- All destinations --
-                      </option>
-                      {destinations.map(function (dest) {
-                        return (
-                          <option key={dest._id} value={dest._id}>
-                            {dest.name}
-                          </option>
-                        );
-                      })}
-                    </select>
+                    <FormControl className="grow">
+                      <InputLabel id="destination-select-label">Destination</InputLabel>
+                      <Select
+                        labelId="destination-select-label"
+                        id="destination-select"
+                        value={selectedDestination}
+                        label="Destination"
+                        onChange={onChangeDestinationDropdown}
+                      >
+                        {destinations.map(function (dest) {
+                          return (
+                            <MenuItem key={dest._id} value={dest._id}>
+                              {dest.name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
                   </div>
                 </Dialog.Title>
 
@@ -427,126 +430,107 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                       <div className="flex gap-3">
                         {/* First column: Times */}
                         <div className="flex flex-col gap-2 items-center">
-                          <div className="invisible bg-emerald-900 font-semibold text-lg text-white rounded-2xl px-3 py-7 h-28 flex flex-col gap-2 justify-between items-center">
-                            <span>Placeholder</span>
-                          </div>
-                          <button
-                            type="button"
-                            id="overallMetrics"
-                            onClick={handleSelectedScoreTime}
-                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              selectedScoreTime === "Overall"
-                                ? "bg-emerald-600"
-                                : ""
-                            }`}
+                          <ToggleButtonGroup
+                            value={selectedScoreTime}
+                            orientation="vertical"
+                            exclusive
+                            onChange={handleSelectedScoreTime}
+                            aria-label="consistency importance"
+                            sx={{
+                              '& .MuiToggleButtonGroup-root': {
+                                width: '100%',
+                              },
+                              '& .MuiToggleButtonGroup-grouped': {
+                                height: '4rem',
+                                margin: "0.125rem 0.125rem",
+                                color: "black",
+                                lineHeight: 1.15,
+                                backgroundColor: "#999",
+                                '&.Mui-selected': {
+                                  backgroundColor: "#eee",
+                                  '&:hover, & .Mui-active': {
+                                    backgroundColor: "#fff"
+                                  },
+                                },
+                                '&:hover, & .Mui-active': {
+                                  backgroundColor: "#fff"
+                                },
+                                '& .MuiTouchRipple-child': {
+                                  backgroundColor: '#10b981'
+                                },
+                              },
+                            }}
                           >
-                            <span>Overall</span>
-                          </button>
-                          <button
-                            type="button"
-                            id="rushHourMetrics"
-                            onClick={handleSelectedScoreTime}
-                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              selectedScoreTime === "Rush-Hour"
-                                ? "bg-emerald-600"
-                                : ""
-                            }`}
-                          >
-                            <span>Rush-Hour</span>
-                          </button>
-                          <button
-                            type="button"
-                            id="offPeakMetrics"
-                            onClick={handleSelectedScoreTime}
-                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              selectedScoreTime === "Off-Peak"
-                                ? "bg-emerald-600"
-                                : ""
-                            }`}
-                          >
-                            <span>Off-Peak</span>
-                          </button>
-                          <button
-                            type="button"
-                            id="weekendMetrics"
-                            onClick={handleSelectedScoreTime}
-                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              selectedScoreTime === "Weekend"
-                                ? "bg-emerald-600"
-                                : ""
-                            }`}
-                          >
-                            <span>Weekend</span>
-                          </button>
-                          <button
-                            type="button"
-                            id="overnightMetrics"
-                            onClick={handleSelectedScoreTime}
-                            className={`bg-emerald-900 hover:bg-emerald-600 font-semibold text-lg text-white rounded-2xl px-7 py-2 h-14 flex flex-col gap-2 justify-between items-center ${
-                              selectedScoreTime === "Overnight"
-                                ? "bg-emerald-600"
-                                : ""
-                            }`}
-                          >
-                            <span>Overnight</span>
-                          </button>
-                        </div>
-                        {/* Second column: Score */}
-                        <div className="flex flex-col gap-2 items-center">
-                          <CircleWithText
-                            className="pl-3 invisible h-28"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            bgColor="bg-white dark:bg-teal-900"
-                            gradient="bg-gradient-to-br from-green-300 to-green-500 dark:from-white dark:to-green-400"
-                          >
-                            {savedScores.rushHour}
-                          </CircleWithText>
-                          <CircleWithText
-                            className="pl-3"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.overallColor}
-                            textColor={savedScores.overallColor}
-                          >
-                            {savedScores.overall}
-                          </CircleWithText>
-                          <CircleWithText
-                            className="pl-3"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.rushHourColor}
-                            textColor={savedScores.rushHourColor}
-                          >
-                            {savedScores.rushHour}
-                          </CircleWithText>
-                          <CircleWithText
-                            className="pl-3"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.offPeakColor}
-                            textColor={savedScores.offPeakColor}
-                          >
-                            {savedScores.offPeak}
-                          </CircleWithText>
-                          <CircleWithText
-                            className="pl-3"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.weekendColor}
-                            textColor={savedScores.weekendColor}
-                          >
-                            {savedScores.weekend}
-                          </CircleWithText>
-                          <CircleWithText
-                            className="pl-3"
-                            size="w-14 h-14"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.overnightColor}
-                            textColor={savedScores.overnightColor}
-                          >
-                            {savedScores.overnight}
-                          </CircleWithText>
+                            <ToggleButton value="overallMetrics" aria-label="left aligned">
+                              <div className="w-full flex justify-between items-center gap-4">
+                                <span>Overall</span>
+                                <CircleWithText
+                                  size="w-12 h-12"
+                                  textClass="text-lg font-bold"
+                                  borderColor={savedScores.overallColor}
+                                  textColor={savedScores.overallColor}
+                                >
+                                  {savedScores.overall}
+                                </CircleWithText>
+                              </div>
+                            </ToggleButton>
+
+                            <ToggleButton value="rushHourMetrics" aria-label="centered">
+                              <div className="w-full flex justify-between items-center gap-4">
+                                <span>Rush Hour</span>
+                                <CircleWithText
+                                  size="w-12 h-12"
+                                  textClass="text-lg font-bold"
+                                  borderColor={savedScores.rushHourColor}
+                                  textColor={savedScores.rushHourColor}
+                                >
+                                  {savedScores.rushHour}
+                                </CircleWithText>
+                              </div>
+                            </ToggleButton>
+
+                            <ToggleButton value="offPeakMetrics" aria-label="right aligned">
+                              <div className="w-full flex justify-between items-center gap-4">
+                                <span>Off Peak</span>
+                                <CircleWithText
+                                  size="w-12 h-12"
+                                  textClass="text-lg font-bold"
+                                  borderColor={savedScores.offPeakColor}
+                                  textColor={savedScores.offPeakColor}
+                                >
+                                  {savedScores.offPeak}
+                                </CircleWithText>
+                              </div>
+                            </ToggleButton>
+
+                            <ToggleButton value="weekendMetrics" aria-label="right aligned">
+                              <div className="w-full flex justify-between items-center gap-4">
+                                <span>Weekend</span>
+                                <CircleWithText
+                                  size="w-12 h-12"
+                                  textClass="text-lg font-bold"
+                                  borderColor={savedScores.weekendColor}
+                                  textColor={savedScores.weekendColor}
+                                >
+                                  {savedScores.weekend}
+                                </CircleWithText>
+                              </div>
+                            </ToggleButton>
+
+                            <ToggleButton value="overnightMetrics" aria-label="right aligned">
+                              <div className="w-full flex justify-between items-center gap-4">
+                                <span>Overnight</span>
+                                <CircleWithText
+                                  size="w-12 h-12"
+                                  textClass="text-lg font-bold"
+                                  borderColor={savedScores.overnightColor}
+                                  textColor={savedScores.overnightColor}
+                                >
+                                  {savedScores.overnight}
+                                </CircleWithText>
+                              </div>
+                            </ToggleButton>
+                          </ToggleButtonGroup>
                         </div>
                         {/* Third column: Table and caroussel */}
                         <div className="flex flex-col gap-2 items-center">
