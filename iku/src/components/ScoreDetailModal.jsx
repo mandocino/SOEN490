@@ -378,7 +378,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                 placement="right"
                 className="pl-3"
               >
-                <span className="flex items-center justify-center transition duration-300 text-white hover:text-emerald-400 cursor-help">
+                <span className="flex items-center justify-center transition duration-300 text-emerald-dark dark:text-white hover:text-emerald-400 cursor-help">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -398,7 +398,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
             </div>
           </DialogTitle>
 
-          <hr className="mb-4 dark:border-emerald-900"></hr>
+          <hr className="mb-4 border-emerald-900"></hr>
           <div className="mb-1">
             <div className="float-right absolute right-4 top-4 ">
               <button type="button" onClick={closeModal}>
@@ -446,7 +446,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                         ? 'white !important'
                         : '#0a1e1d !important',
                     },
-                    color: 'white'
+                    color: isDark
+                      ? 'white'
+                      : '#0e3331'
                   }}
                 >
 
@@ -468,7 +470,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
 
           {/* Table contents */}
-          <div className="w-full border dark:border-none border-emerald-100 bg-white dark:bg-black rounded-3xl p-4 flex shadow-xl flex-col mt-2">
+          <div className="w-full border dark:border-none border-emerald-50 bg-white dark:bg-black rounded-3xl p-4 flex shadow-xl flex-col mt-2">
                 <div className="w-full flex gap-3 p-3">
                   {/* First column: Times */}
                   <div className="flex flex-col gap-2 items-center">
@@ -620,8 +622,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                       </div>
 
                       {/* Alternative Modes */}
-                      <div className="grow rounded-3xl text-emerald-dark dark:border dark:border-emerald-darkest dark:text-white bg-gradient-to-br from-white to-emerald-100 dark:from-emerald-darkest dark:to-black flex items-center justify-center p-2">
-                        <div className="flex flex-col">
+                      <div className="h-full rounded-3xl text-emerald-dark border border-emerald-50 dark:border-emerald-darkest dark:text-white bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-darkest dark:to-black flex items-center justify-center p-2">
+                        <div className="flex flex-col h-full">
                           <div className="text-lg font-semibold ">
                             Alternative modes of transport
                           </div>
@@ -644,7 +646,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                       </div>
 
                       {/* Stats (min, max, avg...) */}
-                      <div className="w-full h-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
+                      <div className="h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
                         <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
                           <Table aria-label="metrics table"
                           sx={{
