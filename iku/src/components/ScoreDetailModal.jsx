@@ -352,52 +352,33 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         <div className="w-full flex flex-col">
           <DialogTitle
             as="h3"
-            className="text-3xl py-2.5 font-medium leading-6 text-emerald-500 pl-5 "
+            className="text-3xl font-semibold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-emerald-900 to-emerald-dark dark:from-white dark:to-emerald-100 flex items-center "
             sx={{ p: 0}}
           >
             <div className="flex">
               <div className="inline flex flex-row">Details</div>
-
               <Tooltip
                 title={
-                  <table className="table-auto border-separate">
-                    <thead>
-                      <tr>
-                        <th>Transit Score Description</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>90-100</td>
-                        <td>Rider's Paradise</td>
-                      </tr>
-                      <tr>
-                        <td>70-89</td>
-                        <td>Excellent Transit</td>
-                      </tr>
-                      <tr>
-                        <td>50-69</td>
-                        <td>Good Transit</td>
-                      </tr>
-                      <tr>
-                        <td>25-49</td>
-                        <td>Some Transit</td>
-                      </tr>
-                      <tr>
-                        <td>0-24</td>
-                        <td>Minimal Transit</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div>
+                    <span>Transit Score Description</span>
+                    <div className="grid grid-cols-2">
+                      <div>90-100</div>
+                      <div>Rider's Paradise</div>
+                      <div>70-89</div>
+                      <div>Excellent Transit</div>
+                      <div>50-69</div>
+                      <div>Good Transit</div>
+                      <div>25-49</div>
+                      <div>Some Transit</div>
+                      <div>0-24</div>
+                      <div>Minimal Transit</div>
+                    </div>
+                  </div>
                 }
                 placement="right"
                 className="pl-3"
               >
-                <button
-                  type="button"
-                  className="w-8 h-8 items-center justify-center transition ease-in-out font-semibold rounded-lg text-md  text-emerald-600 dark:text-emerald-800 hover:bg-white"
-                  on={1}
-                >
+                <span className="flex items-center justify-center transition duration-300 text-white hover:text-emerald-400 cursor-help">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -412,11 +393,13 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                       d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
                     />
                   </svg>
-                </button>
+                </span>
               </Tooltip>
             </div>
           </DialogTitle>
 
+          <hr className="mb-4 dark:border-emerald-900"></hr>
+          <div className="mb-1">
             <div className="float-right absolute right-4 top-4 ">
               <button type="button" onClick={closeModal}>
                 <svg
@@ -480,6 +463,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                 </Select>
               </FormControl>
             </div>
+          </div>
+
+
 
           {/* Table contents */}
           <div className="w-full border dark:border-none border-emerald-100 bg-white dark:bg-black rounded-3xl p-4 flex shadow-xl flex-col mt-2">
