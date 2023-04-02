@@ -29,6 +29,7 @@ import {
   ToggleButtonGroup
 } from "@mui/material";
 import {styled} from "@mui/material/styles";
+import {list} from "postcss";
 
 
 const isDark = window.matchMedia(
@@ -65,7 +66,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const [allRouteMetrics, setAllRouteMetrics] = useState(null);
   const [currentRouteMetrics, setCurrentRouteMetrics] = useState(defaultRouteMetrics);
   const [alternativeRoutes, setAlternativeRoutes] = useState(null);
-  const [itineraries, setItineraries] = useState(null)
+  const [itineraries, setItineraries] = useState(null);
+  const [routesList, setRoutesList] = useState(null);
+  const [routeTimesList, setRouteTimesList] = useState(null);
   const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -204,11 +207,63 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       }
     }
     setAlternativeRoutes(routes)
-    console.log(allRouteMetrics)
   }
 
   const processItineraries = () => {
-    console.log(itineraries)
+    let allRoutes = {}
+    let allStartTimes = {}
+
+    if (!itineraries) {
+      return;
+    }
+
+    // Loop through each day and direction and fetch relevant data
+    for (const [key, value] of Object.entries(itineraries)) {
+      let listOfRoutes = {}
+      let listOfStartTimes = []
+
+      // Loop through every route and fetch its start time and legs
+      for (let i of value) {
+        let legData = []
+        let routeId = ""
+
+        listOfStartTimes.push(i.startTime);
+
+        // Loop through every route and fetch its leg data
+        for (let j of i.legs) {
+          // Route id is a string of the sequence of trips (bus, train, etc). Use mode if trip isnt a transit trip.
+          // This will uniquely identify a route (e.g. bus 165 -> metro -> walk)
+          routeId += j.routeId || j.mode;
+          legData.push({
+            startTime: j.startTime,
+            mode: j.mode,
+            headsign: j.headsign,
+            routeColor: j.routeColor,
+            routeLongName: j.routeLongName,
+            routeShortName: j.routeShortName,
+            duration: j.duration,
+            numStops: j.numIntermediateStops ? j.numIntermediateStops+1 : null
+          });
+        }
+
+        // If an identical route exists, just store the new start time.
+        if (listOfRoutes.hasOwnProperty(routeId)) {
+          listOfRoutes[routeId].times.push(legData.startTime);
+        }
+        else {
+          listOfRoutes[routeId] = {
+            times: [],
+            legData: legData
+          };
+        }
+      }
+
+      // Store the list of routes and list of start times for the given time slice
+      allRoutes[key] = listOfRoutes;
+      allStartTimes[key] = listOfStartTimes;
+    }
+    setRoutesList(allRoutes);
+    setRouteTimesList(allStartTimes);
   }
 
   useEffect(() => {
