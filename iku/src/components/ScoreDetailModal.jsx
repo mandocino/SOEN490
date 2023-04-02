@@ -200,7 +200,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
   useEffect(() => {
     processAlternativeRoutes()
-  }, [allRouteMetrics]);
+  });
 
   const fetchOverallSavedScore = () => {
     axios
@@ -348,7 +348,6 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         }}
       >
         {/* Contents of the modal */}
-        {/*  className="rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl" */}
         <div className="w-full flex flex-col">
           <DialogTitle
             as="h3"
@@ -467,243 +466,239 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
             </div>
           </div>
 
-
-
           {/* Table contents */}
           <div className="w-full border dark:border-none border-emerald-50 bg-white dark:bg-black rounded-3xl p-4 flex shadow-xl flex-col mt-2">
-                <div className="w-full flex gap-3 p-3">
-                  {/* First column: Times */}
-                  <div className="flex flex-col gap-2 items-center">
-                    <ToggleButtonGroup
-                      value={selectedScoreTime}
-                      orientation="vertical"
-                      exclusive
-                      onChange={handleSelectedScoreTime}
-                      aria-label="consistency importance"
-                      sx={{
-                        '& .MuiToggleButtonGroup-root': {
-                          width: '100%',
+            <div className="w-full flex gap-3 p-3">
+              {/* First column: Times */}
+              <div className="flex flex-col gap-2 items-center">
+                <ToggleButtonGroup
+                  value={selectedScoreTime}
+                  orientation="vertical"
+                  exclusive
+                  onChange={handleSelectedScoreTime}
+                  aria-label="consistency importance"
+                  sx={{
+                    '& .MuiToggleButtonGroup-root': {
+                      width: '100%',
+                    },
+                    '& .MuiToggleButtonGroup-grouped': {
+                      height: '4rem',
+                      margin: "0.125rem 0.125rem",
+                      color: 'white',
+                      lineHeight: 1.15,
+                      backgroundColor: isDark
+                        ? 'rgba(255, 255, 255, 0.1)'
+                        : 'rgba(2, 44, 34, 0.8)',
+                      '&.Mui-selected': {
+                        backgroundColor: isDark
+                          ? '#059669'
+                          : '#10b981',
+                        '&:hover, & .Mui-active': {
+                          backgroundColor: "#34d399"
                         },
-                        '& .MuiToggleButtonGroup-grouped': {
-                          height: '4rem',
-                          margin: "0.125rem 0.125rem",
-                          color: 'white',
-                          lineHeight: 1.15,
-                          backgroundColor: isDark
-                            ? 'rgba(255, 255, 255, 0.1)'
-                            : 'rgba(2, 44, 34, 0.8)',
-                          '&.Mui-selected': {
-                            backgroundColor: isDark
-                              ? '#059669'
-                              : '#10b981',
-                            '&:hover, & .Mui-active': {
-                              backgroundColor: "#34d399"
-                            },
-                          },
-                          '&:hover, & .Mui-active': {
-                            backgroundColor: "#34d399"
-                          },
-                          '& .MuiTouchRipple-child': {
-                            backgroundColor: '#fff'
-                          },
-                        },
-                        '& .Mui-disabled': {
-                          color: 'gray !important'
+                      },
+                      '&:hover, & .Mui-active': {
+                        backgroundColor: "#34d399"
+                      },
+                      '& .MuiTouchRipple-child': {
+                        backgroundColor: '#fff'
+                      },
+                    },
+                    '& .Mui-disabled': {
+                      color: 'gray !important'
+                    }
+                  }}
+                >
+                  <ToggleButton value="overallMetrics" aria-label="left aligned" disabled>
+                    <div className="w-full flex justify-between items-center gap-4">
+                      <span>Overall</span>
+                      <CircleWithText
+                        size="w-12 h-12"
+                        textClass="text-lg font-bold"
+                        borderColor={savedScores.overallColor}
+                        textColor={savedScores.overallColor}
+                      >
+                        {savedScores.overall}
+                      </CircleWithText>
+                    </div>
+                  </ToggleButton>
+
+                  <ToggleButton value="rushHourMetrics" aria-label="centered">
+                    <div className="w-full flex justify-between items-center gap-4">
+                      <span>Rush Hour</span>
+                      <CircleWithText
+                        size="w-12 h-12"
+                        textClass="text-lg font-bold"
+                        borderColor={savedScores.rushHourColor}
+                        textColor={savedScores.rushHourColor}
+                      >
+                        {savedScores.rushHour}
+                      </CircleWithText>
+                    </div>
+                  </ToggleButton>
+
+                  <ToggleButton value="offPeakMetrics" aria-label="right aligned">
+                    <div className="w-full flex justify-between items-center gap-4">
+                      <span>Off Peak</span>
+                      <CircleWithText
+                        size="w-12 h-12"
+                        textClass="text-lg font-bold"
+                        borderColor={savedScores.offPeakColor}
+                        textColor={savedScores.offPeakColor}
+                      >
+                        {savedScores.offPeak}
+                      </CircleWithText>
+                    </div>
+                  </ToggleButton>
+
+                  <ToggleButton value="weekendMetrics" aria-label="right aligned">
+                    <div className="w-full flex justify-between items-center gap-4">
+                      <span>Weekend</span>
+                      <CircleWithText
+                        size="w-12 h-12"
+                        textClass="text-lg font-bold"
+                        borderColor={savedScores.weekendColor}
+                        textColor={savedScores.weekendColor}
+                      >
+                        {savedScores.weekend}
+                      </CircleWithText>
+                    </div>
+                  </ToggleButton>
+
+                  <ToggleButton value="overnightMetrics" aria-label="right aligned">
+                    <div className="w-full flex justify-between items-center gap-4">
+                      <span>Overnight</span>
+                      <CircleWithText
+                        size="w-12 h-12"
+                        textClass="text-lg font-bold"
+                        borderColor={savedScores.overnightColor}
+                        textColor={savedScores.overnightColor}
+                      >
+                        {savedScores.overnight}
+                      </CircleWithText>
+                    </div>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </div>
+
+              <div className="w-full h-full grow">
+                {/* Caroussel */}
+                <Carousel
+                  autoPlay={false}
+                  cycleNavigation={false}
+                  duration={350}
+                  swipe={false}
+                  height={'18rem'}
+                  navButtonsAlwaysVisible
+                  className="text-emerald-darker dark:text-white drop-shadow-xl"
+                  navButtonsProps={{
+                    style: {
+                      backgroundColor: navButtonBackgroundColor,
+                    }
+                  }}
+                  sx={{
+                    button: {
+                      '&:hover': {
+                        opacity: '1 !important'
+                      },
+                    }, buttonWrapper: {
+                      '&:hover': {
+                        '& $button': {
+                          backgroundColor: "black", filter: "brightness(120%)", opacity: "1"
                         }
-                      }}
-                    >
-                      <ToggleButton value="overallMetrics" aria-label="left aligned" disabled>
-                        <div className="w-full flex justify-between items-center gap-4">
-                          <span>Overall</span>
-                          <CircleWithText
-                            size="w-12 h-12"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.overallColor}
-                            textColor={savedScores.overallColor}
-                          >
-                            {savedScores.overall}
-                          </CircleWithText>
-                        </div>
-                      </ToggleButton>
-
-                      <ToggleButton value="rushHourMetrics" aria-label="centered">
-                        <div className="w-full flex justify-between items-center gap-4">
-                          <span>Rush Hour</span>
-                          <CircleWithText
-                            size="w-12 h-12"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.rushHourColor}
-                            textColor={savedScores.rushHourColor}
-                          >
-                            {savedScores.rushHour}
-                          </CircleWithText>
-                        </div>
-                      </ToggleButton>
-
-                      <ToggleButton value="offPeakMetrics" aria-label="right aligned">
-                        <div className="w-full flex justify-between items-center gap-4">
-                          <span>Off Peak</span>
-                          <CircleWithText
-                            size="w-12 h-12"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.offPeakColor}
-                            textColor={savedScores.offPeakColor}
-                          >
-                            {savedScores.offPeak}
-                          </CircleWithText>
-                        </div>
-                      </ToggleButton>
-
-                      <ToggleButton value="weekendMetrics" aria-label="right aligned">
-                        <div className="w-full flex justify-between items-center gap-4">
-                          <span>Weekend</span>
-                          <CircleWithText
-                            size="w-12 h-12"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.weekendColor}
-                            textColor={savedScores.weekendColor}
-                          >
-                            {savedScores.weekend}
-                          </CircleWithText>
-                        </div>
-                      </ToggleButton>
-
-                      <ToggleButton value="overnightMetrics" aria-label="right aligned">
-                        <div className="w-full flex justify-between items-center gap-4">
-                          <span>Overnight</span>
-                          <CircleWithText
-                            size="w-12 h-12"
-                            textClass="text-lg font-bold"
-                            borderColor={savedScores.overnightColor}
-                            textColor={savedScores.overnightColor}
-                          >
-                            {savedScores.overnight}
-                          </CircleWithText>
-                        </div>
-                      </ToggleButton>
-                    </ToggleButtonGroup>
+                      }
+                    },
+                  }}
+                >
+                  {/* Routes List */}
+                  <div className="flex flex-col  px-7 py-2 h-full w-full ">
+                    <span>Route 1</span>
+                    <span>Route 2</span>
+                    <span>Route 3</span>
+                    <span>Route 4</span>
                   </div>
 
-                  <div className="w-full h-full grow">
-                    {/* Caroussel */}
-                    <Carousel
-                      autoPlay={false}
-                      cycleNavigation={false}
-                      duration={350}
-                      swipe={false}
-                      height={'18rem'}
-                      navButtonsAlwaysVisible
-                      className="text-emerald-darker dark:text-white drop-shadow-xl"
-                      navButtonsProps={{
-                        style: {
-                          backgroundColor: navButtonBackgroundColor,
-                        }
-                      }}
-                      sx={{
-                        button: {
-                          '&:hover': {
-                            opacity: '1 !important'
-                          },
-                        }, buttonWrapper: {
-                          '&:hover': {
-                            '& $button': {
-                              backgroundColor: "black", filter: "brightness(120%)", opacity: "1"
-                            }
-                          }
-                        },
-                      }}
-                    >
-                      {/* Routes List */}
-                      <div className="flex flex-col  px-7 py-2 h-full w-full ">
-                        <span>Route 1</span>
-                        <span>Route 2</span>
-                        <span>Route 3</span>
-                        <span>Route 4</span>
+                  {/* Alternative Modes */}
+                  <div className="h-full rounded-xl text-emerald-dark border border-emerald-50 dark:border-emerald-darkest dark:text-white bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-darkest dark:to-black flex items-center justify-center p-2">
+                    <div className="flex flex-col h-full">
+                      <div className="text-lg font-semibold ">
+                        Alternative modes of transport
                       </div>
-
-                      {/* Alternative Modes */}
-                      <div className="h-full rounded-3xl text-emerald-dark border border-emerald-50 dark:border-emerald-darkest dark:text-white bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-darkest dark:to-black flex items-center justify-center p-2">
-                        <div className="flex flex-col h-full">
-                          <div className="text-lg font-semibold ">
-                            Alternative modes of transport
+                      {
+                        selectedDestination === "" ?
+                          /* Don't display alternative modes of transport if destination is not selected */
+                          <div className={selectedDestination === "" ? "" : "hidden"}>
+                            Please select a destination to view the alternative modes of transport route information
                           </div>
-                          {
-                            selectedDestination === "" ?
-                              /* Don't display alternative modes of transport if destination is not selected */
-                              <div className={selectedDestination === "" ? "" : "hidden"}>
-                                Please select a destination to view the alternative modes of transport route information
-                              </div>
-                              :
-                              /* Display alternative modes of transport if destination is selected */
-                              <div
-                                className={`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
-                                {alternativeRoutes}
-                              </div>
-                          }
-                        </div>
-
-
-                      </div>
-
-                      {/* Stats (min, max, avg...) */}
-                      <div className="h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
-                        <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
-                          <Table aria-label="metrics table"
-                          sx={{
-                            height: '100%',
-                            maxHeight: '100%',
-                          }}>
-                            <TableHead sx={{
-                              height: '25%'
-                            }}>
-                              <StyledTableRow>
-                                <StyledTableCell align="center">Metric</StyledTableCell>
-                                <StyledTableCell align="center">Minimum</StyledTableCell>
-                                <StyledTableCell align="center">Average</StyledTableCell>
-                                <StyledTableCell align="center">Maximum</StyledTableCell>
-                              </StyledTableRow>
-                            </TableHead>
-                            <TableBody sx={{height: '75%'}}>
-                                <StyledTableRow
-                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                  <StyledTableCell align="center" component="th" scope="row">
-                                    Frequency
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.frequencyMin}</StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.frequencyAvg}</StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.frequencyMax}</StyledTableCell>
-                                </StyledTableRow>
-
-                                <StyledTableRow
-                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                  <StyledTableCell align="center" component="th" scope="row">
-                                    Duration
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.durationMin}</StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.durationAvg}</StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.durationMax}</StyledTableCell>
-                                </StyledTableRow>
-
-                                <StyledTableRow
-                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                  <StyledTableCell align="center" component="th" scope="row">
-                                    Walk Time
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.walkMin}</StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.walkAvg}</StyledTableCell>
-                                  <StyledTableCell align="center">{currentRouteMetrics.walkMax}</StyledTableCell>
-                                </StyledTableRow>
-
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      </div>
-                    </Carousel>
+                          :
+                          /* Display alternative modes of transport if destination is selected */
+                          <div
+                            className={`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
+                            {alternativeRoutes}
+                          </div>
+                      }
+                    </div>
                   </div>
-                </div>
+
+                  {/* Stats (min, max, avg...) */}
+                  <div className="h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
+                    <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
+                      <Table aria-label="metrics table"
+                      sx={{
+                        height: '100%',
+                        maxHeight: '100%',
+                      }}>
+                        <TableHead sx={{
+                          height: '25%'
+                        }}>
+                          <StyledTableRow>
+                            <StyledTableCell align="center">Metric</StyledTableCell>
+                            <StyledTableCell align="center">Minimum</StyledTableCell>
+                            <StyledTableCell align="center">Average</StyledTableCell>
+                            <StyledTableCell align="center">Maximum</StyledTableCell>
+                          </StyledTableRow>
+                        </TableHead>
+                        <TableBody sx={{height: '75%'}}>
+                            <StyledTableRow
+                              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                              <StyledTableCell align="center" component="th" scope="row">
+                                Frequency
+                              </StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.frequencyMin}</StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.frequencyAvg}</StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.frequencyMax}</StyledTableCell>
+                            </StyledTableRow>
+
+                            <StyledTableRow
+                              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                              <StyledTableCell align="center" component="th" scope="row">
+                                Duration
+                              </StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.durationMin}</StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.durationAvg}</StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.durationMax}</StyledTableCell>
+                            </StyledTableRow>
+
+                            <StyledTableRow
+                              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                              <StyledTableCell align="center" component="th" scope="row">
+                                Walk Time
+                              </StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.walkMin}</StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.walkAvg}</StyledTableCell>
+                              <StyledTableCell align="center">{currentRouteMetrics.walkMax}</StyledTableCell>
+                            </StyledTableRow>
+
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </div>
+                </Carousel>
+              </div>
+            </div>
           </div>
         </div>
       </Dialog>

@@ -156,6 +156,54 @@ async function generateMetricsSubroutine(
     carTripComing: carTripComing[0]
   }
 
+  let trimmedItineraries = {}
+  const itineraries = {
+    weekdayToDestItineraries: weekdayToDestItineraries,
+    weekdayFromDestItineraries: weekdayFromDestItineraries,
+    saturdayToDestItineraries: saturdayToDestItineraries,
+    saturdayFromDestItineraries: saturdayFromDestItineraries,
+    sundayToDestItineraries: sundayToDestItineraries,
+    sundayFromDestItineraries: sundayFromDestItineraries
+  }
+
+  for (const [key, value] of Object.entries(itineraries)) {
+    let trimmed = [];
+    for (let i of value) {
+      let itinerary = {...i}
+      let legs = [];
+      for (let j of i.legs) {
+        legs.push({
+          startTime: j.startTime || null,
+          endTime: j.endTime || null,
+          distance: j.distance || null,
+          mode: j.mode || null,
+          route: j.route || null,
+          agencyName: j.agencyName || null,
+          routeShortName: j.routeShortName || null,
+          routeLongName: j.routeLongName || null,
+          routeColor: j.routeColor || null,
+          headSign: j.headSign || null,
+          duration: j.duration || null,
+          from: {
+            name: j.from.name || null,
+            stopCode: j.from.stopCode || null,
+            lon: j.from.lon || null,
+            lat: j.from.lat || null
+          },
+          to: {
+            name: j.to.name || null,
+            stopCode: j.to.stopCode || null,
+            lon: j.to.lon || null,
+            lat: j.to.lat || null
+          }
+        });
+      }
+      itinerary.legs = legs;
+      trimmed.push(itinerary)
+    }
+    trimmedItineraries[key] = trimmed;
+  }
+
 
   const rushHourMetrics = processRushHourItineraries(
       weekdayToDestItineraries,
