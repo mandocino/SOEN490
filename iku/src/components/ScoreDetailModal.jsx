@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { ReactComponent as RightArrowIcon } from "./../assets/arrow-right.svg";
 import CircleWithText from "./custom/CircleWithText";
 import axios from "axios";
@@ -17,7 +17,14 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Select, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  tableCellClasses,
+  TableContainer,
+  TableHead,
+  TableRow,
   ToggleButton,
   ToggleButtonGroup
 } from "@mui/material";
@@ -58,6 +65,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const [allRouteMetrics, setAllRouteMetrics] = useState(null);
   const [currentRouteMetrics, setCurrentRouteMetrics] = useState(defaultRouteMetrics);
   const [alternativeRoutes, setAlternativeRoutes] = useState(null);
+  const [itineraries, setItineraries] = useState(null)
   const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -196,11 +204,20 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       }
     }
     setAlternativeRoutes(routes)
+    console.log(allRouteMetrics)
+  }
+
+  const processItineraries = () => {
+    console.log(itineraries)
   }
 
   useEffect(() => {
-    processAlternativeRoutes()
-  });
+    processAlternativeRoutes();
+  }, [allRouteMetrics]);
+
+  useEffect(() => {
+    processItineraries();
+  }, [itineraries])
 
   const fetchOverallSavedScore = () => {
     axios
@@ -230,6 +247,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     if (newSelection === "") {
       fetchOverallSavedScore();
       setAllRouteMetrics(null);
+      setItineraries(null);
       setSavedScores({});
     } else {
       // Fetch the saved scores for a specific destination
@@ -255,6 +273,18 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
           if (response.data) {
             const computedMetrics = computeRouteMetricsAverages(response.data.routingData, userData);
             setAllRouteMetrics(computedMetrics);
+          }
+        })
+        .catch((err) => console.error(err));
+
+      // Fetch the itineraries
+      axios
+        .get(
+          `http://localhost:5000/savedItineraries/${originLocation._id}/${newSelection}/`
+        )
+        .then((response) => {
+          if (response.data) {
+            setItineraries(response.data.itineraries);
           }
         })
         .catch((err) => console.error(err));
