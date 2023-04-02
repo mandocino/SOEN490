@@ -43,7 +43,11 @@ import {
     deleteSavedRoutingDataByLocations,
     editSavedRoutingDataByLocations,
     showSavedRoutingDataByLocations,
-    showSavedRoutingDataAveragesByLocations
+    showSavedRoutingDataAveragesByLocations,
+    showSavedItinerariesByLocations,
+    deleteSavedItineraries,
+    deleteSavedItinerariesByLocations,
+    editSavedItinerariesByLocations
 } from "../controllers/savedRoutes.js";
 
 // init express router
@@ -170,14 +174,26 @@ router.get('/savedRoutingData/:origin/:destination', showSavedRoutingDataByLocat
 // Get all routing data AVERAGES from an origin to a destination
 router.get('/savedRoutingDataAverages/:origin/:destination/:weeknightWeight/:fridayNightWeight/:saturdayNightWeight/:saturdayWeight/:sundayWeight', showSavedRoutingDataAveragesByLocations);
 
-// Delete a set of routes by object id
+// Delete routing data by object id
 router.post('/deleteRoutingData/', deleteSavedRoutingData);
 
-// Delete a set of routes by origin and destination
+// Delete routing data by origin and destination
 router.post('/deleteRoutingData/:origin/:destination', deleteSavedRoutingDataByLocations);
 
-// Edit a set of routes by origin and destination, on a specific date
+// Edit routing data by origin and destination, on a specific date
 router.post('/editRoutingData/:origin/:destination', editSavedRoutingDataByLocations);
+
+// Get all itineraries from an origin to a destination, on a specific date
+router.get('/savedItineraries/:origin/:destination', showSavedItinerariesByLocations);
+
+// Delete a set of itineraries by object id
+router.post('/deleteRoutingData/', deleteSavedItineraries);
+
+// Delete a set of itineraries by origin and destination
+router.post('/deleteItineraries/:origin/:destination', deleteSavedItinerariesByLocations);
+
+// Edit a set of itineraries by origin and destination, on a specific date
+router.post('/editItineraries/:origin/:destination', editSavedItinerariesByLocations);
 
 //METHOD CALLED IN FRONTEND FOR TESTING PURPOSES
 router.get("/routesOTP/", getAllRoutesOTP);

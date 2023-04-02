@@ -4,12 +4,27 @@ import {
     createSavedRoutingData,
     removeSavedRoutingData,
     removeSavedRoutingDataByLocations,
-    updateSavedRoutingDataByLocations
+    updateSavedRoutingDataByLocations,
+    getSavedItinerariesByLocations,
+    removeSavedItineraries,
+    removeSavedItinerariesByLocations,
+    updateSavedItinerariesByLocations
 } from "../models/savedRoutesModel.js";
 
 // Get saved Routes by origin and destination
 export const showSavedRoutingDataByLocations = (req, res) => {
     getSavedRoutingDataByLocations(req.params.origin, req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Get saved itineraries by origin and destination
+export const showSavedItinerariesByLocations = (req, res) => {
+    getSavedItinerariesByLocations(req.params.origin, req.params.destination, (err, results) => {
         if (err){
             res.send(err);
         }else{
@@ -141,9 +156,32 @@ export const editSavedRoutingDataByLocations = (req, res) => {
     });
 }
 
+// Update/Upsert a set of saved itineraries with data
+export const editSavedItinerariesByLocations = (req, res) => {
+    const updateData = req.body;
+    updateSavedItinerariesByLocations(req.params.origin, req.params.destination, updateData, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
 // Delete a SavedRoutes by its object ID
 export const deleteSavedRoutingData = (req, res) => {
     removeSavedRoutingData(req.body._id, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedItineraries by its object ID
+export const deleteSavedItineraries = (req, res) => {
+    removeSavedItineraries(req.body._id, (err, results) => {
         if (err){
             res.send(err);
         }else{
@@ -162,3 +200,15 @@ export const deleteSavedRoutingDataByLocations = (req, res) => {
         }
     });
 }
+
+// Delete a SavedItineraries by origin and destination
+export const deleteSavedItinerariesByLocations = (req, res) => {
+    removeSavedItinerariesByLocations(req.params.origin, req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+

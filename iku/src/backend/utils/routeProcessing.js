@@ -46,8 +46,10 @@ export async function handleGetRoutingData(
     isWheelchair=false
 ){
   // Attempt to fetch the routes data from the db
-  let routingData;
   let fetchedData;
+  let response;
+  let routingData;
+
   if(typeof origin._id != "number" && typeof destination._id != "number" ) {
     fetchedData = await thisModule.fetchRoutingData(origin, destination);
   }
@@ -60,16 +62,16 @@ export async function handleGetRoutingData(
   // Or, re-compute them if the routing algorithm was updated.
   if (!fetchedData || fetchedData.generatedTime < lastRoutingUpdateTime || fetchedData.generatedTime < lastRoutingPrefChangeTime) {
     const generatedTime = Date.now();
-    routingData = await generateMetricsSubroutine(origin, destination, startDates, time, loggedIn, optionalParams, isWheelchair);
+    response = await generateMetricsSubroutine(origin, destination, startDates, time, loggedIn, optionalParams, isWheelchair);
+    routingData = response.metrics;
 
     // Save the scores if the user is logged in
     if (loggedIn) {
-      await thisModule.saveRoutingData(origin, destination, routingData, generatedTime)
+      await thisModule.saveRoutingData(origin, destination, response, generatedTime)
     }
   } else {
     routingData = fetchedData.routingData;
   }
-
   return routingData;
 }
 
@@ -103,15 +105,25 @@ export async function fetchRoutingData(origin, destination) {
  * @returns {Promise<void>}
  */
 export async function saveRoutingData(origin, destination, routingData, generatedTime) {
-  let params =
+  let routingDataParams =
     {
       origin: origin,
       destination: destination,
       generatedTime: generatedTime,
-      routingData: routingData
+      routingData: routingData.metrics
     };
 
-  await axios.post(`http://localhost:5000/editRoutingData/${origin._id}/${destination._id}`, params);
+  await axios.post(`http://localhost:5000/editRoutingData/${origin._id}/${destination._id}`, routingDataParams);
+
+  let itinerariesParams =
+    {
+      origin: origin,
+      destination: destination,
+      generatedTime: generatedTime,
+      itineraries: routingData.itineraries
+    };
+
+  await axios.post(`http://localhost:5000/editItineraries/${origin._id}/${destination._id}`, itinerariesParams);
 }
 
 
@@ -156,6 +168,54 @@ async function generateMetricsSubroutine(
     carTripComing: carTripComing[0]
   }
 
+  let trimmedItineraries = {}
+  const itineraries = {
+    weekdayToDestItineraries: weekdayToDestItineraries,
+    weekdayFromDestItineraries: weekdayFromDestItineraries,
+    saturdayToDestItineraries: saturdayToDestItineraries,
+    saturdayFromDestItineraries: saturdayFromDestItineraries,
+    sundayToDestItineraries: sundayToDestItineraries,
+    sundayFromDestItineraries: sundayFromDestItineraries
+  }
+
+  for (const [key, value] of Object.entries(itineraries)) {
+    let trimmed = [];
+    for (let i of value) {
+      let itinerary = {...i}
+      let legs = [];
+      for (let j of i.legs) {
+        legs.push({
+          startTime: j.startTime || null,
+          endTime: j.endTime || null,
+          distance: j.distance || null,
+          mode: j.mode || null,
+          route: j.route || null,
+          agencyName: j.agencyName || null,
+          routeShortName: j.routeShortName || null,
+          routeLongName: j.routeLongName || null,
+          routeColor: j.routeColor || null,
+          headSign: j.headSign || null,
+          duration: j.duration || null,
+          from: {
+            name: j.from.name || null,
+            stopCode: j.from.stopCode || null,
+            lon: j.from.lon || null,
+            lat: j.from.lat || null
+          },
+          to: {
+            name: j.to.name || null,
+            stopCode: j.to.stopCode || null,
+            lon: j.to.lon || null,
+            lat: j.to.lat || null
+          }
+        });
+      }
+      itinerary.legs = legs;
+      trimmed.push(itinerary)
+    }
+    trimmedItineraries[key] = trimmed;
+  }
+
 
   const rushHourMetrics = processRushHourItineraries(
       weekdayToDestItineraries,
@@ -181,11 +241,16 @@ async function generateMetricsSubroutine(
   );
 
   return {
-    rushHourMetrics: rushHourMetrics,
-    offPeakMetrics: offPeakMetrics,
-    overnightMetrics: overnightMetrics,
-    weekendMetrics: weekendMetrics,
-    alternativeModeRoutes: alternativeModeRoutes
+    metrics: {
+      rushHourMetrics: rushHourMetrics,
+      offPeakMetrics: offPeakMetrics,
+      overnightMetrics: overnightMetrics,
+      weekendMetrics: weekendMetrics,
+      alternativeModeRoutes: alternativeModeRoutes,
+    },
+    itineraries: {
+      trimmedItineraries: trimmedItineraries
+    }
   }
 }
 
