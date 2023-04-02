@@ -1,10 +1,8 @@
-import React, { useState, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import LinkButton from "./custom/LinkButton";
 import Button from "./custom/Button";
 import Logo from "./custom/Logo";
-import mongoose from "mongoose";
-import axios from "axios";
 
 import SimpleSearchBar from './SimpleSearchBar';
 

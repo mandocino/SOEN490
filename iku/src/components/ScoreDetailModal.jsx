@@ -376,7 +376,6 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass 
     const compareItineraries = (x, y) => {
       return x[1].duration > y[1].duration
     }
-    const width = 120
     if (!routesList) {
       return (
         <div>
@@ -424,9 +423,6 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass 
           case "BUS":
             icon = <DirectionsBusIcon sx={{width: '1.5rem', height: '1.5rem'}}/>
             break;
-          default:
-            icon = null;
-            break;
         }
 
         legs.push(
@@ -469,8 +465,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass 
 
   const DeparturesOverTime = () => {
     const processData = (data) => {
-      // key = hour
-      // value = count
+      // key = hour, value = count
       let keyValue = {}
 
       for (let i=0; i<24; i++) {
