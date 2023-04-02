@@ -23,8 +23,6 @@ export default function Dashboard() {
   const [locations, getLocations] = useState([]);
   const [rawOrigins, setRawOrigins] = useState([]);
   const [origins, setOrigins] = useState([]);
-  const [rawCurrentHome, setRawCurrentHome] = useState([]);
-  const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
   const [cards, setCards] = useState([]);
   const [cardToCompare, setCardToCompare] = useState([]);
@@ -46,10 +44,15 @@ export default function Dashboard() {
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
 
+  const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
+
   const dashboardElementClass = "rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-500 dark:from-emerald-900 dark:to-emerald-dark p-4";
-  const dashboardElementButtonClass = "w-full flex items-center justify-start gap-2 transition ease-in-out duration-200 rounded-lg text-2xl font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white px-4 py-2";
-  const dashboardElementButtonClass2 = "w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-500 dark:bg-emerald-200 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-400 text-white dark:text-emerald-dark hover:bg-emerald-700 dark:hover:bg-white";
   const dashboardInnerElementGradientClass = "bg-gradient-to-br from-emerald-900 to-emerald-darker dark:from-emerald-darker dark:to-black rounded-3xl";
+
+  const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white"
+  const dashboardElementButtonClass = "w-full flex items-center justify-start gap-2  px-4 py-2 text-2xl " + dashboardButtonBase;
+  const dashboardSmallButtonClass = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
+  const dashboardSquareButtonClass = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
 
   let originCards;
   let destinationCards;
@@ -115,8 +118,7 @@ export default function Dashboard() {
   // Split the fetched locations into three: the current home, the other origins, and the destinations
   const splitLocations = () => {
     if (locations.length > 0) {
-      setRawCurrentHome(locations.find(loc => loc.current_home));
-      setRawOrigins(locations.filter(loc => !loc.current_home && loc.origin));
+      setRawOrigins(locations.filter(loc => loc.origin));
       setDestinations(locations.filter(loc => !loc.origin));
     }
     locationsSplit.current = true;
@@ -130,11 +132,6 @@ export default function Dashboard() {
     originsWithScores = await Promise.all(rawOrigins.map(async o => ({
       ...o, scores: await loadScores(o, destinations, user_id, userData)
     })));
-    if(rawCurrentHome) {
-      setCurrentHome({
-        ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id, userData)
-      });
-    }
 
     // Set origins to include the scores
     setOrigins(originsWithScores);
@@ -162,51 +159,29 @@ export default function Dashboard() {
     if (locationsSplit.current) {
       fetchScores();
     }
-  }, [rawOrigins, rawCurrentHome, destinations]);
+  }, [rawOrigins, destinations]);
 
   // Create origins' scorecards
   let count = -1
-  let currentHomeObj = null
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
       count += 1
 
       cards[count] =
         <DashboardCard
+          key={loc._id}
           className={dashboardInnerElementGradientClass}
+          buttonClass={dashboardSmallButtonClass}
           loc={loc}
           destinations={destinations}
-          key={loc._id}
           count={count}
           userData={userData}
           compare={compare}
           addCardToCompare={addCardToCompare}
-        >
-          {loc.name}
-        </DashboardCard>;
+        />;
 
       return cards[count]
     })
-    if (currentHome) {
-      count += 1
-
-      currentHomeObj =
-        <DashboardCard
-          className={dashboardInnerElementGradientClass}
-          loc={currentHome}
-          destinations={destinations}
-          invert
-          compare={compare}
-          key={count}
-          count={count}
-          userData={userData}
-          addCardToCompare={addCardToCompare}
-        >
-          {currentHome.name}
-        </DashboardCard>
-
-      cards[count] = currentHomeObj;
-    }
   } else {
     originCards = <div
       className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2`}>
@@ -227,17 +202,7 @@ export default function Dashboard() {
             {loc.name}
           </span>
           <div className="flex flex-nowrap gap-2">
-            <Link to="/" className="transition ease-in-out duration-200 rounded-lg">
-              <button type="button"
-                      className={dashboardElementButtonClass2}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
-                     stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round"
-                        d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-              </button>
-            </Link>
-            <EditLocation loc={loc} buttonClass={dashboardElementButtonClass2}/>
+            <EditLocation loc={loc} buttonClass={dashboardSquareButtonClass} notext />
           </div>
         </div>);
     })
@@ -255,35 +220,44 @@ export default function Dashboard() {
       <BaseLayout className="flex flex-col" ignore={['dashboard']}>
         <div className="w-full grow flex flex-col items-center p-8">
           <div className="w-full flex flex-col justify-center">
-            <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start">
-              <div className="w-96 flex flex-col gap-8 items-center">
+            <div className="w-full flex flex-col items-center gap-8 lg:flex-row lg:items-start">
+              <div className="w-full lg:w-fit flex flex-col gap-8 items-center">
+
                 <div
-                  className={`w-full flex flex-col items-center gap-4 ${dashboardElementClass}`}>
+                  className={`${dashboardElementClass} w-full lg:w-[28rem] h-fit flex flex-col items-center gap-4`}>
                   <p
-                    className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
-                    Current Home
+                    className={dashboardTitleTextGradient}>
+                    Added Destinations
                   </p>
-                  {
-                    currentHomeObj && currentHomeObj.props.children ?
-                      <>
-                        { currentHomeObj }
-                      </>
-                      :
-                      <div className="bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl p-4 flex flex-col items-center gap-2 w-64">
-                        <div className="flex justify-between items-center gap-2 drop-shadow-lg">
-                          <span className="font-bold text-2xl text-center text-white">
-                            No specified current home.
-                          </span>
-                    </div>
-                  </div>}
+                  <div
+                    className={`${dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
+                    {destinationCards}
+                  </div>
+
+                  <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
+                    <button type="button"
+                            className={dashboardElementButtonClass}>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
+                           stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      Add Destination
+                    </button>
+                  </Link>
                 </div>
 
-                <ScoreCompareModal firstLocation={cards[cardToCompare[0]]} secondLocation={cards[cardToCompare[1]]} show={compareModal} onClose={closeCompareModal} ></ScoreCompareModal>
+                <ScoreCompareModal
+                  firstLocation={cards[cardToCompare[0]]}
+                  secondLocation={cards[cardToCompare[1]]}
+                  show={compareModal}
+                  onClose={closeCompareModal}
+                />
                 
-                <div className={`w-96 h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
+                <div className={`w-full lg:w-[28rem] h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
                   <span className="flex items-center gap-2">
                     <span
-                      className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-white to-emerald-100">
+                      className={dashboardTitleTextGradient}>
                       Scoring Factors
                     </span>
                   </span>
@@ -297,41 +271,17 @@ export default function Dashboard() {
                 </div>
 
               </div>
-              <div className={`grow h-fit flex flex-col gap-4 ${dashboardElementClass}`}>
-                <div className="flex flex-row space-between justify-between">
-                  <div className="w-16"></div>
-                  <p className="text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-50 to-emerald-200">
+              <div className={`w-full grow h-fit flex flex-col ${dashboardElementClass}`}>
+                <div className="flex flex-row justify-between">
+                  <div className="w-14"></div>
+                  <span className={dashboardTitleTextGradient}>
                     Added Homes
-                  </p>
-                  <img src={CompareIcon} className="w-16 cursor-pointer" onClick={() => setCompare(!compare)} />
+                  </span>
+                  <img src={CompareIcon} className="w-14 h-14 cursor-pointer" onClick={() => setCompare(!compare)} />
                 </div>
-                <div className="grid grid-cols-[repeat(auto-fit,16rem)] justify-center gap-8 h-fit">
+                <div className="flex flex-col justify-center gap-8 h-fit">
                   {originCards}
                 </div>
-              </div>
-
-              <div
-                className={`${dashboardElementClass} w-96 h-fit flex flex-col items-center gap-4`}>
-                <p
-                  className="text-center text-4xl font-bold leading-snug text-transparent bg-clip-text bg-clip-text bg-gradient-to-r from-white to-emerald-100">
-                  Added Destinations
-                </p>
-                <div
-                  className={`${dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
-                  {destinationCards}
-                </div>
-
-                <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
-                  <button type="button"
-                          className={dashboardElementButtonClass}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
-                         stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round"
-                            d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Add Destination
-                  </button>
-                </Link>
               </div>
             </div>
           </div>

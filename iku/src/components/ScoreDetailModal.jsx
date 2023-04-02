@@ -76,7 +76,7 @@ const isDark = window.matchMedia(
 
 let navButtonBackgroundColor = isDark ? "#10b981" : "#000";
 
-function ScoreDetailModal({ originLocation, destinations, userData }) {
+function ScoreDetailModal({ originLocation, destinations, userData, buttonClass }) {
 
   const defaultSavedScores = {
     overall: 0,
@@ -443,9 +443,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         )
       }
       visualizedRoutes.push(
-        <div key={key} className="flex w-full">
+        <div key={key} className="flex w-full text-white">
           <span className="grow flex nowrap items-center">
-            <span className="w-16">
+            <span className="w-16 text-emerald-dark dark:text-white">
               {Math.round(value.duration/60)} min:
             </span>
             <span className="grow flex nowrap">
@@ -684,7 +684,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       <button
         onClick={openModal}
         type="button"
-        className="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-b border-emerald-600 rounded-t-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white"
+        className={buttonClass}
         on={1}
       >
         <svg
@@ -701,6 +701,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
             d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
           />
         </svg>
+        <span>Details</span>
       </button>
 
       <Dialog
@@ -1028,7 +1029,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                           <div className={`flex basis-3/5 flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
                             {alternativeRoutes}
                           </div>
-                          <div className={`flex basis-2/5 border-l border-l-white ml-4 pl-4 flex-col py-3 gap-2 items-left`}>
+                          <div className={`flex basis-2/5 border-l border-l-emerald-dark dark:border-l-white ml-4 pl-4 flex-col py-3 gap-2 items-left`}>
                             {
                               selectedScoreTime ?
                                 <>
