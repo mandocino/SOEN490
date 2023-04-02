@@ -29,7 +29,12 @@ import {
   ToggleButtonGroup
 } from "@mui/material";
 import {styled} from "@mui/material/styles";
-import {list} from "postcss";
+
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import TrainIcon from '@mui/icons-material/Train';
+import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import {ReactComponent as MetroLogo} from "./../assets/metro-logo.svg";
 
 
 const isDark = window.matchMedia(
@@ -69,6 +74,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const [itineraries, setItineraries] = useState(null);
   const [routesList, setRoutesList] = useState(null);
   const [routeTimesList, setRouteTimesList] = useState(null);
+  const [routesListDay, setRoutesListDay] = useState("");
+  const [routesListDir, setRoutesListDir] = useState("")
   const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -230,19 +237,36 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         listOfStartTimes.push(i.startTime);
 
         // Loop through every route and fetch its leg data
-        for (let j of i.legs) {
+        for (let j=0; j<i.legs.length; j++) {
           // Route id is a string of the sequence of trips (bus, train, etc). Use mode if trip isnt a transit trip.
           // This will uniquely identify a route (e.g. bus 165 -> metro -> walk)
-          routeId += j.routeId || j.mode;
+          const leg = i.legs[j];
+          routeId += leg.routeId || leg.mode;
+
+          // Find wait parts
+          if (j>0 && leg.startTime > i.legs[j-1].endTime) {
+            legData.push({
+              startTime: i.legs[j-1].endTime,
+              mode: "WAIT",
+              headsign: null,
+              routeId: null,
+              routeColor: "666",
+              routeLongName: null,
+              routeShortName: null,
+              duration: (leg.startTime - i.legs[j-1].endTime)/1000,
+              numStops: null
+            });
+          }
           legData.push({
-            startTime: j.startTime,
-            mode: j.mode,
-            headsign: j.headsign,
-            routeColor: j.routeColor,
-            routeLongName: j.routeLongName,
-            routeShortName: j.routeShortName,
-            duration: j.duration,
-            numStops: j.numIntermediateStops ? j.numIntermediateStops+1 : null
+            startTime: leg.startTime,
+            mode: leg.mode,
+            headsign: leg.headsign,
+            routeId: leg.routeId,
+            routeColor: leg.routeColor,
+            routeLongName: leg.routeLongName,
+            routeShortName: leg.routeShortName,
+            duration: leg.duration,
+            numStops: leg.numIntermediateStops ? leg.numIntermediateStops+1 : null
           });
         }
 
@@ -252,7 +276,8 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         }
         else {
           listOfRoutes[routeId] = {
-            times: [],
+            times: [legData.startTime],
+            duration: i.duration,
             legData: legData
           };
         }
@@ -264,6 +289,101 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     }
     setRoutesList(allRoutes);
     setRouteTimesList(allStartTimes);
+  }
+
+  const RoutesList = () => {
+    const compareItineraries = (x, y) => {
+      return x[1].duration > y[1].duration
+    }
+    const width = 120
+    if (!routesList) {
+      return (
+        <div>
+          <div className="text-lg font-semibold ">
+            List of possible routes
+          </div>
+          {
+            selectedDestination ?
+              <span>No routes found.</span>
+              :
+              <span>Select a destination to display routes.</span>
+          }
+        </div>
+      )
+    }
+    let visualizedRoutes = [];
+
+    const durations = Object.values(routesList.weekdayToDestItineraries).map((x) => {return x.duration});
+    const longestDuration = Math.max(...durations)
+
+    const allItineraries = Object.entries(routesList.weekdayToDestItineraries)
+    allItineraries.sort(compareItineraries);
+
+    for (let [key, value] of allItineraries) {
+      let legs = []
+      for (let j of value.legData) {
+
+        let name = j.routeShortName;
+        const legWidth = (j.duration / longestDuration * 100)
+        let icon = null;
+
+        switch (j.mode) {
+          case "WALK":
+            icon = <DirectionsWalkIcon sx={{width: '1.5rem', height: '1.5rem'}}/>
+            break;
+          case "WAIT":
+            icon = <HourglassEmptyIcon sx={{width: '1.5rem', height: '1.5rem'}}/>
+            break;
+          case "RAIL":
+            icon = <TrainIcon sx={{width: '1.5rem', height: '1.5rem'}}/>
+            break;
+          case "SUBWAY":
+            icon = <MetroLogo className="fill-white w-6 h-6" />
+            break;
+          case "BUS":
+            icon = <DirectionsBusIcon sx={{width: '1.5rem', height: '1.5rem'}}/>
+            break;
+          default:
+            icon = null;
+            break;
+        }
+
+        legs.push(
+          <div key={j.startTime} style={{
+            width: `${legWidth}%`,
+            backgroundColor: `#${j.routeColor || '999'}`
+          }}>
+            <span className='flex nowrap items-center overflow-clip'>
+              <span className="w-6 h-6 flex items-center">{icon}</span>
+              {name}
+            </span>
+
+          </div>
+        )
+      }
+      visualizedRoutes.push(
+        <div key={key} className="flex w-full">
+          <span className="grow flex nowrap items-center">
+            <span className="w-16">
+              {Math.round(value.duration/60)} min:
+            </span>
+            <span className="grow flex nowrap">
+              {legs}
+            </span>
+
+          </span>
+        </div>
+      )
+    }
+
+    return (
+      <div className="flex flex-col gap-0.5 w-full overflow-scroll">
+        <div className="text-lg font-semibold ">
+          List of possible routes
+        </div>
+        {visualizedRoutes}
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -303,6 +423,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       fetchOverallSavedScore();
       setAllRouteMetrics(null);
       setItineraries(null);
+      setRoutesList(null);
       setSavedScores({});
     } else {
       // Fetch the saved scores for a specific destination
@@ -697,10 +818,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                 >
                   {/* Routes List */}
                   <div className="flex flex-col  px-7 py-2 h-full w-full ">
-                    <span>Route 1</span>
-                    <span>Route 2</span>
-                    <span>Route 3</span>
-                    <span>Route 4</span>
+                    <RoutesList/>
                   </div>
 
                   {/* Alternative Modes */}
