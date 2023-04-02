@@ -44,7 +44,7 @@ export default function Dashboard() {
   const userDataLoaded = useRef(false);
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
-  const scoredLoaded = useRef(false);
+  const scoresLoaded = useRef(false);
 
   const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
 
@@ -135,12 +135,9 @@ export default function Dashboard() {
       pairedScores[o._id] = await loadScores(o, destinations, user_id, userData);
       setScores(pairedScores);
     }
-    // originsWithScores = await Promise.all(origins.map(async o => ({
-    //   ...o, scores:
-    // })));
 
     // Set origins to include the scores
-    scoredLoaded.current = true;
+    scoresLoaded.current = true;
   }
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png"
 import {Icon} from 'leaflet'
 
 import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet'
+import {CircularProgress, Skeleton} from "@mui/material";
 
 // const buttonClass = "h-8 p-2 gap-2 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white";
 
@@ -88,6 +89,8 @@ export function calculateColorForEachScore(scores) {
 }
 
 export default function DashboardCard({className, buttonClass, loc, fetchedScores, destinations, count, userData, compare, addCardToCompare}) {
+  const hasDestinations = destinations && destinations.length > 0;
+
   let scores = null;
   if (fetchedScores) {
     // Deep copy of the scores from the location object
@@ -142,12 +145,29 @@ export default function DashboardCard({className, buttonClass, loc, fetchedScore
 
           <div className="flex flex-col gap-4 min-h-[16rem] grow">
             <div className="w-full flex flex-col sm:flex-row flex-wrap items-center lg:items-start gap-2">
-              { !destinations && !scores && <>
-
-              </>
-              }
               {
-                scores && <>
+                !hasDestinations && <>
+                  <div className="text-2xl text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-24 h-24 stroke-amber-400">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    <span>Add a destination to see scores!</span>
+                  </div>
+                </>
+              }
+
+              {
+                hasDestinations && !scores && <>
+                  <div className="text-xl text-white flex items-center gap-2">
+                    <CircularProgress sx={{ color: '#10b981' }} size={96} />
+                    <span>Generating scores...</span>
+                  </div>
+
+                </>
+              }
+
+              {
+                hasDestinations && scores && <>
                   <div className="flex justify-center w-36 sm:w-fit">
                     <CircleWithText size="w-24 h-24" textClass="text-5xl font-bold"
                                     borderColor={scores.overallColor} textColor={scores.overallColor}>
