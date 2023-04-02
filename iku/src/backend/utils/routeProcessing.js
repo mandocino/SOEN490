@@ -184,18 +184,21 @@ async function generateMetricsSubroutine(
       let itinerary = {...i}
       let legs = [];
       for (let j of i.legs) {
+        const numIntermediateStops = j.hasOwnProperty('intermediateStops') ? j.intermediateStops.length : null;
         legs.push({
           startTime: j.startTime || null,
           endTime: j.endTime || null,
-          distance: j.distance || null,
-          mode: j.mode || null,
-          route: j.route || null,
           agencyName: j.agencyName || null,
-          routeShortName: j.routeShortName || null,
-          routeLongName: j.routeLongName || null,
-          routeColor: j.routeColor || null,
-          headSign: j.headSign || null,
+          distance: j.distance || null,
           duration: j.duration || null,
+          headsign: j.headsign || null,
+          mode: j.mode || null,
+          numIntermediateStops: numIntermediateStops,
+          route: j.route || null,
+          routeColor: j.routeColor || null,
+          routeId: j.routeId || null,
+          routeLongName: j.routeLongName || null,
+          routeShortName: j.routeShortName || null,
           from: {
             name: j.from.name || null,
             stopCode: j.from.stopCode || null,
@@ -248,9 +251,7 @@ async function generateMetricsSubroutine(
       weekendMetrics: weekendMetrics,
       alternativeModeRoutes: alternativeModeRoutes,
     },
-    itineraries: {
-      trimmedItineraries: trimmedItineraries
-    }
+    itineraries: trimmedItineraries
   }
 }
 
