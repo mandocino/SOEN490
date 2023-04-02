@@ -5,9 +5,9 @@ import {
     createSavedScore,
     removeSavedScore,
     removeSavedScoresByLocations,
-    removeSavedScoresByOrigin,
+    removeSavedScoresByOriginNoDest,
     updateSavedScoreByOrigin,
-    updateSavedScoreByLocations
+    updateSavedScoreByLocations, removeSavedScoresByDestination, removeSavedScoresByOrigin
 } from "../models/savedScoreModel.js";
 
 // Get saved scores by origin and destination
@@ -90,9 +90,31 @@ export const deleteSavedScoreByLocations = (req, res) => {
     });
 }
 
-// Delete a SavedScore by its object ID
+// Delete a SavedScore by its origin ID (where destination is null)
+export const deleteSavedScoreByOriginNoDest = (req, res) => {
+    removeSavedScoresByOriginNoDest(req.params.origin, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedScore by its origin ID
 export const deleteSavedScoreByOrigin = (req, res) => {
     removeSavedScoresByOrigin(req.params.origin, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedScore by its destination ID
+export const deleteSavedScoreByDestination = (req, res) => {
+    removeSavedScoresByDestination(req.params.destination, (err, results) => {
         if (err){
             res.send(err);
         }else{

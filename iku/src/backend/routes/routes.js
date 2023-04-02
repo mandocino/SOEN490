@@ -31,9 +31,9 @@ import {
     showSavedScoresByOrigin,
     deleteSavedScore,
     deleteSavedScoreByLocations,
-    deleteSavedScoreByOrigin,
+    deleteSavedScoreByOriginNoDest,
     editSavedScoreByLocations,
-    editSavedScoreByOrigin
+    editSavedScoreByOrigin, deleteSavedScoreByDestination, deleteSavedScoreByOrigin
 } from "../controllers/savedScore.js";
 import {getAllRoutesOTP} from "../utils/openTripPlanner.js";
 import {modifyGlobals, showGlobals} from "../controllers/global.js";
@@ -47,7 +47,10 @@ import {
     showSavedItinerariesByLocations,
     deleteSavedItineraries,
     deleteSavedItinerariesByLocations,
-    editSavedItinerariesByLocations
+    editSavedItinerariesByLocations,
+    deleteSavedItinerariesByDestination,
+    deleteSavedRoutingDataByDestination,
+    deleteSavedRoutingDataByOrigin, deleteSavedItinerariesByOrigin
 } from "../controllers/savedRoutes.js";
 
 // init express router
@@ -136,7 +139,13 @@ router.post('/editSavedScore/:origin', editSavedScoreByOrigin);
 router.post('/deleteSavedScore/:origin/:destination', deleteSavedScoreByLocations);
 
 // Delete a saved score by origin only
-router.post('/deleteSavedScore/:origin', deleteSavedScoreByOrigin);
+router.post('/deleteSavedScore/:origin', deleteSavedScoreByOriginNoDest);
+
+// Delete a saved score by origin only
+router.post('/deleteSavedScoreByOrigin/:origin', deleteSavedScoreByOrigin);
+
+// Delete a saved score by origin only
+router.post('/deleteSavedScoreByDest/:destination', deleteSavedScoreByDestination);
 
 ///////////// EMAIL CONFIRMATION
 
@@ -180,6 +189,12 @@ router.post('/deleteRoutingData/', deleteSavedRoutingData);
 // Delete routing data by origin and destination
 router.post('/deleteRoutingData/:origin/:destination', deleteSavedRoutingDataByLocations);
 
+// Delete routing data by origin and destination
+router.post('/deleteRoutingDataByOrigin/:origin', deleteSavedRoutingDataByOrigin);
+
+// Delete routing data by origin and destination
+router.post('/deleteRoutingDataByDest/:destination', deleteSavedRoutingDataByDestination);
+
 // Edit routing data by origin and destination, on a specific date
 router.post('/editRoutingData/:origin/:destination', editSavedRoutingDataByLocations);
 
@@ -191,6 +206,12 @@ router.post('/deleteRoutingData/', deleteSavedItineraries);
 
 // Delete a set of itineraries by origin and destination
 router.post('/deleteItineraries/:origin/:destination', deleteSavedItinerariesByLocations);
+
+// Delete a set of itineraries by origin
+router.post('/deleteItinerariesByOrigin/:origin', deleteSavedItinerariesByOrigin);
+
+// Delete a set of itineraries by destination
+router.post('/deleteItinerariesByDest/:destination', deleteSavedItinerariesByDestination);
 
 // Edit a set of itineraries by origin and destination, on a specific date
 router.post('/editItineraries/:origin/:destination', editSavedItinerariesByLocations);

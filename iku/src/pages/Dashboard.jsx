@@ -44,7 +44,6 @@ export default function Dashboard() {
   const userDataLoaded = useRef(false);
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
-  const scoresLoaded = useRef(false);
 
   const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
 
@@ -128,16 +127,14 @@ export default function Dashboard() {
 
   // Fetch the scores for all origins except the current home
   const fetchScores = async () => {
-
     // Map all scores and set `origins` to it
-    let pairedScores = {...scores}
     for (let o of origins) {
-      pairedScores[o._id] = await loadScores(o, destinations, user_id, userData);
-      setScores(pairedScores);
+      const toAppend = await loadScores(o, destinations, user_id, userData);
+      setScores((previousScores, props) => ({
+        ...previousScores,
+        [o._id]: toAppend
+      }))
     }
-
-    // Set origins to include the scores
-    scoresLoaded.current = true;
   }
 
   useEffect(() => {
@@ -176,7 +173,7 @@ export default function Dashboard() {
           className={dashboardInnerElementGradientClass}
           buttonClass={dashboardSmallButtonClass}
           loc={loc}
-          fetchedScores={scores[loc._id]}
+          fetchedScores={scores && scores[loc._id]}
           destinations={destinations}
           count={count}
           userData={userData}
@@ -257,7 +254,7 @@ export default function Dashboard() {
                   show={compareModal}
                   onClose={closeCompareModal}
                 />
-                
+
                 <div className={`w-full lg:w-[28rem] h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
                   <span className="flex items-center gap-2">
                     <span

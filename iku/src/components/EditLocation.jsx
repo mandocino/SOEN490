@@ -1,4 +1,4 @@
-import {React, useEffect, Fragment, useState} from "react";
+import {React, Fragment, useState} from "react";
 import { Switch, Dialog, Transition } from '@headlessui/react'
 import axios from "axios";
 import mongoose from "mongoose";
@@ -7,6 +7,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
 
   const user_id = localStorage.getItem("user_id");
   const oldPriority = loc.priority;
+  const oldIsOrigin = loc.origin;
 
   let [isOpen, setIsOpen] = useState(false);
 
@@ -48,7 +49,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
     // Remove other homes if new home is set
     if(CurrentHome !== loc.current_home) {
       for(const l of locationArray) {
-        if(l._id != loc._id && l.current_home) {
+        if(l._id !== loc._id && l.current_home) {
           l.current_home = false;
         }
       }
@@ -71,6 +72,28 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
       sessionStorage.setItem('location', JSON.stringify(locationArray));
       window.location.reload(false);
     }
+  }
+
+  const deleteRelevantDocumentsOnOriginChange = async (isOrigin, itemToDelete) => {
+    const byDestStr = isOrigin ? "ByOrigin" : "ByDest";
+
+    await axios
+      .post(`http://localhost:5000/deleteSavedScore${byDestStr}/${itemToDelete}`, {})
+      .catch((error) => {
+        console.log(error.message);
+      });
+
+    await axios
+      .post(`http://localhost:5000/deleteRoutingData${byDestStr}/${itemToDelete}`, {})
+      .catch((error) => {
+        console.log(error.message);
+      });
+
+    await axios
+      .post(`http://localhost:5000/deleteItineraries${byDestStr}/${itemToDelete}`, {})
+      .catch((error) => {
+        console.log(error.message);
+      });
   }
 
   const submitHandlerLoggedInUsers = async () => {
@@ -130,6 +153,24 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
             console.log(error.message);
           });
       }
+      if (isOrigin !== oldIsOrigin) {
+        const currentDate = Date.now();
+        const itemToDelete = mongoose.Types.ObjectId(loc._id);
+        console.log(itemToDelete)
+
+        const data = {
+          _id: mongoose.Types.ObjectId(user_id),
+          lastScoringPrefChangeTime: currentDate
+        }
+
+        await axios
+          .post("http://localhost:5000/modifyUserByID", data)
+          .catch((error) => {
+            console.log(error.message);
+          });
+
+        await deleteRelevantDocumentsOnOriginChange(oldIsOrigin, itemToDelete);
+      }
       window.location.reload();
     }
   }
@@ -146,9 +187,13 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
       }
       sessionStorage.setItem('location', JSON.stringify(locationArray));
     } else {
+
+      const locationToDelete = mongoose.Types.ObjectId(loc._id);
+      await deleteRelevantDocumentsOnOriginChange(loc.origin, locationToDelete);
+
       await axios
         .post("http://localhost:5000/deleteLocation", {
-          _id: mongoose.Types.ObjectId(loc._id),
+          _id: locationToDelete,
         })
         .catch((error) => {
           console.log(error.message);

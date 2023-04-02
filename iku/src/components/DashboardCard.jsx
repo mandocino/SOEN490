@@ -160,7 +160,7 @@ export default function DashboardCard({className, buttonClass, loc, fetchedScore
                 hasDestinations && !scores && <>
                   <div className="text-xl text-white flex items-center gap-2">
                     <CircularProgress sx={{ color: '#10b981' }} size={96} />
-                    <span>Generating scores...</span>
+                    <span>Loading scores...</span>
                   </div>
 
                 </>
