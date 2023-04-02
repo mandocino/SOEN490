@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import BaseLayout from "../components/BaseLayout";
 import DashboardCard from "../components/DashboardCard";
 import EditLocation from "../components/EditLocation";
@@ -11,7 +11,8 @@ import CompareIcon from '../assets/compare.png';
 import {
   defaultUserFactorWeights,
   defaultUserNightDayWeights,
-  defaultUserNightDirectionWeights, defaultUserRoutingPreferences,
+  defaultUserNightDirectionWeights,
+  defaultUserRoutingPreferences,
   defaultUserScoringPreferences,
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
@@ -21,8 +22,8 @@ import {
 export default function Dashboard() {
   const user_id = localStorage.getItem("user_id");
   const [locations, getLocations] = useState([]);
-  const [rawOrigins, setRawOrigins] = useState([]);
   const [origins, setOrigins] = useState([]);
+  const [scores, setScores] = useState({});
   const [destinations, setDestinations] = useState([]);
   const [cards, setCards] = useState([]);
   const [cardToCompare, setCardToCompare] = useState([]);
@@ -43,6 +44,7 @@ export default function Dashboard() {
   const userDataLoaded = useRef(false);
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
+  const scoredLoaded = useRef(false);
 
   const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
 
@@ -118,7 +120,7 @@ export default function Dashboard() {
   // Split the fetched locations into three: the current home, the other origins, and the destinations
   const splitLocations = () => {
     if (locations.length > 0) {
-      setRawOrigins(locations.filter(loc => loc.origin));
+      setOrigins(locations.filter(loc => loc.origin));
       setDestinations(locations.filter(loc => !loc.origin));
     }
     locationsSplit.current = true;
@@ -127,14 +129,18 @@ export default function Dashboard() {
   // Fetch the scores for all origins except the current home
   const fetchScores = async () => {
 
-    let originsWithScores;
     // Map all scores and set `origins` to it
-    originsWithScores = await Promise.all(rawOrigins.map(async o => ({
-      ...o, scores: await loadScores(o, destinations, user_id, userData)
-    })));
+    let pairedScores = {...scores}
+    for (let o of origins) {
+      pairedScores[o._id] = await loadScores(o, destinations, user_id, userData);
+      setScores(pairedScores);
+    }
+    // originsWithScores = await Promise.all(origins.map(async o => ({
+    //   ...o, scores:
+    // })));
 
     // Set origins to include the scores
-    setOrigins(originsWithScores);
+    scoredLoaded.current = true;
   }
 
   useEffect(() => {
@@ -159,7 +165,7 @@ export default function Dashboard() {
     if (locationsSplit.current) {
       fetchScores();
     }
-  }, [rawOrigins, destinations]);
+  }, [origins, destinations]);
 
   // Create origins' scorecards
   let count = -1
@@ -173,6 +179,7 @@ export default function Dashboard() {
           className={dashboardInnerElementGradientClass}
           buttonClass={dashboardSmallButtonClass}
           loc={loc}
+          fetchedScores={scores[loc._id]}
           destinations={destinations}
           count={count}
           userData={userData}
@@ -279,7 +286,7 @@ export default function Dashboard() {
                   </span>
                   <img src={CompareIcon} className="w-14 h-14 cursor-pointer" onClick={() => setCompare(!compare)} />
                 </div>
-                <div className="flex flex-col justify-center gap-8 h-fit">
+                <div className="flex flex-col justify-center gap-4 h-fit">
                   {originCards}
                 </div>
               </div>

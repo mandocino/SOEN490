@@ -87,15 +87,13 @@ export function calculateColorForEachScore(scores) {
   return scores;
 }
 
-export default function DashboardCard({className, buttonClass, loc, destinations, count, userData, compare, addCardToCompare}) {
-  let scores;
-  if (loc.scores) {
+export default function DashboardCard({className, buttonClass, loc, fetchedScores, destinations, count, userData, compare, addCardToCompare}) {
+  let scores = null;
+  if (fetchedScores) {
     // Deep copy of the scores from the location object
-    scores = JSON.parse(JSON.stringify(loc.scores));
+    scores = JSON.parse(JSON.stringify(fetchedScores));
     // Append the corresponding colors to each score value (overall, rushHour, etc)
     scores = calculateColorForEachScore(scores);
-  } else {
-    scores = false;
   }
 
   const currentHomeClass = loc.current_home ? 'order-first border-2 border-amber-400' : '';
@@ -144,6 +142,10 @@ export default function DashboardCard({className, buttonClass, loc, destinations
 
           <div className="flex flex-col gap-4 min-h-[16rem] grow">
             <div className="w-full flex flex-col sm:flex-row flex-wrap items-center lg:items-start gap-2">
+              { !destinations && !scores && <>
+
+              </>
+              }
               {
                 scores && <>
                   <div className="flex justify-center w-36 sm:w-fit">
