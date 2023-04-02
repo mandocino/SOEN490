@@ -33,7 +33,7 @@ export default function SearchBar() {
           >
             <button
               type="button"
-              className="w-14 h-14 border-2 border-yellow-300 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3"
+              className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white hover:text-emerald-dark bg-emerald-600 hover:bg-white focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg p-3"
             >
               <Location onClick={getCurrentLocation} />
             </button>
@@ -45,7 +45,7 @@ export default function SearchBar() {
         <div>
           <button
             type="button"
-            className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg p-3"
+            className="w-14 h-14 flex items-center justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg p-3"
           >
             <Location onClick={getCurrentLocation} />
           </button>

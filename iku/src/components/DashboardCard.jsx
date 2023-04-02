@@ -11,7 +11,7 @@ import {Icon} from 'leaflet'
 import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet'
 import {CircularProgress, Skeleton} from "@mui/material";
 
-// const buttonClass = "h-8 p-2 gap-2 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white";
+// const buttonClass = "h-8 p-2 gap-2 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white";
 
 
 // Convert a hue value (in degrees) to a hex RGB representation

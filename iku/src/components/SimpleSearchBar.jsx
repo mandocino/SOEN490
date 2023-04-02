@@ -123,7 +123,7 @@ const SimpleSearchBar = () => {
             onKeyDown={handleEnterPressed}
             type="search"
             id="default-search"
-            className="accent-emerald-700 dark:accent-white transition ease-in-out duration-200 block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border-2 border-emerald-500 focus:border-emerald-700 dark:bg-gray-700 dark:border-emerald-400 dark:placeholder-gray-400 dark:text-white dark:focus:border-white"
+            className="accent-emerald-700 dark:accent-white transition ease-in-out duration-200 block p-4 pl-10 w-full text-sm text-gray-900 bg-emerald-50 rounded-lg border-2 border-emerald-500 focus:border-emerald-700 dark:bg-emerald-darker dark:border-emerald-400 dark:placeholder-gray-400 dark:text-white dark:focus:border-white"
             placeholder="Search Location"
             list="suggestions"
             autoComplete="off"
@@ -143,7 +143,7 @@ const SimpleSearchBar = () => {
           </datalist>
           <button
             onClick={handleSubmit}
-            className="transition ease-in-out duration-200 text-white absolute right-2.5 bottom-2.5 bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg text-sm px-4 py-2 dark:bg-emerald-400 dark:hover:bg-emerald-600 dark:focus:ring-green-300"
+            className="transition ease-in-out duration-200 text-white hover:text-emerald-dark absolute right-2.5 bottom-2.5 bg-emerald-600 hover:bg-white focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg text-sm px-4 py-2 drop-shadow-lg"
           >
             Search
           </button>

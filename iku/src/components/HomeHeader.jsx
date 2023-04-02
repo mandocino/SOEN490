@@ -17,7 +17,7 @@ export default function HomeHeader({ ignore }) {
 
   return (
     <header>
-      <nav className="bg-emerald-500 dark:bg-emerald-700 px-4 py-2.5 ">
+      <nav className="bg-emerald-500 dark:bg-emerald-800 px-4 py-2.5 ">
         <div className="flex justify-between items-center">
           <div className="hidden md:flex">
             <Link to="/" className="items-center">
@@ -34,33 +34,33 @@ export default function HomeHeader({ ignore }) {
               </li>
             ) : null}
           </ul>
-          <div className="flex items-center">
-            <ul className="hidden md:flex mt-4 font-medium space-x-2 space-y-1 space-y-0 mt-0">
+          <div className="flex items-center justify-center">
+            <div className="hidden md:flex items-center font-medium space-x-2 mt-0">
               {localStorage.getItem("authenticated") !== "true" ? (
                 <>
-                  <li className="flex items-center justify-end">
+                  <span className="flex items-center justify-end">
                     <LinkButton to="/login">Log In</LinkButton>
-                  </li>
-                  <li className="flex items-center justify-end">
+                  </span>
+                  <span className="flex items-center justify-end">
                     <LinkButton to="/register">Register</LinkButton>
-                  </li>
+                  </span>
                 </>
               ) : (
                 <>
-                  <li className="flex items-center">
+                  <span className="flex items-center">
                     <Link
                       to="/accountpage"
-                      className="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
+                      className="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-400 dark:focus:ring-emerald-400"
                     >
                       <Button>
                         {localStorage.getItem("first_name")}
                       </Button>
                     </Link>
-                  </li>
-                  <li className="flex items-center">
+                  </span>
+                  <span className="flex items-center">
                     <Link
                       to="/"
-                      className="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400"
+                      className="transition ease-in-out hover:scale-110 duration-200 rounded-lg focus:ring-4 focus:ring-emerald-400 dark:focus:ring-emerald-400"
                       onClick={() => {
                         localStorage.removeItem("authenticated");
                         localStorage.removeItem("first_name");
@@ -72,10 +72,10 @@ export default function HomeHeader({ ignore }) {
                         Sign Out
                       </Button>
                     </Link>
-                  </li>
+                  </span>
                 </>
               )}
-            </ul>
+            </div>
             <button
               data-collapse-toggle="mobile-menu-2"
               type="button"

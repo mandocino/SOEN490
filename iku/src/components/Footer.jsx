@@ -6,7 +6,7 @@ export default function Footer() {
     <div>
       <div
         id="footer"
-        className="bg-emerald-500 dark:bg-emerald-700 text-white flex justify-between py-4 text-sm"
+        className="bg-emerald-500 dark:bg-emerald-800 text-white flex justify-between py-4 text-sm"
       >
         <div className="ml-6">
           <p className="has-text-white has-text-weight-bold is-size-5 m">

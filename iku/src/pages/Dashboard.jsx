@@ -47,13 +47,16 @@ export default function Dashboard() {
 
   const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
 
-  const dashboardElementClass = "rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-500 dark:from-emerald-900 dark:to-emerald-dark p-4";
-  const dashboardInnerElementGradientClass = "bg-gradient-to-br from-emerald-900 to-emerald-darker dark:from-emerald-darker dark:to-black rounded-3xl";
+  const dashboardElement = "rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-800 dark:to-emerald-900 p-4";
+  const dashboardInnerElementGradient = "bg-gradient-to-br from-emerald-dark to-emerald-darker dark:from-emerald-darkest dark:to-black rounded-3xl";
+  const dashboardNestedInnerElementGradient = "bg-gradient-to-br from-white to-emerald-100 text-emerald-dark rounded-lg px-4 py-2 flex justify-between items-center";
 
-  const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white"
-  const dashboardElementButtonClass = "w-full flex items-center justify-start gap-2  px-4 py-2 text-2xl " + dashboardButtonBase;
-  const dashboardSmallButtonClass = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
-  const dashboardSquareButtonClass = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
+  const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark hover:bg-white drop-shadow-lg"
+  const dashboardButtonBase2 = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-500 focus:ring-4 focus:ring-emerald-400 text-white hover:text-emerald-dark hover:bg-white drop-shadow-lg"
+  const dashboardElementButton = "w-full flex items-center justify-start gap-2  px-4 py-2 text-2xl " + dashboardButtonBase;
+  const dashboardSmallButton = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
+  const dashboardSquareButton = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
+  const dashboardSquareButton2 = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase2;
 
   let originCards;
   let destinationCards;
@@ -170,8 +173,8 @@ export default function Dashboard() {
       cards[count] =
         <DashboardCard
           key={loc._id}
-          className={dashboardInnerElementGradientClass}
-          buttonClass={dashboardSmallButtonClass}
+          className={dashboardInnerElementGradient}
+          buttonClass={dashboardSmallButton}
           loc={loc}
           fetchedScores={scores && scores[loc._id]}
           destinations={destinations}
@@ -185,7 +188,7 @@ export default function Dashboard() {
     })
   } else {
     originCards = <div className="w-full flex justify-center items-center">
-      <div className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2 w-[26rem]`}>
+      <div className={`${dashboardInnerElementGradient} rounded-3xl p-4 flex flex-col items-center gap-2 w-[26rem]`}>
         <div className="flex justify-between items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved locations yet.
@@ -198,13 +201,13 @@ export default function Dashboard() {
   // Create card with the list of destinations
   if (destinations.length > 0) {
     destinationCards = destinations.map(function (loc) {
-      return (<div className="bg-gradient-to-br from-white to-emerald-100 text-emerald-800 dark:from-emerald-500 dark:to-emerald-700 dark:text-white rounded-2xl px-4 py-2 flex justify-between items-center"
+      return (<div className={dashboardNestedInnerElementGradient}
                    key={loc._id}>
           <span className="font-semibold text-xl text-left line-clamp-2">
             {loc.name}
           </span>
           <div className="flex flex-nowrap gap-2">
-            <EditLocation loc={loc} buttonClass={dashboardSquareButtonClass} notext />
+            <EditLocation loc={loc} buttonClass={dashboardSquareButton2} notext />
           </div>
         </div>);
     })
@@ -227,19 +230,19 @@ export default function Dashboard() {
               <div className="w-full lg:w-fit flex flex-col gap-8 items-center">
 
                 <div
-                  className={`${dashboardElementClass} w-full lg:w-[28rem] h-fit flex flex-col items-center gap-4`}>
+                  className={`${dashboardElement} w-full lg:w-[28rem] h-fit flex flex-col items-center gap-4`}>
                   <p
                     className={dashboardTitleTextGradient}>
                     Added Destinations
                   </p>
                   <div
-                    className={`${dashboardInnerElementGradientClass} w-full rounded-3xl p-4 flex flex-col gap-2`}>
+                    className={`${dashboardInnerElementGradient} w-full rounded-3xl p-4 flex flex-col gap-2`}>
                     {destinationCards}
                   </div>
 
                   <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
                     <button type="button"
-                            className={dashboardElementButtonClass}>
+                            className={dashboardElementButton}>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                            stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round"
@@ -257,7 +260,7 @@ export default function Dashboard() {
                   onClose={closeCompareModal}
                 />
 
-                <div className={`w-full lg:w-[28rem] h-fit flex flex-col items-center p-4 gap-4 ${dashboardElementClass}`}>
+                <div className={`w-full lg:w-[28rem] h-fit flex flex-col items-center p-4 gap-4 ${dashboardElement}`}>
                   <span className="flex items-center gap-2">
                     <span
                       className={dashboardTitleTextGradient}>
@@ -267,14 +270,14 @@ export default function Dashboard() {
 
                   {
                     userDataLoaded.current
-                      ? <EditScoringFactors userData={userData} buttonClass={dashboardElementButtonClass}/>
+                      ? <EditScoringFactors userData={userData} buttonClass={dashboardElementButton}/>
                       : <></>
                   }
 
                 </div>
 
               </div>
-              <div className={`w-full grow h-fit flex flex-col ${dashboardElementClass}`}>
+              <div className={`w-full grow h-fit flex flex-col ${dashboardElement}`}>
                 <div className="flex flex-row justify-between">
                   <div className="w-14"></div>
                   <span className={dashboardTitleTextGradient}>
