@@ -79,7 +79,7 @@ async function updateUserPreferences(data, routing) {
   }
 }
 
-export default function EditScoringFactors(props) {
+export default function EditScoringFactors({userData, buttonClass}) {
   const [factorWeights, setFactorWeights] = useState([]);
   const [nightDayWeights, setNightDayWeights] = useState([]);
   const [nightDirectionWeights, setNightDirectionWeights] = useState([]);
@@ -104,9 +104,18 @@ export default function EditScoringFactors(props) {
   }
 
   const resetRoutingPreferences = async () => {
-    setIsWheelChair(defaultUserRoutingPreferences.isWheelChair);
-    setWalkReluctance(defaultUserRoutingPreferences.walkReluctance);
-    await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, false);
+    const defaultIsWheelChair = defaultUserRoutingPreferences.isWheelChair;
+    const defaultWalkReluctance = defaultUserRoutingPreferences.walkReluctance
+
+    setIsWheelChair(defaultIsWheelChair);
+    setWalkReluctance(defaultWalkReluctance);
+
+
+    const isWheelChairChanged = defaultIsWheelChair !== oldIsWheelChair;
+    const walkReluctanceChanged = defaultWalkReluctance !== oldWalkReluctance;
+    const routingChanged = walkReluctanceChanged || isWheelChairChanged;
+
+    await updateUserPreferences({routingPreferences: defaultUserRoutingPreferences}, routingChanged);
   }
 
   const [resetDialogOpen, setResetDialogOpen] = useState(false)
@@ -141,36 +150,6 @@ export default function EditScoringFactors(props) {
 
   // Fetch user's preferred scoring priorities
   const fetchUserPreferences = async () => {
-    let userData;
-
-    if(user_id === null) {
-      if(sessionStorage.getItem("preferences") === null) {
-        const defaultFactors = {
-            factorWeights: defaultUserFactorWeights,
-            nightDayWeights: defaultUserNightDayWeights,
-            nightDirectionWeights: defaultUserNightDirectionWeights,
-            weekendWeights: defaultUserWeekendWeights,
-            timeSliceWeights: defaultUserTimeSliceWeights,
-            scoringPreferences: defaultUserScoringPreferences,
-            routingPreferences: defaultUserRoutingPreferences,
-          };
-        let preferences = {
-          factorWeights: defaultFactors,
-          preferencesUpdated: false
-        }
-
-        sessionStorage.setItem("preferences", JSON.stringify(preferences));
-        userData = defaultFactors;
-      } else {
-        userData = JSON.parse(sessionStorage.getItem("preferences")).factorWeights;
-      }
-    }
-
-    else {
-      // Get the weighted average scores
-      const response = await axios.get(`http://localhost:5000/userById/${user_id}`);
-      userData = response.data[0];
-    }
 
     const weightsToFetch = [
       // [converterFunction, weightName, stateSetterFunction, defaultWeights]
@@ -448,7 +427,7 @@ export default function EditScoringFactors(props) {
   return (
     <>
       <div>
-        <button onClick={openModal} type="button" className={props.buttonClass}>
+        <button onClick={openModal} type="button" className={buttonClass}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round"

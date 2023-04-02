@@ -70,6 +70,7 @@ const SimpleSearchBar = () => {
       .catch((error) => {
         console.log(error.message);
       });
+    window.location.reload();
   };
 
   const getSuggestions = async (event) => {

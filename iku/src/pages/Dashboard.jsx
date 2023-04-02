@@ -8,6 +8,14 @@ import {loadScores} from "../backend/utils/scoring";
 import EditScoringFactors from "../components/EditScoringFactors";
 import ScoreCompareModal from '../components/ScoreCompareModal';
 import CompareIcon from '../assets/compare.png';
+import {
+  defaultUserFactorWeights,
+  defaultUserNightDayWeights,
+  defaultUserNightDirectionWeights, defaultUserRoutingPreferences,
+  defaultUserScoringPreferences,
+  defaultUserTimeSliceWeights,
+  defaultUserWeekendWeights
+} from "../backend/config/defaultUserPreferences";
 
 
 export default function Dashboard() {
@@ -18,10 +26,11 @@ export default function Dashboard() {
   const [rawCurrentHome, setRawCurrentHome] = useState([]);
   const [currentHome, setCurrentHome] = useState(false);
   const [destinations, setDestinations] = useState([]);
-  const [cards, setCards] = useState([])
+  const [cards, setCards] = useState([]);
   const [cardToCompare, setCardToCompare] = useState([]);
-  const [compare, setCompare] = useState(false)
-  const [compareModal, setCompareModal] = useState(false)
+  const [compare, setCompare] = useState(false);
+  const [compareModal, setCompareModal] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const addCardToCompare = (count) => {
     cardToCompare.push(count)
@@ -33,6 +42,7 @@ export default function Dashboard() {
     setCardToCompare([])
   }
 
+  const userDataLoaded = useRef(false);
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
 
@@ -43,6 +53,37 @@ export default function Dashboard() {
 
   let originCards;
   let destinationCards;
+
+  const fetchUserData = async () => {
+    if (user_id != null) {
+      const user = await axios.get(`http://localhost:5000/userByID/${user_id}`);
+      setUserData(user.data[0]);
+    } else {
+      if(user_id === null) {
+        if(sessionStorage.getItem("preferences") === null) {
+          const defaultFactors = {
+            factorWeights: defaultUserFactorWeights,
+            nightDayWeights: defaultUserNightDayWeights,
+            nightDirectionWeights: defaultUserNightDirectionWeights,
+            weekendWeights: defaultUserWeekendWeights,
+            timeSliceWeights: defaultUserTimeSliceWeights,
+            scoringPreferences: defaultUserScoringPreferences,
+            routingPreferences: defaultUserRoutingPreferences,
+          };
+          let preferences = {
+            factorWeights: defaultFactors,
+            preferencesUpdated: false
+          }
+
+          sessionStorage.setItem("preferences", JSON.stringify(preferences));
+          setUserData(defaultFactors);
+        } else {
+          setUserData(JSON.parse(sessionStorage.getItem("preferences")).factorWeights);
+        }
+      }
+    }
+    userDataLoaded.current = true;
+  }
 
   // Fetch all locations from the DB
   const fetchLocations = () => {
@@ -86,11 +127,11 @@ export default function Dashboard() {
     let originsWithScores;
     // Map all scores and set `origins` to it
     originsWithScores = await Promise.all(rawOrigins.map(async o => ({
-      ...o, scores: await loadScores(o, destinations, user_id)
+      ...o, scores: await loadScores(o, destinations, user_id, userData)
     })));
     if(rawCurrentHome) {
       setCurrentHome({
-        ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id)
+        ...rawCurrentHome, scores: await loadScores(rawCurrentHome, destinations, user_id, userData)
       });
     }
 
@@ -98,10 +139,15 @@ export default function Dashboard() {
     setOrigins(originsWithScores);
   }
 
-  // Fetch the locations from the DB
   useEffect(() => {
-    fetchLocations();
-  }, []);
+    fetchUserData();
+  }, [])
+
+  useEffect(() => {
+    if (userDataLoaded.current) {
+      fetchLocations();
+    }
+  }, [userData])
 
   // Split the fetched locations
   useEffect(() => {
@@ -123,12 +169,41 @@ export default function Dashboard() {
   if (origins.length > 0) {
     originCards = origins.map(function(loc) {
       count += 1
-      cards[count] = <DashboardCard className={dashboardInnerElementGradientClass} loc={loc} destinations={destinations} key={loc._id} count={count} compare={compare} addCardToCompare={addCardToCompare}>{loc.name}</DashboardCard>;
+
+      cards[count] =
+        <DashboardCard
+          className={dashboardInnerElementGradientClass}
+          loc={loc}
+          destinations={destinations}
+          key={loc._id}
+          count={count}
+          userData={userData}
+          compare={compare}
+          addCardToCompare={addCardToCompare}
+        >
+          {loc.name}
+        </DashboardCard>;
+
       return cards[count]
     })
     if (currentHome) {
       count += 1
-      currentHomeObj = <DashboardCard className={dashboardInnerElementGradientClass} loc={currentHome} destinations={destinations} invert compare={compare} key={count} count={count} addCardToCompare={addCardToCompare}>{currentHome.name}</DashboardCard>
+
+      currentHomeObj =
+        <DashboardCard
+          className={dashboardInnerElementGradientClass}
+          loc={currentHome}
+          destinations={destinations}
+          invert
+          compare={compare}
+          key={count}
+          count={count}
+          userData={userData}
+          addCardToCompare={addCardToCompare}
+        >
+          {currentHome.name}
+        </DashboardCard>
+
       cards[count] = currentHomeObj;
     }
   } else {
@@ -212,7 +287,12 @@ export default function Dashboard() {
                     </span>
                   </span>
 
-                  <EditScoringFactors dashboardInnerElementGradientClass={dashboardInnerElementGradientClass} buttonClass={dashboardElementButtonClass}/>
+                  {
+                    userDataLoaded.current
+                      ? <EditScoringFactors userData={userData} buttonClass={dashboardElementButtonClass}/>
+                      : <></>
+                  }
+
                 </div>
 
               </div>
