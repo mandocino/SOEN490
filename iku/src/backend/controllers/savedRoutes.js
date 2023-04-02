@@ -49,10 +49,6 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
 
             let savedRoutesMetricsAverage = {};
 
-            // TODO: GET THE NIGHT WEIGHTS AND WEEKEND WEIGHTS FROM DASHBOARD -> DASHBOARD CARD -> SCOREDETAILMODAL
-            // let frequencyWeight = req.params.frequency;
-            // let durationWeight = req.params.duration;
-
             let metricTypes = ['durationMetrics', 'frequencyMetrics', 'walkMetrics'];
 
             // Calculate average rush hour metrics

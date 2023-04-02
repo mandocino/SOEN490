@@ -1,6 +1,5 @@
 // import connection
 import {savedItinerariesDBModel, savedRoutingDataDBModel} from "../config/db.js";
-import {deleteSavedItinerariesByLocations} from "../controllers/savedRoutes.js";
 
 // Get saved routes by origin and destination
 export const getSavedRoutingDataByLocations = (originID, destID, result) => {

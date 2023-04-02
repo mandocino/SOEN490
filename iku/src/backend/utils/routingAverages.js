@@ -2,10 +2,6 @@ export function computeRouteMetricsAverages(routingData, userData) {
   // PROCESSING OF SAVED ROUTES HERE
   let savedRoutesMetricsAverage = {};
 
-  // TODO: GET THE NIGHT WEIGHTS AND WEEKEND WEIGHTS FROM DASHBOARD -> DASHBOARD CARD -> SCOREDETAILMODAL
-  // let frequencyWeight = req.params.frequency;
-  // let durationWeight = req.params.duration;
-
   let metricTypes = ['durationMetrics', 'trueFrequencyMetrics', 'walkMetrics'];
 
   let allMetrics = {}
@@ -71,7 +67,7 @@ export function computeRouteMetricsAverages(routingData, userData) {
     });
   }
 
-  computeMetrics(routingData, false);
+  computeMetrics(routingData);
 
   // Add the walk, bike, and car routes data
   savedRoutesMetricsAverage['alternativeModeRoutes'] = routingData['alternativeModeRoutes'];
