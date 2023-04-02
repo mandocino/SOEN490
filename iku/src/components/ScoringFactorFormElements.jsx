@@ -1,4 +1,4 @@
-import {alpha, FormControlLabel, FormGroup, ToggleButton, ToggleButtonGroup} from "@mui/material";
+import {alpha, FormControlLabel, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import React from "react";
 import {styled} from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
