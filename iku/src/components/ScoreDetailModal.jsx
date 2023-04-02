@@ -120,6 +120,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         ? "#0e3331"
         : "#059669",
       color: "white",
+      width: "25%"
     },
   }))
 
@@ -448,20 +449,17 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     const newSelection = event.target.value
     setSelectedDestination(newSelection);
 
-    // Reset the selected score time to Overall
-    setSelectedScoreTime("");
-
-    // Reset the current route metrics
-    setCurrentRouteMetrics(defaultRouteMetrics);
-
-    // Case where selected item in dropdown is All destinations
+    // Case where selected item in dropdown is None
     if (newSelection === "") {
+      setCurrentRouteMetrics(defaultRouteMetrics);
       fetchOverallSavedScore();
       setAllRouteMetrics(null);
       setItineraries(null);
       setRoutesList(null);
       setSavedScores({});
-    } else {
+    }
+
+    else {
       // Fetch the saved scores for a specific destination
       axios
         .get(
@@ -476,6 +474,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
           }
         })
         .catch((err) => console.error(err));
+
       // Fetch the routes metrics
       axios
         .get(
@@ -485,6 +484,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
           if (response.data) {
             const computedMetrics = computeRouteMetricsAverages(response.data.routingData, userData);
             setAllRouteMetrics(computedMetrics);
+
+            // Do this call here since we need the computedMetrics for it.
+            handleSetCurrentRouteMetrics(selectedScoreTime, computedMetrics);
           }
         })
         .catch((err) => console.error(err));
@@ -500,11 +502,17 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
           }
         })
         .catch((err) => console.error(err));
+
     }
   };
 
   const handleCarouselChange = (now) => {
-    console.log(now);
+
+    /**
+     * 0: List of possible routes
+     * 1: Alternative modes of transport
+     * 2: Table of metrics
+     */
 
     // eslint-disable-next-line
     switch(now) {
@@ -518,24 +526,30 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     }
   }
 
+  const handleSetCurrentRouteMetrics = (timeSlice, routeMetrics=allRouteMetrics) => {
+    console.log(timeSlice)
+    console.log(routeMetrics)
+    if (timeSlice !== "" && routeMetrics) {
+      console.log("in here")
+      let currentMetrics = {
+        frequencyMin: `${routeMetrics[timeSlice]["trueFrequencyMetrics"]["min"]} minutes`,
+        frequencyMax: `${routeMetrics[timeSlice]["trueFrequencyMetrics"]["max"]} minutes`,
+        frequencyAvg: `${routeMetrics[timeSlice]["trueFrequencyMetrics"]["average"]} minutes`,
+        durationMin: `${routeMetrics[timeSlice]["durationMetrics"]["min"]} minutes`,
+        durationMax: `${routeMetrics[timeSlice]["durationMetrics"]["max"]} minutes`,
+        durationAvg: `${routeMetrics[timeSlice]["durationMetrics"]["average"]} minutes`,
+        walkMin: `${routeMetrics[timeSlice]["walkMetrics"]["min"]} minutes`,
+        walkMax: `${routeMetrics[timeSlice]["walkMetrics"]["max"]} minutes`,
+        walkAvg: `${routeMetrics[timeSlice]["walkMetrics"]["average"]} minutes`,
+      };
+      setCurrentRouteMetrics(currentMetrics);
+    }
+  }
+
   const handleSelectedScoreTime = (event, selectedTimeSlice) => {
     if (selectedTimeSlice !== null) {
       setSelectedScoreTime(selectedTimeSlice);
-
-      if (selectedTimeSlice !== "" && allRouteMetrics) {
-        let currentMetrics = {
-          frequencyMin: `${allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["min"]} minutes`,
-          frequencyMax: `${allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["max"]} minutes`,
-          frequencyAvg: `${allRouteMetrics[selectedTimeSlice]["trueFrequencyMetrics"]["average"]} minutes`,
-          durationMin: `${allRouteMetrics[selectedTimeSlice]["durationMetrics"]["min"]} minutes`,
-          durationMax: `${allRouteMetrics[selectedTimeSlice]["durationMetrics"]["max"]} minutes`,
-          durationAvg: `${allRouteMetrics[selectedTimeSlice]["durationMetrics"]["average"]} minutes`,
-          walkMin: `${allRouteMetrics[selectedTimeSlice]["walkMetrics"]["min"]} minutes`,
-          walkMax: `${allRouteMetrics[selectedTimeSlice]["walkMetrics"]["max"]} minutes`,
-          walkAvg: `${allRouteMetrics[selectedTimeSlice]["walkMetrics"]["average"]} minutes`,
-        };
-        setCurrentRouteMetrics(currentMetrics);
-      }
+      handleSetCurrentRouteMetrics(selectedTimeSlice);
     }
   }
 
@@ -928,6 +942,13 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
                   {/* Stats (min, max, avg...) */}
                   <div className="flex flex-col px-16 py-2 h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
+                    {
+                      selectedDestination === "" || selectedScoreTime === "" ?
+                        <div className=" p-8 rounded-3xl absolute bg-emerald-50 text-emerald-darkest text-xl drop-shadow-xl">
+                          Please select a destination and a time period to view the table of route metrics
+                        </div>
+                        : null
+                    }
                     <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
                       <Table aria-label="metrics table"
                       sx={{
