@@ -67,13 +67,15 @@ const LoginForm = ({ inputs, type }) => {
   const register = async () => {
     inputIsGood().then((inputIsGood) => {
       if (inputIsGood) {
+        const currentDate = Date.now();
         axios
           .post("http://localhost:5000/signup", {
             email: inputValue[0].value.toLowerCase(),
             first_name: inputValue[1].value,
             last_name: inputValue[2].value,
             password: inputValue[3].value,
-            lastScoringPrefChangeTime: 0
+            lastScoringPrefChangeTime: currentDate,
+            lastRoutingPrefChangeTime: currentDate
           })
           .catch((e) => e.message);
         document.getElementById("registerMsg").innerHTML = "Account Successfully Registered!";
