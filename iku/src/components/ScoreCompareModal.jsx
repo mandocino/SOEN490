@@ -57,10 +57,9 @@ const ScoreCompareModal = ({ firstLocation, secondLocation, show, onClose }) => 
                             {
                                 firstLocation &&
                                 <>
-                                    <div className="flex justify-between items-center text-emerald-900 mb-5">
-                                        <h2 style={{fontSize: '30px', maxWidth: '40%', marginBottom: '0px'}}>{firstLocation.props.children}</h2>
-                                        <div className="bg-emerald-900" style={{minWidth: '3px', height: '40px', marginTop: '8px'}}> </div>
-                                        <h2 style={{fontSize: '30px', marginBottom: '0px', maxWidth: '40%'}}>{secondLocation.props.children}</h2>
+                                    <div className="grid grid-cols-2 items-center text-emerald-900 mb-5">
+                                        <h2 style={{fontSize: '30px', marginBottom: '0px', borderRight: '1px solid black'}}>{firstLocation.props.loc.name}</h2>
+                                        <h2 style={{fontSize: '30px', marginBottom: '0px', borderLeft: '1px solid black', textAlign: 'right'}}>{secondLocation.props.loc.name}</h2>
                                     </div>
                                     <div className="bg-emerald-900" style={{height: '2px', width: '100%', marginBottom: '15px'}}></div>
                                     <h3 className="text-emerald-900" style={{fontSize: '21px', fontWeight: 'bold', marginLeft: '15px'}}>Overall</h3>
