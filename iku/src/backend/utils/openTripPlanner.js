@@ -276,7 +276,7 @@ export const getFrequencyMetrics = (routes) => {
 
   let minGap = Math.min(...frequencyList);
   let maxGap = Math.max(...frequencyList);
-  let averageGap = frequencyList.reduce((a, b) => a + b) / frequencyList.length;
+  let averageGap = frequencyList.reduce((a, b) => {return a + b}) / frequencyList.length;
   let standardDeviationGap = Math.sqrt(frequencyList.map(x => Math.pow(x - averageGap, 2)).reduce((a,b) => a+b)/frequencyList.length);
 
   return {
@@ -299,7 +299,7 @@ export const getDurationMetrics = (routes) => {
 
   let minDurationTime = Math.min(...durationTimes);
   let maxDurationTime = Math.max(...durationTimes);
-  let averageDurationTime = durationTimes.reduce((a, b) => a + b) / durationTimes.length;
+  let averageDurationTime = durationTimes.reduce((a, b) => {return a + b}) / durationTimes.length;
   let standardDeviationDurationTime = Math.sqrt(durationTimes.map(x => Math.pow(x - averageDurationTime, 2)).reduce((a,b) => a+b)/durationTimes.length);
 
   return {
@@ -326,7 +326,7 @@ export const getWalkTimeMetrics = (routes) => {
 
   let minWalkTime = Math.min(...walkTimes);
   let maxWalkTime = Math.max(...walkTimes);
-  let averageWalkTime = walkTimes.reduce((a, b) => a + b) / walkTimes.length;
+  let averageWalkTime = walkTimes.reduce((a, b) => {return a + b}) / walkTimes.length;
   let standardDeviationWalkTime = Math.sqrt(walkTimes.map(x => Math.pow(x - averageWalkTime, 2)).reduce((a,b) => a+b)/walkTimes.length);
 
   return {
@@ -353,7 +353,7 @@ export const getWaitTimeMetrics = (routes) => {
 
   let minWaitTime = Math.min(...waitTimes);
   let maxWaitTime = Math.max(...waitTimes);
-  let averageWaitTime = waitTimes.reduce((a, b) => a + b) / waitTimes.length;
+  let averageWaitTime = waitTimes.reduce((a, b) => {return a + b}) / waitTimes.length;
   let standardDeviationWaitTime = Math.sqrt(waitTimes.map(x => Math.pow(x - averageWaitTime, 2)).reduce((a,b) => a+b)/waitTimes.length);
 
   return {

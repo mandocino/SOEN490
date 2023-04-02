@@ -29,6 +29,9 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
             console.log(results);
             results = results['routingData'];
 
+            console.log('PARAMS:')
+            console.log(req.params);
+
             let savedRoutesMetricsAverage = {};
 
             // TODO: GET THE NIGHT WEIGHTS AND WEEKEND WEIGHTS FROM DASHBOARD -> DASHBOARD CARD -> SCOREDETAILMODAL
@@ -63,9 +66,9 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
             let overnightMetrics = {};
             metricTypes.forEach(function(metricType){
 
-                const weeknightWeight = 0.3;
-                const fridayNightWeight = 0.35;
-                const saturdayNightWeight = 0.35;
+                const weeknightWeight = req.params.weeknightWeight;
+                const fridayNightWeight = req.params.fridayNightWeight;
+                const saturdayNightWeight = req.params.saturdayNightWeight;
 
                 overnightMetrics[metricType] = {};
                 overnightMetrics[metricType]['max'] = Math.round(((results['overnightMetrics'][0][metricType]['max'] + results['overnightMetrics'][1][metricType]['max'])/2)*weeknightWeight + ((results['overnightMetrics'][2][metricType]['max'] + results['overnightMetrics'][3][metricType]['max'])/2)*fridayNightWeight + ((results['overnightMetrics'][4][metricType]['max'] + results['overnightMetrics'][5][metricType]['max'])/2)*saturdayNightWeight);
@@ -78,8 +81,8 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
             let weekendMetrics = {};
             metricTypes.forEach(function(metricType){
 
-                const saturdayWeight = 0.6;
-                const sundayWeight = 0.4;
+                const saturdayWeight = req.params.saturdayWeight;
+                const sundayWeight = req.params.sundayWeight;
 
                 weekendMetrics[metricType] = {};
                 weekendMetrics[metricType]['max'] = Math.round(((results['weekendMetrics'][0][metricType]['max'] + results['weekendMetrics'][1][metricType]['max'])/2)*saturdayWeight + ((results['weekendMetrics'][2][metricType]['max'] + results['weekendMetrics'][3][metricType]['max'])/2)*sundayWeight);
@@ -105,8 +108,8 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
 
             savedRoutesMetricsAverage['overallMetrics'] = overallMetrics;
 
-            // Add the walk and bike routes data
-            savedRoutesMetricsAverage['walkBikeRoutes'] = results['walkBikeRoutes'];
+            // Add the walk, bike, and car routes data
+            savedRoutesMetricsAverage['alternativeModeRoutes'] = results['alternativeModeRoutes'];
 
             res.json(savedRoutesMetricsAverage);
         }

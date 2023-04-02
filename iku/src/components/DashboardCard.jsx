@@ -3,9 +3,59 @@ import CircleWithText from "../components/custom/CircleWithText";
 import EditLocation from "../components/EditLocation";
 import ScoreDetailModal from "./ScoreDetailModal";
 import PlusIcon from "../assets/plus.png";
+import {listOfScores} from "../backend/utils/scoring";
 
-export default function DashboardCard(props) {
 
+// Convert a hue value (in degrees) to a hex RGB representation
+// Hue in this case refers to the H of an HSV value where S and V are set to 100%
+export function hueToHex(hue) {
+  let quotient = (hue/60>>0);
+  let remainder = (hue%60/60);
+  let r, g, b;
+
+  switch(quotient) {
+    case 0: // 0-59deg
+      r = 255;
+      g = Math.round(255*remainder);
+      b = 0;
+      break;
+    case 1: // 60-119deg
+      r = Math.round(255-255*remainder);
+      g = 255;
+      b = 0;
+      break;
+    case 2: // 120-179deg
+      r = 0;
+      g = 255;
+      b = Math.round(255*remainder);
+      break;
+    case 3: // 180-239deg
+      r = 0;
+      g = Math.round(255-255*remainder);
+      b = 255;
+      break;
+    case 4: // 240-299deg
+      r = Math.round(255*remainder);
+      g = 0;
+      b = 255;
+      break;
+    case 5: // 300-359deg
+      r = 255;
+      g = 0;
+      b = Math.round(255-255*remainder);
+      break;
+  }
+
+  // Convert the RGB set into its hex representation
+  const hex = '#' + [r, g, b].map(x => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  }).join('');
+
+  return hex;
+}
+
+export function calculateColorForEachScore(scores) {
   const hueLowerBound = 340;
   const hueUpperBound = 140;
   const hueDirection = 1 // 1 = CW; -1 = CCW
@@ -18,68 +68,25 @@ export default function DashboardCard(props) {
     hueScale = ((hueLowerBound + 360 - hueUpperBound) % 360) / -100;
   }
 
-  // Convert a hue value (in degrees) to a hex RGB representation
-  // Hue in this case refers to the H of an HSV value where S and V are set to 100%
-  function hueToHex(hue) {
-    let quotient = (hue/60>>0);
-    let remainder = (hue%60/60);
-    let r, g, b;
-
-    switch(quotient) {
-      case 0: // 0-59deg
-        r = 255;
-        g = Math.round(255*remainder);
-        b = 0;
-        break;
-      case 1: // 60-119deg
-        r = Math.round(255-255*remainder);
-        g = 255;
-        b = 0;
-        break;
-      case 2: // 120-179deg
-        r = 0;
-        g = 255;
-        b = Math.round(255*remainder);
-        break;
-      case 3: // 180-239deg
-        r = 0;
-        g = Math.round(255-255*remainder);
-        b = 255;
-        break;
-      case 4: // 240-299deg
-        r = Math.round(255*remainder);
-        g = 0;
-        b = 255;
-        break;
-      case 5: // 300-359deg
-        r = 255;
-        g = 0;
-        b = Math.round(255-255*remainder);
-        break;
+  for (let score of listOfScores) {
+    const i = scores[score];
+    let hue = (hueScale * i + hueLowerBound) % 360
+    if (hue < 0) {
+      hue += 360;
     }
-
-    // Convert the RGB set into its hex representation
-    const hex = '#' + [r, g, b].map(x => {
-      const hex = x.toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    }).join('');
-
-    return hex;
+    scores[`${score}Color`] = hueToHex(hue);
   }
 
+  return scores;
+}
+
+export default function DashboardCard(props) {
   let scores;
   if (props.loc.scores) {
     // Deep copy of the scores from the location object
     scores = JSON.parse(JSON.stringify(props.loc.scores));
     // Append the corresponding colors to each score value (overall, rushHour, etc)
-    for (let score in scores) {
-      const i = scores[score];
-      let hue = (hueScale * i + hueLowerBound) % 360
-      if (hue < 0) {
-        hue += 360;
-      }
-      scores[`${score}Color`] = hueToHex(hue);
-    }
+    scores = calculateColorForEachScore(scores);
   } else {
     scores = false;
   }
@@ -103,7 +110,7 @@ export default function DashboardCard(props) {
             {props.children}
           </span>
           <div className="flex flex-col gap-2">
-            <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} factorWeights={props.factorWeights} />
+            <ScoreDetailModal originLocation={props.loc} destinations={props.destinations} userData={props.userData} />
             <EditLocation loc={props.loc} buttonClass="w-8 h-8 flex items-center justify-center transition ease-in-out font-semibold rounded-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-200 dark:focus:ring-emerald-400 text-emerald-600 dark:text-emerald-800 hover:bg-white"/>
           </div>
 

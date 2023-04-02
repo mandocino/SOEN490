@@ -143,13 +143,17 @@ async function generateMetricsSubroutine(
   const walkTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "WALK");
   const bicycleTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "BICYCLE");
   const bicycleTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "BICYCLE");
+  const carTripGoing = await handleGetAllRoutesOTP(originCoords, destinationCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "CAR");
+  const carTripComing = await handleGetAllRoutesOTP(destinationCoords, originCoords, weekdayStartDate, searchStartTime, null, isWheelchair, "CAR");
 
-  const walkBikeRoutes = {
-    name: `${origin.name}-${destination.name}-walkBikeRoutes`,
+  const alternativeModeRoutes = {
+    name: `${origin.name}-${destination.name}-alternativeModeRoutes`,
     walkTripGoing: walkTripGoing[0],
     walkTripComing: walkTripComing[0],
     bicycleTripGoing: bicycleTripGoing[0],
-    bicycleTripComing: bicycleTripComing[0]
+    bicycleTripComing: bicycleTripComing[0],
+    carTripGoing: carTripGoing[0],
+    carTripComing: carTripComing[0]
   }
 
 
@@ -181,7 +185,7 @@ async function generateMetricsSubroutine(
     offPeakMetrics: offPeakMetrics,
     overnightMetrics: overnightMetrics,
     weekendMetrics: weekendMetrics,
-    walkBikeRoutes: walkBikeRoutes
+    alternativeModeRoutes: alternativeModeRoutes
   }
 }
 
@@ -189,10 +193,10 @@ function processRushHourItineraries(
     weekdayToDestItineraries,
     weekdayFromDestItineraries
 ) {
-  const toDestStartDate = new Date("2023-02-20T06:00:00.000-05:00").getTime();
-  const toDestEndDate = new Date("2023-02-20T10:15:00.000-05:00").getTime();
-  const fromDestStartDate = new Date("2023-02-20T15:00:00.000-05:00").getTime();
-  const fromDestEndDate = new Date("2023-02-20T19:15:00.000-05:00").getTime();
+  const toDestStartDate = new Date("2023-03-27T06:00:00.000-04:00").getTime();
+  const toDestEndDate = new Date("2023-03-27T10:15:00.000-04:00").getTime();
+  const fromDestStartDate = new Date("2023-03-27T15:00:00.000-04:00").getTime();
+  const fromDestEndDate = new Date("2023-03-27T19:15:00.000-04:00").getTime();
 
   const processedToDestItineraries = processItineraries(weekdayToDestItineraries, toDestStartDate, toDestEndDate);
   const processedFromDestItineraries = processItineraries(weekdayFromDestItineraries, fromDestStartDate, fromDestEndDate);
@@ -205,12 +209,12 @@ function processOffPeakItineraries(
     weekdayToDestItineraries,
     weekdayFromDestItineraries
 ) {
-  const toDestStartDate = new Date("2023-02-20T10:00:00.000-05:00").getTime();
-  const toDestEndDate = new Date("2023-02-21T01:15:00.000-05:00").getTime();
-  const fromDestStartDate1 = new Date("2023-02-20T06:00:00.000-05:00").getTime();
-  const fromDestEndDate1 = new Date("2023-02-20T15:15:00.000-05:00").getTime();
-  const fromDestStartDate2 = new Date("2023-02-20T19:00:00.000-05:00").getTime();
-  const fromDestEndDate2 = new Date("2023-02-21T01:15:00.000-05:00").getTime();
+  const toDestStartDate = new Date("2023-03-27T10:00:00.000-04:00").getTime();
+  const toDestEndDate = new Date("2023-03-28T01:15:00.000-04:00").getTime();
+  const fromDestStartDate1 = new Date("2023-03-27T06:00:00.000-04:00").getTime();
+  const fromDestEndDate1 = new Date("2023-03-27T15:15:00.000-04:00").getTime();
+  const fromDestStartDate2 = new Date("2023-03-27T19:00:00.000-04:00").getTime();
+  const fromDestEndDate2 = new Date("2023-03-28T01:15:00.000-04:00").getTime();
 
   const processedToDestItineraries = processItineraries(weekdayToDestItineraries, toDestStartDate, toDestEndDate);
   const processedFromDestItineraries1 = processItineraries(weekdayFromDestItineraries, fromDestStartDate1, fromDestEndDate1);
@@ -235,16 +239,16 @@ function processOvernightItineraries(
   const saturdayNightToDestItineraries = sundayToDestItineraries;
   const saturdayNightFromDestItineraries = sundayFromDestItineraries;
 
-  const weeknightStartDate = new Date("2023-02-20T01:00:00.000-05:00").getTime();
-  const weeknightEndDate = new Date("2023-02-20T05:15:00.000-05:00").getTime();
+  const weeknightStartDate = new Date("2023-03-27T01:00:00.000-04:00").getTime();
+  const weeknightEndDate = new Date("2023-03-27T05:15:00.000-04:00").getTime();
 
   // Recall: Friday night is saturday AM
-  const fridayStartDate = new Date("2023-02-25T01:00:00.000-05:00").getTime();
-  const fridayEndDate = new Date("2023-02-25T05:15:00.000-05:00").getTime();
+  const fridayStartDate = new Date("2023-04-01T01:00:00.000-04:00").getTime();
+  const fridayEndDate = new Date("2023-04-01T05:15:00.000-04:00").getTime();
 
   // Recall: Saturday night is sunday AM
-  const saturdayStartDate = new Date("2023-02-26T01:00:00.000-05:00").getTime();
-  const saturdayEndDate = new Date("2023-02-26T05:15:00.000-05:00").getTime();
+  const saturdayStartDate = new Date("2023-04-02T01:00:00.000-04:00").getTime();
+  const saturdayEndDate = new Date("2023-04-02T05:15:00.000-04:00").getTime();
 
   const processedToDestItineraries = processItineraries(weekdayToDestItineraries, weeknightStartDate, weeknightEndDate);
   const processedFromDestItineraries = processItineraries(weekdayFromDestItineraries, weeknightStartDate, weeknightEndDate);
@@ -271,10 +275,10 @@ function processWeekendItineraries(
     sundayToDestItineraries,
     sundayFromDestItineraries
 ) {
-  const saturdayStartDate = new Date("2023-02-25T05:00:00.000-05:00").getTime();
-  const saturdayEndDate = new Date("2023-02-26T01:15:00.000-05:00").getTime();
-  const sundayStartDate = new Date("2023-02-26T05:00:00.000-05:00").getTime();
-  const sundayEndDate = new Date("2023-02-27T01:15:00.000-05:00").getTime();
+  const saturdayStartDate = new Date("2023-04-01T05:00:00.000-04:00").getTime();
+  const saturdayEndDate = new Date("2023-04-02T01:15:00.000-04:00").getTime();
+  const sundayStartDate = new Date("2023-04-02T05:00:00.000-04:00").getTime();
+  const sundayEndDate = new Date("2023-04-03T01:15:00.000-04:00").getTime();
 
   const processedSaturdayToDestItineraries = processItineraries(saturdayToDestItineraries, saturdayStartDate, saturdayEndDate);
   const processedSaturdayFromDestItineraries = processItineraries(saturdayFromDestItineraries, saturdayStartDate, saturdayEndDate);
@@ -305,6 +309,7 @@ export function processItineraries(itineraries, startDate, endDate, considerGap 
   const slicedItineraries = sliceRoutesList(itineraries, startDate, endDate, "START_MODE");
   const cleanedItineraries = removeBadRoutes(slicedItineraries);
 
+  const trueFrequencyMetrics = getFrequencyMetrics(cleanedItineraries);
   let frequencyMetrics = getFrequencyMetrics(cleanedItineraries);
   const durationMetrics = getDurationMetrics(cleanedItineraries);
   const walkMetrics = getWalkTimeMetrics(cleanedItineraries);
@@ -342,6 +347,7 @@ export function processItineraries(itineraries, startDate, endDate, considerGap 
   return {
     startCutoff: startCutoff,
     endCutoff: endCutoff,
+    trueFrequencyMetrics: trueFrequencyMetrics,
     frequencyMetrics: frequencyMetrics,
     durationMetrics: durationMetrics,
     walkMetrics: walkMetrics,
@@ -355,6 +361,7 @@ function computeMetricsFromList(processedItineraries) {
 
   for (let i of processedItineraries) {
     let currentFrequencyMetrics;
+    let currentTrueFrequencyMetrics;
     let currentDurationMetrics;
     let currentWalkMetrics;
 
@@ -367,6 +374,18 @@ function computeMetricsFromList(processedItineraries) {
         min: i.frequencyMetrics.minGap/60000,
         average: i.frequencyMetrics.averageGap/60000,
         standardDeviation: i.frequencyMetrics.standardDeviationGap/60000
+      };
+    }
+
+    if (i.trueFrequencyMetrics == null) {
+      currentTrueFrequencyMetrics = null;
+    } else {
+      // Normalize metrics from milliseconds to minutes, and provide them in the format expected by calculateScore()
+      currentTrueFrequencyMetrics = {
+        max: i.trueFrequencyMetrics.maxGap/60000,
+        min: i.trueFrequencyMetrics.minGap/60000,
+        average: i.trueFrequencyMetrics.averageGap/60000,
+        standardDeviation: i.trueFrequencyMetrics.standardDeviationGap/60000
       };
     }
 
@@ -395,6 +414,7 @@ function computeMetricsFromList(processedItineraries) {
     }
     metrics.push({
       frequencyMetrics: currentFrequencyMetrics,
+      trueFrequencyMetrics: currentTrueFrequencyMetrics,
       durationMetrics: currentDurationMetrics,
       walkMetrics: currentWalkMetrics
     })
