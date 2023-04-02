@@ -31,6 +31,28 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
     setPriority(result);
   };
 
+  const deleteRelevantDocumentsOnOriginChange = async (isOrigin, itemToDelete) => {
+    const byDestStr = isOrigin ? "ByOrigin" : "ByDest";
+
+    await axios
+      .post(`http://localhost:5000/deleteSavedScore${byDestStr}/${itemToDelete}`, {})
+      .catch((error) => {
+        console.log(error.message);
+      });
+
+    await axios
+      .post(`http://localhost:5000/deleteRoutingData${byDestStr}/${itemToDelete}`, {})
+      .catch((error) => {
+        console.log(error.message);
+      });
+
+    await axios
+      .post(`http://localhost:5000/deleteItineraries${byDestStr}/${itemToDelete}`, {})
+      .catch((error) => {
+        console.log(error.message);
+      });
+  }
+
   const submitHandler = async (event) => {
     event.preventDefault();
 
@@ -38,7 +60,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
       submitHandlerNonLoggedInUsers();
 
     } else {
-      submitHandlerLoggedInUsers();
+      await submitHandlerLoggedInUsers();
     }
   };
 
@@ -60,40 +82,26 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
       Notes !== "" ||
       Priority !== ""
     ) {
+      const newPriority = parseInt(Priority);
       for(const l of locationArray) {
         if(l._id === loc._id) {
           l.name = Name;
           l.notes = Notes;
-          l.priority = parseInt(Priority);
+          l.priority = newPriority;
           l.current_home = isOrigin ? CurrentHome : false;
           l.origin = isOrigin;
         }
       }
       sessionStorage.setItem('location', JSON.stringify(locationArray));
+
+      if (newPriority !== oldPriority || isOrigin !== oldIsOrigin) {
+        const oldPrefs = JSON.parse(sessionStorage.getItem('preferences'));
+        oldPrefs.preferencesUpdated = true;
+        sessionStorage.setItem('preferences', JSON.stringify(oldPrefs))
+      }
+
       window.location.reload(false);
     }
-  }
-
-  const deleteRelevantDocumentsOnOriginChange = async (isOrigin, itemToDelete) => {
-    const byDestStr = isOrigin ? "ByOrigin" : "ByDest";
-
-    await axios
-      .post(`http://localhost:5000/deleteSavedScore${byDestStr}/${itemToDelete}`, {})
-      .catch((error) => {
-        console.log(error.message);
-      });
-
-    await axios
-      .post(`http://localhost:5000/deleteRoutingData${byDestStr}/${itemToDelete}`, {})
-      .catch((error) => {
-        console.log(error.message);
-      });
-
-    await axios
-      .post(`http://localhost:5000/deleteItineraries${byDestStr}/${itemToDelete}`, {})
-      .catch((error) => {
-        console.log(error.message);
-      });
   }
 
   const submitHandlerLoggedInUsers = async () => {

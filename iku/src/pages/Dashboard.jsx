@@ -184,12 +184,13 @@ export default function Dashboard() {
       return cards[count]
     })
   } else {
-    originCards = <div
-      className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2`}>
-      <div className="flex justify-between items-center gap-2 drop-shadow-lg">
+    originCards = <div className="w-full flex justify-center items-center">
+      <div className={`${dashboardInnerElementGradientClass} rounded-3xl p-4 flex flex-col items-center gap-2 w-[26rem]`}>
+        <div className="flex justify-between items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved locations yet.
         </span>
+        </div>
       </div>
     </div>;
   }
@@ -209,11 +210,12 @@ export default function Dashboard() {
     })
   } else {
     destinationCards =
-      <div className="flex justify-between items-center gap-2 drop-shadow-lg">
+      <div className="flex justify-center items-center gap-2 drop-shadow-lg">
         <span className="font-bold text-2xl text-center text-white">
           No saved destinations yet.
         </span>
       </div>;
+
   }
 
   return (

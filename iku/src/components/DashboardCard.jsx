@@ -169,7 +169,7 @@ export default function DashboardCard({className, buttonClass, loc, fetchedScore
               {
                 hasDestinations && scores && <>
                   <div className="flex justify-center w-36 sm:w-fit">
-                    <CircleWithText size="w-24 h-24" textClass="text-5xl font-bold"
+                    <CircleWithText size="w-[5.5rem] h-[5.5rem]" textClass="text-5xl font-bold"
                                     borderColor={scores.overallColor} textColor={scores.overallColor}>
                       {scores.overall}
                     </CircleWithText>
