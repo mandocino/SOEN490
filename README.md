@@ -27,7 +27,7 @@ Armando Mancino (mandocino) - 40078466 <br/>
 ### Front-End:
 
 - React
-- Bulma (CSS Library)
+- Tailwind (CSS Library)
 
 ### Backend:
 
