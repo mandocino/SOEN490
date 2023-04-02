@@ -19,6 +19,19 @@ import {
 } from "../backend/config/defaultUserPreferences";
 
 
+const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
+
+const dashboardElement = "rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-800 dark:to-emerald-900 p-4";
+const dashboardInnerElementGradient = "bg-gradient-to-br from-emerald-dark to-emerald-darker dark:from-emerald-darkest dark:to-black rounded-3xl";
+const dashboardNestedInnerElementGradient = "bg-gradient-to-br from-white to-emerald-100 text-emerald-dark rounded-lg px-4 py-2 flex justify-between items-center";
+
+const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark hover:bg-white drop-shadow-lg"
+const dashboardButtonBase2 = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-500 focus:ring-4 focus:ring-emerald-400 text-white hover:text-emerald-dark hover:bg-white drop-shadow-lg"
+const dashboardElementButton = "w-full flex items-center justify-start gap-2  px-4 py-2 text-2xl " + dashboardButtonBase;
+const dashboardSmallButton = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
+export const dashboardSquareButton = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
+const dashboardSquareButton2 = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase2;
+
 export default function Dashboard() {
   const user_id = localStorage.getItem("user_id");
   const [locations, getLocations] = useState([]);
@@ -44,19 +57,6 @@ export default function Dashboard() {
   const userDataLoaded = useRef(false);
   const locationsLoaded = useRef(false);
   const locationsSplit = useRef(false);
-
-  const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
-
-  const dashboardElement = "rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-800 dark:to-emerald-900 p-4";
-  const dashboardInnerElementGradient = "bg-gradient-to-br from-emerald-dark to-emerald-darker dark:from-emerald-darkest dark:to-black rounded-3xl";
-  const dashboardNestedInnerElementGradient = "bg-gradient-to-br from-white to-emerald-100 text-emerald-dark rounded-lg px-4 py-2 flex justify-between items-center";
-
-  const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark hover:bg-white drop-shadow-lg"
-  const dashboardButtonBase2 = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-500 focus:ring-4 focus:ring-emerald-400 text-white hover:text-emerald-dark hover:bg-white drop-shadow-lg"
-  const dashboardElementButton = "w-full flex items-center justify-start gap-2  px-4 py-2 text-2xl " + dashboardButtonBase;
-  const dashboardSmallButton = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
-  const dashboardSquareButton = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
-  const dashboardSquareButton2 = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase2;
 
   let originCards;
   let destinationCards;
