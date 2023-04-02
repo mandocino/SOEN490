@@ -77,7 +77,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const [selectedDay, setSelectedDay] = useState("weekday");
   const [selectedDir, setSelectedDir] = useState("ToDest")
   const [displayTimeSlices, setDisplayTimeSlices] = useState(false);
-  const [selectedScoreTime, setSelectedScoreTime] = useState("Overall");
+  const [selectedScoreTime, setSelectedScoreTime] = useState("");
 
   const selectedItineraries = `${selectedDay}${selectedDir}Itineraries`;
 
@@ -449,7 +449,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     setSelectedDestination(newSelection);
 
     // Reset the selected score time to Overall
-    setSelectedScoreTime("Overall");
+    setSelectedScoreTime("");
 
     // Reset the current route metrics
     setCurrentRouteMetrics(defaultRouteMetrics);
@@ -901,9 +901,27 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                         </div>
                         :
                         /* Display alternative modes of transport if destination is selected */
-                        <div
-                          className={`flex flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
-                          {alternativeRoutes}
+                        <div className="flex">
+                          <div className={`flex basis-3/5 flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
+                            {alternativeRoutes}
+                          </div>
+                          <div className={`flex basis-2/5 border-l border-l-white ml-4 pl-4 flex-col py-3 gap-2 items-left`}>
+                            {
+                              selectedScoreTime ?
+                                <>
+                                  <span>Average duration <i>with transit</i> for selected time period:</span>
+                                  <div className="flex flex-col">
+                                    <span className="font-semibold">{currentRouteMetrics.durationAvg}</span>
+                                    <span>- Minimum: {currentRouteMetrics.durationMin}</span>
+                                    <span>- Maximum: {currentRouteMetrics.durationMax}</span>
+                                  </div>
+                                </>
+                                :
+                                <>
+                                  <span>Select a time period on the left to display the average duration with transit for that time period</span>
+                                </>
+                            }
+                          </div>
                         </div>
                     }
                   </div>
