@@ -35,6 +35,39 @@ import TrainIcon from '@mui/icons-material/Train';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import {ReactComponent as MetroLogo} from "./../assets/metro-logo.svg";
+import {removeBadRoutes} from "../backend/utils/openTripPlanner";
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip as ChartTooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  ChartTooltip,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+};
 
 
 const isDark = window.matchMedia(
@@ -255,7 +288,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
   const processItineraries = () => {
     let allRoutes = {}
-    let allStartTimes = {}
+    let allStartEndTimes = {}
 
     if (!itineraries) {
       return;
@@ -264,14 +297,17 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     // Loop through each day and direction and fetch relevant data
     for (const [key, value] of Object.entries(itineraries)) {
       let listOfRoutes = {}
-      let listOfStartTimes = []
+      let listOfStartAndEndTimes = []
 
       // Loop through every route and fetch its start time and legs
       for (let i of value) {
         let legData = []
         let routeId = ""
 
-        listOfStartTimes.push(i.startTime);
+        listOfStartAndEndTimes.push({
+          startTime: i.startTime,
+          endTime: i.endTime
+        });
 
         // Loop through every route and fetch its leg data
         for (let j=0; j<i.legs.length; j++) {
@@ -322,10 +358,11 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
       // Store the list of routes and list of start times for the given time slice
       allRoutes[key] = listOfRoutes;
-      allStartTimes[key] = listOfStartTimes;
+      const cleanedStartEndTimes = removeBadRoutes(listOfStartAndEndTimes)
+      allStartEndTimes[key] = cleanedStartEndTimes;
     }
     setRoutesList(allRoutes);
-    setRouteTimesList(allStartTimes);
+    setRouteTimesList(allStartEndTimes);
   }
 
   const RoutesList = () => {
@@ -423,6 +460,66 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     )
   }
 
+  const DeparturesOverTime = () => {
+    const processData = (data) => {
+      // key = hour
+      // value = count
+      let keyValue = {}
+
+      for (let i=0; i<24; i++) {
+        keyValue[`${i}:00`] = 0;
+      }
+
+      for (let i of data) {
+        const hour = new Date(i.startTime).getHours();
+        keyValue[`${hour}:00`] += 1;
+      }
+
+      return keyValue;
+    }
+
+    if (!routeTimesList) {
+      return (
+        <div>
+          <div className="text-lg font-semibold ">
+            Number of departures per hour
+          </div>
+          {
+            selectedDestination ?
+              <span>No routes found.</span>
+              :
+              <span>Select a destination to display routes.</span>
+          }
+        </div>
+      )
+    }
+
+    const data = processData(routeTimesList[selectedItineraries]);
+
+    const dataset = {
+      labels: Object.keys(data),
+      datasets: [{
+        label: 'Number of departures at hour',
+        data: Object.values(data),
+        borderColor: '#10b981',
+        backgroundColor: '#34d399',
+        cubicInterpolationMode: 'monotone',
+        tension: 0.4
+      }]
+    }
+
+    return (
+      <div className="flex flex-col h-full gap-0.5 w-full overflow-scroll">
+        <div className="text-lg font-semibold ">
+          Number of departures per hour
+        </div>
+        <div className="h-full">
+          <Line options={options} data={dataset} />
+        </div>
+      </div>
+    )
+  }
+
   useEffect(() => {
     processAlternativeRoutes();
   }, [allRouteMetrics]);
@@ -456,6 +553,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
       setAllRouteMetrics(null);
       setItineraries(null);
       setRoutesList(null);
+      setRouteTimesList(null);
       setSavedScores({});
     }
 
@@ -510,27 +608,26 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
     /**
      * 0: List of possible routes
-     * 1: Alternative modes of transport
-     * 2: Table of metrics
+     * 1: List of departure times
+     * 2: Alternative modes of transport
+     * 3: Table of metrics
      */
 
     // eslint-disable-next-line
     switch(now) {
       case 0:
+      case 1:
         setDisplayTimeSlices(false);
         break;
-      case 1:
       case 2:
+      case 3:
         setDisplayTimeSlices(true);
         break;
     }
   }
 
   const handleSetCurrentRouteMetrics = (timeSlice, routeMetrics=allRouteMetrics) => {
-    console.log(timeSlice)
-    console.log(routeMetrics)
     if (timeSlice !== "" && routeMetrics) {
-      console.log("in here")
       let currentMetrics = {
         frequencyMin: `${routeMetrics[timeSlice]["trueFrequencyMetrics"]["min"]} minutes`,
         frequencyMax: `${routeMetrics[timeSlice]["trueFrequencyMetrics"]["max"]} minutes`,
@@ -900,6 +997,11 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                   {/* Routes List */}
                   <div className="flex flex-col px-16 py-2 h-full w-full">
                     <RoutesList/>
+                  </div>
+
+                  {/* Number of departures over time */}
+                  <div className="flex flex-col px-16 py-2 h-full w-full">
+                    <DeparturesOverTime/>
                   </div>
 
                   {/* Alternative Modes */}
