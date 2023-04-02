@@ -3,7 +3,7 @@ import React from "react";
 export default function Guide() {
   return (
     <>
-      <div className="shadow-lg shadow-gray-400 dark:shadow-gray-900 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl text-white flex items-center justify-center p-4 w-full">
+      <div className="shadow-lg shadow-gray-400 dark:shadow-gray-900 bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-700 dark:to-emerald-900 rounded-3xl text-white flex items-center justify-center p-4 w-full">
         <div className="flex flex-col items-center gap-2 w-full md:w-auto">
           <div className="pb-2 text-left text-4xl font-bold w-full">
             It's pretty straightforward!
