@@ -150,7 +150,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: isDark
-        ? "#0e3331"
+        ? "#064e3b"
         : "#059669",
       color: "white",
       width: "25%"
@@ -159,14 +159,14 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     height: '1/3',
-    '&:nth-of-type(odd)': {
-      backgroundColor: "white",
-    },
     '&.MuiTableRow-head': {
       backgroundColor: '#0000'
     },
+    '&:nth-of-type(odd)': {
+      backgroundColor: "white",
+    },
     '&:nth-of-type(even)': {
-      backgroundColor: "lightgrey",
+      backgroundColor: "#e2e8f0",
     },
   }));
 
@@ -177,8 +177,15 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   };
 
   const closeModal = () => {
-    setSelectedDestination("");
     setCurrentRouteMetrics(defaultRouteMetrics);
+    fetchOverallSavedScore();
+    setAllRouteMetrics(null);
+    setItineraries(null);
+    setRoutesList(null);
+    setRouteTimesList(null);
+    setSavedScores({});
+    setDisplayTimeSlices(false);
+
     setIsOpen(false);
   };
 
@@ -499,7 +506,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     const dataset = {
       labels: Object.keys(data),
       datasets: [{
-        label: 'Number of departures at hour',
+        label: 'Number of departures',
         data: Object.values(data),
         borderColor: '#10b981',
         backgroundColor: '#34d399',
@@ -1046,12 +1053,20 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                   <div className="flex flex-col px-16 py-2 h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
                     {
                       selectedDestination === "" || selectedScoreTime === "" ?
-                        <div className=" p-8 rounded-3xl absolute bg-emerald-50 text-emerald-darkest text-xl drop-shadow-xl">
-                          Please select a destination and a time period to view the table of route metrics
+                        <div className="z-10 absolute w-full h-full flex pb-4">
+                          <div className="w-full h-full mx-16 my-2 bg-black/25 rounded-xl flex items-center justify-center">
+                            <div className=" p-8 rounded-3xl bg-gray-200 text-emerald-darkest text-xl drop-shadow-xl">
+                              Please select a destination and a time period to view the table of route metrics
+                            </div>
+                          </div>
                         </div>
                         : null
                     }
-                    <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
+                    <TableContainer sx={{
+                      height: '100%',
+                      borderRadius: '0.75rem',
+                      filter: 'drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))'
+                    }}>
                       <Table aria-label="metrics table"
                       sx={{
                         height: '100%',
