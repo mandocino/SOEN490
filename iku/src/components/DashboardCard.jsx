@@ -88,7 +88,7 @@ export function calculateColorForEachScore(scores) {
   return scores;
 }
 
-export default function DashboardCard({className, buttonClass, loc, fetchedScores, destinations, count, userData, compare, addCardToCompare}) {
+export default function DashboardCard({className, buttonClass, noHoverButtonClass, loc, fetchedScores, destinations, count, userData, compare, addCardToCompare}) {
   const hasDestinations = destinations && destinations.length > 0;
 
   let scores = null;
@@ -239,6 +239,7 @@ export default function DashboardCard({className, buttonClass, loc, fetchedScore
                   destinations={destinations}
                   userData={userData}
                   buttonClass={buttonClass}
+                  noHoverButtonClass={noHoverButtonClass}
                 />
                 <EditLocation
                   loc={loc}

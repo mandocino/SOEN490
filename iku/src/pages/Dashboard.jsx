@@ -27,9 +27,11 @@ const dashboardInnerElementGradient = "bg-gradient-to-br from-emerald-dark to-em
 const dashboardNestedInnerElementGradient = "bg-gradient-to-br from-white to-emerald-100 text-emerald-dark rounded-lg px-4 py-2 flex justify-between items-center";
 
 const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark hover:bg-white drop-shadow-lg"
+const dashboardButtonBaseNoHover = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark drop-shadow-lg"
 const dashboardButtonBase2 = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-500 focus:ring-4 focus:ring-emerald-400 text-white hover:text-emerald-dark hover:bg-white drop-shadow-lg"
-const dashboardElementButton = "w-full flex items-center justify-start gap-2  px-4 py-2 text-2xl " + dashboardButtonBase;
+const dashboardElementButton = "w-full flex items-center justify-start gap-2 px-4 py-2 text-2xl " + dashboardButtonBase;
 const dashboardSmallButton = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
+const dashboardSmallButtonNoHover = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBaseNoHover;
 export const dashboardSquareButton = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
 const dashboardSquareButton2 = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase2;
 
@@ -176,6 +178,7 @@ export default function Dashboard() {
           key={loc._id}
           className={dashboardInnerElementGradient}
           buttonClass={dashboardSmallButton}
+          noHoverButtonClass={dashboardSmallButtonNoHover}
           loc={loc}
           fetchedScores={scores && scores[loc._id]}
           destinations={destinations}
