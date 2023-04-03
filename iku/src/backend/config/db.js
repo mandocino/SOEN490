@@ -37,7 +37,8 @@ const userSchema = new Schema(
     scoringPreferences: { type: Object, default: defaultUserScoringPreferences },
     routingPreferences: { type: Object, default: defaultUserRoutingPreferences },
     lastScoringPrefChangeTime: { type: Schema.Types.Date, required: true },
-    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true }
+    lastRoutingPrefChangeTime: { type: Schema.Types.Date, required: true },
+    administrator: { type: Schema.Types.Boolean, default: false },
   },
   { collection: "Users" }
 );
@@ -76,6 +77,13 @@ const savedRoutingDataSchema = new Schema({
   routingData: { type: Object, required: true }
 }, { collection : 'SavedRoutingData' });
 
+const savedItinerariesSchema = new Schema({
+  origin: { type: Schema.Types.ObjectId, required: true },
+  destination: { type: Schema.Types.ObjectId, required: true },
+  generatedTime: { type: Schema.Types.Date, required: true },
+  itineraries: { type: Object, required: true }
+}, { collection : 'SavedItineraries' });
+
 const emailConfirmationSchema = new Schema({
   email: { type: String, required: true },
   code: { type: String, required: true }
@@ -93,7 +101,8 @@ export const globalDBModel = model("Global", globalSchema);
 export const userDBModel = model("User", userSchema);
 export const locationDBModel = model("Location", locationSchema);
 export const savedScoreDBModel = model("SavedScore", savedScoreSchema);
-export const savedRoutesDBModel = model("SavedRoutingData", savedRoutingDataSchema);
+export const savedRoutingDataDBModel = model("SavedRoutingData", savedRoutingDataSchema);
+export const savedItinerariesDBModel = model("SavedItineraries", savedItinerariesSchema);
 export const emailConfirmationDBModel = model("EmailConfirmation", emailConfirmationSchema);
 export const passwordResetRequestDBModel = model("PasswordResetRequest", passwordResetRequestSchema);
 

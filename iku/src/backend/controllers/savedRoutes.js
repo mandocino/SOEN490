@@ -4,12 +4,27 @@ import {
     createSavedRoutingData,
     removeSavedRoutingData,
     removeSavedRoutingDataByLocations,
-    updateSavedRoutingDataByLocations
+    updateSavedRoutingDataByLocations,
+    getSavedItinerariesByLocations,
+    removeSavedItineraries,
+    removeSavedItinerariesByLocations,
+    updateSavedItinerariesByLocations
 } from "../models/savedRoutesModel.js";
 
 // Get saved Routes by origin and destination
 export const showSavedRoutingDataByLocations = (req, res) => {
     getSavedRoutingDataByLocations(req.params.origin, req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Get saved itineraries by origin and destination
+export const showSavedItinerariesByLocations = (req, res) => {
+    getSavedItinerariesByLocations(req.params.origin, req.params.destination, (err, results) => {
         if (err){
             res.send(err);
         }else{
@@ -29,11 +44,10 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
             console.log(results);
             results = results['routingData'];
 
-            let savedRoutesMetricsAverage = {};
+            console.log('PARAMS:')
+            console.log(req.params);
 
-            // TODO: GET THE NIGHT WEIGHTS AND WEEKEND WEIGHTS FROM DASHBOARD -> DASHBOARD CARD -> SCOREDETAILMODAL
-            // let frequencyWeight = req.params.frequency;
-            // let durationWeight = req.params.duration;
+            let savedRoutesMetricsAverage = {};
 
             let metricTypes = ['durationMetrics', 'frequencyMetrics', 'walkMetrics'];
 
@@ -63,9 +77,9 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
             let overnightMetrics = {};
             metricTypes.forEach(function(metricType){
 
-                const weeknightWeight = 0.3;
-                const fridayNightWeight = 0.35;
-                const saturdayNightWeight = 0.35;
+                const weeknightWeight = req.params.weeknightWeight;
+                const fridayNightWeight = req.params.fridayNightWeight;
+                const saturdayNightWeight = req.params.saturdayNightWeight;
 
                 overnightMetrics[metricType] = {};
                 overnightMetrics[metricType]['max'] = Math.round(((results['overnightMetrics'][0][metricType]['max'] + results['overnightMetrics'][1][metricType]['max'])/2)*weeknightWeight + ((results['overnightMetrics'][2][metricType]['max'] + results['overnightMetrics'][3][metricType]['max'])/2)*fridayNightWeight + ((results['overnightMetrics'][4][metricType]['max'] + results['overnightMetrics'][5][metricType]['max'])/2)*saturdayNightWeight);
@@ -78,8 +92,8 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
             let weekendMetrics = {};
             metricTypes.forEach(function(metricType){
 
-                const saturdayWeight = 0.6;
-                const sundayWeight = 0.4;
+                const saturdayWeight = req.params.saturdayWeight;
+                const sundayWeight = req.params.sundayWeight;
 
                 weekendMetrics[metricType] = {};
                 weekendMetrics[metricType]['max'] = Math.round(((results['weekendMetrics'][0][metricType]['max'] + results['weekendMetrics'][1][metricType]['max'])/2)*saturdayWeight + ((results['weekendMetrics'][2][metricType]['max'] + results['weekendMetrics'][3][metricType]['max'])/2)*sundayWeight);
@@ -105,8 +119,8 @@ export const showSavedRoutingDataAveragesByLocations = (req, res) => {
 
             savedRoutesMetricsAverage['overallMetrics'] = overallMetrics;
 
-            // Add the walk and bike routes data
-            savedRoutesMetricsAverage['walkBikeRoutes'] = results['walkBikeRoutes'];
+            // Add the walk, bike, and car routes data
+            savedRoutesMetricsAverage['alternativeModeRoutes'] = results['alternativeModeRoutes'];
 
             res.json(savedRoutesMetricsAverage);
         }
@@ -138,9 +152,32 @@ export const editSavedRoutingDataByLocations = (req, res) => {
     });
 }
 
+// Update/Upsert a set of saved itineraries with data
+export const editSavedItinerariesByLocations = (req, res) => {
+    const updateData = req.body;
+    updateSavedItinerariesByLocations(req.params.origin, req.params.destination, updateData, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
 // Delete a SavedRoutes by its object ID
 export const deleteSavedRoutingData = (req, res) => {
     removeSavedRoutingData(req.body._id, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedItineraries by its object ID
+export const deleteSavedItineraries = (req, res) => {
+    removeSavedItineraries(req.body._id, (err, results) => {
         if (err){
             res.send(err);
         }else{
@@ -159,3 +196,15 @@ export const deleteSavedRoutingDataByLocations = (req, res) => {
         }
     });
 }
+
+// Delete a SavedItineraries by origin and destination
+export const deleteSavedItinerariesByLocations = (req, res) => {
+    removeSavedItinerariesByLocations(req.params.origin, req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+

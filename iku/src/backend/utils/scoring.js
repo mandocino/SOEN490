@@ -12,6 +12,15 @@ import {
 } from "../config/defaultUserPreferences.js";
 
 
+export const listOfScores = [
+  'offPeak',
+  'overall',
+  'overnight',
+  'rushHour',
+  'weekend'
+];
+
+
 /**
  * Saves the scores of a specific (origin, dstination) pair to the DB, or the weighted average scores of a specific
  * origin (in which case there is no destination).
@@ -45,11 +54,12 @@ export async function saveScores(origin, destination, scores, date) {
 /**
  * Fetch the scores for a defined origin, destination pair.
  * @param origin
+ * @param origin
  * @param destination
  * @returns {Promise<AxiosResponse<any>|void>}
  */
 export async function fetchScores(origin, destination) {
-  // If a destination is specified, load scores for the specific origin/destination pair, else load for irigin only
+  // If a destination is specified, load scores for the specific origin/destination pair, else load for origin only
   const url = destination ? `http://localhost:5000/savedScores/${origin._id}/${destination._id}` : `http://localhost:5000/savedScores/${origin._id}`;
   return await axios.get(url, {
     params:
@@ -68,9 +78,10 @@ export async function fetchScores(origin, destination) {
  * @param origin
  * @param destinations
  * @param userID
+ * @param userData
  * @returns {Promise<AxiosResponse<*>|{overnight: number, generatedTime: number, rushHour: number, origin: *, weekend: number, overall: number, detailedScores: [], offPeak: number}|null>}
  */
-export async function loadScores(origin, destinations, userID) {
+export async function loadScores(origin, destinations, userID, userData) {
   if (origin && origin.length === 0) {
     return null;
   }
@@ -81,48 +92,89 @@ export async function loadScores(origin, destinations, userID) {
   let lastScoringPrefChangeTime;
   let lastRoutingPrefChangeTime;
   let lastAlgoUpdateTime;
+  let lastRoutingUpdateTime;
+  let preferencesUpdated;
 
   if (loggedIn) {
     // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
     const timeValues = await axios.get('http://localhost:5000/global/');
     lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
+    lastRoutingUpdateTime = timeValues.data.lastRoutingUpdateTime;
 
     // Grab the last time the user updated their preferences
-    const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-    lastScoringPrefChangeTime = user.data[0].lastScoringPrefChangeTime;
-    lastRoutingPrefChangeTime = user.data[0].lastRoutingPrefChangeTime;
+    lastScoringPrefChangeTime = userData.lastScoringPrefChangeTime;
+    lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
 
     // Get the latest scores for the origin only
     savedScores = await thisModule.fetchScores(origin, null);
   } else {
     // For non-logged-in users, set both times to 1970 to force re-generation
     const aLongTimeAgo = new Date(0);
+
     lastScoringPrefChangeTime = aLongTimeAgo;
-    lastRoutingPrefChangeTime = aLongTimeAgo;
-    lastAlgoUpdateTime = aLongTimeAgo;
+    lastRoutingPrefChangeTime = aLongTimeAgo
+    lastAlgoUpdateTime = aLongTimeAgo
+    lastRoutingUpdateTime = aLongTimeAgo
+    preferencesUpdated = JSON.parse(sessionStorage.getItem('preferences')).preferencesUpdated;
+
+    // Get the scores for current origin from session storage (if exists)
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+        savedScores = location.scores;
+      }
+    }   
+
   }
 
   // Generate the scores if there are no saved scores.
   // Or, re-generate the scores if the system was updated, or the user preferences changed since last generation
-  if (!savedScores || savedScores.generatedTime < lastScoringPrefChangeTime || savedScores.generatedTime < lastRoutingPrefChangeTime || savedScores.generatedTime < lastAlgoUpdateTime) {
-    savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+  if (!savedScores
+    || savedScores.generatedTime < lastScoringPrefChangeTime
+    || savedScores.generatedTime < lastRoutingPrefChangeTime
+    || savedScores.generatedTime < lastAlgoUpdateTime
+    || savedScores.generatedTime < lastRoutingUpdateTime
+    || preferencesUpdated
+  ) {
+    savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
+    preferencesUpdated =  false;
   }
   // Get the latest scores for each origin/destination pair
   else {
     let scores = []
     for (const destination of destinations) {
       let score;
-      if (userID != null) {
+      const loggedIn = userID != null;
+      if (loggedIn) {
         // Fetch scores for a single origin/destination pair
         score = await thisModule.fetchScores(origin, destination);
-      }
+      } else if(origin.detailedScores) {
+        //If user is not logged in, check in the detailedScores array of the origin 
+        //(as stored in session storage) to check if a score was already generated 
+        // for the origin/destination pair.
+
+        for(const savedScore of origin.detailedScores) {
+          if(savedScore.destination_id === destination._id) {
+            score = savedScore;
+          }
+        }
+      } 
 
       // If scores for any origin/destination pair are outdated, regenerate everything.
       // This is so that the weighted average score gets regenerated as well.
-      // TODO: We can make this more efficient by only regenerating the scores that need to be, and updating the
+      // We can make this more efficient by only regenerating the scores that need to be, and updating the
       //  weighted average accordingly
-      if (!score || score.generatedTime < lastScoringPrefChangeTime || score.generatedTime < lastRoutingPrefChangeTime || score.generatedTime < lastAlgoUpdateTime) {
-        savedScores = await thisModule.generateNewScores(origin, destinations, userID);
+
+      if (!score
+        || score.generatedTime < lastScoringPrefChangeTime
+        || score.generatedTime < lastRoutingPrefChangeTime
+        || score.generatedTime < lastAlgoUpdateTime
+        || score.generatedTime < lastRoutingUpdateTime
+        || preferencesUpdated) {
+        savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
+        preferencesUpdated = false;
         break;
       }
       scores.push(score);
@@ -130,6 +182,12 @@ export async function loadScores(origin, destinations, userID) {
     savedScores.detailedScores = scores;
   }
 
+  if(!loggedIn) {
+    let preferences = JSON.parse(sessionStorage.getItem('preferences'))
+    preferences.preferencesUpdated = preferencesUpdated;
+
+    sessionStorage.setItem('preferences', JSON.stringify(preferences));
+  }
   return savedScores;
 }
 
@@ -139,11 +197,11 @@ export async function loadScores(origin, destinations, userID) {
  * `generateNewScoresForOnePair` function. Also computes the weighted average of all scores for this specific origin.
  * @param origin
  * @param destinations
- * @param userID
+ * @param loggedIn
+ * @param userData
  * @returns {Promise<{overnight: number, generatedTime: Date, rushHour: number, origin, weekend: number, overall: number, detailedScores: *[], offPeak: number}>}
  */
-export async function generateNewScores(origin, destinations, userID) {
-  const loggedIn = (userID != null);
+export async function generateNewScores(origin, destinations, loggedIn, userData) {
 
   // User's scoring and routing preferences
   let userPreferences;
@@ -167,22 +225,24 @@ export async function generateNewScores(origin, destinations, userID) {
   let weekend = 0;
   let overnight = 0;
 
-  const user = await axios.get(`http://localhost:5000/userByID/${userID}`);
-  const userData = user.data[0];
+  let lastRoutingPrefChangeTime;
+  if(!loggedIn) {
+    userData = JSON.parse(sessionStorage.getItem('preferences')).factorWeights;
+  }
+  lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
 
-  const lastRoutingPrefChangeTime = userData.lastRoutingPrefChangeTime;
-
-  // TODO: Either update user document in db to the default preferences or show an alert in frontend
-  if (userData.hasOwnProperty('factorWeights')
+  // Either update user document in db to the default preferences or show an alert in frontend
+  if (userData && userData.hasOwnProperty('factorWeights')
     && userData.factorWeights.hasOwnProperty('frequencyWeight')
     && userData.factorWeights.hasOwnProperty('durationWeight')
   ) {
+
     factorWeights = userData.factorWeights;
   } else {
     factorWeights = defaultUserFactorWeights;
   }
 
-  if (userData.hasOwnProperty('nightDayWeights')
+  if (userData && userData.hasOwnProperty('nightDayWeights')
     && userData.nightDayWeights.hasOwnProperty('weeknightWeight')
     && userData.nightDayWeights.hasOwnProperty('fridayNightWeight')
     && userData.nightDayWeights.hasOwnProperty('saturdayNightWeight')
@@ -192,7 +252,8 @@ export async function generateNewScores(origin, destinations, userID) {
     nightDayWeights = defaultUserNightDayWeights;
   }
 
-  if (userData.hasOwnProperty('nightDirectionWeights')
+
+  if (userData && userData.hasOwnProperty('nightDirectionWeights')
     && userData.nightDirectionWeights.hasOwnProperty('toDestWeight')
     && userData.nightDirectionWeights.hasOwnProperty('fromDestWeight')
   ) {
@@ -201,7 +262,7 @@ export async function generateNewScores(origin, destinations, userID) {
     nightDirectionWeights = defaultUserNightDirectionWeights;
   }
 
-  if (userData.hasOwnProperty('weekendWeights')
+  if (userData && userData.hasOwnProperty('weekendWeights')
     && userData.weekendWeights.hasOwnProperty('saturdayWeight')
     && userData.weekendWeights.hasOwnProperty('sundayWeight')
   ) {
@@ -210,7 +271,7 @@ export async function generateNewScores(origin, destinations, userID) {
     weekendWeights = defaultUserWeekendWeights;
   }
 
-  if (userData.hasOwnProperty('timeSliceWeights')
+  if (userData && userData.hasOwnProperty('timeSliceWeights')
     && userData.timeSliceWeights.hasOwnProperty('rushHourWeight')
     && userData.timeSliceWeights.hasOwnProperty('offPeakWeight')
     && userData.timeSliceWeights.hasOwnProperty('nightWeight')
@@ -221,7 +282,7 @@ export async function generateNewScores(origin, destinations, userID) {
     timeSliceWeights = defaultUserTimeSliceWeights;
   }
 
-  if (userData.hasOwnProperty('scoringPreferences')
+  if (userData && userData.hasOwnProperty('scoringPreferences')
     && userData.scoringPreferences.hasOwnProperty('consistencyImportance')
     && userData.scoringPreferences.hasOwnProperty('worstAcceptableFrequency')
     && userData.scoringPreferences.hasOwnProperty('worstAcceptableDuration')
@@ -232,7 +293,7 @@ export async function generateNewScores(origin, destinations, userID) {
     scoringPreferences = defaultUserScoringPreferences;
   }
 
-  if (userData.hasOwnProperty('routingPreferences')
+  if (userData && userData.hasOwnProperty('routingPreferences')
     && userData.routingPreferences.hasOwnProperty('walkReluctance')
     && userData.routingPreferences.hasOwnProperty('isWheelChair')
   ) {
@@ -240,7 +301,6 @@ export async function generateNewScores(origin, destinations, userID) {
   } else {
     routingPreferences = defaultUserRoutingPreferences;
   }
-
   userPreferences = {
     factorWeights: factorWeights,
     nightDayWeights: nightDayWeights,
@@ -293,6 +353,19 @@ export async function generateNewScores(origin, destinations, userID) {
 
   if (loggedIn) {
     await thisModule.saveScores(origin, null, scores, date);
+  } else {
+    // If user is not logged in, save scores in the origin object stored in the location
+    // array in session storage. 
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+        location.scores = scores
+      }
+    }
+
+    sessionStorage.setItem("location",  JSON.stringify(locationArray));
   }
 
   return {
@@ -321,9 +394,9 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
   const durationWeight = userPreferences.factorWeights.durationWeight / 100;
 
   const startDates = {
-    weekdayStartDate: "2023-02-20",
-    saturdayStartDate: "2023-02-25",
-    sundayStartDate: "2023-02-26"
+    weekdayStartDate: "2023-03-27",
+    saturdayStartDate: "2023-04-01",
+    sundayStartDate: "2023-04-02"
   };
 
   const cvRatioBase = 8
@@ -392,6 +465,31 @@ export async function generateNewScoresForOnePair(origin, destination, userPrefe
 
   if (loggedIn) {
     await thisModule.saveScores(origin, destination, scores, date);
+  } else {
+    // For non-logged-in users, scores are saved in session storage as an 
+    // array of detailedScore objects. These objects contain two members, a key 
+    //(ID of the destination) and the corresponding scores
+
+    // Modify the origin as stored in session storage in location array to hold the new score.
+    let locationStringArray = sessionStorage.getItem('location');
+    let locationArray = JSON.parse(locationStringArray);
+
+    for(const location of locationArray) {
+      if(location._id === origin._id) {
+
+        if(!location.detailedScores) {
+          location.detailedScores = [];
+        }
+
+        location.detailedScores.push({
+          destination_id: destination._id,
+          score: scores
+        })
+      }
+    }
+
+    sessionStorage.setItem("location",  JSON.stringify(locationArray));
+
   }
 
   return {
@@ -506,7 +604,6 @@ function generateWeekendScores(metrics, scoringParams, scoringWeights) {
 function calculateScoresFromMetrics(metrics, scoringParams) {
   const worstFreq = scoringParams.worstAcceptableFrequency;
   const worstDur = scoringParams.worstAcceptableDuration;
-  const worstWalk = scoringParams.worstAcceptableWalk;
   const cvParams = scoringParams.cvParams;
 
   let frequencyScores = []
@@ -621,9 +718,9 @@ function computeWeightedScore(scores, frequencyWeight, durationWeight, walkWeigh
 
 /**
  * Function to set the global `lastAlgoUpdateTime` to the current time
- * @returns {Promise<void>}
+ * @returns {Promise<{lastAlgoUpdateTime: number}>}
  */
-export async function updateAlgorithmTime() {
+export async function updateScoringAlgorithmTime() {
   // Update the record for when the system was updated to match the current time
   let params =
     {
@@ -631,4 +728,21 @@ export async function updateAlgorithmTime() {
     };
 
   await axios.post('http://localhost:5000/modifyGlobal/', params);
+  return params;
+}
+
+
+/**
+ * Function to set the global `lastRoutingUpdateTime` to the current time
+ * @returns {Promise<{lastRoutingUpdateTime: number}>}
+ */
+export async function updateRoutingAlgorithmTime() {
+  // Update the record for when the system was updated to match the current time
+  let params =
+    {
+      lastRoutingUpdateTime: Date.now()
+    };
+
+  await axios.post('http://localhost:5000/modifyGlobal/', params);
+  return params;
 }

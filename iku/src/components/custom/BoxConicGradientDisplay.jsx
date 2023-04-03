@@ -13,7 +13,7 @@ export default function BoxConicGradientDisplay({values, colors, names, icons, m
   const boxConicGradient = `conic-gradient(from 180deg at 50% 100%, ${gradientLines})`;
 
   const gridCols = twoCols ? 'grid-cols-2' : 'grid-cols-1';
-  const textSize = twoCols ? 'text-xl' : 'text-xl';
+  const textSize = 'text-xl';
 
   // ALTERNATIVE BOX CONIC
   // NOTE: If using this update to dynamically match values

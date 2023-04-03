@@ -5,6 +5,7 @@ import "./App.css";
 
 import Homepage from "./pages/Homepage.jsx";
 import Accountpage from "./pages/Accountpage.jsx";
+import Admin from "./pages/Admin.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/aboutus" element={<AboutUs />} />
         <Route path="/editinfo" element={<EditAccountPage />} />
         <Route path="/editpassword" element={<EditPasswordPage />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </>
   );
