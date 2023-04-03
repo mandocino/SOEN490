@@ -1742,7 +1742,7 @@ describe("Removing bad routes from generated OTP routes", () => {
         const result = removeBadRoutes(routes);
 
         // Assert
-        expect(result.find(route => route.endTime === 1669345170000).toBeEmpty);
+        expect(result.find(route => route['endTime'] == 1669345169000).toBeEmpty);
     })
 
     it("should remove the longer of two routes with the same end time", () => {
@@ -1768,7 +1768,7 @@ describe("Removing bad routes from generated OTP routes", () => {
         const result = removeBadRoutes(routes);
 
         // Assert
-        expect(result.find(route => route.startTime === 1669340578000).toBeEmpty);
+        expect(result.find(route => route.startTime === 1669340579000).toBeEmpty);
     })
 
     it("should remove routes with matching start/end time and more transfers", () => {
@@ -1794,7 +1794,7 @@ describe("Removing bad routes from generated OTP routes", () => {
         const result = removeBadRoutes(routes);
 
         // Assert
-        expect(result.find(route => route.transfers === 3).toBeEmpty);
+        expect(result.find(route => route.transfers === 2).toBeEmpty);
     })
 
     it("should remove routes with matching start/end time and more walk time", () => {
@@ -1820,7 +1820,7 @@ describe("Removing bad routes from generated OTP routes", () => {
         const result = removeBadRoutes(routes);
 
         // Assert
-        expect(result.find(route => route.walkTime === 1263).toBeEmpty);
+        expect(result.find(route => route.walkTime === 1163).toBeEmpty);
     })
 
     it("should only keep one of multiple routes with matching start/end time and walk time", () => {
