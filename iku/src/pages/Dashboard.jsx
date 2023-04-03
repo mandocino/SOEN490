@@ -50,8 +50,8 @@ export default function Dashboard() {
   }
 
   const closeCompareModal = () => {
-    setCompareModal(false)
     setCardToCompare([])
+    setCompareModal(false);
   }
 
   const userDataLoaded = useRef(false);
@@ -255,6 +255,7 @@ export default function Dashboard() {
                 <ScoreCompareModal
                   firstLocation={cards[cardToCompare[0]]}
                   secondLocation={cards[cardToCompare[1]]}
+                  scores={scores}
                   show={compareModal}
                   onClose={closeCompareModal}
                 />

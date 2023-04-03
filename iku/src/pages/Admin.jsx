@@ -50,7 +50,7 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={updateScoringAlgoTime}
-                  className="border-2 border-white rounded	p-2"
+                  className="border-2 border-emerald-dark dark:border-white bg-white dark:bg-emerald-dark rounded	p-2"
                 >
                   Update Scoring Algo time
                 </button>
@@ -73,7 +73,7 @@ export default function Admin() {
                 <button
                   type="button"
                   onClick={updateRoutingAlgoTime}
-                  className="border-2 border-white rounded	p-2"
+                  className="border-2 border-emerald-dark dark:border-white bg-white dark:bg-emerald-dark rounded	p-2"
                 >
                   Update Routing Algo time
                 </button>
