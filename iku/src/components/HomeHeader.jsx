@@ -27,8 +27,8 @@ export default function HomeHeader({ ignore }) {
               <LinkButton to="/dashboard">Dashboard</LinkButton>
             </li>
             {location.pathname === "/dashboard" ? (
-              <li className="w-96">
-                <SimpleSearchBar />
+              <li className="w-96" id={"header-container"}>
+                <SimpleSearchBar  id={"header-search"} />
               </li>
             ) : null}
           </ul>

@@ -17,6 +17,7 @@ import {
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
+import AddDestination from "../components/AddDestination";
 
 
 const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
@@ -43,6 +44,7 @@ export default function Dashboard() {
   const [compare, setCompare] = useState(false);
   const [compareModal, setCompareModal] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [addDestinationModalOpen, setAddDestinationModalOpen] = useState(false);
 
   const addCardToCompare = (count) => {
     cardToCompare.push(count)
@@ -238,10 +240,12 @@ export default function Dashboard() {
                     className={`${dashboardInnerElementGradient} w-full rounded-3xl p-4 flex flex-col gap-2`}>
                     {destinationCards}
                   </div>
-
-                  <Link to="/" className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
-                    <button type="button"
-                            className={dashboardElementButton}>
+                  <div className="transition ease-in-out duration-200 rounded-lg font-bold text-2xl">
+                    <button
+                      type="button"
+                      className={dashboardElementButton}
+                      onClick={() => {setAddDestinationModalOpen(true)}}
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                            stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round"
@@ -249,7 +253,12 @@ export default function Dashboard() {
                       </svg>
                       Add Destination
                     </button>
-                  </Link>
+                    <AddDestination
+                      state={addDestinationModalOpen}
+                      setState={setAddDestinationModalOpen}
+                    />
+                  </div>
+
                 </div>
 
                 <ScoreCompareModal

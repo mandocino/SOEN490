@@ -442,7 +442,7 @@ export default function EditScoringFactors({userData, buttonClass}) {
         onClose={closeModal}
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             backdropFilter: 'blur(8px)'
           }
         }}

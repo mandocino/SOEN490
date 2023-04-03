@@ -210,7 +210,10 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
   }
 
   const deleteHandler = async (event) => {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
+
     if(user_id === null) {
       let locationStringArray = sessionStorage.getItem('location')
       let locationArray = JSON.parse(locationStringArray);
@@ -270,7 +273,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
         fullWidth
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             backdropFilter: 'blur(8px)'
           },
           '& .MuiDialog-paper': {

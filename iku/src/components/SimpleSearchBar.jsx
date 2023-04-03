@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import mongoose from "mongoose";
 import axios from "axios";
 
-const SimpleSearchBar = () => {
+const SimpleSearchBar = ({asDest=false, id=null}) => {
 
   const inputRef = useRef(null); // To autofill the textbox after fetching current location
 
@@ -40,7 +40,7 @@ const SimpleSearchBar = () => {
           longitude: response.data.coordinates.lng,
           name: input.split(",")[0],
           notes: input,
-          origin: true,
+          origin: !asDest,
           current_home: false,
         };
 
@@ -95,7 +95,7 @@ const SimpleSearchBar = () => {
 
   return (
     <>
-      <form className="rounded-lg drop-shadow-lg grow">
+      <form className="rounded-lg drop-shadow-lg grow" id={id}>
         <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">
           Search
         </label>
