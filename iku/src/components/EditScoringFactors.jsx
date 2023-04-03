@@ -442,7 +442,7 @@ export default function EditScoringFactors({userData, buttonClass}) {
         onClose={closeModal}
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             backdropFilter: 'blur(8px)'
           }
         }}
@@ -568,7 +568,7 @@ export default function EditScoringFactors({userData, buttonClass}) {
                 <button
                   type="button"
                   onClick={submitHandler}
-                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-semibold rounded-lg"
+                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                        stroke="currentColor" className="w-6 h-6">

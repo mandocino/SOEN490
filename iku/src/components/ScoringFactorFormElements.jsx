@@ -19,6 +19,7 @@ import {ReactComponent as SaturdayIcon} from "./../assets/calendar-sat-solid.svg
 import {ReactComponent as SundayIcon} from "./../assets/calendar-sun-solid.svg";
 import {ReactComponent as ToDestIcon} from "./../assets/arrow-right-to-city-solid.svg";
 import {ReactComponent as FromDestIcon} from "./../assets/arrow-left-from-city-solid.svg";
+import {dashboardSquareButton} from "../pages/Dashboard";
 
 
 const color1 = {bgGradient: 'bg-gradient-to-br from-sky-500 to-sky-400', text: 'text-sky-400', hex: '#38bdf8'};
@@ -119,7 +120,7 @@ export const AccordionSummary = styled((props) => {
       <button
         type="button"
         onClick={showInfoPopover}
-        className="z-10 z-10 w-8 h-8 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-200 focus:ring-4 focus:ring-emerald-300 text-emerald-800 hover:bg-white font-semibold rounded-lg"
+        className={"z-10 " + dashboardSquareButton}
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
              className="w-6 h-6">
@@ -149,7 +150,7 @@ export const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 
-const StyledSwitch = styled(Switch)(({ theme }) => ({
+export const StyledSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-track': {
     backgroundColor: '#fff',
   },

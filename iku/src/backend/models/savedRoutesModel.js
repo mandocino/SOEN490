@@ -125,9 +125,69 @@ export const removeSavedRoutingDataByLocations = (originID, destID, result) => {
     });
 }
 
+// Remove saved routes by origin only
+export const removeSavedRoutingDataByOrigin = (originID, result) => {
+    savedRoutingDataDBModel.deleteMany({'origin': originID},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
+            result(null, data);
+        }
+    });
+}
+
+// Remove saved routes by destination only
+export const removeSavedRoutingDataByDestination = (destID, result) => {
+    savedRoutingDataDBModel.deleteMany({'destination': destID},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
+            result(null, data);
+        }
+    });
+}
+
 // Remove saved itineraries by origin and destination
 export const removeSavedItinerariesByLocations = (originID, destID, result) => {
     savedItinerariesDBModel.deleteMany({'origin': originID, 'destination': destID},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
+            result(null, data);
+        }
+    });
+}
+
+// Remove saved itineraries by origin only
+export const removeSavedItinerariesByOrigin = (originID, result) => {
+    savedItinerariesDBModel.deleteMany({'origin': originID},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
+            result(null, data);
+        }
+    });
+}
+
+// Remove saved itineraries by destination only
+export const removeSavedItinerariesByDestination = (destID, result) => {
+    savedItinerariesDBModel.deleteMany({'destination': destID},(err, data) => {
         if (err){
             console.log(err);
         }

@@ -8,7 +8,10 @@ import {
     getSavedItinerariesByLocations,
     removeSavedItineraries,
     removeSavedItinerariesByLocations,
-    updateSavedItinerariesByLocations
+    updateSavedItinerariesByLocations,
+    removeSavedRoutingDataByDestination,
+    removeSavedItinerariesByDestination,
+    removeSavedRoutingDataByOrigin, removeSavedItinerariesByOrigin
 } from "../models/savedRoutesModel.js";
 
 // Get saved Routes by origin and destination
@@ -197,6 +200,28 @@ export const deleteSavedRoutingDataByLocations = (req, res) => {
     });
 }
 
+// Delete a SavedRoutes by origin only
+export const deleteSavedRoutingDataByOrigin = (req, res) => {
+    removeSavedRoutingDataByOrigin(req.params.origin, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedRoutes by destination only
+export const deleteSavedRoutingDataByDestination = (req, res) => {
+    removeSavedRoutingDataByDestination(req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
 // Delete a SavedItineraries by origin and destination
 export const deleteSavedItinerariesByLocations = (req, res) => {
     removeSavedItinerariesByLocations(req.params.origin, req.params.destination, (err, results) => {
@@ -208,3 +233,24 @@ export const deleteSavedItinerariesByLocations = (req, res) => {
     });
 }
 
+// Delete a SavedItineraries by origin only
+export const deleteSavedItinerariesByOrigin = (req, res) => {
+    removeSavedItinerariesByOrigin(req.params.origin, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}
+
+// Delete a SavedItineraries by destination only
+export const deleteSavedItinerariesByDestination = (req, res) => {
+    removeSavedItinerariesByDestination(req.params.destination, (err, results) => {
+        if (err){
+            res.send(err);
+        }else{
+            res.json(results);
+        }
+    });
+}

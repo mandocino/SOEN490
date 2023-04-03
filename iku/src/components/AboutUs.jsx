@@ -3,7 +3,7 @@ import React from "react";
 export default function AboutUs() {
   return (
     <>
-      <div className="bg-emerald-500 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
+      <div className="bg-emerald-500 dark:bg-emerald-700 mx-auto text-center rounded-3xl text-white max-w-xl mt-20">
         <p className="text-white text-2xl pt-5">Project IKU</p>
         <p className="text-white text-xl">CAPSTONE SOEN490</p>
         <br />

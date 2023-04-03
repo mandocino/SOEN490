@@ -110,9 +110,39 @@ export const removeSavedScoresByLocations = (originID, destID, result) => {
     });
 }
 
+// Remove saved scores by origin only (where destination is null)
+export const removeSavedScoresByOriginNoDest = (originID, result) => {
+    savedScoreDBModel.deleteMany({'origin':originID,'destination':{ $exists: false }},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
+            result(null, data);
+        }
+    });
+}
+
 // Remove saved scores by origin only
 export const removeSavedScoresByOrigin = (originID, result) => {
-    savedScoreDBModel.deleteMany({'origin':originID,'destination':{ $exists: false }},(err, data) => {
+    savedScoreDBModel.deleteMany({'origin':originID},(err, data) => {
+        if (err){
+            console.log(err);
+        }
+        else{
+            if (process.env.REACT_APP_LOG_SUCCESSFUL_DB_CALLS === 'true') {
+                console.log(data);
+            }
+            result(null, data);
+        }
+    });
+}
+
+// Remove saved scores by destination only
+export const removeSavedScoresByDestination = (destinationID, result) => {
+    savedScoreDBModel.deleteMany({'destination':destinationID},(err, data) => {
         if (err){
             console.log(err);
         }

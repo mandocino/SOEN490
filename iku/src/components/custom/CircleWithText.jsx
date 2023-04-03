@@ -28,7 +28,13 @@ export default function CircleWithText(props) {
   return (
     <>
       <div className={props.className + shadowClass}>
-        <div className={props.size + " absolute rounded-full " + (props.gradient || gradient)} style={{backgroundColor: props.borderColor, mask: `radial-gradient(circle at 50% 50%, transparent 60%, black 62.5%)`}}/>
+        <div
+          className={props.size + " absolute rounded-full " + (props.gradient || gradient)}
+          style={{
+            backgroundColor: props.borderColor,
+            mask: `radial-gradient(circle at 50% 50%, transparent 60%, black 62.5%)`,
+            '-webkit-mask': `radial-gradient(circle at 50% 50%, transparent 60%, black 62.5%)`,
+        }}/>
         <div className={props.size + " rounded-full flex items-center justify-center p-1 "}>
           <div className={"w-full h-full rounded-full flex items-center justify-center " + bgColor}>
             <div className={"p-4 text-center gap-2 " + (textGradient)} style={{backgroundColor: props.textColor}}>

@@ -48,6 +48,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import {CloseButton} from "./custom/CloseButton";
 
 ChartJS.register(
   CategoryScale,
@@ -74,9 +75,13 @@ const isDark = window.matchMedia(
   "(prefers-color-scheme: dark)"
 ).matches;
 
+
+const user_id = localStorage.getItem("user_id");
+const notLoggedIn = (user_id === null);
+
 let navButtonBackgroundColor = isDark ? "#10b981" : "#000";
 
-function ScoreDetailModal({ originLocation, destinations, userData }) {
+function ScoreDetailModal({ originLocation, destinations, userData, buttonClass, noHoverButtonClass }) {
 
   const defaultSavedScores = {
     overall: 0,
@@ -150,7 +155,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: isDark
-        ? "#0e3331"
+        ? "#064e3b"
         : "#059669",
       color: "white",
       width: "25%"
@@ -159,14 +164,14 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     height: '1/3',
-    '&:nth-of-type(odd)': {
-      backgroundColor: "white",
-    },
     '&.MuiTableRow-head': {
       backgroundColor: '#0000'
     },
+    '&:nth-of-type(odd)': {
+      backgroundColor: "white",
+    },
     '&:nth-of-type(even)': {
-      backgroundColor: "lightgrey",
+      backgroundColor: "#e2e8f0",
     },
   }));
 
@@ -177,8 +182,15 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
   };
 
   const closeModal = () => {
-    setSelectedDestination("");
     setCurrentRouteMetrics(defaultRouteMetrics);
+    fetchOverallSavedScore();
+    setAllRouteMetrics(null);
+    setItineraries(null);
+    setRoutesList(null);
+    setRouteTimesList(null);
+    setSavedScores({});
+    setDisplayTimeSlices(false);
+
     setIsOpen(false);
   };
 
@@ -432,9 +444,9 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         )
       }
       visualizedRoutes.push(
-        <div key={key} className="flex w-full">
+        <div key={key} className="flex w-full text-white">
           <span className="grow flex nowrap items-center">
-            <span className="w-16">
+            <span className="w-16 text-emerald-dark dark:text-white">
               {Math.round(value.duration/60)} min:
             </span>
             <span className="grow flex nowrap">
@@ -494,7 +506,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     const dataset = {
       labels: Object.keys(data),
       datasets: [{
-        label: 'Number of departures at hour',
+        label: 'Number of departures',
         data: Object.values(data),
         borderColor: '#10b981',
         backgroundColor: '#34d399',
@@ -667,29 +679,45 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
     return hDisplay + mDisplay;
   }
 
+  const detailsButton = (
+    <button
+      onClick={openModal}
+      type="button"
+      disabled={notLoggedIn}
+      className={notLoggedIn ? "cursor-not-allowed " + noHoverButtonClass : buttonClass}
+      on={1}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        stroke="currentColor"
+        className="w-6 h-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+        />
+      </svg>
+      <span>Details</span>
+    </button>
+  )
+
   return (
     <>
-      <button
-        onClick={openModal}
-        type="button"
-        className="w-8 h-7 flex items-center justify-center transition ease-in-out font-semibold border-b border-emerald-600 rounded-t-lg text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-800 dark:text-emerald-dark hover:bg-white"
-        on={1}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="2"
-          stroke="currentColor"
-          className="w-6 h-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-          />
-        </svg>
-      </button>
+      {
+        notLoggedIn ?
+          <Tooltip
+            title={"Please log in to view scoring details."}
+          >
+            {detailsButton}
+          </Tooltip>
+          :
+          detailsButton
+      }
+
 
       <Dialog
         open={isOpen}
@@ -698,7 +726,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
         fullWidth
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
             backdropFilter: 'blur(8px)'
           },
           '& .MuiDialog-paper': {
@@ -765,21 +793,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
 
           <hr className="mb-4 border-emerald-900"></hr>
           <div className="mb-1">
-            <div className="float-right absolute right-4 top-4 ">
-              <button type="button" onClick={closeModal}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="35"
-                  height="35"
-                  fill="currentColor"
-                  viewBox="0 0 512 512"
-                >
-                  {" "}
-                  <title>ionicons-v5-m</title>{" "}
-                  <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
-                </svg>
-              </button>
-            </div>
+            <CloseButton onClick={closeModal} right={'1rem'} top={'1rem'} />
             <div className="flex w-full items-center gap-2">
               <div className="text-2xl inline">{originLocation.name}</div>
               <RightArrowIcon className="inline"></RightArrowIcon>
@@ -1016,7 +1030,7 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                           <div className={`flex basis-3/5 flex-col py-3 gap-2 items-left ${selectedDestination !== "" ? "" : "hidden"}`}>
                             {alternativeRoutes}
                           </div>
-                          <div className={`flex basis-2/5 border-l border-l-white ml-4 pl-4 flex-col py-3 gap-2 items-left`}>
+                          <div className={`flex basis-2/5 border-l border-l-emerald-dark dark:border-l-white ml-4 pl-4 flex-col py-3 gap-2 items-left`}>
                             {
                               selectedScoreTime ?
                                 <>
@@ -1041,12 +1055,20 @@ function ScoreDetailModal({ originLocation, destinations, userData }) {
                   <div className="flex flex-col px-16 py-2 h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
                     {
                       selectedDestination === "" || selectedScoreTime === "" ?
-                        <div className=" p-8 rounded-3xl absolute bg-emerald-50 text-emerald-darkest text-xl drop-shadow-xl">
-                          Please select a destination and a time period to view the table of route metrics
+                        <div className="z-10 absolute w-full h-full flex pb-4">
+                          <div className="w-full h-full mx-16 my-2 bg-black/25 rounded-xl flex items-center justify-center">
+                            <div className=" p-8 rounded-3xl bg-gray-200 text-emerald-darkest text-xl drop-shadow-xl">
+                              Please select a destination and a time period to view the table of route metrics
+                            </div>
+                          </div>
                         </div>
                         : null
                     }
-                    <TableContainer sx={{height: '100%', borderRadius: '0.75rem'}}>
+                    <TableContainer sx={{
+                      height: '100%',
+                      borderRadius: '0.75rem',
+                      filter: 'drop-shadow(0 20px 13px rgb(0 0 0 / 0.03)) drop-shadow(0 8px 5px rgb(0 0 0 / 0.08))'
+                    }}>
                       <Table aria-label="metrics table"
                       sx={{
                         height: '100%',
