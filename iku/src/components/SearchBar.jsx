@@ -71,7 +71,7 @@ export default function SearchBar() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await axios
-      .get("http://localhost:5000/coordinates", {
+      .get("http://iku.ddns.net:5000/coordinates", {
         params: {
           address: input,
         },
@@ -101,7 +101,7 @@ export default function SearchBar() {
 
         } else {
           await axios
-            .post("http://localhost:5000/newlocation", {
+            .post("http://iku.ddns.net:5000/newlocation", {
               user_id: mongoose.Types.ObjectId(userId),
               ...location,
             })
@@ -120,7 +120,7 @@ export default function SearchBar() {
     setInput(event.target.value);
     if (event.target.value.length > 0) {
       await axios
-        .get("http://localhost:5000/suggestions", {
+        .get("http://iku.ddns.net:5000/suggestions", {
           params: {
             input: event.target.value,
           },
@@ -146,7 +146,7 @@ export default function SearchBar() {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
           await axios
-            .get("http://localhost:5000/address", {
+            .get("http://iku.ddns.net:5000/address", {
               params: {
                 lat: latitude,
                 lng: longitude,
@@ -174,13 +174,15 @@ export default function SearchBar() {
             <p className="text-center text-5xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
               Let's find your transit scores
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               <SimpleSearchBar />
-              <span className="h-14 flex items-center">
-                <p>or</p>
+              <span className="flex items-center justify-center gap-4">
+                <span className="h-14 flex items-center">
+                  <p>or</p>
+                </span>
+                {/* w-14 and h-14 is the size of the adjacent searchbox */}
+                {currentLocationButton}
               </span>
-              {/* w-14 and h-14 is the size of the adjacent searchbox */}
-              {currentLocationButton}
             </div>
           </div>
         </div>

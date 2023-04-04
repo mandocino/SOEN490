@@ -51,6 +51,11 @@ import {
 } from "./ScoringFactorFormElements";
 import {ConfirmDialog} from "./custom/ConfirmDialog";
 
+
+const isSmall = window.matchMedia(
+    "(max-width: 640px)"
+).matches;
+
 const user_id = localStorage.getItem("user_id");
 
 async function updateUserPreferences(data, routing) {
@@ -72,7 +77,7 @@ async function updateUserPreferences(data, routing) {
     data.lastScoringPrefChangeTime = currentDate;
 
     return await axios
-      .post("http://localhost:5000/modifyUserByID", data)
+      .post("http://iku.ddns.net:5000/modifyUserByID", data)
       .catch((error) => {
         console.log(error.message);
       });
@@ -423,6 +428,36 @@ export default function EditScoringFactors({userData, buttonClass}) {
     }
   }
 
+  const helpBoxTransform = isSmall ?
+    (
+      infoPopoverActive ? {
+        zIndex: '20'
+      } : {
+        zIndex: '0'
+      }
+    ) : (
+      infoPopoverActive ? {
+        transform: 'translate(calc(50% + 0.5rem))'
+      } : {
+        transform: 'translate(0)'
+      }
+    );
+
+  const mainBoxTransform = isSmall ?
+    (
+      infoPopoverActive ? {
+        display: 'none'
+      } : {
+        display: 'block'
+      }
+    ) : (
+      infoPopoverActive ? {
+        transform: 'translate(calc(-50% - 0.5rem))'
+      } : {
+        transform: 'translate(0)'
+      }
+    );
+
 
   return (
     <>
@@ -447,15 +482,11 @@ export default function EditScoringFactors({userData, buttonClass}) {
           }
         }}
       >
-        <div className="fixed inset-0 overflow-y-auto">
+        <div className="fixed inset-0 overflow-scroll">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             <div
-              className="w-full absolute top-4 max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-              style={infoPopoverActive ? {
-                transform: 'translate(calc(-50% - 0.5rem))'
-              } : {
-                transform: 'translate(0)'
-              }}>
+              className="w-full absolute top-4 max-w-md z-10 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-darkest dark:to-emerald-darker p-6 text-left align-middle shadow-xl"
+              style={mainBoxTransform}>
               <div className="flex justify-between gap-2 pb-1">
                 <DialogTitle
                   as="h3"
@@ -568,7 +599,7 @@ export default function EditScoringFactors({userData, buttonClass}) {
                 <button
                   type="button"
                   onClick={submitHandler}
-                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg"
+                  className="p-2 sm:px-4 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-emerald-500 hover:bg-emerald-700 focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                        stroke="currentColor" className="w-6 h-6">
@@ -580,7 +611,7 @@ export default function EditScoringFactors({userData, buttonClass}) {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
+                  className="p-2 sm:px-4 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-red-500 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-semibold rounded-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                        stroke="currentColor" className="w-6 h-6">
@@ -592,7 +623,7 @@ export default function EditScoringFactors({userData, buttonClass}) {
                 <button
                   type="button"
                   onClick={resetAllFactors}
-                  className="px-4 py-2 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg"
+                  className="p-2 sm:px-4 flex items-center gap-2 justify-center transition ease-in-out duration-200 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                        stroke="currentColor" className="w-6 h-6">
@@ -612,12 +643,8 @@ export default function EditScoringFactors({userData, buttonClass}) {
               </div>
             </div>
             <div
-              className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-dark p-6 text-left align-middle shadow-xl"
-              style={infoPopoverActive ? {
-                transform: 'translate(calc(50% + 0.5rem))'
-              } : {
-                transform: 'translate(0)'
-              }}
+              className="w-full max-w-md fixed z-0 top-4 transition-transform duration-300 overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-darkest dark:to-emerald-darker p-6 text-left align-middle shadow-xl"
+              style={helpBoxTransform}
             >
               { infoPopoverContent }
             </div>

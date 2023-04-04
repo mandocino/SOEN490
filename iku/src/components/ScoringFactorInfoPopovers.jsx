@@ -8,7 +8,7 @@ const darkThemeNavButtonColor = "#10b981";
 
 function CarouselItem({children}) {
   return (
-    <div className="h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-emerald-darker dark:to-black rounded-xl p-2 overflow-y-auto">
+    <div className="h-full bg-white dark:bg-black rounded-xl p-2 overflow-y-auto">
       {children}
     </div>
   )

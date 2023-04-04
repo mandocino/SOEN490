@@ -29,7 +29,7 @@ describe("Database tests", () => {
     let confirmID = "";
     let codeVal = "";
     test("Create", async () => {
-        const resCreate = await axios.post(`http://localhost:5000/newEmailConfirmation/`, {
+        const resCreate = await axios.post(`http://iku.ddns.net:5000/newEmailConfirmation/`, {
             email: "iku.soen490@gmail.com"
         });
         expect(resCreate.data).toHaveProperty('_id');
@@ -38,7 +38,7 @@ describe("Database tests", () => {
     });
 
     test("Get", async () => {
-        const resGet = await axios.post(`http://localhost:5000/emailConfirmation/`, {
+        const resGet = await axios.post(`http://iku.ddns.net:5000/emailConfirmation/`, {
             email: "iku.soen490@gmail.com",
             code: codeVal
         });
@@ -46,11 +46,11 @@ describe("Database tests", () => {
     });
 
     test("Delete", async () => {
-        const resDelete = await axios.post(`http://localhost:5000/removeEmailConfirmation/`, {
+        const resDelete = await axios.post(`http://iku.ddns.net:5000/removeEmailConfirmation/`, {
             email: "iku.soen490@gmail.com",
             code: codeVal
         });
-        const resGet = await axios.post(`http://localhost:5000/emailConfirmation/`, {
+        const resGet = await axios.post(`http://iku.ddns.net:5000/emailConfirmation/`, {
             email: "iku.soen490@gmail.com",
             code: codeVal
         });

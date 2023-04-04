@@ -24,12 +24,12 @@ const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transpar
 
 const dashboardElement = "rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-800 dark:to-emerald-900 p-4";
 const dashboardInnerElementGradient = "bg-gradient-to-br from-emerald-dark to-emerald-darker dark:from-emerald-darkest dark:to-black rounded-3xl";
-const dashboardNestedInnerElementGradient = "bg-gradient-to-br from-white to-emerald-100 text-emerald-dark rounded-lg px-4 py-2 flex justify-between items-center";
+const dashboardNestedInnerElementGradient = "bg-gradient-to-br from-white to-emerald-100 text-emerald-dark rounded-lg p-2 sm:px-4 flex justify-between items-center";
 
 const dashboardButtonBase = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark hover:bg-white drop-shadow-lg"
 const dashboardButtonBaseNoHover = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-200 focus:ring-4 focus:ring-emerald-400 text-emerald-dark drop-shadow-lg"
 const dashboardButtonBase2 = "transition ease-in-out duration-200 rounded-lg font-semibold rounded-2xl text-md bg-emerald-500 focus:ring-4 focus:ring-emerald-400 text-white hover:text-emerald-dark hover:bg-white drop-shadow-lg"
-const dashboardElementButton = "w-full flex items-center justify-start gap-2 px-4 py-2 text-2xl " + dashboardButtonBase;
+const dashboardElementButton = "w-full flex items-center justify-start gap-2 p-2 sm:px-4 text-2xl " + dashboardButtonBase;
 const dashboardSmallButton = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBase;
 const dashboardSmallButtonNoHover = "h-8 p-2 gap-2 flex items-center justify-center " + dashboardButtonBaseNoHover;
 export const dashboardSquareButton = "h-8 w-8 flex items-center justify-center " + dashboardButtonBase;
@@ -67,7 +67,7 @@ export default function Dashboard() {
 
   const fetchUserData = async () => {
     if (user_id != null) {
-      const user = await axios.get(`http://localhost:5000/userByID/${user_id}`);
+      const user = await axios.get(`http://iku.ddns.net:5000/userByID/${user_id}`);
       setUserData(user.data[0]);
     } else {
       if(user_id === null) {
@@ -113,7 +113,7 @@ export default function Dashboard() {
         getLocations(locationArray);
       }
     } else {
-      axios.get(`http://localhost:5000/locations/${user_id}`)
+      axios.get(`http://iku.ddns.net:5000/locations/${user_id}`)
         .then((response) => {
           getLocations(response.data);
         })

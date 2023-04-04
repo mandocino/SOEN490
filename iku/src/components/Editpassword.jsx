@@ -14,7 +14,7 @@ export default function EditAccount() {
   const fetchAccountInfo = () => {
     const user_id = localStorage.getItem("user_id");
     axios
-      .get(`http://localhost:5000/userByID/${user_id}`)
+      .get(`http://iku.ddns.net:5000/userByID/${user_id}`)
       .then((response) => {
         setOldPassword(response.data[0].password);
       })
@@ -56,7 +56,7 @@ export default function EditAccount() {
     if (boolOldPassInput && boolPasswordsMatch && oldPasswordInput!="") {
 
       await axios
-        .post("http://localhost:5000/modifyUserById", {
+        .post("http://iku.ddns.net:5000/modifyUserById", {
         _id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
         password: newPassword,
         })

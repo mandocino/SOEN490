@@ -102,7 +102,7 @@ export default function DashboardCard({className, buttonClass, noHoverButtonClas
   const currentHomeClass = loc.current_home ? 'order-first border-2 border-amber-400' : '';
   return (
     <>
-      <div className={`${className} ${currentHomeClass} flex flex-col rounded-3xl p-8 h-fit`}>
+      <div className={`${className} ${currentHomeClass} flex flex-col rounded-3xl p-4 sm:p-8 h-fit`}>
         <div>
           <span className="flex justify-between">
             <span className="flex items-center justify-center gap-2 fill-white font-bold text-2xl text-white line-clamp-2 ">
@@ -131,7 +131,7 @@ export default function DashboardCard({className, buttonClass, noHoverButtonClas
           <hr className="mt-1 mb-4 border-emerald-900"/>
         </div>
         <div className={`flex flex-col lg:flex-row flex-wrap items-center gap-8 w-full h-full`}>
-          <div className="w-64 h-64">
+          <div className="w-full max-w-[16rem] h-64">
             <MapContainer center={[loc.latitude, loc.longitude]} zoom={13}>
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

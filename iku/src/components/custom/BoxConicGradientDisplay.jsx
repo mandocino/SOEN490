@@ -30,7 +30,7 @@ export default function BoxConicGradientDisplay({values, colors, names, icons, m
   let lines = [];
   for (let i=0; i<numValues; i++) {
     lines.push(
-      <div className={`font-semibold ${textSize} rounded-2xl px-4 py-2 flex gap-2 justify-start items-center`} key={i}>
+      <div className={`font-semibold ${textSize} rounded-2xl p-2 sm:px-4 flex gap-2 justify-start items-center`} key={i}>
         {icons[i]}
         <span>{names[i]}: {values[i]}%</span>
       </div>

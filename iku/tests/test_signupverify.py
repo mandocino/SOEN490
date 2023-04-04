@@ -19,7 +19,7 @@ class TestSignupverify():
         self.driver.quit()
 
     def test_signupverify(self):
-        self.driver.get("http://localhost:3000/register")
+        self.driver.get("http://iku.ddns.net:3000/register")
         self.driver.set_window_size(1294, 1392)
         
         self.driver.find_element(By.NAME, "email").click()

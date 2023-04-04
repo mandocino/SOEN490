@@ -49,7 +49,7 @@ const LoginForm = ({ inputs, type }) => {
 
   const login = async () => {
     const res = await axios
-      .post("http://localhost:5000/login", {
+      .post("http://iku.ddns.net:5000/login", {
         email: inputValue[0].value.toLowerCase(),
         password: inputValue[1].value,
       })
@@ -69,7 +69,7 @@ const LoginForm = ({ inputs, type }) => {
       if (inputIsGood) {
         const currentDate = Date.now();
         axios
-          .post("http://localhost:5000/signup", {
+          .post("http://iku.ddns.net:5000/signup", {
             email: inputValue[0].value.toLowerCase(),
             first_name: inputValue[1].value,
             last_name: inputValue[2].value,
@@ -111,7 +111,7 @@ const LoginForm = ({ inputs, type }) => {
     emptyEmail(false);
 
     const checkEmail = await axios
-      .get(`http://localhost:5000/userByEmail/${inputValue[0].value.toLowerCase()}`)
+      .get(`http://iku.ddns.net:5000/userByEmail/${inputValue[0].value.toLowerCase()}`)
       .catch((e) => e.message);
 
     if (checkEmail.data.length > 0) {

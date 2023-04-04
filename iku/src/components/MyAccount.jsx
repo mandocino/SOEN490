@@ -11,7 +11,7 @@ export default function MyAccount() {
   const fetchAccountInfo = () => {
     const user_id = localStorage.getItem("user_id");
     axios
-      .get(`http://localhost:5000/userByID/${user_id}`)
+      .get(`http://iku.ddns.net:5000/userByID/${user_id}`)
       .then((response) => {
         setFirstName(response.data[0].first_name);
         setLastName(response.data[0].last_name);
