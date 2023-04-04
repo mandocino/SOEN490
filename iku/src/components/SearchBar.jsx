@@ -71,7 +71,7 @@ export default function SearchBar() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await axios
-      .get("http://localhost:5000/coordinates", {
+      .get("http://iku.ddns.net:5000/coordinates", {
         params: {
           address: input,
         },
@@ -101,7 +101,7 @@ export default function SearchBar() {
 
         } else {
           await axios
-            .post("http://localhost:5000/newlocation", {
+            .post("http://iku.ddns.net:5000/newlocation", {
               user_id: mongoose.Types.ObjectId(userId),
               ...location,
             })
@@ -120,7 +120,7 @@ export default function SearchBar() {
     setInput(event.target.value);
     if (event.target.value.length > 0) {
       await axios
-        .get("http://localhost:5000/suggestions", {
+        .get("http://iku.ddns.net:5000/suggestions", {
           params: {
             input: event.target.value,
           },
@@ -146,7 +146,7 @@ export default function SearchBar() {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
           await axios
-            .get("http://localhost:5000/address", {
+            .get("http://iku.ddns.net:5000/address", {
               params: {
                 lat: latitude,
                 lng: longitude,

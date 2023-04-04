@@ -26,4 +26,4 @@ app.use(Router);
 // Connect to DB
 connectToServer();
 
-app.listen(5000, () => console.log("Server running at http://localhost:5000"));
+app.listen(5000, () => console.log("Server running at http://iku.ddns.net:5000"));

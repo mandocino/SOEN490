@@ -28,7 +28,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await axios
-      .get("http://localhost:5000/coordinates", {
+      .get("http://iku.ddns.net:5000/coordinates", {
         params: {
           address: input,
         },
@@ -57,7 +57,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
           }
         } else {
           await axios
-            .post("http://localhost:5000/newlocation", {
+            .post("http://iku.ddns.net:5000/newlocation", {
               user_id: mongoose.Types.ObjectId(userId),
               ...location
             })
@@ -76,7 +76,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
   const getSuggestions = async (event) => {
     setInput(event.target.value);
     if (event.target.value.length > 0) {
-      axios.get("http://localhost:5000/suggestions", {
+      axios.get("http://iku.ddns.net:5000/suggestions", {
           params: {
             input: event.target.value,
           },

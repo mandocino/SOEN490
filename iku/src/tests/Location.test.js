@@ -32,7 +32,7 @@ describe("Google Geocoding API tests", () => {
 
         const concordiaLatitude = 45.497109;
         const concordiaLongitude = -73.578734;
-        const geocodedAddress = await axios.get('http://localhost:5000/address/', {
+        const geocodedAddress = await axios.get('http://iku.ddns.net:5000/address/', {
             params:{
               lat: concordiaLatitude,
               lng: concordiaLongitude
@@ -45,7 +45,7 @@ describe("Google Geocoding API tests", () => {
 
     // Test for bad request (Address from coordinates)
     test("Failed request for /address/", async () => {
-        const response = await axios.get('http://localhost:5000/address/', {
+        const response = await axios.get('http://iku.ddns.net:5000/address/', {
             params: null
         });
         expect(response.data.status).toBe(400);
@@ -55,7 +55,7 @@ describe("Google Geocoding API tests", () => {
     // Test geocoding with valid address (coordinates from address)
     test("Get coordinates from a valid address", async() => {
         const address = 'Concordia University, Boulevard de Maisonneuve Ouest';
-        const geocodedCoordinates = await axios.get('http://localhost:5000/coordinates', {
+        const geocodedCoordinates = await axios.get('http://iku.ddns.net:5000/coordinates', {
             params: {
                 address: address
             }
@@ -67,7 +67,7 @@ describe("Google Geocoding API tests", () => {
 
      // Test for bad request (coordinates from address)
     test("Failed request for /coordinates/", async () => {
-        const response = await axios.get('http://localhost:5000/coordinates', {
+        const response = await axios.get('http://iku.ddns.net:5000/coordinates', {
             params: {
                 address: null
             }
@@ -83,7 +83,7 @@ describe("Google Places Autocomplete API test", () => {
     // Test valid request to Google autocomplete Api
     test("Get suggestions for a given input", async () => {
         const input = 'montreal';
-        const suggestionsResponse = await axios.get('http://localhost:5000/suggestions', {
+        const suggestionsResponse = await axios.get('http://iku.ddns.net:5000/suggestions', {
             params: {
                 input: input
             }
@@ -96,7 +96,7 @@ describe("Google Places Autocomplete API test", () => {
 
     //Test for invalid request to Google autocomplete API
     test("Failed request for /suggestions/", async () => {
-        const response = await axios.get('http://localhost:5000/suggestions', {
+        const response = await axios.get('http://iku.ddns.net:5000/suggestions', {
             params: {
                 input: null
             }
@@ -111,7 +111,7 @@ describe("Database tests", () => {
     const objectID = new mongoose.mongo.ObjectId('6334936ea7e4368f95ec50c9');
 
     test("Create", async () => {
-        const resSignup = await axios.post(`http://localhost:5000/newlocation/`, {
+        const resSignup = await axios.post(`http://iku.ddns.net:5000/newlocation/`, {
             user_id: new mongoose.mongo.ObjectId('6334936ea7e4368f95ec50c9'),
             latitude: 0,
             longitude: 0,
@@ -124,7 +124,7 @@ describe("Database tests", () => {
     });
 
     test("Create with invalid request", async () => {
-        const response = await axios.post(`http://localhost:5000/newlocation/`, {
+        const response = await axios.post(`http://iku.ddns.net:5000/newlocation/`, {
             user_id: null,
             latitude: 0,
             longitude: 0,
@@ -137,7 +137,7 @@ describe("Database tests", () => {
 
 
     test("Get", async () => {
-        const resGet = await axios.get(`http://localhost:5000/locations/${objectID}`);
+        const resGet = await axios.get(`http://iku.ddns.net:5000/locations/${objectID}`);
         expect(Array.isArray(resGet.data)).toBe(true);
         expect(resGet.data.length).toBeGreaterThanOrEqual(1);
         let found = false;
@@ -151,7 +151,7 @@ describe("Database tests", () => {
 
 
     test("Modify", async () => {
-        const resModify = await axios.post(`http://localhost:5000/updateLocation/`, {
+        const resModify = await axios.post(`http://iku.ddns.net:5000/updateLocation/`, {
             _id: locationID,
             name: "ModifiedTest"
         });
@@ -159,7 +159,7 @@ describe("Database tests", () => {
     });
 
     test("Modify with invalid request", async () => {
-        const response = await axios.post(`http://localhost:5000/updateLocation/`, {
+        const response = await axios.post(`http://iku.ddns.net:5000/updateLocation/`, {
             _id: 'badID',
             name: "ModifiedTest"
         });
@@ -167,10 +167,10 @@ describe("Database tests", () => {
     });
 
     test("Delete", async () => {
-        const resModify = await axios.post(`http://localhost:5000/deleteLocation/`, {
+        const resModify = await axios.post(`http://iku.ddns.net:5000/deleteLocation/`, {
             _id: locationID
         });
-        const resGet = await axios.get(`http://localhost:5000/locations/${objectID}`);
+        const resGet = await axios.get(`http://iku.ddns.net:5000/locations/${objectID}`);
         expect(Array.isArray(resGet.data)).toBe(true);
         let found = false;
         for(let i = 0;i<resGet.data.length;++i){
@@ -182,7 +182,7 @@ describe("Database tests", () => {
     });
 
     test("Delete with invalid request", async () => {
-        const response = await axios.post(`http://localhost:5000/deleteLocation/`, {
+        const response = await axios.post(`http://iku.ddns.net:5000/deleteLocation/`, {
             _id: 'badID'
         });
         expect(response.data.message).toContain("failed");

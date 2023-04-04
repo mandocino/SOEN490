@@ -537,7 +537,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
 
   const fetchOverallSavedScore = () => {
     axios
-      .get(`http://localhost:5000/savedScores/${originLocation._id}`)
+      .get(`http://iku.ddns.net:5000/savedScores/${originLocation._id}`)
       .then((response) => {
         if (response.data) {
           processScores(response.data);
@@ -568,7 +568,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
       // Fetch the saved scores for a specific destination
       axios
         .get(
-          `http://localhost:5000/savedScores/${originLocation._id}/${newSelection}`
+          `http://iku.ddns.net:5000/savedScores/${originLocation._id}/${newSelection}`
         )
         .then((response) => {
           if (response.data) {
@@ -583,7 +583,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
       // Fetch the routes metrics
       axios
         .get(
-          `http://localhost:5000/savedRoutingData/${originLocation._id}/${newSelection}/`
+          `http://iku.ddns.net:5000/savedRoutingData/${originLocation._id}/${newSelection}/`
         )
         .then((response) => {
           if (response.data) {
@@ -599,7 +599,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
       // Fetch the itineraries
       axios
         .get(
-          `http://localhost:5000/savedItineraries/${originLocation._id}/${newSelection}/`
+          `http://iku.ddns.net:5000/savedItineraries/${originLocation._id}/${newSelection}/`
         )
         .then((response) => {
           if (response.data) {
@@ -848,7 +848,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
 
           {/* Table contents */}
           <div className="w-full border dark:border-none border-emerald-50 flex flex-col mt-2">
-            <div className="w-full flex gap-3">
+            <div className="w-full flex flex-col sm:flex-row gap-3">
               {/* First column: Times */}
               <div className="flex flex-col gap-2 items-center">
                 {

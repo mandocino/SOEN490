@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8080/otp/routers/default/plan";
+const url = "http://iku.ddns.net:8080/otp/routers/default/plan";
 
 let otpParameterKeys = [
   'maxPreTransitTime',

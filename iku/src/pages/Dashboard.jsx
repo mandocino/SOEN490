@@ -67,7 +67,7 @@ export default function Dashboard() {
 
   const fetchUserData = async () => {
     if (user_id != null) {
-      const user = await axios.get(`http://localhost:5000/userByID/${user_id}`);
+      const user = await axios.get(`http://iku.ddns.net:5000/userByID/${user_id}`);
       setUserData(user.data[0]);
     } else {
       if(user_id === null) {
@@ -113,7 +113,7 @@ export default function Dashboard() {
         getLocations(locationArray);
       }
     } else {
-      axios.get(`http://localhost:5000/locations/${user_id}`)
+      axios.get(`http://iku.ddns.net:5000/locations/${user_id}`)
         .then((response) => {
           getLocations(response.data);
         })

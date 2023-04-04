@@ -72,7 +72,7 @@ async function updateUserPreferences(data, routing) {
     data.lastScoringPrefChangeTime = currentDate;
 
     return await axios
-      .post("http://localhost:5000/modifyUserByID", data)
+      .post("http://iku.ddns.net:5000/modifyUserByID", data)
       .catch((error) => {
         console.log(error.message);
       });

@@ -31,7 +31,7 @@ describe("Database tests", () => {
     let origin = null;
     let destination = null;
     test("Create", async () => {
-        const resCreate = await axios.post(`http://localhost:5000/newSavedScore/`, {
+        const resCreate = await axios.post(`http://iku.ddns.net:5000/newSavedScore/`, {
             origin: new mongoose.mongo.ObjectId(),
             destination: new mongoose.mongo.ObjectId(),
             generatedTime: new Date(),
@@ -48,16 +48,16 @@ describe("Database tests", () => {
     });
 
     test("Get", async () => {
-        const resGet = await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`);
+        const resGet = await axios.get(`http://iku.ddns.net:5000/savedScores/${origin}/${destination}`);
         expect(Array.isArray(resGet.data)).toBe(false);
         expect(resGet.data._id).toBe(scoreID);
     });
 
     test("Delete", async () => {
-        const resDelete = await axios.post(`http://localhost:5000/deleteSavedScore/`, {
+        const resDelete = await axios.post(`http://iku.ddns.net:5000/deleteSavedScore/`, {
             _id: scoreID
         });
-        const resGet = await axios.get(`http://localhost:5000/savedScores/${origin}/${destination}`);
+        const resGet = await axios.get(`http://iku.ddns.net:5000/savedScores/${origin}/${destination}`);
         expect(Array.isArray(resGet.data)).toBe(false);
         expect(resGet.data).toBe(null);
     });

@@ -13,7 +13,7 @@ export default function Admin() {
   const [updateRoutingAlgoConfirm, setUpdateRoutingAlgoConfirm] = useState(false);
 
   const fetchUser = async() => {
-    const response = await axios.get(`http://localhost:5000/userByID/${userID}`)
+    const response = await axios.get(`http://iku.ddns.net:5000/userByID/${userID}`)
     setUser(response.data[0]);
   }
 

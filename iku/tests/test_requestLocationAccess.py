@@ -30,7 +30,7 @@ class TestRequestLocationAccess():
     self.driver.quit()
   
   def test_requestLocationAccess(self):
-    self.driver.get("http://localhost:3000/")
+    self.driver.get("http://iku.ddns.net:3000/")
     self.driver.set_window_size(1294, 1392)
     #TODO: Assert that address is inputted into the field if the user shares their location
   
