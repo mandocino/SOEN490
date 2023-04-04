@@ -22,7 +22,7 @@ export default function HomeHeader({ ignore }) {
               <Logo className="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition"/>
             </Link>
           </div>
-          <ul className="grow max-w-xl sm:px-8 flex font-medium">
+          <ul className="grow max-w-xl sm:px-8 flex items-center justify-center font-medium">
             <li className="flex items-center" style={ignore.includes('dashboard') ? {display: "none"} : {visibility: 'visible'}}>
               <LinkButton to="/dashboard">Dashboard</LinkButton>
             </li>
