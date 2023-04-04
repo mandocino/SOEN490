@@ -1004,17 +1004,17 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
                   }}
                 >
                   {/* Routes List */}
-                  <div className="flex flex-col px-16 py-2 h-full w-full">
+                  <div className="flex flex-col px-16 py-2 h-full w-full overflow-scroll">
                     <RoutesList/>
                   </div>
 
                   {/* Number of departures over time */}
-                  <div className="flex flex-col px-16 py-2 h-full w-full">
+                  <div className="flex flex-col px-16 py-2 h-full w-full overflow-scroll">
                     <DeparturesOverTime/>
                   </div>
 
                   {/* Alternative Modes */}
-                  <div className="flex flex-col px-16 py-2 h-full w-full">
+                  <div className="flex flex-col px-16 py-2 h-full w-full overflow-scroll">
                     <div className="text-lg font-semibold ">
                       Alternative modes of transport
                     </div>
@@ -1052,7 +1052,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
                   </div>
 
                   {/* Stats (min, max, avg...) */}
-                  <div className="flex flex-col px-16 py-2 h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center">
+                  <div className="flex flex-col px-16 py-2 h-full w-full rounded-xl dark:border dark:border-emerald-darkest flex items-center justify-center overflow-scroll">
                     {
                       selectedDestination === "" || selectedScoreTime === "" ?
                         <div className="z-10 absolute w-full h-full flex pb-4">

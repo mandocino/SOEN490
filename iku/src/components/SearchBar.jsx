@@ -174,13 +174,15 @@ export default function SearchBar() {
             <p className="text-center text-5xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 to-emerald-500">
               Let's find your transit scores
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               <SimpleSearchBar />
-              <span className="h-14 flex items-center">
-                <p>or</p>
+              <span className="flex items-center justify-center gap-4">
+                <span className="h-14 flex items-center">
+                  <p>or</p>
+                </span>
+                {/* w-14 and h-14 is the size of the adjacent searchbox */}
+                {currentLocationButton}
               </span>
-              {/* w-14 and h-14 is the size of the adjacent searchbox */}
-              {currentLocationButton}
             </div>
           </div>
         </div>

@@ -15,19 +15,19 @@ export default function HomeHeader({ ignore }) {
 
   return (
     <header>
-      <nav className="bg-emerald-500 dark:bg-emerald-800 px-4 py-2.5 ">
+      <nav className="bg-emerald-500 dark:bg-emerald-800 p-2 sm:px-4.5 ">
         <div className="flex justify-between items-center">
           <div className="hidden md:flex">
             <Link to="/" className="items-center">
               <Logo className="fill-white stroke-white hover:fill-emerald-100 hover:scale-110 duration-200 transition"/>
             </Link>
           </div>
-          <ul className="flex font-medium">
+          <ul className="grow max-w-xl sm:px-8 flex font-medium">
             <li className="flex items-center" style={ignore.includes('dashboard') ? {display: "none"} : {visibility: 'visible'}}>
               <LinkButton to="/dashboard">Dashboard</LinkButton>
             </li>
             {location.pathname === "/dashboard" ? (
-              <li className="w-96" id={"header-container"}>
+              <li className="grow" id={"header-container"}>
                 <SimpleSearchBar  id={"header-search"} />
               </li>
             ) : null}
