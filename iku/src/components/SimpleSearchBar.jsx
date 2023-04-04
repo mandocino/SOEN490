@@ -143,7 +143,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
           </datalist>
           <button
             onClick={handleSubmit}
-            className="transition ease-in-out duration-200 text-white hover:text-emerald-dark absolute right-2.5 bottom-2.5 bg-emerald-600 hover:bg-white focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg text-sm px-4 py-2 drop-shadow-lg"
+            className="transition ease-in-out duration-200 text-white hover:text-emerald-dark absolute right-2.5 bottom-2.5 bg-emerald-600 hover:bg-white focus:ring-4 focus:outline-none focus:ring-emerald-400 font-semibold rounded-lg text-sm p-2 sm:px-4 drop-shadow-lg"
           >
             Search
           </button>
