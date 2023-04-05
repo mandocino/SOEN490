@@ -49,6 +49,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import {CloseButton} from "./custom/CloseButton";
+import {hostname, useElevationData} from "../App";
 
 ChartJS.register(
   CategoryScale,
@@ -215,7 +216,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
           {secondsToMinutes(allRouteMetrics['alternativeModeRoutes'][trip]['duration'])}
         </div>
         {
-          isCar ? <> </> :
+          useElevationData && !isCar ?
             <div className="flex flex-row gap-2 items-center">
               <div>
                 <ElevationIcon className="fill-emerald-dark dark:fill-white mt-1 h-6 w-6" ></ElevationIcon>
@@ -229,6 +230,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
                 </div>
               </div>
             </div>
+            : null
         }
       </div>
     )
@@ -412,6 +414,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
         const legWidth = (j.duration / longestDuration * 100)
         let icon = null;
 
+        //eslint-disable-next-line
         switch (j.mode) {
           case "WALK":
             icon = <DirectionsWalkIcon sx={{width: '1.5rem', height: '1.5rem'}}/>
@@ -537,7 +540,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
 
   const fetchOverallSavedScore = () => {
     axios
-      .get(`http://iku.ddns.net:5000/savedScores/${originLocation._id}`)
+      .get(`http://${hostname}:5000/savedScores/${originLocation._id}`)
       .then((response) => {
         if (response.data) {
           processScores(response.data);
@@ -568,7 +571,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
       // Fetch the saved scores for a specific destination
       axios
         .get(
-          `http://iku.ddns.net:5000/savedScores/${originLocation._id}/${newSelection}`
+          `http://${hostname}:5000/savedScores/${originLocation._id}/${newSelection}`
         )
         .then((response) => {
           if (response.data) {
@@ -583,7 +586,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
       // Fetch the routes metrics
       axios
         .get(
-          `http://iku.ddns.net:5000/savedRoutingData/${originLocation._id}/${newSelection}/`
+          `http://${hostname}:5000/savedRoutingData/${originLocation._id}/${newSelection}/`
         )
         .then((response) => {
           if (response.data) {
@@ -599,7 +602,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
       // Fetch the itineraries
       axios
         .get(
-          `http://iku.ddns.net:5000/savedItineraries/${originLocation._id}/${newSelection}/`
+          `http://${hostname}:5000/savedItineraries/${originLocation._id}/${newSelection}/`
         )
         .then((response) => {
           if (response.data) {
@@ -712,7 +715,7 @@ function ScoreDetailModal({ originLocation, destinations, userData, buttonClass,
           <Tooltip
             title={"Please log in to view scoring details."}
           >
-            {detailsButton}
+            <span>{detailsButton}</span>
           </Tooltip>
           :
           detailsButton

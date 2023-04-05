@@ -27,7 +27,7 @@ class TestDashboardElementsPresent():
         self.driver.quit()
 
     def test_dashboardElementsPresenet(self):
-        self.driver.get("http://iku.ddns.net:3000/dashboard")
+        self.driver.get("http://"+hostname+":3000/dashboard")
         self.driver.set_window_size(1294, 1392)
         
         elements = self.driver.find_elements(By.CSS_SELECTOR, ".text-4xl")

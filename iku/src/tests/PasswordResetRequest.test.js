@@ -4,6 +4,7 @@ import axios from 'axios';
 import express from 'express';
 import router from '../backend/routes/routes'
 import {connectToServer} from "../backend/config/db.js";
+import {hostname} from "../App";
 
 const app = express();
 
@@ -29,7 +30,7 @@ describe("Database tests", () => {
     let resetID = "";
     let codeVal = "";
     test("Create", async () => {
-        const resCreate = await axios.post(`http://iku.ddns.net:5000/newPasswordResetRequest/`, {
+        const resCreate = await axios.post(`http://${hostname}:5000/newPasswordResetRequest/`, {
             email: "iku.soen490@gmail.com"
         });
         expect(resCreate.data).toHaveProperty('_id');
@@ -39,7 +40,7 @@ describe("Database tests", () => {
     });
 
     test("Get", async () => {
-        const resGet = await axios.post(`http://iku.ddns.net:5000/passwordResetRequest/`, {
+        const resGet = await axios.post(`http://${hostname}:5000/passwordResetRequest/`, {
             user_id: "6334936ea7e4368f95ec50c9",
             code: codeVal
         });
@@ -47,7 +48,7 @@ describe("Database tests", () => {
     });
 
     test("Modify", async () => {
-        const resGet = await axios.post(`http://iku.ddns.net:5000/updatePasswordResetRequest/`, {
+        const resGet = await axios.post(`http://${hostname}:5000/updatePasswordResetRequest/`, {
             user_id: "6334936ea7e4368f95ec50c9",
             email: "iku.soen490@gmail.com"
         });
@@ -56,10 +57,10 @@ describe("Database tests", () => {
     });
 
     test("Delete", async () => {
-        const resDelete = await axios.post(`http://iku.ddns.net:5000/removePasswordResetRequest/`, {
+        const resDelete = await axios.post(`http://${hostname}:5000/removePasswordResetRequest/`, {
             _id: resetID
         });
-        const resGet = await axios.post(`http://iku.ddns.net:5000/passwordResetRequest/`, {
+        const resGet = await axios.post(`http://${hostname}:5000/passwordResetRequest/`, {
             user_id: "6334936ea7e4368f95ec50c9",
             code: codeVal
         });

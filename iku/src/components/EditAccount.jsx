@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import LinkButton from "./custom/LinkButton";
 import axios from "axios";
 import mongoose from "mongoose";
+import {hostname} from "../App";
 
 export default function EditAccount() {
   const [FirstName, setFirstName] = useState("");
@@ -17,7 +18,7 @@ export default function EditAccount() {
   const fetchAccountInfo = () => {
     const user_id = localStorage.getItem("user_id");
     axios
-      .get(`http://iku.ddns.net:5000/userByID/${user_id}`)
+      .get(`http://${hostname}:5000/userByID/${user_id}`)
       .then((response) => {
         setFirstName(response.data[0].first_name);
         setLastName(response.data[0].last_name);
@@ -72,7 +73,7 @@ export default function EditAccount() {
       NewCurrentLocation !== ""
     ) {
       axios
-        .post("http://iku.ddns.net:5000/modifyUserById", {
+        .post("http://"+hostname+":5000/modifyUserById", {
           _id: mongoose.Types.ObjectId(localStorage.getItem("user_id")),
           email: NewEmail,
           first_name: NewFirstName,

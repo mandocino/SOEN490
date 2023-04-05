@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import LinkButton from "./custom/LinkButton";
 import defaultPhoto from "./../assets/default_user.jpg";
 import axios from "axios";
+import {hostname} from "../App";
 
 export default function MyAccount() {
   const [FirstName, setFirstName] = useState("");
@@ -11,7 +12,7 @@ export default function MyAccount() {
   const fetchAccountInfo = () => {
     const user_id = localStorage.getItem("user_id");
     axios
-      .get(`http://iku.ddns.net:5000/userByID/${user_id}`)
+      .get(`http://${hostname}:5000/userByID/${user_id}`)
       .then((response) => {
         setFirstName(response.data[0].first_name);
         setLastName(response.data[0].last_name);

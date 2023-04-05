@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {updateRoutingAlgorithmTime, updateScoringAlgorithmTime} from "../backend/utils/scoring";
 import {ConfirmDialog} from "../components/custom/ConfirmDialog";
+import {hostname} from "../App";
 
 export default function Admin() {
   const userID = localStorage.getItem("user_id");
@@ -13,7 +14,7 @@ export default function Admin() {
   const [updateRoutingAlgoConfirm, setUpdateRoutingAlgoConfirm] = useState(false);
 
   const fetchUser = async() => {
-    const response = await axios.get(`http://iku.ddns.net:5000/userByID/${userID}`)
+    const response = await axios.get(`http://${hostname}:5000/userByID/${userID}`)
     setUser(response.data[0]);
   }
 

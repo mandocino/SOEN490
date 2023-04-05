@@ -2,7 +2,7 @@
   "id": "4dec7047-540d-4ffc-9b49-60433c33917c",
   "version": "2.0",
   "name": "Iku",
-  "url": "http://iku.ddns.net:3000/",
+  "url": "http://"+hostname+":3000/",
   "tests": [{
     "id": "cc3fdd59-1332-45f4-a0d4-ee14afd138c5",
     "name": "HomePageElementsPresent",
@@ -10,7 +10,7 @@
       "id": "ce2d2a12-acec-4ac2-a676-cdfcf11b805d",
       "comment": "",
       "command": "open",
-      "target": "http://iku.ddns.net:3000/",
+      "target": "http://"+hostname+":3000/",
       "targets": [],
       "value": ""
     }, {
@@ -78,7 +78,7 @@
       "id": "17bdb871-dc90-4500-8e86-b88196b65003",
       "comment": "",
       "command": "open",
-      "target": "http://iku.ddns.net:3000/register",
+      "target": "http://"+hostname+":3000/register",
       "targets": [],
       "value": ""
     }, {
@@ -255,7 +255,7 @@
       "id": "4a30713c-9423-4cf1-a34e-015f160149f5",
       "comment": "",
       "command": "open",
-      "target": "http://iku.ddns.net:3000/dashboard",
+      "target": "http://"+hostname+":3000/dashboard",
       "targets": [],
       "value": ""
     }, {
@@ -332,6 +332,6 @@
     "timeout": 300,
     "tests": []
   }],
-  "urls": ["http://iku.ddns.net:3000/"],
+  "urls": ["http://"+hostname+":3000/"],
   "plugins": []
 }

@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import axios from "axios";
 
 import * as module from '../backend/utils/scoring.js';
+import {hostname} from "../App";
 
 
 describe("saveScores", () => {
@@ -20,7 +21,7 @@ describe("saveScores", () => {
         }
         const mockDate = null;
 
-        const expectedURI = 'http://iku.ddns.net:5000/editSavedScore/0/1';
+        const expectedURI = 'http://'+hostname+':5000/editSavedScore/0/1';
         const expectedParams = {
             origin: mockOrigin,
             destination: mockDestination,
@@ -63,7 +64,7 @@ describe("fetchScores", () => {
         // Arrange
         jest.spyOn(axios, "get");
 
-        const expectedURI = `http://iku.ddns.net:5000/savedScores/${mockOrigin._id}/${mockDestination._id}`;
+        const expectedURI = `http://${hostname}:5000/savedScores/${mockOrigin._id}/${mockDestination._id}`;
         const expectedParams = {
             params:
                 {
@@ -126,8 +127,8 @@ describe("loadScores", () => {
 
     it("should make the get calls to axios", async () => {
         // Arrange
-        const expectedTimeURI = 'http://iku.ddns.net:5000/global/';
-        // const expectedUserURI = `http://iku.ddns.net:5000/userByID/${mockUserID}`;
+        const expectedTimeURI = 'http://'+hostname+':5000/global/';
+        // const expectedUserURI = `http://${hostname}:5000/userByID/${mockUserID}`;
 
         const mockAlgoUpdatedTime = {
             data: { lastAlgoUpdateTime: new Date(2020, 1, 1) }

@@ -28,7 +28,7 @@ class TestHomePageElementsPresent():
         self.driver.quit()
 
     def test_homePageElementsPresent(self):
-        self.driver.get("http://iku.ddns.net:3000/")
+        self.driver.get("http://"+hostname+":3000/")
         
         # Search for an element unique to the SearchBar component
         elements = self.driver.find_elements(By.CSS_SELECTOR, "input[type='search']")

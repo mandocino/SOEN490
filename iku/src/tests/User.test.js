@@ -4,6 +4,7 @@ import axios from 'axios';
 import express from 'express';
 import router from '../backend/routes/routes'
 import {connectToServer} from "../backend/config/db.js";
+import {hostname} from "../App";
 
 const app = express();
 
@@ -26,7 +27,7 @@ afterAll((done) => {
 })
 
 const getUsers = async () => {
-    const res = await axios.get('http://iku.ddns.net:5000/users');
+    const res = await axios.get('http://'+hostname+':5000/users');
     expect(Array.isArray(res.data)).toBe(true)
     expect(res.data.length).toBeGreaterThan(0);
     expect(res.data[0]).toHaveProperty('_id');
@@ -47,7 +48,7 @@ describe("User tests", () => {
 
     let testUserID;
     test("Signup", async () => {
-        const resSignup = await axios.post(`http://iku.ddns.net:5000/signup/`, {
+        const resSignup = await axios.post(`http://${hostname}:5000/signup/`, {
             email: "userSignUpTestTemp@test.com",
             first_name: "TestFirstName",
             last_name: "TestLastName",
@@ -62,7 +63,7 @@ describe("User tests", () => {
     test("Get user by ID", async () => {
         const res = await getUsers();
 
-        const resID = await axios.get(`http://iku.ddns.net:5000/userByID/${res.data[0]._id}`);
+        const resID = await axios.get(`http://${hostname}:5000/userByID/${res.data[0]._id}`);
         expect(Array.isArray(resID.data)).toBe(true)
         expect(resID.data.length).toBeGreaterThan(0);
         expect(resID.data[0]).toHaveProperty('email');
@@ -72,7 +73,7 @@ describe("User tests", () => {
     test("Get user by email", async () => {
         const res = await getUsers();
 
-        const resEmail = await axios.get(`http://iku.ddns.net:5000/userByEmail/${res.data[0].email}`);
+        const resEmail = await axios.get(`http://${hostname}:5000/userByEmail/${res.data[0].email}`);
         expect(Array.isArray(resEmail.data)).toBe(true)
         expect(resEmail.data.length).toBeGreaterThan(0);
         expect(resEmail.data[0]).toHaveProperty('_id');
@@ -80,7 +81,7 @@ describe("User tests", () => {
     });
 
     test("Login", async () => {
-        const resLogin = await axios.post(`http://iku.ddns.net:5000/login/`, {
+        const resLogin = await axios.post(`http://${hostname}:5000/login/`, {
             email: "userSignUpTestTemp@test.com",
             password: "TestPassword"
         });
@@ -91,15 +92,15 @@ describe("User tests", () => {
     });
 
     test("Modify a user", async () => {
-        await axios.post(`http://iku.ddns.net:5000/modifyUserByEmail/`, {
+        await axios.post(`http://${hostname}:5000/modifyUserByEmail/`, {
             email: "userSignUpTestTemp@test.com",
             first_name: "modifiedTestFirstName"
         });
-        const resModifyID = await axios.get(`http://iku.ddns.net:5000/userByEmail/${"userSignUpTestTemp@test.com"}`);
+        const resModifyID = await axios.get(`http://${hostname}:5000/userByEmail/${"userSignUpTestTemp@test.com"}`);
         expect(Array.isArray(resModifyID.data)).toBe(true)
         expect(resModifyID.data.length).toBeGreaterThan(0);
         expect(resModifyID.data[0]).toHaveProperty('_id');
-        const resModify = await axios.get(`http://iku.ddns.net:5000/userByID/${resModifyID.data[0]._id}`);
+        const resModify = await axios.get(`http://${hostname}:5000/userByID/${resModifyID.data[0]._id}`);
         expect(Array.isArray(resModify.data)).toBe(true)
         expect(resModify.data.length).toBeGreaterThan(0);
         expect(resModify.data[0]).toHaveProperty('first_name');
@@ -107,10 +108,10 @@ describe("User tests", () => {
     });
 
     test("Delete a user", async () => {
-        await axios.post(`http://iku.ddns.net:5000/deleteUser/`, {
+        await axios.post(`http://${hostname}:5000/deleteUser/`, {
             email: "userSignUpTestTemp@test.com"
         });
-        const resModifyID = await axios.get(`http://iku.ddns.net:5000/userByEmail/${"userSignUpTestTemp@test.com"}`);
+        const resModifyID = await axios.get(`http://${hostname}:5000/userByEmail/${"userSignUpTestTemp@test.com"}`);
         expect(Array.isArray(resModifyID.data)).toBe(true)
         expect(resModifyID.data.length).toEqual(0);
     });

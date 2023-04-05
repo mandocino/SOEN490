@@ -10,6 +10,7 @@ import {
   defaultUserTimeSliceWeights,
   defaultUserWeekendWeights
 } from "../config/defaultUserPreferences.js";
+import {hostname} from "../constants.js";
 
 
 export const listOfScores = [
@@ -45,9 +46,9 @@ export async function saveScores(origin, destination, scores, date) {
   // destination specified (weighted average)
   if (destination) {
     params.destination = destination;
-    await axios.post(`http://iku.ddns.net:5000/editSavedScore/${origin._id}/${destination._id}`, params);
+    await axios.post(`http://${hostname}:5000/editSavedScore/${origin._id}/${destination._id}`, params);
   } else {
-    await axios.post(`http://iku.ddns.net:5000/editSavedScore/${origin._id}`, params);
+    await axios.post(`http://${hostname}:5000/editSavedScore/${origin._id}`, params);
   }
 }
 
@@ -60,7 +61,7 @@ export async function saveScores(origin, destination, scores, date) {
  */
 export async function fetchScores(origin, destination) {
   // If a destination is specified, load scores for the specific origin/destination pair, else load for origin only
-  const url = destination ? `http://iku.ddns.net:5000/savedScores/${origin._id}/${destination._id}` : `http://iku.ddns.net:5000/savedScores/${origin._id}`;
+  const url = destination ? `http://${hostname}:5000/savedScores/${origin._id}/${destination._id}` : `http://${hostname}:5000/savedScores/${origin._id}`;
   return await axios.get(url, {
     params:
       {
@@ -88,7 +89,7 @@ export async function loadScores(origin, destinations, userID, userData) {
 
   const loggedIn = (userID != null);
 
-  let savedScores;
+  let savedScores = {newScores: false};
   let lastScoringPrefChangeTime;
   let lastRoutingPrefChangeTime;
   let lastAlgoUpdateTime;
@@ -97,7 +98,7 @@ export async function loadScores(origin, destinations, userID, userData) {
 
   if (loggedIn) {
     // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
-    const timeValues = await axios.get('http://iku.ddns.net:5000/global/');
+    const timeValues = await axios.get('http://'+hostname+':5000/global/');
     lastAlgoUpdateTime = timeValues.data.lastAlgoUpdateTime;
     lastRoutingUpdateTime = timeValues.data.lastRoutingUpdateTime;
 
@@ -139,6 +140,7 @@ export async function loadScores(origin, destinations, userID, userData) {
     || preferencesUpdated
   ) {
     savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
+    savedScores.newScores = true;
     preferencesUpdated =  false;
   }
   // Get the latest scores for each origin/destination pair
@@ -174,6 +176,7 @@ export async function loadScores(origin, destinations, userID, userData) {
         || score.generatedTime < lastRoutingUpdateTime
         || preferencesUpdated) {
         savedScores = await thisModule.generateNewScores(origin, destinations, loggedIn, userData);
+        savedScores.newScores = true;
         preferencesUpdated = false;
         break;
       }
@@ -727,7 +730,7 @@ export async function updateScoringAlgorithmTime() {
       lastAlgoUpdateTime: Date.now()
     };
 
-  await axios.post('http://iku.ddns.net:5000/modifyGlobal/', params);
+  await axios.post('http://'+hostname+':5000/modifyGlobal/', params);
   return params;
 }
 
@@ -743,6 +746,6 @@ export async function updateRoutingAlgorithmTime() {
       lastRoutingUpdateTime: Date.now()
     };
 
-  await axios.post('http://iku.ddns.net:5000/modifyGlobal/', params);
+  await axios.post('http://'+hostname+':5000/modifyGlobal/', params);
   return params;
 }

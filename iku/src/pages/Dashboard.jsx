@@ -18,6 +18,7 @@ import {
   defaultUserWeekendWeights
 } from "../backend/config/defaultUserPreferences";
 import AddDestination from "../components/AddDestination";
+import {hostname} from "../App";
 
 
 const dashboardTitleTextGradient = "text-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-emerald-100 pb-1";
@@ -67,7 +68,7 @@ export default function Dashboard() {
 
   const fetchUserData = async () => {
     if (user_id != null) {
-      const user = await axios.get(`http://iku.ddns.net:5000/userByID/${user_id}`);
+      const user = await axios.get(`http://${hostname}:5000/userByID/${user_id}`);
       setUserData(user.data[0]);
     } else {
       if(user_id === null) {
@@ -113,7 +114,7 @@ export default function Dashboard() {
         getLocations(locationArray);
       }
     } else {
-      axios.get(`http://iku.ddns.net:5000/locations/${user_id}`)
+      axios.get(`http://${hostname}:5000/locations/${user_id}`)
         .then((response) => {
           getLocations(response.data);
         })

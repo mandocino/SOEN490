@@ -2,6 +2,7 @@ import { React, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import mongoose from "mongoose";
 import axios from "axios";
+import {hostname} from "../App";
 
 const SimpleSearchBar = ({asDest=false, id=null}) => {
 
@@ -28,7 +29,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     await axios
-      .get("http://iku.ddns.net:5000/coordinates", {
+      .get("http://"+hostname+":5000/coordinates", {
         params: {
           address: input,
         },
@@ -57,7 +58,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
           }
         } else {
           await axios
-            .post("http://iku.ddns.net:5000/newlocation", {
+            .post("http://"+hostname+":5000/newlocation", {
               user_id: mongoose.Types.ObjectId(userId),
               ...location
             })
@@ -76,7 +77,7 @@ const SimpleSearchBar = ({asDest=false, id=null}) => {
   const getSuggestions = async (event) => {
     setInput(event.target.value);
     if (event.target.value.length > 0) {
-      axios.get("http://iku.ddns.net:5000/suggestions", {
+      axios.get("http://"+hostname+":5000/suggestions", {
           params: {
             input: event.target.value,
           },

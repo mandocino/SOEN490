@@ -13,6 +13,12 @@ import AboutUs from "./pages/Aboutpage.jsx";
 import EditAccountPage from "./pages/Editinfopage.jsx";
 import EditPasswordPage from "./pages/Editpasswordpage.jsx";
 
+
+export const isDevMode = process.env.REACT_APP_DEV_MODE === 'true';
+export const hostname = isDevMode ? "localhost" : "iku.ddns.net";
+export const useElevationData = process.env.REACT_APP_USE_ELEVATION_DATA === 'true';
+
+
 function App() {
   return (
     <>

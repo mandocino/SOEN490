@@ -8,6 +8,7 @@ import cors from "cors";
 import Router from "./routes/routes.js";
 
 import {connectToServer} from "./config/db.js";
+import {hostname} from "./constants.js";
 
 // init express
 const app = express();
@@ -26,4 +27,4 @@ app.use(Router);
 // Connect to DB
 connectToServer();
 
-app.listen(5000, () => console.log("Server running at http://iku.ddns.net:5000"));
+app.listen(5000, () => console.log("Server running at http://"+hostname+":5000"));

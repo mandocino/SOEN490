@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import {Dialog, DialogTitle} from "@mui/material";
 import {StyledSwitch} from "./ScoringFactorFormElements";
 import {ConfirmDialog} from "./custom/ConfirmDialog";
+import {hostname} from "../App";
 
 
 const isDark = window.matchMedia(
@@ -57,19 +58,19 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
     const byDestStr = isOrigin ? "ByOrigin" : "ByDest";
 
     await axios
-      .post(`http://iku.ddns.net:5000/deleteSavedScore${byDestStr}/${itemToDelete}`, {})
+      .post(`http://${hostname}:5000/deleteSavedScore${byDestStr}/${itemToDelete}`, {})
       .catch((error) => {
         console.log(error.message);
       });
 
     await axios
-      .post(`http://iku.ddns.net:5000/deleteRoutingData${byDestStr}/${itemToDelete}`, {})
+      .post(`http://${hostname}:5000/deleteRoutingData${byDestStr}/${itemToDelete}`, {})
       .catch((error) => {
         console.log(error.message);
       });
 
     await axios
-      .post(`http://iku.ddns.net:5000/deleteItineraries${byDestStr}/${itemToDelete}`, {})
+      .post(`http://${hostname}:5000/deleteItineraries${byDestStr}/${itemToDelete}`, {})
       .catch((error) => {
         console.log(error.message);
       });
@@ -131,7 +132,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
     if (currentHome !== loc.current_home) {
       let locations;
 
-      await axios.get(`http://iku.ddns.net:5000/locations/${user_id}`)
+      await axios.get(`http://${hostname}:5000/locations/${user_id}`)
       .then((response) => {
         locations = response.data;
         locations = locations.filter(l => l._id !== loc._id && l.current_home);
@@ -141,7 +142,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
       for (let l in locations) {
         let oldHome = locations[l];
         await axios
-        .post("http://iku.ddns.net:5000/updateLocation", {
+        .post("http://"+hostname+":5000/updateLocation", {
           _id: mongoose.Types.ObjectId(oldHome._id),
           current_home: false,
         })
@@ -158,7 +159,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
     ) {
       const newPriority = parseInt(priority);
       await axios
-        .post("http://iku.ddns.net:5000/updateLocation", {
+        .post("http://"+hostname+":5000/updateLocation", {
           _id: mongoose.Types.ObjectId(loc._id),
           name: name,
           notes: notes,
@@ -178,7 +179,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
         }
 
         await axios
-          .post("http://iku.ddns.net:5000/modifyUserByID", data)
+          .post("http://"+hostname+":5000/modifyUserByID", data)
           .catch((error) => {
             console.log(error.message);
           });
@@ -194,7 +195,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
         }
 
         await axios
-          .post("http://iku.ddns.net:5000/modifyUserByID", data)
+          .post("http://"+hostname+":5000/modifyUserByID", data)
           .catch((error) => {
             console.log(error.message);
           });
@@ -229,7 +230,7 @@ export default function EditLocation({loc, buttonClass, notext=false}) {
       await deleteRelevantDocumentsOnOriginChange(loc.origin, locationToDelete);
 
       await axios
-        .post("http://iku.ddns.net:5000/deleteLocation", {
+        .post("http://"+hostname+":5000/deleteLocation", {
           _id: locationToDelete,
         })
         .catch((error) => {

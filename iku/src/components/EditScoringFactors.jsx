@@ -50,6 +50,7 @@ import {
   timeSliceHexColors
 } from "./ScoringFactorFormElements";
 import {ConfirmDialog} from "./custom/ConfirmDialog";
+import {hostname} from "../App";
 
 
 const isSmall = window.matchMedia(
@@ -77,7 +78,7 @@ async function updateUserPreferences(data, routing) {
     data.lastScoringPrefChangeTime = currentDate;
 
     return await axios
-      .post("http://iku.ddns.net:5000/modifyUserByID", data)
+      .post("http://"+hostname+":5000/modifyUserByID", data)
       .catch((error) => {
         console.log(error.message);
       });

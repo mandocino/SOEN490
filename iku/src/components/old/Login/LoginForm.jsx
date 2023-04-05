@@ -6,6 +6,7 @@ import '../../styles/Login.css';
 import QuestionMarkLogo from '../../assets/question_mark.svg';
 
 import LoginInput from './LoginInput'
+import {hostname} from "../../../App";
 
 const LoginForm = ({ inputs, type }) => {
 
@@ -49,7 +50,7 @@ const LoginForm = ({ inputs, type }) => {
     }
 
     const login = async () => {
-        const res = await axios.post('http://iku.ddns.net:5000/login', {
+        const res = await axios.post('http://'+hostname+':5000/login', {
             email: inputValue[0].value.toLowerCase(),
             password: inputValue[1].value
         }).catch(e => e.message);
@@ -65,7 +66,7 @@ const LoginForm = ({ inputs, type }) => {
     const register = async () => {
         inputIsGood().then(inputIsGood => {
             if (inputIsGood) {
-                axios.post('http://iku.ddns.net:5000/signup', {
+                axios.post('http://'+hostname+':5000/signup', {
                     email: inputValue[0].value.toLowerCase(),
                     first_name: inputValue[1].value,
                     last_name: inputValue[2].value,
@@ -96,7 +97,7 @@ const LoginForm = ({ inputs, type }) => {
         }
         emptyEmail(false);
 
-        const checkEmail = await axios.post('http://iku.ddns.net:5000/login', {
+        const checkEmail = await axios.post('http://'+hostname+':5000/login', {
                 email: inputValue[0].value.toLowerCase()
             }).catch(e => e.message);
 

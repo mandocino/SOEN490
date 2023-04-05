@@ -9,6 +9,7 @@ import {
 } from './openTripPlanner.js';
 import axios from "axios";
 import * as thisModule from "./routeProcessing.js";
+import {hostname} from "../constants.js";
 
 
 const defaultStartTime = "1:00am";
@@ -55,7 +56,7 @@ export async function handleGetRoutingData(
   }
 
   // Grab the last time the system was updated (changes to algorithm, transit schedules update, etc...)
-  const timeValues = await axios.get('http://iku.ddns.net:5000/global/');
+  const timeValues = await axios.get('http://'+hostname+':5000/global/');
   const lastRoutingUpdateTime = timeValues.data.lastRoutingUpdateTime;
 
   // Compute metrics for scoring if there are none saved.
@@ -83,7 +84,7 @@ export async function handleGetRoutingData(
  */
 export async function fetchRoutingData(origin, destination) {
   // If a destination is specified, load scores for the specific origin/destination pair, else load for origin only
-  const url =`http://iku.ddns.net:5000/savedRoutingData/${origin._id}/${destination._id}`;
+  const url =`http://${hostname}:5000/savedRoutingData/${origin._id}/${destination._id}`;
   return await axios.get(url, {
     params:
       {
@@ -113,7 +114,7 @@ export async function saveRoutingData(origin, destination, routingData, generate
       routingData: routingData.metrics
     };
 
-  await axios.post(`http://iku.ddns.net:5000/editRoutingData/${origin._id}/${destination._id}`, routingDataParams);
+  await axios.post(`http://${hostname}:5000/editRoutingData/${origin._id}/${destination._id}`, routingDataParams);
 
   let itinerariesParams =
     {
@@ -123,7 +124,7 @@ export async function saveRoutingData(origin, destination, routingData, generate
       itineraries: routingData.itineraries
     };
 
-  await axios.post(`http://iku.ddns.net:5000/editItineraries/${origin._id}/${destination._id}`, itinerariesParams);
+  await axios.post(`http://${hostname}:5000/editItineraries/${origin._id}/${destination._id}`, itinerariesParams);
 }
 
 
